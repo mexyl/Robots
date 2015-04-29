@@ -22,19 +22,22 @@ using namespace Aris::DynKer;
 
 int main()
 {
+	cout << "begin" << endl;
 	try
 	{
 #ifdef PLATFORM_IS_WINDOWS
-		robot.LoadXML("C:\\Users\\yang\\Desktop\\HexapodIII.xml");
+		robot.LoadXML("D:\\kuaipan\\Program\\Robots\\Hexapod\\Resource\\HexapodIII.xml");
 #endif
 #ifdef PLATFORM_IS_LINUX
-		robot.LoadXML("/home/py/KuaiPan/Program/ROBOTS/Hexapod/HexapodIII.xml");
+		robot.LoadXML("/home/py/KuaiPan/Program/Robots/Hexapod/Resource/HexapodIII.xml");
 #endif
 	}
 	catch (std::logic_error &e)
 	{
 		cout << e.what();
+		abort();
 	}
+	cout << "end" << endl;
 
 	robot.SaveSnapshotXML("C:\\Users\\yang\\Desktop\\HexapodIII_1.xml");
 

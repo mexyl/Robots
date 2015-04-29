@@ -618,6 +618,7 @@ namespace Hexapod_Robot
 	}
 	void LEG::Calibrate(const int n, const double *plen, const double *vplen, const double *aplen, const double *fplen)
 	{
+		/*
 		vector<double[60]> _Calibration_m(n * 3);
 		vector<double[3]> _Calibration_fce(n * 3);
 		
@@ -698,22 +699,22 @@ namespace Hexapod_Robot
 
 				dsp(test2, 3, 1);
 				
-				/*if (pPrt == pP3b)
-				{
+				//if (pPrt == pP3b)
+				//{
 
-					dsp(test1, 10, 1);
-					dsp(test2, 3, 1);
-					dsp(fplen + i * 3, 3, 1);
-				}*/
-				/*static double test3[6];
-				s_daxpy(6, -1, pPrt->GetPrtFgPtr(), 1, test3, 1);
-				s_daxpy(6, 1, pPrt->GetPrtFvPtr(), 1, test3, 1);
-				s_dgemm(6, 1, 6, 1, pPrt->GetPrtImPtr(), 6, pPrt->GetPrtAccPtr(), 1, 1, test3, 1);
-				s_dgemm(3, 1, 6, 1, &_inv_of_C[33][j * 6], 36, test3, 1, 0, test1, 1);
-				dsp(test1, 3, 1);
+				//	dsp(test1, 10, 1);
+				//	dsp(test2, 3, 1);
+				//	dsp(fplen + i * 3, 3, 1);
+				//}
+				///*static double test3[6];
+				//s_daxpy(6, -1, pPrt->GetPrtFgPtr(), 1, test3, 1);
+				//s_daxpy(6, 1, pPrt->GetPrtFvPtr(), 1, test3, 1);
+				//s_dgemm(6, 1, 6, 1, pPrt->GetPrtImPtr(), 6, pPrt->GetPrtAccPtr(), 1, 1, test3, 1);
+				//s_dgemm(3, 1, 6, 1, &_inv_of_C[33][j * 6], 36, test3, 1, 0, test1, 1);
+				//dsp(test1, 3, 1);
 
-				dsp(&this->_c_M[30][0], 6, 4);
-				dsp(test3, 6, 1);*/
+				//dsp(&this->_c_M[30][0], 6, 4);
+				//dsp(test3, 6, 1);
 			}
 		}
 		
@@ -740,7 +741,7 @@ namespace Hexapod_Robot
 		dsp(_Calibration_fce[4], 10, 1);
 		cout << "p3b:" << endl;
 		dsp(_Calibration_fce[5], 10, 1);
-
+		*/
 		//static double real_mass[60];
 		//static double test_fce[210];
 
