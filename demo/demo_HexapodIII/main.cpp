@@ -26,10 +26,10 @@ int main()
 	try
 	{
 #ifdef PLATFORM_IS_WINDOWS
-		robot.LoadXML("D:\\kuaipan\\Program\\Robots\\Hexapod\\Resource\\HexapodIII.xml");
+		robot.LoadXML("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
 #endif
 #ifdef PLATFORM_IS_LINUX
-		robot.LoadXML("/home/py/KuaiPan/Program/Robots/Hexapod/Resource/HexapodIII.xml");
+		robot.LoadXML("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
 #endif
 	}
 	catch (std::logic_error &e)

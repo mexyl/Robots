@@ -9,6 +9,22 @@ FUNCTION(PREPEND var prefix)
    SET(${var} "${listVar}" PARENT_SCOPE)
 ENDFUNCTION(PREPEND)
 
+FUNCTION(PREPEND_CPP var prefix)
+   SET(listVar "")
+   FOREACH(f ${ARGN})
+      LIST(APPEND listVar "${prefix}/${f}.cpp")
+   ENDFOREACH(f)
+   SET(${var} "${listVar}" PARENT_SCOPE)
+ENDFUNCTION(PREPEND_CPP)
+
+FUNCTION(PREPEND_H var prefix)
+   SET(listVar "")
+   FOREACH(f ${ARGN})
+      LIST(APPEND listVar "${prefix}/${f}.h")
+   ENDFOREACH(f)
+   SET(${var} "${listVar}" PARENT_SCOPE)
+ENDFUNCTION(PREPEND_H)
+
 project(ROBOTS)
 
 # set compile options
@@ -22,17 +38,34 @@ set(LIBRARY_OUTPUT_PATH lib)
 
 # set include and lib folders
 if(UNIX)
-include_directories("/usr/include/Lapack")
-include_directories("/usr/include/Aris")
-link_directories(/usr/lib/Lapack)
-link_directories(/usr/lib/Aris)
+include_directories("/usr/xenomai/include")
+include_directories("/opt/etherlab/include")
+include_directories("/usr/lapack/include")
+include_directories("/usr/Aris/include")
+link_directories(/usr/lapack/lib)
+link_directories(/usr/Aris/lib)
 endif(UNIX)
 if(WIN32)
-include_directories("C:/include/Lapack")
-include_directories("C:/include/Aris")
-link_directories(C:/lib/Lapack)
-link_directories(C:/lib/Aris)
+include_directories("C:/lapack/include")
+include_directories("C:/Aris/include")
+link_directories(C:/lapack/lib)
+link_directories(C:/Aris/lib)
 endif(WIN32)
+
+include_directories("src/HexapodIII")
+
+# build HexapodIII lib
+set(SOURCE Hexapod_Robot)
+PREPEND_CPP(FULL_SRC src/HexapodIII ${SOURCE})
+PREPEND_H(FULL_H src/HexapodIII ${SOURCE})
+add_library(HexapodIII STATIC ${FULL_SRC} ${FULL_H})
+set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
+
+
+################################### build demos ####################################
+# Make demo projects
+set(MAKE_DEMO " ")
+if(MAKE_DEMO)
 
 # set link files
 if(WIN32)
@@ -45,13 +78,32 @@ set(SYSTEM_LINK_LIBS pthread gfortran)
 set(LAPACK_LINK_LIBS lapacke lapack cblas refblas)
 set(ARIS_LINK_LIBS Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
 endif(UNIX)
-
+set(ROBOTS_LINK_LIBS HexapodIII)
 
 # build programs
-set(SOURCE_FILES main.cpp Hexapod_Robot_Plan.cpp Hexapod_Robot.cpp Hexapod_Robot_Plan.h Hexapod_Robot.h)
-PREPEND(FULL_SRC Hexapod ${SOURCE_FILES})
+set(SOURCE_FILES main.cpp Hexapod_Robot_Plan.h Hexapod_Robot_Plan.cpp)
+PREPEND(FULL_SRC demo/demo_HexapodIII ${SOURCE_FILES})
 add_executable(Hexapod ${FULL_SRC})
-target_link_libraries(Hexapod ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+target_link_libraries(Hexapod ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+
+endif(MAKE_DEMO)
+
+############################################ install ############################################
+if(UNIX)
+	set(CMAKE_INSTALL_PREFIX "/usr/Robots")
+endif(UNIX)
+if(WIN32)
+	set(CMAKE_INSTALL_PREFIX "C:/Robots")
+endif(WIN32)
 
 
 
+install(TARGETS HexapodIII ARCHIVE DESTINATION lib)
+install(FILES ${INCLUDE_HEADER_FILES} DESTINATION include)
+install(DIRECTORY src/HexapodIII/Resource/ DESTINATION resource/HexapodIII)
+
+
+############################################ uninstall ############################################
+if(UNIX)
+	add_custom_target(uninstall rm -r /usr/Robots)
+endif(UNIX)
