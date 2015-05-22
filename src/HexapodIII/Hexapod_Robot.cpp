@@ -2144,24 +2144,34 @@ namespace Hexapod_Robot
 
 		for (int i = 0; i < 6; ++i)
 		{
-			if (pLeg[i]->pSf->GetActive())
+			if (pLegs[i]->pSf->GetActive())
 			{
-				memcpy(&result[i * 3], &h[supported_id[i] * 3], sizeof(double)* 3);
-				pLeg[i]->pM1->SetF_m(&h[supported_id[i] * 3]);
-				pLeg[i]->pM2->SetF_m(&h[supported_id[i] * 3+1]);
-				pLeg[i]->pM3->SetF_m(&h[supported_id[i] * 3+2]);
+				/*以下输入动力学计算，并补偿摩擦力*/
+				double fce;
+				for (unsigned j = 0; j < 3; ++j)
+				{
+					fce = h[supported_id[i] * 3 + j]
+						+ s_sgn(pLegs[i]->pMots[j]->GetV_mPtr()[0]) * pLegs[i]->pMots[j]->GetFrcCoePtr()[0]
+						+ pLegs[i]->pMots[j]->GetV_mPtr()[0] * pLegs[i]->pMots[j]->GetFrcCoePtr()[1]
+						+ pLegs[i]->pMots[j]->GetA_mPtr()[0] * pLegs[i]->pMots[j]->GetFrcCoePtr()[2];
+					pLegs[i]->pMots[j]->SetF_m(&fce);
+				}
 			}
 			else
 			{
-				result[i * 3] = k_L[i][33][0];
-				result[i * 3 + 1] = k_L[i][34][0];
-				result[i * 3 + 2] = k_L[i][35][0];
-
-				pLeg[i]->pM1->SetF_m(&k_L[i][33][0]);
-				pLeg[i]->pM2->SetF_m(&k_L[i][34][0]);
-				pLeg[i]->pM3->SetF_m(&k_L[i][35][0]);
+				/*以下输入动力学计算，并补偿摩擦力*/
+				double fce;
+				for (unsigned j = 0; j < 3; ++j)
+				{
+					fce = k_L[i][33 + j][0]
+						+ s_sgn(pLegs[i]->pMots[j]->GetV_mPtr()[0]) * pLegs[i]->pMots[j]->GetFrcCoePtr()[0]
+						+ pLegs[i]->pMots[j]->GetV_mPtr()[0] * pLegs[i]->pMots[j]->GetFrcCoePtr()[1]
+						+ pLegs[i]->pMots[j]->GetA_mPtr()[0] * pLegs[i]->pMots[j]->GetFrcCoePtr()[2];
+					pLegs[i]->pMots[j]->SetF_m(&fce);
+				}
 			}
 		}
+
 
 		/*更新驱动力*/
 

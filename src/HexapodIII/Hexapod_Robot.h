@@ -407,8 +407,6 @@ namespace Hexapod_Robot
 			LEG *pLegs[6];
 		};
 
-		double result[18];
-
 	public:
 		ROBOT();/*!< \brief 构造函数 */
 		~ROBOT();/*!< \brief 析构函数 */

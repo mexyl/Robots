@@ -75,8 +75,8 @@ int main()
 	double invel[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	double inacc[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-	//robot.SetFixedFeet("12345", "45abgh");
-	robot.SetFixedFeet("024", "1278de");
+	robot.SetFixedFeet("12345", "45abgh");
+	//robot.SetFixedFeet("024", "1278de");
 
 	robot.SetPee(feetpos, bodypos, "G");
 	robot.SetVee(feetvel, bodyvel, "G");
@@ -93,13 +93,13 @@ int main()
 	inacc[1] = 0.2;
 	inacc[2] = 0.3;
 
-	invel[0] = 0;
-	invel[1] = 0;
-	invel[2] = 0;
+	//invel[0] = 0;
+	//invel[1] = 0;
+	//invel[2] = 0;
 
-	inacc[0] = 0;
-	inacc[1] = 0;
-	inacc[2] = 0;
+	//inacc[0] = 0;
+	//inacc[1] = 0;
+	//inacc[2] = 0;
 
 	robot.SetVin(invel, bodyvel);
 	robot.SetAin(inacc, bodyacc);
@@ -107,22 +107,23 @@ int main()
 	robot.GetAee(feetacc, "G");
 	robot.SetAee(feetacc, 0, "G");
 
-	
-
 	robot.FastDynMtxInPrt();
-	dsp(robot.result, 18, 1);
 
 	for (int i = 0; i < 18; ++i)
 	{
-		robot.GetMotion(i)->SetF_m(&robot.result[i]);
-		robot.GetMotion(i)->SetA_m(&inacc[i]);
+		cout << *robot.GetMotion(i)->GetF_mPtr() << endl;
 	}
+	cout << endl;
 
 	robot.DynPre();
 	robot.DynPrtMtx();
 	robot.Dyn();
 
-	dsp(robot.x,9,1,447,0);
+	for (int i = 0; i < 18; ++i)
+	{
+		cout << *robot.GetMotion(i)->GetF_mPtr() << endl;
+	}
+	cout << endl;
 
 	robot.SaveAdams("C:\\Users\\yang\\Desktop\\Hexapod.cmd");
 
@@ -149,61 +150,6 @@ int main()
 
 
 
-
-
-
-
-
-
-	/*
-	MODEL m;
-
-	double gamma[10] = { 1.3, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-	double im[6][6];
-	double pm[4][4];
-	double ep[6] = { 0, 0, 0, 0.1, 0.5, 0.6 };
-	double vel[6] = { 0, 0, 0, 0, 0, 0.16 };
-	double acc[6] = { 0, 0, 0, 0, 0, 0.021 };
-	double fce[1] = { 1.5 };
-
-	s_gamma2im(gamma, *im);
-
-	s_ep2pm(ep, *pm);
-
-	double ep2[6] = { 0, 0, 0, 0, 0, 0 };
-
-	m.AddPart("PART1", *im, *pm, vel, acc);
-	m.pGround->AddMarker("MARKER1", *pm);
-	s_ep2pm(ep2, *pm);
-	m.GetPart("PART1")->AddMarker("MARKER2", *pm);
-	m.AddJoint("P1", JOINT::PRISMATIC, m.pGround->GetMarker("MARKER1"), m.GetPart("PART1")->GetMarker("MARKER2"));
-	m.AddMotion("M1",MOTION::LINEAR,MOTION::POS_CONTROL, m.pGround->GetMarker("MARKER1"), m.GetPart("PART1")->GetMarker("MARKER2"));
-
-	m.GetMotion("M1")->SetP_m(&ep[0]);
-	m.GetMotion("M1")->SetV_m(&vel[5]);
-	m.GetMotion("M1")->SetA_m(&acc[5]);
-
-	m.DynPre();
-	m.DynPrtMtx();
-
-	dlmwrite("C:\\Users\\yang\\Desktop\\C.txt", m.C, 12, 12);
-	dlmwrite("C:\\Users\\yang\\Desktop\\D.txt", m.D, 24, 24);
-	dlmwrite("C:\\Users\\yang\\Desktop\\x.txt", m.x, 24, 1);
-	//dsp(m.C, 12, 12);
-
-
-	m.Dyn();
-
-	cout << *m.GetMotion("M1")->GetF_mPtr() << endl;
-
-	double *clb_d, *clb_b;
-	unsigned clb_m, clb_n;
-	m.ClbEqnTo(clb_d, clb_b, clb_m, clb_n);
-
-	dlmwrite("C:\\Users\\yang\\Desktop\\clb_d.txt", clb_d, clb_m, clb_n);
-	
-	
-	*/
 
 
 	double d[1000],b[20];

@@ -33,7 +33,7 @@
         <ThighGamma>{4,0,0,0,0,0,0,0,0,0}</ThighGamma>
         <P2bGamma>{5,0,0,0,0,0,0,0,0,0}</P2bGamma>
         <P3bGamma>{6,0,0,0,0,0,0,0,0,0}</P3bGamma>
-        <Mot_friction>{0,0,0}</Mot_friction>
+        <Mot_friction>{1,2,3}</Mot_friction>
     </Variable>
     <Environment>
         <Gravity>{0 , -9.8 , 0 , 0 , 0 , 0}</Gravity>
