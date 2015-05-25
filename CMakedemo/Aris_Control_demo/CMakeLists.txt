@@ -22,22 +22,17 @@ set(LIBRARY_OUTPUT_PATH lib)
 
 # set include and lib folders
 if(UNIX)
-include_directories("/usr/include/Lapack")
+include_directories("/usr/lapack/include")
 include_directories("/usr/Aris/include")
 include_directories("/usr/xenomai/include")
 include_directories("/opt/etherlab/include")
 include_directories("/usr/Robots/include")
-link_directories(/usr/lib/Lapack)
+link_directories(/usr/lapack/lib)
 link_directories(/usr/Aris/lib)
 link_directories(/usr/xenomai/lib)
 link_directories(/opt/etherlab/lib)
 link_directories(/usr/Robots/lib)
-
 endif(UNIX)
-if(WIN32)
-include_directories("C:/include/Lapack")
-include_directories("C:/include/Aris")
-endif(WIN32)
 
 # set link files
 set(SYSTEM_LINK_LIBS pthread gfortran)
