@@ -461,6 +461,12 @@ namespace Hexapod_Robot
 		_CalAvarByAcd();
 		_CalApartByAvar();
 	}
+	void LEG::SetFin(const double *fIn)
+	{
+		pM1->SetF_m(fIn);
+		pM2->SetF_m(fIn + 1);
+		pM3->SetF_m(fIn + 2);
+	}
 	void LEG::FastDynMtxInPrt()
 	{
 		static double Loc_C[36][36], Loc_a_c[36];

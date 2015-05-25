@@ -4,8 +4,7 @@
 #include <Aris_Core.h>
 #include <Aris_Socket.h>
 #include <Aris_DynKer.h>
-
-#include "Aris_ExpCal.h"
+#include <Aris_ExpCal.h>
 
 #include <map>
 
@@ -22,7 +21,6 @@ using namespace Aris::DynKer;
 
 int main()
 {
-	cout << "begin" << endl;
 	try
 	{
 #ifdef PLATFORM_IS_WINDOWS
@@ -37,122 +35,95 @@ int main()
 		cout << e.what();
 		abort();
 	}
-	cout << "end" << endl;
 
-	robot.SaveSnapshotXML("C:\\Users\\yang\\Desktop\\HexapodIII_1.xml");
+#define input_calibration_length 2801
 
-	double eePos[6][3] =
-	{ { -0.3, -0.85, -0.65 }
-	, { -0.45, -0.85, 0 }
-	, { -0.3, -0.85, 0.65 }
-	, { 0.3, -0.85, -0.65 }
-	, { 0.45, -0.85, 0 }
-	, { 0.3, -0.85, 0.65 } };
+	static double pos[input_calibration_length][3], vel[input_calibration_length][3], acc[input_calibration_length][3], fce[input_calibration_length][3];
 
-	double inPos[18];
-
-	robot.SetPee(*eePos);
-	robot.GetPin(inPos);
-	robot.GetPee(*eePos);
-
-	dsp(*eePos, 6, 3);
+	dlmread("C:\\Users\\yang\\Desktop\\pos_calibrated.txt", *pos);
+	dlmread("C:\\Users\\yang\\Desktop\\vel_calibrated.txt", *vel);
+	dlmread("C:\\Users\\yang\\Desktop\\acc_calibrated.txt", *acc);
+	dlmread("C:\\Users\\yang\\Desktop\\fce_calibrated.txt", *fce);
 
 
-	double bodypos[6] = { 0, 0, 0, 0, 0, 0 };
-	//double bodypos[6] = { 0.1, 0.02, 0.001, 0.005, 0.03, 0.01 };
-	//'double bodyvel[6] = { 0.1, 0.02, 0.01, 0.1, 0.04, 0.35 };
-	double bodyvel[6] = { 0, 0, 0, 0, 0, 0 };
-	//double bodyacc[6] = { 0.1, 0.03, 0.12, 0.15, 0.32, 0.1 };
-	double bodyacc[6] = { 0, 0, 0, 0, 0, 0 };
-	double feetpos[18] = { -0.3, -0.85, -0.65,
-		- 0.45, -0.85, 0,
-		- 0.3, -0.85, 0.65,
-		0.3, -0.85, -0.65,
-		0.45, -0.85, 0,
-		0.3, -0.85, 0.65 };
-	double feetvel[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	double feetacc[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	double invel[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	double inacc[18] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	double input[18] = { 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9 };
+	double bodyep[6] = { 0, 0, 0, 0, 0, 0 };
 
 	robot.SetFixedFeet("12345", "45abgh");
-	//robot.SetFixedFeet("024", "1278de");
 
-	robot.SetPee(feetpos, bodypos, "G");
-	robot.SetVee(feetvel, bodyvel, "G");
-	robot.SetAee(feetacc, bodyacc, "G");
+	robot.SetPin(input, bodyep);
+	
+	memset(input, 0, sizeof(input));
+	robot.SetVin(input, bodyep);
+	robot.SetAin(input, bodyep);
 
-	robot.GetVin(invel);
-	robot.GetAin(inacc);
+	double *clb_d, *clb_b;
+	unsigned m, n;
 
-	invel[0] = 0.1;
-	invel[1] = 0.12;
-	invel[2] = -0.13;
+	robot.ForEachMotion([](MOTION *m)
+	{
+		double f = 0;
+		m->SetF_m(&f);
+	});
 
-	inacc[0] = 0.1;
-	inacc[1] = 0.2;
-	inacc[2] = 0.3;
+	robot.ClbEqnTo(clb_d, clb_b, m, n);
 
-	//invel[0] = 0;
-	//invel[1] = 0;
-	//invel[2] = 0;
 
-	//inacc[0] = 0;
-	//inacc[1] = 0;
-	//inacc[2] = 0;
+#define clb_num 1
 
-	robot.SetVin(invel, bodyvel);
-	robot.SetAin(inacc, bodyacc);
+	MATRIX clb_d_mat, clb_b_mat;
+	clb_d_mat.Resize(clb_num * 3, n);
+	clb_b_mat.Resize(clb_num * 3, 1);
 
-	robot.GetAee(feetacc, "G");
-	robot.SetAee(feetacc, 0, "G");
+	for (unsigned i = 0; i < clb_num; ++i)
+	{
+		robot.pLF->SetPin(pos[i]);
+		robot.pLF->SetVin(vel[i]);
+		robot.pLF->SetAin(acc[i]);
+		robot.pLF->SetFin(fce[i]);
+		
+		/*if (i == 2532)
+		{
+			int k = 0;
+			k++;
+
+
+		}*/
+
+
+		robot.ClbEqnTo(clb_d, clb_b, m, n);
+
+		
+
+
+		memcpy(&clb_d_mat(i * 3, 0), clb_d, 3 * n * sizeof(double));
+		memcpy(&clb_b_mat(i * 3, 0), clb_b, 3 * sizeof(double));
+
+		
+
+		if (i % 100 == 0)
+		{
+			cout << i << endl;
+		}
+	}
+
+	dlmwrite("C:\\Users\\yang\\Desktop\\clb_d.txt", clb_d_mat.Data(), clb_d_mat.RowNum(), clb_d_mat.ColNum());
+	dlmwrite("C:\\Users\\yang\\Desktop\\clb_b.txt", clb_b_mat.Data(), clb_b_mat.RowNum(), clb_b_mat.ColNum());
+
+
 
 	robot.FastDynMtxInPrt();
 
-	for (int i = 0; i < 18; ++i)
+	robot.ForEachMotion([](MOTION *m)
 	{
-		cout << *robot.GetMotion(i)->GetF_mPtr() << endl;
-	}
-	cout << endl;
-
-	robot.DynPre();
-	robot.DynPrtMtx();
-	robot.Dyn();
-
-	for (int i = 0; i < 18; ++i)
-	{
-		cout << *robot.GetMotion(i)->GetF_mPtr() << endl;
-	}
-	cout << endl;
-
-	robot.SaveAdams("C:\\Users\\yang\\Desktop\\Hexapod.cmd");
-
-
-	double *clb_d, *clb_b;
-	unsigned clb_m, clb_n;
-	robot.ClbEqnTo(clb_d, clb_b, clb_m, clb_n);
-
-	dlmwrite("C:\\Users\\yang\\Desktop\\clb_d.txt", clb_d, clb_m, clb_n);
-	dlmwrite("C:\\Users\\yang\\Desktop\\clb_b.txt", clb_b, clb_m, 1);
-
-	MATRIX gamma(robot.GetPartNum()*10,1);
-	robot.ForEachPart([&gamma](const PART* p)
-	{
-		double locGamma[10];
-		s_im2gamma(p->GetPrtImPtr(), locGamma);
-
-		memcpy(&gamma(p->GetID()*10, 0), locGamma, sizeof(locGamma));
+		cout << *(m->GetF_mPtr()) << endl;
 	});
 
-	dlmwrite("C:\\Users\\yang\\Desktop\\gamma.txt",gamma.Data(), robot.GetPartNum() * 10, 1);
+	cout << endl;
 
 
 
-
-
-
-
-	double d[1000],b[20];
+	cout << "finished" << endl;
 
 
 
