@@ -27,12 +27,12 @@
         <RMep>{PI/2,  PI* 0/6,   -PI/2-PI*7/18,  0.1234141 , 0 ,  0}</RMep>
         <RRep>{PI/2,  PI*11/6,   -PI/2-PI*7/18,  0.0679295 , 0 ,  0.3532904}</RRep>
         <BodyGamma>{140,0,0,0,0,0,0,0,0,0}</BodyGamma>
-        <P1aGamma>{1,0,0,0,0,0,0,0,0,0}</P1aGamma>
-        <P2aGamma>{2,0,0,0,0,0,0,0,0,0}</P2aGamma>
-        <P3aGamma>{3,0,0,0,0,0,0,0,0,0}</P3aGamma>
-        <ThighGamma>{4,0,0,0,0,0,0,0,0,0}</ThighGamma>
-        <P2bGamma>{5,0,0,0,0,0,0,0,0,0}</P2bGamma>
-        <P3bGamma>{6,0,0,0,0,0,0,0,0,0}</P3bGamma>
+        <P1aGamma>{0,0,0,0,0,0,0,0,0,0}</P1aGamma>
+        <P2aGamma>{0,0,0,0,0,0,0,0,0,0}</P2aGamma>
+        <P3aGamma>{0,0,0,0,0,0,0,0,0,0}</P3aGamma>
+        <ThighGamma>{10,1.0,0.5,0,0,0,0,0,0,0}</ThighGamma>
+        <P2bGamma>{0,0,0,0,0,0,0,0,0,0}</P2bGamma>
+        <P3bGamma>{0,0,0,0,0,0,0,0,0,0}</P3bGamma>
         <Mot_friction>{0,0,0}</Mot_friction>
     </Variable>
     <Environment>

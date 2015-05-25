@@ -351,6 +351,11 @@ namespace Hexapod_Robot
 		* \param vIn 单腿三个输入的加速度。
 		*/
 		void SetAin(const double *aIn);
+		/*!
+		* \brief 设置单腿三个输入的输入力。
+		* \param vIn 单腿三个输入的输入力。
+		*/
+		void SetFin(const double *fIn);
 
 	public:
 		void FastDynMtxInPrt();
@@ -406,8 +411,6 @@ namespace Hexapod_Robot
 			};
 			LEG *pLegs[6];
 		};
-
-		double result[18];
 
 	public:
 		ROBOT();/*!< \brief 构造函数 */
