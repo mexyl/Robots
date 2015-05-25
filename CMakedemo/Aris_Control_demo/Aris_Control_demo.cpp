@@ -552,7 +552,7 @@ cout<<screw_pos[15]<<"  "<<screw_pos[16]<<"  "<<screw_pos[17]<<endl;*/
 	//cs.SetModeCycVel();
 
 
-	initParam.motorNum=1;
+	initParam.motorNum=18;
 	initParam.homeHighSpeed=280000;
 	initParam.homeLowSpeed=40000;
 
@@ -563,8 +563,6 @@ cout<<screw_pos[15]<<"  "<<screw_pos[16]<<"  "<<screw_pos[17]<<endl;*/
 	cs.SysInitCommunication();
 
 	cs.SysStart();
-
-
 
 	printf("Will start\n");
 	while(!cs.IsSysStopped())
