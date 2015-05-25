@@ -224,7 +224,7 @@ int tg(Aris::RT_CONTROL::CMachineData& machineData,Aris::RT_CONTROL::RT_MSG& msg
 		{
 		    for(int i=0;i<18;i++)
 		    {
-				machineData.motorsModes[i]=EOperationMode::OM_CYCLICPOS;
+				machineData.motorsModes[i]=EOperationMode::OM_CYCLICVEL;
 		    }
 
 			gaitcmd[MapAbsToPhy[3]]=EGAIT::GAIT_HOME2START;
