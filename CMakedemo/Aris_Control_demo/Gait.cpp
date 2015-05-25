@@ -147,7 +147,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 		std::cout << "Start Reading File" << std::endl;
 		std::cout<<"reading file data..."<<std::endl;
 
-		fin.open("./gait/TL.txt");
+		fin.open("../../resource/gait/TL.txt");
 
 		for(int i=0;i<GAIT_TURN_LEN;i++)
 		{
@@ -164,7 +164,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 
 	    fin.close();
 
-	     fin.open("./gait/TR.txt");
+	     fin.open("../../resource/gait/TR.txt");
 
 			for(int i=0;i<GAIT_TURN_LEN;i++)
 			{
@@ -182,7 +182,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 
 		fin.close();
 
-		fin.open("./gait/leg_up.txt");
+		fin.open("../../resource/gait/leg_up.txt");
 
 		for(int i=0;i<GAIT_LEGUP_LEN;i++)
 		{
@@ -199,7 +199,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 
 		fin.close();
 
-		fin.open("./gait/start.txt");
+		fin.open("../../resource/gait/start.txt");
 
 		for(int i=0;i<GAIT_HOME2START_LEN;i++)
 		{
@@ -218,7 +218,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 
 		fin.close();
 		/*FOWARD*/
-		fin.open("./gait/acc.txt");
+		fin.open("../../resource/gait/acc.txt");
 		for(int i=0; i<GAIT_ACC_LEN;i++)
 		{
 			fin>>Line_Num;
@@ -232,7 +232,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 		fin.close();
 
 
-		fin.open("./gait/cons.txt");
+		fin.open("../../resource/gait/cons.txt");
 		for(int i=0+GAIT_ACC_LEN; i<GAIT_ACC_LEN+GAIT_CON_LEN;i++)
 		{
 			fin>>Line_Num;
@@ -244,7 +244,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 
 		}
 		fin.close();
-		fin.open("./gait/dec.txt");
+		fin.open("../../resource/gait/dec.txt");
 		for(int i=0+GAIT_ACC_LEN+GAIT_CON_LEN; i<GAIT_ACC_LEN+GAIT_CON_LEN+GAIT_DEC_LEN;i++)
 		{
 			fin>>Line_Num;
@@ -258,7 +258,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 		fin.close();
 
 		/*backward*/
-		fin.open("./gait/back_acc.txt");
+		fin.open("../../resource/gait/back_acc.txt");
 		for(int i=0; i<GAIT_ACC_LEN;i++)
 		{
 			fin>>Line_Num;
@@ -272,7 +272,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 		fin.close();
 
 
-		fin.open("./gait/back_cons.txt");
+		fin.open("../../resource/gait/back_cons.txt");
 		for(int i=0+GAIT_ACC_LEN; i<GAIT_ACC_LEN+GAIT_CON_LEN;i++)
 		{
 			fin>>Line_Num;
@@ -284,7 +284,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 
 		}
 		fin.close();
-		fin.open("./gait/back_dec.txt");
+		fin.open("../../resource/gait/back_dec.txt");
 		for(int i=0+GAIT_ACC_LEN+GAIT_CON_LEN; i<GAIT_ACC_LEN+GAIT_CON_LEN+GAIT_DEC_LEN;i++)
 		{
 			fin>>Line_Num;
@@ -299,7 +299,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 
 		/*fast FOWARD*/
 
-		fin.open("./gait/fast_acc.txt");
+		fin.open("../../resource/gait/fast_acc.txt");
 		for(int i=0; i<GAIT_FAST_ACC_LEN;i++)
 		{
 			fin>>Line_Num;
@@ -312,7 +312,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 		fin.close();
 
 
-		fin.open("./gait/fast_cons.txt");
+		fin.open("../../resource/gait/fast_cons.txt");
 		for(int i=0+GAIT_FAST_ACC_LEN; i<GAIT_FAST_ACC_LEN+GAIT_FAST_CON_LEN;i++)
 		{
 			fin>>Line_Num;
@@ -324,7 +324,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 		}
 
 		fin.close();
-		fin.open("./gait/fast_dec.txt");
+		fin.open("../../resource/gait/fast_dec.txt");
 		for(int i=0+GAIT_FAST_ACC_LEN+GAIT_FAST_CON_LEN; i<GAIT_FAST_ACC_LEN+GAIT_FAST_CON_LEN+GAIT_FAST_DEC_LEN;i++)
 		{
 			fin>>Line_Num;
@@ -337,7 +337,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 		fin.close();
 		/*fast backward*/
 
-		fin.open("./gait/fast_back_acc.txt");
+		fin.open("../../resource/gait/fast_back_acc.txt");
 		for(int i=0; i<GAIT_FAST_ACC_LEN;i++)
 		{
 			fin>>Line_Num;
@@ -350,7 +350,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 		fin.close();
 
 
-		fin.open("./gait/fast_back_const.txt");
+		fin.open("../../resource/gait/fast_back_const.txt");
 		for(int i=0+GAIT_FAST_ACC_LEN; i<GAIT_FAST_ACC_LEN+GAIT_FAST_CON_LEN;i++)
 		{
 			fin>>Line_Num;
@@ -362,7 +362,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 		}
 
 		fin.close();
-		fin.open("./gait/fast_back_dec.txt");
+		fin.open("../../resource/gait/fast_back_dec.txt");
 		for(int i=0+GAIT_FAST_ACC_LEN+GAIT_FAST_CON_LEN; i<GAIT_FAST_ACC_LEN+GAIT_FAST_CON_LEN+GAIT_FAST_DEC_LEN;i++)
 		{
 			fin>>Line_Num;
@@ -375,7 +375,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 		fin.close();
 
 	//// trot gait
-		fin.open("./gait/trot_three_acc_0.55_2.3_0.18.txt");
+		fin.open("../../resource/gait/trot_three_acc_0.55_2.3_0.18.txt");
 			for(int i=0; i<GAIT_TROT_ACC_LEN;i++)
 			{
 				fin>>Line_Num;
@@ -388,7 +388,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 			fin.close();
 
 
-			fin.open("./gait/trot_three_const_0.55_2.3_0.18.txt");
+			fin.open("../../resource/gait/trot_three_const_0.55_2.3_0.18.txt");
 			for(int i=0+GAIT_TROT_ACC_LEN; i<GAIT_TROT_ACC_LEN+GAIT_TROT_CON_LEN;i++)
 			{
 				fin>>Line_Num;
@@ -400,7 +400,7 @@ int CGait::InitGait(Aris::RT_CONTROL::CSysInitParameters& param)
 			}
 
 			fin.close();
-			fin.open("./gait/trot_three_dec_0.55_2.3_0.18.txt");
+			fin.open("../../resource/gait/trot_three_dec_0.55_2.3_0.18.txt");
 			for(int i=0+GAIT_TROT_ACC_LEN+GAIT_TROT_CON_LEN; i<GAIT_TROT_ACC_LEN+GAIT_TROT_CON_LEN+GAIT_TROT_DEC_LEN;i++)
 			{
 				fin>>Line_Num;
