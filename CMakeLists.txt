@@ -100,7 +100,7 @@ endif(WIN32)
 
 install(TARGETS HexapodIII ARCHIVE DESTINATION lib)
 install(FILES ${INCLUDE_HEADER_FILES} DESTINATION include)
-install(DIRECTORY src/HexapodIII/Resource/ DESTINATION resource/HexapodIII)
+install(DIRECTORY src/HexapodIII/resource/ DESTINATION resource/HexapodIII)
 
 
 ############################################ uninstall ############################################
