@@ -121,6 +121,13 @@ namespace Hexapod_Robot
 	{
 		memcpy(aIn, this->aIn, sizeof(this->aIn));
 	}
+	void LEG::GetFin(double *fIn) const
+	{
+		for (unsigned i = 0; i < 3; ++i)
+		{
+			fIn[i] = *pMots[i]->GetF_mPtr();
+		}
+	}
 	
 	void LEG::GetFceJacDir(double *jac, const char *RelativeCoodinate) const
 	{
@@ -2075,7 +2082,7 @@ namespace Hexapod_Robot
 		}
 	}
 
-	void ROBOT::FastDynMtxInPrt()
+	void ROBOT::FastDyn()
 	{
 		static double Cb[6][6][36], Loc_C[36][36], k_L[6][36][4], H[6][18], h[18];
 		
@@ -2146,7 +2153,8 @@ namespace Hexapod_Robot
 		}
 
 		/*求解支撑腿的驱动力*/
-		s_dgelsd(6, supported_Leg_Num * 3, 1, *H, 18, h, 1, s, rcond, &rank);
+		if (supported_Leg_Num>0)
+			s_dgelsd(6, supported_Leg_Num * 3, 1, *H, 18, h, 1, s, rcond, &rank);
 
 		for (int i = 0; i < 6; ++i)
 		{
