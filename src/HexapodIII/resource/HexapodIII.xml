@@ -30,10 +30,10 @@
         <P1aGamma>{0,0,0,0,0,0,0,0,0,0}</P1aGamma>
         <P2aGamma>{0,0,0,0,0,0,0,0,0,0}</P2aGamma>
         <P3aGamma>{0,0,0,0,0,0,0,0,0,0}</P3aGamma>
-        <ThighGamma>{10,1.0,0.5,0,0,0,0,0,0,0}</ThighGamma>
+        <ThighGamma>{10,1.1,0.5,0,0,0,0,0,0,0}</ThighGamma>
         <P2bGamma>{0,0,0,0,0,0,0,0,0,0}</P2bGamma>
         <P3bGamma>{0,0,0,0,0,0,0,0,0,0}</P3bGamma>
-        <Mot_friction>{0,0,0}</Mot_friction>
+        <Mot_friction>{20, 30, 560}</Mot_friction>
     </Variable>
     <Environment>
         <Gravity>{0 , -9.8 , 0 , 0 , 0 , 0}</Gravity>

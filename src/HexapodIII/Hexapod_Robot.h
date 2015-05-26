@@ -258,6 +258,11 @@ namespace Hexapod_Robot
 		* \param aIn 单腿三个输入的加速度。
 		*/
 		void GetAin(double *aIn) const;
+		/*!
+		* \brief 获取单腿三个输入的力。
+		* \param aIn 单腿三个输入的力。
+		*/
+		void GetFin(double *fIn) const;
 
 		/*!
 		* \brief 获取单腿坐标系下的正向力雅克比矩阵（已知输入求输出）。
@@ -357,6 +362,7 @@ namespace Hexapod_Robot
 		*/
 		void SetFin(const double *fIn);
 
+
 	public:
 		void FastDynMtxInPrt();
 		void FastDynEeForce(const double *fIn_in, double *fEE_out, const char *RelativeCoodinate = "G");
@@ -441,7 +447,7 @@ namespace Hexapod_Robot
 		void SetVinWithFixedFeet(const double *vIn = 0);
 		void SetAinWithFixedFeet(const double *aIn = 0);
 
-		void FastDynMtxInPrt();
+		void FastDyn();
 		void FastDynEeForce(const double *fIn_in, double *fEE_out, const char *RelativeCoodinate = "G");
 		void Clb(const char* filename);
 		void ClbLeg(const char* filename);
