@@ -53,11 +53,13 @@ namespace Robots
 		}
 
 		calculate_from_pEE();
+		calculate_jac();
 	}
 	void LEG_BASE::SetPin(const double *pIn)
 	{
 		memcpy(this->pIn, pIn, in_size);
 		calculate_from_pIn();
+		calculate_jac();
 	}
 	void LEG_BASE::SetVee(const double *vEE, const char *RelativeCoodinate)
 	{
@@ -81,12 +83,14 @@ namespace Robots
 		}
 
 		calculate_from_vEE();
+		calculate_jac_c();
 	}
 	void LEG_BASE::SetVin(const double *vIn)
 	{
 		memcpy(this->vIn, vIn, in_size);
 
 		calculate_from_vIn();
+		calculate_jac_c();
 	}
 	void LEG_BASE::SetAee(const double *aEE, const char *RelativeCoodinate)
 	{
@@ -182,6 +186,192 @@ namespace Robots
 	void LEG_BASE::GetAin(double *aIn) const
 	{
 		memcpy(aIn, this->aIn, in_size);
+	}
+
+	void LEG_BASE::GetFceJacDir(double *jac, const char *RelativeCoodinate) const
+	{
+		/*力雅克比是速度雅克比转置的逆*/
+		double locJac[3][3];
+
+		GetVelJacInv(*locJac, 0, RelativeCoodinate);
+		s_transpose(3, 3, *locJac, 3, jac, 3);
+	}
+	void LEG_BASE::GetFceJacInv(double *jac, const char *RelativeCoodinate) const
+	{
+		/*力雅克比是速度雅克比转置的逆*/
+		double locJac[3][3];
+
+		GetVelJacDir(*locJac, 0, RelativeCoodinate);
+		s_transpose(3, 3, *locJac, 3, jac, 3);
+	}
+	void LEG_BASE::GetVelJacDir(double *jac, double *c, const char *RelativeCoodinate) const
+	{
+		switch (*RelativeCoodinate)
+		{
+		case 'L':
+			if (jac != nullptr)
+			{
+				memcpy(jac, *_jac_vel_dir, sizeof(_jac_vel_dir));
+			}
+			if (c != nullptr)
+			{
+				memset(c, 0, sizeof(double) * 3);
+			}
+			break;
+		case 'M':
+		case 'B':
+			if (jac != nullptr)
+			{
+				s_dgemm(3, 3, 3, 1, pBasePrtPm, 4, *_jac_vel_dir, 3, 0, jac, 3);
+			}
+			if (c != nullptr)
+			{
+				memset(c, 0, sizeof(double) * 3);
+			}
+			break;
+		case 'G':
+		case 'O':
+		default:
+			if (jac != nullptr)
+			{
+				s_dgemm(3, 3, 3, 1, pBasePm, 4, *_jac_vel_dir, 3, 0, jac, 3);
+			}
+			if (c != nullptr)
+			{
+				s_pv2pv(pBasePm, pRobot->pBodyVel, this->pEE, 0, c);
+			}
+			break;
+		}
+
+	}
+	void LEG_BASE::GetVelJacInv(double *jac, double *c, const char *RelativeCoodinate) const
+	{
+		double tem[3];
+		
+		switch (*RelativeCoodinate)
+		{
+		case 'L':
+			if (jac != nullptr)
+			{
+				memcpy(jac, *_jac_vel_inv, sizeof(_jac_vel_inv));
+			}
+			if (c != nullptr)
+			{
+				memset(c, 0, sizeof(double) * 3);
+			}
+			break;
+		case 'M':
+		case 'B':
+			if (jac != nullptr)
+			{
+				s_dgemmNT(3, 3, 3, 1, *_jac_vel_inv, 3, pBasePrtPm, 4, 0, jac, 3);
+			}
+			if (c != nullptr)
+			{
+				memset(c, 0, sizeof(double) * 3);
+			}
+			break;
+		case 'G':
+		case 'O':
+		default:
+			if (jac != nullptr)
+			{
+				s_dgemmNT(3, 3, 3, 1, *_jac_vel_inv, 3, pBasePm, 4, 0, jac, 3);
+			}
+			if (c != nullptr)
+			{
+				s_pv2pv(pBasePm, pRobot->pBodyVel, this->pEE, 0, c);
+				s_dgemmTN(3, 1, 3, 1, pBasePm, 4, c, 1, 0, tem, 1);
+				s_dgemm(3, 1, 3, -1, *_jac_vel_inv, 3, tem, 1, 0, c, 1);
+			}
+			break;
+		}
+	}
+	void LEG_BASE::GetAccJacDir(double *jac, double *c, const char *RelativeCoodinate) const
+	{
+		switch (*RelativeCoodinate)
+		{
+		case 'L':
+			if (jac != nullptr)
+			{
+				memcpy(jac, *_jac_vel_dir, sizeof(_jac_vel_dir));
+			}
+			if (c != 0)
+			{
+				memcpy(c, _c_acc_dir, sizeof(_c_acc_dir));
+			}
+			break;
+		case 'M':
+		case 'B':
+			if (jac != nullptr)
+			{
+				s_dgemm(3, 3, 3, 1, pBasePrtPm, 4, *_jac_vel_dir, 3, 0, jac, 3);
+			}
+			if (c != nullptr)
+			{
+				s_dgemm(3, 1, 3, 1, pBasePrtPm, 4, _c_acc_dir, 1, 0, c, 1);
+			}
+			break;
+		case 'G':
+		case 'O':
+		default:
+			if (jac != nullptr)
+			{
+				s_dgemm(3, 3, 3, 1, pBasePm, 4, *_jac_vel_dir, 3, 0, jac, 3);
+			}
+
+			if (c != 0)
+			{
+				s_pa2pa(pBasePm, pRobot->pBodyVel, pRobot->pBodyAcc, this->pEE, this->vEE, _c_acc_dir, c);
+			}
+			break;
+		}
+	}
+	void LEG_BASE::GetAccJacInv(double *jac, double *c, const char *RelativeCoodinate) const
+	{
+		double tem1[3], tem2[3], tem3[3];
+		
+		switch (*RelativeCoodinate)
+		{
+		case 'L':
+			if (jac != nullptr)
+			{
+				memcpy(jac, *_jac_vel_inv, sizeof(_jac_vel_inv));
+			}
+			if (c != nullptr)
+			{
+				memcpy(c, _c_acc_inv, sizeof(_c_acc_inv));
+			}
+			break;
+		case 'M':
+		case 'B':
+			if (jac != nullptr)
+			{
+				s_dgemmNT(3, 3, 3, 1, *_jac_vel_inv, 3, pBasePrtPm, 4, 0, jac, 3);
+			}
+			if (c != nullptr)
+			{
+				memcpy(c, _c_acc_inv, sizeof(_c_acc_inv));
+			}
+			break;
+		case 'G':
+		case 'O':
+		default:
+			if (jac != nullptr)
+			{
+				s_dgemmNT(3, 3, 3, 1, *_jac_vel_inv, 3, pBasePm, 4, 0, jac, 3);
+			}
+
+			if (c != nullptr)
+			{
+				memcpy(c, _c_acc_inv, sizeof(_c_acc_inv));
+				this->GetPee(tem1, "G");
+				this->GetVee(tem2, "G");
+				s_inv_pa2pa(pBasePm, pRobot->pBodyVel, pRobot->pBodyAcc, tem1, tem2, 0, tem3);
+				s_dgemm(3, 1, 3, 1, *_jac_vel_inv, 3, tem3, 1, 1, c, 1);
+			}
+			break;
+		}
 	}
 
 	ROBOT_BASE::ROBOT_BASE()

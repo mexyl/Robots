@@ -469,7 +469,7 @@ namespace Robots
 		}
 	};
 
-
+	class ROBOT_III;
 	class LEG_III :public Aris::DynKer::OBJECT, public Robots::LEG_BASE
 	{
 		friend class ROBOT_III;
@@ -572,6 +572,9 @@ namespace Robots
 		virtual void calculate_from_vIn();
 		virtual void calculate_from_aEE();
 		virtual void calculate_from_aIn();
+
+		virtual void calculate_jac();
+		virtual void calculate_jac_c();
 
 		void _CalCdByPos();
 		void _CalCdByPlen();

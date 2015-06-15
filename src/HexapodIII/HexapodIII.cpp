@@ -631,177 +631,6 @@ namespace Robots
 	}
 	void LEG::Calibrate(const int n, const double *plen, const double *vplen, const double *aplen, const double *fplen)
 	{
-		/*
-		vector<double[60]> _Calibration_m(n * 3);
-		vector<double[3]> _Calibration_fce(n * 3);
-		
-		double cm[6][6];
-		double _inv_of_C[36][36], A[3][6], B[3][6], q[6],v[6];
-		int ipiv[36];
-
-		memset(_Calibration_m.data(), 0, sizeof(double)*n * 3 * 60);
-		memcpy(_Calibration_fce.data(), fplen, sizeof(double)*n * 3);
-		
-		this->pSf->Deactivate();
-
-		for (int i = 0; i < n; ++i)
-		{
-			this->SetPin(plen + i * 3);
-			this->SetVin(vplen + i * 3);
-			this->SetAin(aplen + i * 3);
-
-			this->FastDynMtxInPrt();
-
-			memcpy(_inv_of_C, this->_C, sizeof(double)* 36 * 36);
-
-			s_dgeinv(36,*_inv_of_C,36,ipiv);
-
-			for (int j = 0; j < 6; j++)
-			{
-				PART *pPrt=pPrts[j];
-
-				s_block_cpy(3, 6, *_inv_of_C, 33, j * 6, 36, *A, 0, 0, 6);
-
-				memset(q, 0, sizeof(double)* 6);
-				memcpy(q, pPrt->GetPrtAccPtr(), sizeof(double)* 6);
-				s_daxpy(6, -1, pPrt->GetPrtGravityPtr(), 1, q, 1);
-				
-				s_cmf(pPrt->GetPrtVelPtr(), *cm);
-				s_dgemm(3, 6, 6, 1, *A, 6, *cm, 6, 0, *B, 6);
-
-				memcpy(v, pPrt->GetPrtVelPtr(), sizeof(double)* 6);
-
-				for (int k = 0; k < 3; k++)
-				{
-					_Calibration_m[i * 3 + k][j * 10] = A[k][0] * q[0] + A[k][1] * q[1] + A[k][2] * q[2];
-					_Calibration_m[i * 3 + k][j * 10 + 1] = A[k][1] * q[5] + A[k][5] * q[1] - A[k][2] * q[4] - A[k][4] * q[2];
-					_Calibration_m[i * 3 + k][j * 10 + 2] = A[k][2] * q[3] + A[k][3] * q[2] - A[k][0] * q[5] - A[k][5] * q[0];
-					_Calibration_m[i * 3 + k][j * 10 + 3] = A[k][0] * q[4] + A[k][4] * q[0] - A[k][1] * q[3] - A[k][3] * q[1];
-					_Calibration_m[i * 3 + k][j * 10 + 4] = A[k][3] * q[3];
-					_Calibration_m[i * 3 + k][j * 10 + 5] = A[k][4] * q[4];
-					_Calibration_m[i * 3 + k][j * 10 + 6] = A[k][5] * q[5];
-					_Calibration_m[i * 3 + k][j * 10 + 7] = A[k][3] * q[4] + A[k][4] * q[3];
-					_Calibration_m[i * 3 + k][j * 10 + 8] = A[k][3] * q[5] + A[k][5] * q[3];
-					_Calibration_m[i * 3 + k][j * 10 + 9] = A[k][4] * q[5] + A[k][5] * q[4];
-
-					_Calibration_m[i * 3 + k][j * 10] += B[k][0] * v[0] + B[k][1] * v[1] + B[k][2] * v[2];
-					_Calibration_m[i * 3 + k][j * 10 + 1] += B[k][1] * v[5] + B[k][5] * v[1] - B[k][2] * v[4] - B[k][4] * v[2];
-					_Calibration_m[i * 3 + k][j * 10 + 2] += B[k][2] * v[3] + B[k][3] * v[2] - B[k][0] * v[5] - B[k][5] * v[0];
-					_Calibration_m[i * 3 + k][j * 10 + 3] += B[k][0] * v[4] + B[k][4] * v[0] - B[k][1] * v[3] - B[k][3] * v[1];
-					_Calibration_m[i * 3 + k][j * 10 + 4] += B[k][3] * v[3];
-					_Calibration_m[i * 3 + k][j * 10 + 5] += B[k][4] * v[4];
-					_Calibration_m[i * 3 + k][j * 10 + 6] += B[k][5] * v[5];
-					_Calibration_m[i * 3 + k][j * 10 + 7] += B[k][3] * v[4] + B[k][4] * v[3];
-					_Calibration_m[i * 3 + k][j * 10 + 8] += B[k][3] * v[5] + B[k][5] * v[3];
-					_Calibration_m[i * 3 + k][j * 10 + 9] += B[k][4] * v[5] + B[k][5] * v[4];
-				}
-
-				double test1[10], test2[3];
-				test1[0] = pPrt->GetPrtImPtr()[0];
-				test1[1] = pPrt->GetPrtImPtr()[11];
-				test1[2] = pPrt->GetPrtImPtr()[15];
-				test1[3] = pPrt->GetPrtImPtr()[4];
-				test1[4] = pPrt->GetPrtImPtr()[21];
-				test1[5] = pPrt->GetPrtImPtr()[28];
-				test1[6] = pPrt->GetPrtImPtr()[35];
-				test1[7] = pPrt->GetPrtImPtr()[27];
-				test1[8] = pPrt->GetPrtImPtr()[33];
-				test1[9] = pPrt->GetPrtImPtr()[34];
-
-				s_dgemm(3, 1, 10, 1, &_Calibration_m[i * 3][j*10], 60, test1, 1, 0, test2, 1);
-
-				dsp(test2, 3, 1);
-				
-				//if (pPrt == pP3b)
-				//{
-
-				//	dsp(test1, 10, 1);
-				//	dsp(test2, 3, 1);
-				//	dsp(fplen + i * 3, 3, 1);
-				//}
-				///*static double test3[6];
-				//s_daxpy(6, -1, pPrt->GetPrtFgPtr(), 1, test3, 1);
-				//s_daxpy(6, 1, pPrt->GetPrtFvPtr(), 1, test3, 1);
-				//s_dgemm(6, 1, 6, 1, pPrt->GetPrtImPtr(), 6, pPrt->GetPrtAccPtr(), 1, 1, test3, 1);
-				//s_dgemm(3, 1, 6, 1, &_inv_of_C[33][j * 6], 36, test3, 1, 0, test1, 1);
-				//dsp(test1, 3, 1);
-
-				//dsp(&this->_c_M[30][0], 6, 4);
-				//dsp(test3, 6, 1);
-			}
-		}
-		
-		vector<double[3]> _tem_Calibration_m(n);
-
-		vector<double[3]> s(n);
-		vector<int[3]> rank(n);
-		double rcond;
-
-		memcpy(_tem_Calibration_m.data(), _Calibration_m.data(), sizeof(double)*n * 3 * 60);
-
-		s_dgelsd(n * 3, 60, 1, &_tem_Calibration_m[0][0], 60, &_Calibration_fce[0][0], 1, &s[0][0], rcond, &rank[0][0]);
-
-
-		cout << "p1a:" << endl;
-		dsp(_Calibration_fce[0], 10, 1);
-		cout << "p2a:" << endl;
-		dsp(_Calibration_fce[1], 10, 1);
-		cout << "p3a:" << endl;
-		dsp(_Calibration_fce[2], 10, 1);
-		cout << "Thigh:" << endl;
-		dsp(_Calibration_fce[3], 10, 1);
-		cout << "p2b:" << endl;
-		dsp(_Calibration_fce[4], 10, 1);
-		cout << "p3b:" << endl;
-		dsp(_Calibration_fce[5], 10, 1);
-		*/
-		//static double real_mass[60];
-		//static double test_fce[210];
-
-		//for (int j = 0; j < 6; j++)
-		//{
-		//	PART *pPrt=0;
-
-		//	switch (j)
-		//	{
-		//	case 0:
-		//		pPrt = pP1a;
-		//		break;
-		//	case 1:
-		//		pPrt = pP2a;
-		//		break;
-		//	case 2:
-		//		pPrt = pP3a;
-		//		break;
-		//	case 3:
-		//		pPrt = pThigh;
-		//		break;
-		//	case 4:
-		//		pPrt = pP2b;
-		//		break;
-		//	case 5:
-		//		pPrt = pP3b;
-		//		break;
-		//	}
-
-		//	real_mass[j * 10] = pPrt->GetPrtImPtr()[0];
-		//	real_mass[j * 10 + 1] = pPrt->GetPrtImPtr()[11];
-		//	real_mass[j * 10 + 2] = pPrt->GetPrtImPtr()[15];
-		//	real_mass[j * 10 + 3] = pPrt->GetPrtImPtr()[4];
-		//	real_mass[j * 10 + 4] = pPrt->GetPrtImPtr()[21];
-		//	real_mass[j * 10 + 5] = pPrt->GetPrtImPtr()[28];
-		//	real_mass[j * 10 + 6] = pPrt->GetPrtImPtr()[35];
-		//	real_mass[j * 10 + 7] = pPrt->GetPrtImPtr()[27];
-		//	real_mass[j * 10 + 8] = pPrt->GetPrtImPtr()[33];
-		//	real_mass[j * 10 + 9] = pPrt->GetPrtImPtr()[34];
-		//}
-
-		////dsp(real_mass, 60, 1);
-
-		//s_dgemm(n * 3, 1, 60, 1, *_Calibration_m, 60, _Calibration_fce, 1, 0, test_fce, 1);
-
-		//dsp(test_fce, 30, 3);
-		//dsp(fplen, 30, 3);
 	}
 	void LEG::_CalCdByPos()
 	{
@@ -2200,189 +2029,6 @@ namespace Robots
 		pRR->FastDynEeForce(fIn_in + 15, fEE_out + 15, RelativeCoodinate);
 	}
 
-	void ROBOT::Clb(const char* filename)
-	{
-
-
-
-
-
-	}
-
-	void ROBOT::ClbLeg(const char* filename)
-	{
-
-
-
-
-
-	}
-
-	/*void ROBOT::TestClb()
-	{
-		cout << "Reading data begin..." << endl;
-
-		ifstream f_pin, f_vin, f_ain, f_fin;
-		static double pin[1800][18], vin[1800][18], ain[1800][18], fin[1800][18];
-
-		f_pin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\pos_for_test.txt");
-		f_vin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\vel_for_test.txt");
-		f_ain.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\acc_for_test.txt");
-		f_fin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\fce_for_test.txt");
-
-		int prow = 0, vrow = 0, arow = 0, frow = 0;
-		while (f_pin >> pin[0][prow])
-		{
-			++prow;
-		}
-		while (f_vin >> vin[0][vrow])
-		{
-			++vrow;
-		}
-		while (f_ain >> ain[0][arow])
-		{
-			++arow;
-		}
-		while (f_fin >> fin[0][frow])
-		{
-			++frow;
-		}
-		prow = prow / 18;
-		vrow = vrow / 18;
-		arow = arow / 18;
-		frow = frow / 18;
-
-		f_pin.close();
-		f_vin.close();
-		f_ain.close();
-		f_fin.close();
-
-		cout << "Reading data finished" << endl;
-		cout << "And data num is:" << prow << "  " << vrow << "  " << arow << "  " << frow << endl << endl;
-		
-		f_pin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\pos_for_clb.txt");
-		f_vin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\vel_for_clb.txt");
-		f_ain.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\acc_for_clb.txt");
-		f_fin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\fce_for_clb.txt");
-		
-		
-		double bodypos[6] = { 0, 0, 0, 0, 0, 0 };
-
-		ofstream f_calibrated_fin;
-
-		f_calibrated_fin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\calibrated_fce.txt");
-
-		for (int i = 0; i < num; ++i)
-		{
-			SetPin(pin[i], bodypos);
-			SetVinWithFixedFeet(vin[i]);
-			SetAinWithFixedFeet(ain[i]);
-
-			for (int j = 0; j < 18; ++j)
-			{
-				_Motion[j].SetF_m(&fin[i][j]);
-				_Motion[j].SetA_m(&ain[i][j]);
-			}
-
-			DynPre();
-			DynMtxInPrt();
-			Dyn();
-
-			for (int j = 0; j < 18; ++j)
-			{
-				if (_Motion[j].GetMode() == MOTION::FCE_CONTROL)
-				{
-					f_calibrated_fin << fin[i][j];
-				}
-				else
-				{
-					f_calibrated_fin << _Motion[j].GetF_mPtr()[0];
-				}
-				f_calibrated_fin << "   ";
-			}
-			f_calibrated_fin << endl;
-		}
-		f_calibrated_fin.close();
-		cout << "test finished" << endl;
-	}*/
-	/*void ROBOT::TestClbEeFce()
-	{
-		cout << "Reading data begin..." << endl;
-
-		ifstream f_pin, f_vin, f_ain, f_fin;
-		static double pin[1800][18], vin[1800][18], ain[1800][18], fin[1800][18];
-
-		f_pin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\pos_for_test.txt");
-		f_vin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\vel_for_test.txt");
-		f_ain.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\acc_for_test.txt");
-		f_fin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\fce_for_test.txt");
-
-		int prow = 0, vrow = 0, arow = 0, frow = 0;
-		while (f_pin >> pin[0][prow])
-		{
-			++prow;
-		}
-		while (f_vin >> vin[0][vrow])
-		{
-			++vrow;
-		}
-		while (f_ain >> ain[0][arow])
-		{
-			++arow;
-		}
-		while (f_fin >> fin[0][frow])
-		{
-			++frow;
-		}
-		prow = prow / 18;
-		vrow = vrow / 18;
-		arow = arow / 18;
-		frow = frow / 18;
-
-		f_pin.close();
-		f_vin.close();
-		f_ain.close();
-		f_fin.close();
-
-		cout << "Reading data finished" << endl;
-		cout << "And data num is:" << prow << "  " << vrow << "  " << arow << "  " << frow << endl << endl;
-
-		f_pin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\pos_for_test.txt");
-		f_vin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\vel_for_test.txt");
-		f_ain.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\acc_for_test.txt");
-		f_fin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\fce_for_test.txt");
-
-
-		double bodypos[6] = { 0, 0, 0, 0, 0, 0 };
-		double bodyvel[6] = { 0, 0, 0, 0, 0, 0 };
-		double bodyacc[6] = { 0, 0, 0, 0, 0, 0 };
-
-		ofstream f_calibrated_fin;
-
-		f_calibrated_fin.open("D:\\kuaipan\\Hexapod_Robot\\Robot_III\\m_experiment\\14.09.11 test\\calibrated_fce.txt");
-
-		double fee[18];
-
-		for (int i = 0; i < num; ++i)
-		{
-			SetPin(pin[i], bodypos);
-			SetVin(vin[i], bodyvel);
-			SetAin(ain[i], bodyacc);
-
-			FastDynEeForce(fin[i],fee);
-
-
-			for (int j = 0; j < 18; ++j)
-			{
-				f_calibrated_fin << fee[j];
-				f_calibrated_fin << "   ";
-			}
-			f_calibrated_fin << endl;
-		}
-		f_calibrated_fin.close();
-		cout << "test finished" << endl;
-	}*/
-
 	int ROBOT::MoveWithKinect(double* currentH, double *nextH, double *data)
 	{
 #define RATIO -5600000
@@ -2697,6 +2343,36 @@ namespace Robots
 		_CalAvarByAcd();
 		_CalApartByAvar();
 	}
+	void LEG_III::calculate_jac()
+	{
+		int ipiv[3];
+		double tem[3][3];
+
+		/*direct*/
+		memcpy(*_jac_vel_dir, *this->J1, sizeof(this->J1));
+		memcpy(*tem, *this->J2, sizeof(this->J2));
+		s_dgesvT(3, 3, *tem, 3, ipiv, *_jac_vel_dir, 3);
+
+		/*inverse*/
+		memcpy(*_jac_vel_inv, *this->J2, sizeof(this->J2));
+		memcpy(*tem, *this->J1, sizeof(this->J1));
+		s_dgesvT(3, 3, *tem, 3, ipiv, *_jac_vel_inv, 3);
+	}
+	void LEG_III::calculate_jac_c()
+	{
+		double tem1[3], tem2[3];
+		double vCD[3]{va1, vb1, vl1};
+
+		/*direct*/
+		s_dgemm(3, 1, 3, 1, *vJ2, 3, vCD, 1, 0, tem1, 1);
+		s_dgemm(3, 1, 3, -1, *_jac_vel_dir, 3, tem1, 1, 0, _c_acc_dir, 1);
+		s_dgemm(3, 1, 3, 1, *vJ1, 3, vCD, 1, 1, _c_acc_dir, 1);
+
+		/*inverse*/
+		s_dgemm(3, 1, 3, 1, *vJ1, 3, vCD, 1, 0, tem1, 1);
+		s_dgemm(3, 1, 3, -1, *_jac_vel_inv, 3, tem1, 1, 0, _c_acc_inv, 1);
+		s_dgemm(3, 1, 3, 1, *vJ2, 3, vCD, 1, 1, _c_acc_inv, 1);
+	}
 
 	void LEG_III::_CalCdByPos()
 	{
@@ -2855,7 +2531,7 @@ namespace Robots
 	}
 	void LEG_III::_CalPartByVar()
 	{
-		static double pm[4][4], pm1[4][4], pm2[4][4];
+		double pm[4][4], pm1[4][4];
 
 		pBase->Update();
 

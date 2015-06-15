@@ -35,82 +35,64 @@ int main()
 #endif
 
 	
+	
+	
 
-	double pIn[18] = { 0.7, 0.71, 0.72
-		, 0.73, 0.74, 0.75
-		, 0.76, 0.77, 0.78
-		, 0.79, 0.80, 0.81
-		, 0.82, 0.83, 0.84
-		, 0.85, 0.86, 0.87 };
-	double pEE[18];
-	double vIn[18] = { 0.31, 0.32, 0.33
-		, 0.34, 0.35, 0.36
-		, 0.37, 0.38, 0.39
-		, 0.40, 0.41, 0.42
-		, 0.43, 0.44, 0.45
-		, 0.46, 0.47, 0.48 };
-	double vEE[18];
-	double aIn[18] = { 0.11, 0.12, 0.13
-		, 0.14, 0.15, 0.16
-		, 0.17, 0.18, 0.19
-		, 0.20, 0.21, 0.22
-		, 0.23, 0.24, 0.25
-		, 0.26, 0.27, 0.28 };
-	double aEE[18];
+	/*Compute inverse position kinematics in Ground coordinates*/
+	double pIn[18];
+	double pEE_G[18] =
+	{
+		-0.4, -0.7, -0.7,
+		-0.5, -0.7, 0,
+		-0.4, -0.7, 0.7,
+		0.4, -0.7, -0.7,
+		0.5, -0.7, 0,
+		0.4, -0.7, 0.7
+	};
 
-	double bodyEp[6] = { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6 };
+	double bodyEp[6] = { 0.1, 0, 0, 0, 0.2, 0 };
 
-	const char *RelativeMarker = "G";
-
-	robot.SetPin(pIn,bodyEp);
-	rbt.SetPin(pIn,bodyEp);
-
-	rbt.GetPee(pEE, RelativeMarker);
-	dsp(pEE, 18, 1);
-	robot.GetPee(pEE, RelativeMarker);
-	dsp(pEE, 18, 1);
-
-	/*robot.SetVin(vIn, bodyEp);
-	rbt.SetVin(vIn, bodyEp);
-
-	rbt.GetVee(vEE, RelativeMarker);
-	dsp(vEE, 18, 1);
-	robot.GetVee(vEE, RelativeMarker);
-	dsp(vEE, 18, 1);
-
-	robot.SetAin(aIn, bodyEp);
-	rbt.SetAin(aIn, bodyEp);
-
-	rbt.GetAee(aEE, RelativeMarker);
-	dsp(aEE, 18, 1);
-	robot.GetAee(aEE, RelativeMarker);
-	dsp(aEE, 18, 1);*/
-
-	memset(pIn, 0, sizeof(pIn));
-	memset(vIn, 0, sizeof(vIn));
-	memset(aIn, 0, sizeof(aIn));
-
-
-	robot.SetPee(pEE, bodyEp, RelativeMarker);
-	rbt.SetPee(pEE, bodyEp, RelativeMarker);
+	rbt.SetPee(pEE_G, bodyEp, "G");
 	rbt.GetPin(pIn);
-	dsp(pIn, 18, 1);
-	robot.GetPin(pIn);
+
 	dsp(pIn, 18, 1);
 
-	//robot.SetVee(vEE, bodyEp, RelativeMarker);
-	//rbt.SetVee(vEE, bodyEp, RelativeMarker);
-	//rbt.GetVin(vIn);
-	//dsp(vIn, 18, 1);
-	//robot.GetVin(vIn);
-	//dsp(vIn, 18, 1);
+	/*Compute inverse velocity kinematics in Body coordinates*/
+	double vIn[18];
+	double vEE_M[18] =
+	{
+		-0.4, -0.7, -0.7,
+		-0.5, -0.7, 0,
+		-0.4, -0.7, 0.7,
+		0.4, -0.7, -0.7,
+		0.5, -0.7, 0,
+		0.4, -0.7, 0.7
+	};
+	double bodyVel[6] = { 0.1, 0, 0, 0, 0, 0 };
 
-	//robot.SetAee(aEE, bodyEp, RelativeMarker);
-	//rbt.SetAee(aEE, bodyEp, RelativeMarker);
-	//rbt.GetAin(aIn);
-	//dsp(aIn, 18, 1);
-	//robot.GetAin(aIn);
-	//dsp(aIn, 18, 1);
+	rbt.SetVee(vEE_M, bodyVel, "M");
+	rbt.GetVin(vIn);
+
+	dsp(vIn, 18, 1);
+
+	/*Compute forward acceleration kinematics in Leg coordinates*/
+	double aEE_L[18];
+	double aIn[18]=
+	{
+		0.1, 0.2, 0.3,
+		0.1, 0.2, 0.3,
+		0.1, 0.2, 0.3,
+		0.1, 0.2, 0.3,
+		0.1, 0.2, 0.3,
+		0.1, 0.2, 0.3,
+	};
+
+	double bodyAcc[6] = { 0, 0, 0, 0.1, 0, 0 };
+
+	rbt.SetAin(aIn, bodyAcc);
+
+	rbt.GetAee(aEE_L,"L");
+	dsp(aEE_L, 18, 1);
 
 
 
@@ -123,7 +105,7 @@ int main()
 
 
 	char aaa;
-	cin>>aaa;
+	cin >> aaa;
 	return 0;
 }
 

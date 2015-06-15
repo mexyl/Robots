@@ -22,8 +22,6 @@ namespace Robots
 		friend class ROBOT_BASE;
 
 	private:
-		
-
 		double _BasePrtPm[4][4];
 		double _BasePm[4][4];
 
@@ -47,6 +45,12 @@ namespace Robots
 		double &vl1{ vIn[0] }, &vl2{ vIn[1] }, &vl3{ vIn[2] };
 		double &al1{ aIn[0] }, &al2{ aIn[1] }, &al3{ aIn[2] };
 
+		double _c_acc_dir[3];
+		double _c_acc_inv[3];
+
+		double _jac_vel_dir[3][3];
+		double _jac_vel_inv[3][3];
+
 	protected:
 		virtual void calculate_from_pEE(){};
 		virtual void calculate_from_pIn(){};
@@ -55,60 +59,87 @@ namespace Robots
 		virtual void calculate_from_aEE(){};
 		virtual void calculate_from_aIn(){};
 
+		virtual void calculate_jac(){};
+		virtual void calculate_jac_c(){};
+
 	protected:
 		LEG_BASE(ROBOT_BASE* pRobot, unsigned beginPos);
 		virtual ~LEG_BASE() = default;
 
 	public:
+		/*!
+		* \brief Set the position of end-effector
+		* \param pEE position of end-effector, double array with 3 elements
+		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
 		void SetPee(const double *pEE, const char *RelativeCoodinate = "G");
-		void SetVee(const double *aEE, const char *RelativeCoodinate = "G");
-		void SetAee(const double *vEE, const char *RelativeCoodinate = "G");
+		/*!
+		* \brief Set the velocity of end-effector, must be called after position is set
+		* \param vEE velocity of end-effector, double array with 3 elements
+		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void SetVee(const double *vEE, const char *RelativeCoodinate = "G");
+		/*!
+		* \brief Set the velocity of end-effector, must be called after velocity is set
+		* \param vEE acceleration of end-effector, double array with 3 elements
+		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void SetAee(const double *aEE, const char *RelativeCoodinate = "G");
+		/*!
+		* \brief Set the position of inputs
+		* \param pIn position of inputs, double array with 3 elements
+		*/
 		void SetPin(const double *pIn);
+		/*!
+		* \brief Set the velocity of inputs
+		* \param vIn velocity of inputs, double array with 3 elements
+		*/
 		void SetVin(const double *vIn);
+		/*!
+		* \brief Set the acceleration of inputs
+		* \param aIn acceleration of inputs, double array with 3 elements
+		*/
 		void SetAin(const double *aIn);
+		/*!
+		* \brief Get the position of end-effector
+		* \param pEE position of end-effector, double array with 3 elements
+		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
 		void GetPee(double *pEE, const char *RelativeCoodinate = "G") const;
-		void GetVee(double *aEE, const char *RelativeCoodinate = "G") const;
-		void GetAee(double *vEE, const char *RelativeCoodinate = "G") const;
+		/*!
+		* \brief Get the velocity of end-effector
+		* \param vEE velocity of end-effector, double array with 3 elements
+		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void GetVee(double *vEE, const char *RelativeCoodinate = "G") const;
+		/*!
+		* \brief Get the acceleration of end-effector
+		* \param pEE acceleration of end-effector, double array with 3 elements
+		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void GetAee(double *aEE, const char *RelativeCoodinate = "G") const;
+		/*!
+		* \brief Get the position of inputs
+		* \param pIn position of inputs, double array with 3 elements
+		*/
 		void GetPin(double *pIn) const;
+		/*!
+		* \brief Get the velocity of inputs
+		* \param vIn velocity of inputs, double array with 3 elements
+		*/
 		void GetVin(double *vIn) const;
+		/*!
+		* \brief Get the acceleration of inputs
+		* \param aIn acceleration of inputs, double array with 3 elements
+		*/
 		void GetAin(double *aIn) const;
-		/*!
-		* \brief 获取单腿坐标系下的正向力雅克比矩阵（已知输入求输出）。
-		* \param jac 3乘3的雅克比矩阵。
-		*/
+
+
 		void GetFceJacDir(double *jac, const char *RelativeCoodinate = "G") const;
-		/*!
-		* \brief 获取单腿坐标系下的拟向力雅克比矩阵（已知输出求输入）。
-		* \param jac 3乘3的雅克比矩阵。
-		*/
 		void GetFceJacInv(double *jac, const char *RelativeCoodinate = "G") const;
-		/*!
-		* \brief 获取单腿坐标系下的正向速度雅克比矩阵（已知输入求输出）。
-		* \param jac 3乘3的雅克比矩阵。
-		*/
 		void GetVelJacDir(double *jac, double *c = 0, const char *RelativeCoodinate = "G") const;
-		/*!
-		* \brief 获取单腿坐标系下的拟向速度雅克比矩阵（已知输出求输入）。
-		* \param jac 3乘3的雅克比矩阵。
-		*/
 		void GetVelJacInv(double *jac, double *c = 0, const char *RelativeCoodinate = "G") const;
-		/*!
-		* \brief 获取单腿坐标系下的正向加速度雅克比矩阵（已知输入求输出）。
-		* \param jac 3乘3的雅克比矩阵。
-		* \param c 残余项。
-		* \param RelativeCoodinate 输出加速度所在的坐标系。
-		* 输入输出关系可以用下式计算：
-		* Aee=jac*Ain+c
-		*/
 		void GetAccJacDir(double *jac, double *c = 0, const char *RelativeCoodinate = "G") const;
-		/*!
-		* \brief 获取单腿坐标系下的拟向加速度雅克比矩阵（已知输出求输入）。
-		* \param jac 3乘3的雅克比矩阵。
-		* \param c 残余项。
-		* \param RelativeCoodinate 输出加速度所在的坐标系。
-		* 输入输出关系可以用下式计算：
-		* Ain=jac*Aee+c
-		*/
 		void GetAccJacInv(double *jac, double *c = 0, const char *RelativeCoodinate = "G") const;
 	};
 
@@ -139,9 +170,20 @@ namespace Robots
 		ROBOT_BASE();
 		virtual ~ROBOT_BASE() = default;
 
-
+		/*!
+		* \brief Get the body pose matrix
+		* \param body pose matrix, double array with 16 elements
+		*/
 		void GetBodyPm(double *bodypm) const;
+		/*!
+		* \brief Get the body velocity
+		* \param body velocity, double array with 6 elements
+		*/
 		void GetBodyVel(double *bodyvel) const;
+		/*!
+		* \brief Get the body acceleration
+		* \param body acceleration, double array with 6 elements
+		*/
 		void GetBodyAcc(double *bodyacc) const;
 
 		void SetPee(const double *pEE = nullptr, const double *bodyep = nullptr, const char *RelativeCoodinate = "G");
