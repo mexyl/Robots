@@ -1506,6 +1506,14 @@ namespace Robots
 		}
 	}
 
+	void ROBOT::GetFin(double *fIn) const
+	{
+		for (unsigned i = 0; i < 6; ++i)
+		{
+			pLegs[i]->GetFin(&fIn[i * 3]);
+		}
+	}
+
 	void ROBOT::GetVelJacInv(double *jac, const char *ActiveMotion) const
 	{
 		static double J[18][6];
@@ -2303,8 +2311,17 @@ namespace Robots
 
 	LEG_III::LEG_III(const char *Name, ROBOT_III* pRobot, unsigned beginPos)
 		: OBJECT(static_cast<Aris::DynKer::MODEL *>(pRobot), Name)
+		, pRobot(pRobot)
 		, LEG_BASE(pRobot, beginPos)
 	{
+	}
+
+	void LEG_III::GetFin(double *fIn) const
+	{
+		for (unsigned i = 0; i < 3; ++i)
+		{
+			fIn[i] = *pMots[i]->GetF_mPtr();
+		}
 	}
 
 	void LEG_III::calculate_from_pEE()
@@ -2360,17 +2377,17 @@ namespace Robots
 	}
 	void LEG_III::calculate_jac_c()
 	{
-		double tem1[3], tem2[3];
+		double tem[3];
 		double vCD[3]{va1, vb1, vl1};
 
 		/*direct*/
-		s_dgemm(3, 1, 3, 1, *vJ2, 3, vCD, 1, 0, tem1, 1);
-		s_dgemm(3, 1, 3, -1, *_jac_vel_dir, 3, tem1, 1, 0, _c_acc_dir, 1);
+		s_dgemm(3, 1, 3, 1, *vJ2, 3, vCD, 1, 0, tem, 1);
+		s_dgemm(3, 1, 3, -1, *_jac_vel_dir, 3, tem, 1, 0, _c_acc_dir, 1);
 		s_dgemm(3, 1, 3, 1, *vJ1, 3, vCD, 1, 1, _c_acc_dir, 1);
 
 		/*inverse*/
-		s_dgemm(3, 1, 3, 1, *vJ1, 3, vCD, 1, 0, tem1, 1);
-		s_dgemm(3, 1, 3, -1, *_jac_vel_inv, 3, tem1, 1, 0, _c_acc_inv, 1);
+		s_dgemm(3, 1, 3, 1, *vJ1, 3, vCD, 1, 0, tem, 1);
+		s_dgemm(3, 1, 3, -1, *_jac_vel_inv, 3, tem, 1, 0, _c_acc_inv, 1);
 		s_dgemm(3, 1, 3, 1, *vJ2, 3, vCD, 1, 1, _c_acc_inv, 1);
 	}
 
@@ -2894,6 +2911,124 @@ namespace Robots
 		pM3->SetA_m(&al3);
 	}
 
+	void LEG_III::FastDyn()
+	{
+		double rcond = 0.0000001;
+
+
+		/*初始化*/
+		memset(*_C, 0, 36 * 36 * sizeof(double));
+		memset(*_I, 0, 36 * 36 * sizeof(double));
+		memset(_f, 0, 36 * sizeof(double));
+		memset(_v, 0, 36 * sizeof(double));
+		memset(_a_c, 0, 36 * sizeof(double));
+
+		memset(_a, 0, 36 * sizeof(double));
+		memset(_epsilon, 0, 36 * sizeof(double));
+
+		memset(_c_M, 0, 36 * 4 * sizeof(double));
+
+		/*计算C*/
+		/*
+		U1    U2    U3     P1      P2       P3      S2     S3     M1       M2       M3
+		P1a      0*0                -0*12                                  -0*33
+		P2a            6*4                  -6*17                                  -6*34
+		P3a                  12*8                  -12*22                                  -12*35
+		Thigh                      18*12                    18*27   18*30  18*33
+		P2b                                24*17           -24*27                   24*34
+		P3b                                         30*22          -30*30                   30*35
+		*/
+
+		/*更新每个部件*/
+		pRobot->pBody->UpdateInPrt();
+
+		for (auto &i : pPrts)
+		{
+			i->UpdateInPrt();
+		}
+
+		/*更新每个关节和驱动*/
+		for (auto &i : pJnts)
+		{
+			i->UpdateInPrt();
+		}
+		for (auto &i : pMots)
+		{
+			i->UpdateInPrt();
+		}
+
+		/*复制约束矩阵*/
+		s_block_cpy(6, 4, pU1->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 0, 0, 36);
+		s_block_cpy(6, 4, pU2->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 6, 4, 36);
+		s_block_cpy(6, 4, pU3->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 12, 8, 36);
+		s_block_cpy(6, 5, pP1->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 18, 12, 36);
+		s_block_cpy(6, 5, pP1->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 0, 12, 36);
+		s_block_cpy(6, 5, pP2->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 24, 17, 36);
+		s_block_cpy(6, 5, pP2->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 6, 17, 36);
+		s_block_cpy(6, 5, pP3->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 30, 22, 36);
+		s_block_cpy(6, 5, pP3->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 12, 22, 36);
+		s_block_cpy(6, 3, pS2->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 18, 27, 36);
+		s_block_cpy(6, 3, pS2->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 24, 27, 36);
+		s_block_cpy(6, 3, pS3->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 18, 30, 36);
+		s_block_cpy(6, 3, pS3->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 30, 30, 36);
+
+		if (pSf->GetActive())
+		{
+			/*若该腿支撑，则使用Sf副约束*/
+			pSf->UpdateInPrt();
+			s_block_cpy(6, 3, pSf->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 18, 33, 36);
+
+			/*更新驱动矩阵M*/
+			s_block_cpy(6, 1, pM1->GetPrtCstMtxIPtr(), 0, 0, 6, *_c_M, 18, 1, 4);
+			s_block_cpy(6, 1, pM1->GetPrtCstMtxJPtr(), 0, 0, 6, *_c_M, 0, 1, 4);
+			s_block_cpy(6, 1, pM2->GetPrtCstMtxIPtr(), 0, 0, 6, *_c_M, 24, 2, 4);
+			s_block_cpy(6, 1, pM2->GetPrtCstMtxJPtr(), 0, 0, 6, *_c_M, 6, 2, 4);
+			s_block_cpy(6, 1, pM3->GetPrtCstMtxIPtr(), 0, 0, 6, *_c_M, 30, 3, 4);
+			s_block_cpy(6, 1, pM3->GetPrtCstMtxJPtr(), 0, 0, 6, *_c_M, 12, 3, 4);
+		}
+		else
+		{
+			/*否则，更新驱动的约束矩阵*/
+			s_block_cpy(6, 1, pM1->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 18, 33, 36);
+			s_block_cpy(6, 1, pM1->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 0, 33, 36);
+			s_block_cpy(6, 1, pM2->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 24, 34, 36);
+			s_block_cpy(6, 1, pM2->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 6, 34, 36);
+			s_block_cpy(6, 1, pM3->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 30, 35, 36);
+			s_block_cpy(6, 1, pM3->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 12, 35, 36);
+		}
+
+		/*更新右侧的c_M矩阵*/
+		s_daxpy(6, -1, pP1a->GetPrtFgPtr(), 1, &_c_M[0][0], 4);
+		s_daxpy(6, 1, pP1a->GetPrtFvPtr(), 1, &_c_M[0][0], 4);
+		s_tmv_dot_vel(pP1a->GetPrtTmvPtr(), pP1a->GetAccPtr(), pP1a->GetPrtAccPtr());
+		s_dgemm(6, 1, 6, 1, pP1a->GetPrtImPtr(), 6, pP1a->GetPrtAccPtr(), 1, 1, &_c_M[0][0], 4);
+
+		s_daxpy(6, -1, pP2a->GetPrtFgPtr(), 1, &_c_M[6][0], 4);
+		s_daxpy(6, 1, pP2a->GetPrtFvPtr(), 1, &_c_M[6][0], 4);
+		s_tmv_dot_vel(pP2a->GetPrtTmvPtr(), pP2a->GetAccPtr(), pP2a->GetPrtAccPtr());
+		s_dgemm(6, 1, 6, 1, pP2a->GetPrtImPtr(), 6, pP2a->GetPrtAccPtr(), 1, 1, &_c_M[6][0], 4);
+
+		s_daxpy(6, -1, pP3a->GetPrtFgPtr(), 1, &_c_M[12][0], 4);
+		s_daxpy(6, 1, pP3a->GetPrtFvPtr(), 1, &_c_M[12][0], 4);
+		s_tmv_dot_vel(pP3a->GetPrtTmvPtr(), pP3a->GetAccPtr(), pP3a->GetPrtAccPtr());
+		s_dgemm(6, 1, 6, 1, pP3a->GetPrtImPtr(), 6, pP3a->GetPrtAccPtr(), 1, 1, &_c_M[12][0], 4);
+
+		s_daxpy(6, -1, pThigh->GetPrtFgPtr(), 1, &_c_M[18][0], 4);
+		s_daxpy(6, 1, pThigh->GetPrtFvPtr(), 1, &_c_M[18][0], 4);
+		s_tmv_dot_vel(pThigh->GetPrtTmvPtr(), pThigh->GetAccPtr(), pThigh->GetPrtAccPtr());
+		s_dgemm(6, 1, 6, 1, pThigh->GetPrtImPtr(), 6, pThigh->GetPrtAccPtr(), 1, 1, &_c_M[18][0], 4);
+
+		s_daxpy(6, -1, pP2b->GetPrtFgPtr(), 1, &_c_M[24][0], 4);
+		s_daxpy(6, 1, pP2b->GetPrtFvPtr(), 1, &_c_M[24][0], 4);
+		s_tmv_dot_vel(pP2b->GetPrtTmvPtr(), pP2b->GetAccPtr(), pP2b->GetPrtAccPtr());
+		s_dgemm(6, 1, 6, 1, pP2b->GetPrtImPtr(), 6, pP2b->GetPrtAccPtr(), 1, 1, &_c_M[24][0], 4);
+
+		s_daxpy(6, -1, pP3b->GetPrtFgPtr(), 1, &_c_M[30][0], 4);
+		s_daxpy(6, 1, pP3b->GetPrtFvPtr(), 1, &_c_M[30][0], 4);
+		s_tmv_dot_vel(pP3b->GetPrtTmvPtr(), pP3b->GetAccPtr(), pP3b->GetPrtAccPtr());
+		s_dgemm(6, 1, 6, 1, pP3b->GetPrtImPtr(), 6, pP3b->GetPrtAccPtr(), 1, 1, &_c_M[30][0], 4);
+	}
+
 	ROBOT_III::ROBOT_III()
 		: pLF{ &LF_Leg }
 		, pLM{ &LM_Leg }
@@ -2908,7 +3043,234 @@ namespace Robots
 		}
 		
 	}
-	int ROBOT_III::LoadXML(const char *filename)
+	void ROBOT_III::GetFin(double *fIn) const
+	{
+		for (unsigned i = 0; i < 6; ++i)
+		{
+			pLegs[i]->GetFin(&fIn[i*3]);
+		}
+	}
+	void ROBOT_III::SetFixedFeet(const char *fixedLeg, const char *ActiveMotion)
+	{
+		MOTION** const mots[18] =
+		{ &(pLF->pM1), &(pLF->pM2), &(pLF->pM3),
+		&(pLM->pM1), &(pLM->pM2), &(pLM->pM3),
+		&(pLR->pM1), &(pLR->pM2), &(pLR->pM3),
+		&(pRF->pM1), &(pRF->pM2), &(pRF->pM3),
+		&(pRM->pM1), &(pRM->pM2), &(pRM->pM3),
+		&(pRR->pM1), &(pRR->pM2), &(pRR->pM3), };
+
+		int leg, Mot;
+
+		if (fixedLeg == 0)
+		{
+			for (int i = 0; i < 6; ++i)
+			{
+				pLegs[i]->pSf->Activate();
+			}
+
+			if (ActiveMotion == 0)
+			{
+				for (auto &i : _motions)
+				{
+					i->SetMode(MOTION::POS_CONTROL);
+				}
+			}
+			else
+			{
+				for (auto &i : _motions)
+				{
+					i->SetMode(MOTION::FCE_CONTROL);
+				}
+
+				int j = 0;
+				while (ActiveMotion[j] != '\0')
+				{
+					if ((ActiveMotion[j] <= '9') && (ActiveMotion[j] >= '0'))
+					{
+						Mot = ActiveMotion[j] - '0';
+					}
+					else if ((ActiveMotion[j] <= 'h') && (ActiveMotion[j] >= 'a'))
+					{
+						Mot = ActiveMotion[j] - 'a' + 10;
+					}
+					else
+					{
+						continue;
+					}
+					(*mots[Mot])->SetMode(MOTION::POS_CONTROL);
+					j++;
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < 6; ++i)
+			{
+				pLegs[i]->pSf->Deactivate();
+			}
+
+			int i = 0;
+			while (fixedLeg[i] != '\0')
+			{
+				if ((fixedLeg[i] <= '5') && (fixedLeg[i] >= '0'))
+				{
+					leg = fixedLeg[i] - '0';
+				}
+				else
+				{
+					continue;
+				}
+				pLegs[leg]->pSf->Activate();
+				i++;
+			}
+
+			if (ActiveMotion == 0)
+			{
+				for (auto &i : _motions)
+				{
+					i->SetMode(MOTION::POS_CONTROL);
+				}
+			}
+			else
+			{
+				for (auto &i : _motions)
+				{
+					i->SetMode(MOTION::FCE_CONTROL);
+				}
+
+				for (int i = 0; i < 6; ++i)
+				{
+					if (!pLegs[i]->pSf->GetActive())
+					{
+						pLegs[i]->pM1->SetMode(MOTION::POS_CONTROL);
+						pLegs[i]->pM2->SetMode(MOTION::POS_CONTROL);
+						pLegs[i]->pM3->SetMode(MOTION::POS_CONTROL);
+					}
+				}
+				int j = 0;
+				while (ActiveMotion[j] != '\0')
+				{
+					if ((ActiveMotion[j] <= '9') && (ActiveMotion[j] >= '0'))
+					{
+						Mot = ActiveMotion[j] - '0';
+					}
+					else if ((ActiveMotion[j] <= 'h') && (ActiveMotion[j] >= 'a'))
+					{
+						Mot = ActiveMotion[j] - 'a' + 10;
+					}
+					else
+					{
+						continue;
+					}
+					(*mots[Mot])->SetMode(MOTION::POS_CONTROL);
+					j++;
+				}
+			}
+		}
+	}
+	void ROBOT_III::FastDyn()
+	{
+		double Cb[6][6][36], Loc_C[36][36], k_L[6][36][4], H[6][18], h[18];
+
+		int supported_Leg_Num, supported_id[6];
+
+		int ipiv[36];
+		double s[36];
+		double rcond = 0.0000000001;
+		int rank;
+
+		memset(**Cb, 0, 6 * 6 * 36 * sizeof(double));
+		memset(**k_L, 0, 6 * 36 * 4 * sizeof(double));
+		memset(*H, 0, 6 * 18 * sizeof(double));
+		memset(h, 0, 18 * sizeof(double));
+
+		supported_Leg_Num = 0;
+		memset(supported_id, 0, 6 * sizeof(int));
+
+
+		pBody->UpdateInPrt();
+		s_tmv_dot_vel(pBody->GetPrtTmvPtr(), pBody->GetAccPtr(), pBody->GetPrtAccPtr());
+		/*更新cb并写入到h中，机身只有重力和惯性力*/
+		s_daxpy(6, -1, pBody->GetPrtFgPtr(), 1, h, 1);
+		s_daxpy(6, 1, pBody->GetPrtFvPtr(), 1, h, 1);
+		s_dgemm(6, 1, 6, 1, pBody->GetPrtImPtr(), 6, pBody->GetPrtAccPtr(), 1, 1, h, 1);
+
+
+		/*对每条腿操作*/
+		for (int i = 0; i < 6; ++i)
+		{
+			pLegs[i]->FastDyn();
+
+			/*更新Cb*/
+			s_block_cpy(6, 4, pLegs[i]->pU1->GetPrtCstMtxIPtr(), 0, 0, 6, *(Cb[i]), 0, 0, 36);
+			s_block_cpy(6, 4, pLegs[i]->pU2->GetPrtCstMtxIPtr(), 0, 0, 6, *(Cb[i]), 0, 4, 36);
+			s_block_cpy(6, 4, pLegs[i]->pU3->GetPrtCstMtxIPtr(), 0, 0, 6, *(Cb[i]), 0, 8, 36);
+
+			/*复制C与c_M*/
+			memcpy(Loc_C, pLegs[i]->_C, 36 * 36 * sizeof(double));
+			memcpy(*(k_L[i]), pLegs[i]->_c_M, 36 * 4 * sizeof(double));
+
+			if (pLegs[i]->pSf->GetActive())
+			{
+				/*更新支撑腿数量与id*/
+				supported_id[i] = supported_Leg_Num;
+				supported_Leg_Num += 1;
+
+				/*计算k_L*/
+
+				s_dgesv(36, 4, *Loc_C, 36, ipiv, *(k_L[i]), 4);
+
+				/*更新H，对于机身，只有U副跟腿连接，所以4*3=12列相乘即可*/
+				s_dgemm(6, 3, 12, -1, *(Cb[i]), 36, &k_L[i][0][1], 4, 1, &H[0][supported_Leg_Num * 3 - 3], 18);
+			}
+			else
+			{
+				/*计算k*/
+				s_dgesv(36, 4, *Loc_C, 36, ipiv, *(k_L[i]), 4);
+
+
+			}
+
+			/*更新h，对于机身，只有U副跟腿连接，所以4*3=12列相乘即可*/
+			s_dgemm(6, 1, 12, -1, *(Cb[i]), 36, *(k_L[i]), 4, 1, h, 1);
+		}
+
+		/*求解支撑腿的驱动力*/
+		if (supported_Leg_Num>0)
+			s_dgelsd(6, supported_Leg_Num * 3, 1, *H, 18, h, 1, s, rcond, &rank);
+
+		for (int i = 0; i < 6; ++i)
+		{
+			if (pLegs[i]->pSf->GetActive())
+			{
+				/*以下输入动力学计算，并补偿摩擦力*/
+				double fce;
+				for (unsigned j = 0; j < 3; ++j)
+				{
+					fce = h[supported_id[i] * 3 + j]
+						+ s_sgn(pLegs[i]->pMots[j]->GetV_mPtr()[0]) * pLegs[i]->pMots[j]->GetFrcCoePtr()[0]
+						+ pLegs[i]->pMots[j]->GetV_mPtr()[0] * pLegs[i]->pMots[j]->GetFrcCoePtr()[1]
+						+ pLegs[i]->pMots[j]->GetA_mPtr()[0] * pLegs[i]->pMots[j]->GetFrcCoePtr()[2];
+					pLegs[i]->pMots[j]->SetF_m(&fce);
+				}
+			}
+			else
+			{
+				/*以下输入动力学计算，并补偿摩擦力*/
+				double fce;
+				for (unsigned j = 0; j < 3; ++j)
+				{
+					fce = k_L[i][33 + j][0]
+						+ s_sgn(pLegs[i]->pMots[j]->GetV_mPtr()[0]) * pLegs[i]->pMots[j]->GetFrcCoePtr()[0]
+						+ pLegs[i]->pMots[j]->GetV_mPtr()[0] * pLegs[i]->pMots[j]->GetFrcCoePtr()[1]
+						+ pLegs[i]->pMots[j]->GetA_mPtr()[0] * pLegs[i]->pMots[j]->GetFrcCoePtr()[2];
+					pLegs[i]->pMots[j]->SetF_m(&fce);
+				}
+			}
+		}
+	}
+	void ROBOT_III::LoadXML(const char *filename)
 	{
 		MODEL::LoadXML(filename);
 
@@ -3084,10 +3446,6 @@ namespace Robots
 			const_cast<const double *&>(pLeg->pBasePrtPm) = pLeg->pBase->GetPrtPmPtr();
 		}
 
-
-		
-
-		return 0;
 	}
 
 

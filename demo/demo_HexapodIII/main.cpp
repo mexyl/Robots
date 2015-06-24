@@ -46,7 +46,7 @@ int main()
 		-0.5, -0.7, 0,
 		-0.4, -0.7, 0.7,
 		0.4, -0.7, -0.7,
-		0.5, -0.7, 0,
+		0.4, -0.7, 0,
 		0.4, -0.7, 0.7
 	};
 
@@ -59,46 +59,108 @@ int main()
 
 	/*Compute inverse velocity kinematics in Body coordinates*/
 	double vIn[18];
-	double vEE_M[18] =
+	double vEE_G[18] =
 	{
-		-0.4, -0.7, -0.7,
+		0, 0, 0,
 		-0.5, -0.7, 0,
-		-0.4, -0.7, 0.7,
+		0, 0, 0,
 		0.4, -0.7, -0.7,
-		0.5, -0.7, 0,
+		0, 0, 0,
 		0.4, -0.7, 0.7
 	};
 	double bodyVel[6] = { 0.1, 0, 0, 0, 0, 0 };
 
-	rbt.SetVee(vEE_M, bodyVel, "M");
+	rbt.SetVee(vEE_G, bodyVel, "G");
 	rbt.GetVin(vIn);
 
 	dsp(vIn, 18, 1);
 
 	/*Compute forward acceleration kinematics in Leg coordinates*/
-	double aEE_L[18];
-	double aIn[18]=
+	double aEE_G[18] =
 	{
-		0.1, 0.2, 0.3,
-		0.1, 0.2, 0.3,
-		0.1, 0.2, 0.3,
-		0.1, 0.2, 0.3,
-		0.1, 0.2, 0.3,
-		0.1, 0.2, 0.3,
+		0, 0, 0,
+		-0.5, -0.7, 0,
+		0, 0, 0,
+		0.4, -0.7, -0.7,
+		0, 0, 0,
+		0.4, -0.7, 0.7
 	};
+	double aIn[18];
 
 	double bodyAcc[6] = { 0, 0, 0, 0.1, 0, 0 };
 
-	rbt.SetAin(aIn, bodyAcc);
+	rbt.SetAee(aEE_G, bodyAcc, "G");
+	rbt.GetAin(aIn);
+	dsp(aIn, 18, 1);
 
-	rbt.GetAee(aEE_L,"L");
-	dsp(aEE_L, 18, 1);
+	/*compute dynamics*/
+	double fIn[18];
 
+	rbt.SetFixedFeet("024", "1278de");
+	rbt.FastDyn();
+	rbt.GetFin(fIn);
+	dsp(fIn, 18, 1);
+
+	
+	rbt.DynPre();
+	rbt.DynPrtMtx();
+	rbt.Dyn();
+	rbt.GetFin(fIn);
+	dsp(fIn, 18, 1);
+
+
+	robot.SetPee(pEE_G, bodyEp, "G");
+	robot.SetVee(vEE_G, bodyVel, "G");
+	robot.SetAee(aEE_G, bodyAcc, "G");
+	robot.SetFixedFeet("024", "1278de");
+	robot.FastDyn();
+	robot.GetFin(fIn);
+	dsp(fIn, 18, 1);
+
+	robot.DynPre();
+	robot.DynPrtMtx();
+	robot.Dyn();
+	robot.GetFin(fIn);
+	dsp(fIn, 18, 1);
 
 
 
 
 	cout << "finished" << endl;
+
+
+	double pm_G02G[4][4] =
+	{
+		{ -1, 0, 0, 0 },
+		{ 0, 0, 1, 0 },
+		{ 0, 1, 0, 0 },
+		{ 0, 0, 0, 1 }
+	};
+
+	double ep[6] = { PI, 0, PI, 0, 0, 0 };
+	double pm_I2G0[4][4];
+	s_ep2pm(ep, *pm_I2G0, "321");
+	dsp(*pm_I2G0, 4, 4);
+
+	double pm_R2I[4][4] =
+	{
+		{ 1, 0, 0, 0 },
+		{ 0, 0, 1, 0 },
+		{ 0, -1, 0, 0 },
+		{ 0, 0, 0, 1 }
+	};
+
+
+	double pm_R2G0[4][4];
+
+	double pm_R2G[4][4];
+
+	s_pm_dot_pm(*pm_I2G0, *pm_R2I, *pm_R2G0);
+	s_pm_dot_pm(*pm_G02G, *pm_R2G0, *pm_R2G);
+	dsp(*pm_R2G, 4, 4);
+
+
+
 
 
 

@@ -442,6 +442,8 @@ namespace Robots
 		void SetAee(const double *aEE = 0, const double *bodyacc = 0, const char *RelativeCoodinate = "G");/*!< \brief 等同于SetVeeG函数 */
 		void SetAin(const double *aIn = 0, const double *bodyacc = 0);/*!< \brief 设置6条腿的丝杠速度 */
 
+		void GetFin(double *fIn) const;
+
 		void GetVelJacDir(double *jac, const char* = 0) const;/*!< \brief 获取G坐标系下的正雅克比矩阵，从丝杠输入到身体位姿 */
 		void GetVelJacInv(double *jac, const char* = 0) const;/*!< \brief 获取G坐标系下的逆雅克比矩阵，从身体位姿到丝杠输入 */
 
@@ -474,6 +476,8 @@ namespace Robots
 	{
 		friend class ROBOT_III;
 	private:
+		ROBOT_III *pRobot;
+
 		const double U2x{ 0 }, U2y{ 0 }, U2z{ 0 }, U3x{ 0 }, U3y{ 0 }, U3z{ 0 };
 		const double S2x{ 0 }, S2y{ 0 }, S2z{ 0 }, S3x{ 0 }, S3y{ 0 }, S3z{ 0 };
 		const double Sfx{ 0 }, Sfy{ 0 }, Sfz{ 0 };
@@ -496,6 +500,17 @@ namespace Robots
 		double k21, k22, k23, k31, k32, k33;
 		double vk21, vk22, vk23, vk31, vk32, vk33;
 		double J1[3][3], J2[3][3], vJ1[3][3], vJ2[3][3];
+
+		double _C[36][36];
+		double _I[36][36];
+		double _f[36];
+		double _v[36];
+		double _a_c[36];
+
+		double _a[36];
+		double _epsilon[36];
+
+		double _c_M[36][4];
 
 	public:
 		union
@@ -566,6 +581,9 @@ namespace Robots
 		};
 
 	private:
+		void GetFin(double *fIn) const;
+		void SetFin(const double *fIn);
+
 		virtual void calculate_from_pEE();
 		virtual void calculate_from_pIn();
 		virtual void calculate_from_vEE();
@@ -595,6 +613,8 @@ namespace Robots
 	private:
 		LEG_III(const char *Name, ROBOT_III* pRobot, unsigned beginPos);
 		virtual ~LEG_III() = default;
+
+		void FastDyn();
 	};
 	class ROBOT_III :public Aris::DynKer::MODEL, public Robots::ROBOT_BASE
 	{
@@ -628,7 +648,12 @@ namespace Robots
 		ROBOT_III();
 		~ROBOT_III() = default;
 
-		int LoadXML(const char *filename);
+		void GetFin(double *fIn) const;
+		void SetFin(const double *fIn);
+
+		void SetFixedFeet(const char *fixedLeg = 0, const char *ActiveMotion = 0);
+		void FastDyn();
+		void LoadXML(const char *filename);
 	};
 
 }

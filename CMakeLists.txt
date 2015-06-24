@@ -118,6 +118,11 @@ PREPEND(FULL_SRC demo/demo_HexapodIV ${SOURCE_FILES})
 add_executable(demo_HexapodIV ${FULL_SRC})
 target_link_libraries(demo_HexapodIV ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
+set(SOURCE_FILES main.cpp)
+PREPEND(FULL_SRC demo/demo_Test ${SOURCE_FILES})
+add_executable(demo_Test ${FULL_SRC})
+target_link_libraries(demo_Test ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+
 
 endif(MAKE_DEMO)
 

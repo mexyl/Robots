@@ -28,6 +28,8 @@ namespace Robots
 	/*以下为反解函数，你需要根据xyz和你自己定的尺寸参数来计算l1,l2,l3*/
 	void LEG_IV::calculate_from_pEE()
 	{
+		
+		
 		l1 = sqrt(x*x + y*y + z*z - Sfy*Sfy - Sfz*Sfz) - Sfx;
 		double b1 = asin(y / sqrt((l1 + Sfx)*(l1 + Sfx) + Sfy*Sfy)) - asin(Sfy / sqrt((l1 + Sfx)*(l1 + Sfx) + Sfy*Sfy));
 		double a1 = atan2(Sfz*x - ((l1 + Sfx)*cos(b1) - Sfy*sin(b1))*z, ((l1 + Sfx)*cos(b1) - Sfy*sin(b1))*x + Sfz*z);
@@ -73,7 +75,5 @@ namespace Robots
 		s_ep2pm(ep3, const_cast<double * const>(leg3.pBasePrtPm));
 		s_ep2pm(ep4, const_cast<double * const>(leg4.pBasePrtPm));
 		s_ep2pm(ep5, const_cast<double * const>(leg5.pBasePrtPm));
-
-
 	}
 }
