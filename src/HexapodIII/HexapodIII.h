@@ -1,8 +1,10 @@
-﻿#ifndef ROBOT_H
-#define ROBOT_H
+﻿#ifndef ROBOT_III_H
+#define ROBOT_III_H
 
-#include "Aris_DynKer.h"
+#include <Aris_DynKer.h>
 #include <fstream>
+
+#include "Robot_Base.h"	
 
 
 
@@ -13,7 +15,7 @@
 *
 * 用来计算机器人的运动学和动力学等。
 */
-namespace Hexapod_Robot
+namespace Robots
 {
 	class LEG;
 	class ROBOT;
@@ -440,6 +442,8 @@ namespace Hexapod_Robot
 		void SetAee(const double *aEE = 0, const double *bodyacc = 0, const char *RelativeCoodinate = "G");/*!< \brief 等同于SetVeeG函数 */
 		void SetAin(const double *aIn = 0, const double *bodyacc = 0);/*!< \brief 设置6条腿的丝杠速度 */
 
+		void GetFin(double *fIn) const;
+
 		void GetVelJacDir(double *jac, const char* = 0) const;/*!< \brief 获取G坐标系下的正雅克比矩阵，从丝杠输入到身体位姿 */
 		void GetVelJacInv(double *jac, const char* = 0) const;/*!< \brief 获取G坐标系下的逆雅克比矩阵，从身体位姿到丝杠输入 */
 
@@ -466,6 +470,192 @@ namespace Hexapod_Robot
 
 		}
 	};
+
+	class ROBOT_III;
+	class LEG_III :public Aris::DynKer::OBJECT, public Robots::LEG_BASE
+	{
+		friend class ROBOT_III;
+	private:
+		ROBOT_III *pRobot;
+
+		const double U2x{ 0 }, U2y{ 0 }, U2z{ 0 }, U3x{ 0 }, U3y{ 0 }, U3z{ 0 };
+		const double S2x{ 0 }, S2y{ 0 }, S2z{ 0 }, S3x{ 0 }, S3y{ 0 }, S3z{ 0 };
+		const double Sfx{ 0 }, Sfy{ 0 }, Sfz{ 0 };
+
+		const double D1{ 0 }, H1{ 0 }, D2{ 0 }, H2{ 0 };
+
+		double a1, b1, va1, vb1, aa1, ab1;
+		double x2, y2, z2, x3, y3, z3;
+		double a2, b2, a3, b3;
+		double sa1, ca1, sb1, cb1, sa2, ca2, sb2, cb2, sa3, ca3, sb3, cb3;
+		double pa1, qa1, pb1, qb1, pa2, qa2, pb2, qb2, pa3, qa3, pb3, qb3;
+
+		double vx2, vy2, vz2, vx3, vy3, vz3;
+		double va2, vb2, va3, vb3;
+
+		double ax2, ay2, az2, ax3, ay3, az3;
+		double aa2, ab2, aa3, ab3;
+
+		double H11, H12, H21, H22;
+		double k21, k22, k23, k31, k32, k33;
+		double vk21, vk22, vk23, vk31, vk32, vk33;
+		double J1[3][3], J2[3][3], vJ1[3][3], vJ2[3][3];
+
+		double _C[36][36];
+		double _I[36][36];
+		double _f[36];
+		double _v[36];
+		double _a_c[36];
+
+		double _a[36];
+		double _epsilon[36];
+
+		double _c_M[36][4];
+
+	public:
+		union
+		{
+			struct
+			{
+				Aris::DynKer::PART* pP1a;/*!< \brief 指向部件P1a的指针 */
+				Aris::DynKer::PART* pP2a;/*!< \brief 指向部件P2a的指针 */
+				Aris::DynKer::PART* pP3a;/*!< \brief 指向部件P3a的指针 */
+				Aris::DynKer::PART* pThigh;/*!< \brief 指向部件Thigh的指针 */
+				Aris::DynKer::PART* pP2b;/*!< \brief 指向部件P2b的指针 */
+				Aris::DynKer::PART* pP3b;/*!< \brief 指向部件P3b的指针 */
+			};
+			Aris::DynKer::PART* pPrts[6];
+		};
+		union
+		{
+			struct
+			{
+				Aris::DynKer::JOINT *pU1;/*!< \brief 指向关节U1的指针 */
+				Aris::DynKer::JOINT *pU2;/*!< \brief 指向关节U2的指针 */
+				Aris::DynKer::JOINT *pU3;/*!< \brief 指向关节U3的指针 */
+				Aris::DynKer::JOINT *pP1;/*!< \brief 指向关节P1的指针 */
+				Aris::DynKer::JOINT *pP2;/*!< \brief 指向关节P2的指针 */
+				Aris::DynKer::JOINT *pP3;/*!< \brief 指向关节P3的指针 */
+				Aris::DynKer::JOINT *pS2;/*!< \brief 指向关节S2的指针 */
+				Aris::DynKer::JOINT *pS3;/*!< \brief 指向关节S3的指针 */
+				Aris::DynKer::JOINT *pSf;/*!< \brief 指向关节Sf的指针 */
+			};
+			Aris::DynKer::JOINT *pJnts[9];
+		};
+		union
+		{
+			struct
+			{
+				Aris::DynKer::MARKER *pBase;/*!< \brief 指向坐标系Base的指针，位于部件MainBody上 */
+				Aris::DynKer::MARKER *pU1i;/*!< \brief 指向坐标系U1i的指针，位于部件MainBody上 */
+				Aris::DynKer::MARKER *pU1j;/*!< \brief 指向坐标系U1j的指针，位于部件P1a上 */
+				Aris::DynKer::MARKER *pU2i;/*!< \brief 指向坐标系U2i的指针，位于部件MainBody上 */
+				Aris::DynKer::MARKER *pU2j;/*!< \brief 指向坐标系U2j的指针，位于部件P2a上 */
+				Aris::DynKer::MARKER *pU3i;/*!< \brief 指向坐标系U3i的指针，位于部件MainBody上 */
+				Aris::DynKer::MARKER *pU3j;/*!< \brief 指向坐标系U3j的指针，位于部件P3a上 */
+				Aris::DynKer::MARKER *pP1i;/*!< \brief 指向坐标系P1i的指针，位于部件Thigh上 */
+				Aris::DynKer::MARKER *pP1j;/*!< \brief 指向坐标系P1j的指针，位于部件P1a上 */
+				Aris::DynKer::MARKER *pP2i;/*!< \brief 指向坐标系P2i的指针，位于部件P2b上 */
+				Aris::DynKer::MARKER *pP2j;/*!< \brief 指向坐标系P2j的指针，位于部件P2a上 */
+				Aris::DynKer::MARKER *pP3i;/*!< \brief 指向坐标系P3i的指针，位于部件P3b上 */
+				Aris::DynKer::MARKER *pP3j;/*!< \brief 指向坐标系P3i的指针，位于部件P3a上 */
+				Aris::DynKer::MARKER *pS2i;/*!< \brief 指向坐标系S2i的指针，位于部件Thigh上 */
+				Aris::DynKer::MARKER *pS2j;/*!< \brief 指向坐标系S2j的指针，位于部件P2b上 */
+				Aris::DynKer::MARKER *pS3i;/*!< \brief 指向坐标系S3i的指针，位于部件Thigh上 */
+				Aris::DynKer::MARKER *pS3j;/*!< \brief 指向坐标系S3j的指针，位于部件P3b上 */
+				Aris::DynKer::MARKER *pSfi;/*!< \brief 指向坐标系Sfi的指针，位于部件Thigh上 */
+				Aris::DynKer::MARKER *pSfj;/*!< \brief 指向坐标系Sfj的指针，位于部件Ground上 */
+			};
+			Aris::DynKer::MARKER *pMaks[19];
+		};
+		union
+		{
+			struct
+			{
+				Aris::DynKer::MOTION *pM1;/*!< \brief 指向驱动M1的指针 */
+				Aris::DynKer::MOTION *pM2;/*!< \brief 指向驱动M2的指针 */
+				Aris::DynKer::MOTION *pM3;/*!< \brief 指向驱动M3的指针 */
+			};
+
+			Aris::DynKer::MOTION *pMots[3];
+		};
+
+	private:
+		void GetFin(double *fIn) const;
+		void SetFin(const double *fIn);
+
+		virtual void calculate_from_pEE();
+		virtual void calculate_from_pIn();
+		virtual void calculate_from_vEE();
+		virtual void calculate_from_vIn();
+		virtual void calculate_from_aEE();
+		virtual void calculate_from_aIn();
+
+		virtual void calculate_jac();
+		virtual void calculate_jac_c();
+
+		void _CalCdByPos();
+		void _CalCdByPlen();
+		void _CalCdByPlen2();
+		void _CalVarByCd();
+		void _CalPartByVar();
+
+		void _CalVcdByVpos();
+		void _CalVcdByVplen();
+		void _CalVvarByVcd();
+		void _CalVpartByVvar();
+
+		void _CalAcdByApos();
+		void _CalAcdByAplen();
+		void _CalAvarByAcd();
+		void _CalApartByAvar();
+
+	private:
+		LEG_III(const char *Name, ROBOT_III* pRobot, unsigned beginPos);
+		virtual ~LEG_III() = default;
+
+		void FastDyn();
+	};
+	class ROBOT_III :public Aris::DynKer::MODEL, public Robots::ROBOT_BASE
+	{
+	private:
+		LEG_III LF_Leg{ "LF", this, 0 };
+		LEG_III LM_Leg{ "LM", this, 3 };
+		LEG_III LR_Leg{ "LR", this, 6 };
+		LEG_III RF_Leg{ "RF", this, 9 };
+		LEG_III RM_Leg{ "RM", this, 12 };
+		LEG_III RR_Leg{ "RR", this, 15 };
+
+	public:
+		union
+		{
+			struct
+			{
+				LEG_III *const pLF;
+				LEG_III *const pLM;
+				LEG_III *const pLR;
+				LEG_III *const pRF;
+				LEG_III *const pRM;
+				LEG_III *const pRR;
+			};
+			LEG_III *const pLegs[6];
+		};
+
+		Aris::DynKer::PART* pBody;
+		Aris::DynKer::MARKER* pBodyCenter;
+
+	public:
+		ROBOT_III();
+		~ROBOT_III() = default;
+
+		void GetFin(double *fIn) const;
+		void SetFin(const double *fIn);
+
+		void SetFixedFeet(const char *fixedLeg = 0, const char *ActiveMotion = 0);
+		void FastDyn();
+		void LoadXML(const char *filename);
+	};
+
 }
 
 #endif
