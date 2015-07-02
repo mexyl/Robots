@@ -2312,7 +2312,7 @@ namespace Robots
 	LEG_III::LEG_III(const char *Name, ROBOT_III* pRobot, unsigned beginPos)
 		: OBJECT(static_cast<Aris::DynKer::MODEL *>(pRobot), Name)
 		, pRobot(pRobot)
-		, LEG_BASE(pRobot, beginPos)
+		, LEG_BASE(pRobot)
 	{
 	}
 

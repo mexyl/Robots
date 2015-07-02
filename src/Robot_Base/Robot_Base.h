@@ -31,19 +31,86 @@ namespace Robots
 		const double * const pBasePrtPm{ *_BasePrtPm };
 		double * const pBasePm{ *_BasePm };
 
-		double * const pEE;
-		double * const vEE;
-		double * const aEE;
-		double * const pIn;
-		double * const vIn;
-		double * const aIn;
+		union
+		{
+			double pEE[3];
+			struct
+			{
+				double x;
+				double y;
+				double z;
+			};
+		};
 
-		double &x{ pEE[0] }, &y{ pEE[1] }, &z{ pEE[2] };
-		double &vx{ vEE[0] }, &vy{ vEE[1] }, &vz{ vEE[2] };
-		double &ax{ aEE[0] }, &ay{ aEE[1] }, &az{ aEE[2] };
-		double &l1{ pIn[0] }, &l2{ pIn[1] }, &l3{ pIn[2] };
-		double &vl1{ vIn[0] }, &vl2{ vIn[1] }, &vl3{ vIn[2] };
-		double &al1{ aIn[0] }, &al2{ aIn[1] }, &al3{ aIn[2] };
+		union
+		{
+			double vEE[3];
+			struct
+			{
+				double vx;
+				double vy;
+				double vz;
+			};
+		};
+
+		union
+		{
+			double aEE[3];
+			struct
+			{
+				double ax;
+				double ay;
+				double az;
+			};
+		};
+
+		union
+		{
+			double pIn[3];
+			struct
+			{
+				double l1;
+				double l2;
+				double l3;
+			};
+		};
+
+		union
+		{
+			double vIn[3];
+			struct
+			{
+				double vl1;
+				double vl2;
+				double vl3;
+			};
+		};
+
+		union
+		{
+			double aIn[3];
+			struct
+			{
+				double al1;
+				double al2;
+				double al3;
+			};
+		};
+
+
+		//double * const pEE;
+		//double * const vEE;
+		//double * const aEE;
+		//double * const pIn;
+		//double * const vIn;
+		//double * const aIn;
+
+		//double &x{ pEE[0] }, &y{ pEE[1] }, &z{ pEE[2] };
+		//double &vx{ vEE[0] }, &vy{ vEE[1] }, &vz{ vEE[2] };
+		//double &ax{ aEE[0] }, &ay{ aEE[1] }, &az{ aEE[2] };
+		//double &l1{ pIn[0] }, &l2{ pIn[1] }, &l3{ pIn[2] };
+		//double &vl1{ vIn[0] }, &vl2{ vIn[1] }, &vl3{ vIn[2] };
+		//double &al1{ aIn[0] }, &al2{ aIn[1] }, &al3{ aIn[2] };
 
 		double _c_acc_dir[3];
 		double _c_acc_inv[3];
@@ -63,7 +130,7 @@ namespace Robots
 		virtual void calculate_jac_c(){};
 
 	protected:
-		LEG_BASE(ROBOT_BASE* pRobot, unsigned beginPos);
+		LEG_BASE(ROBOT_BASE* pRobot);
 		virtual ~LEG_BASE() = default;
 
 	public:
@@ -154,12 +221,12 @@ namespace Robots
 		LEG_BASE *pLegs[6];
 
 	protected:
-		double pEE[18];
-		double vEE[18];
-		double aEE[18];
-		double pIn[18];
-		double vIn[18];
-		double aIn[18];
+		//double pEE[18];
+		//double vEE[18];
+		//double aEE[18];
+		//double pIn[18];
+		//double vIn[18];
+		//double aIn[18];
 
 		double *const pBodyPm{ *_BodyPm };
 		double *const pBodyVel{ _BodyVel };

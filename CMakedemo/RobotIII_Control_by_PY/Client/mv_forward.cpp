@@ -8,39 +8,8 @@
 
 using namespace Aris::Core;
 
-#include "robot_interface.h"
+#include "../Server/robot_interface.h"
 
-
-void printCMD(int cmd)
-{
-	switch (cmd)
-	{
-	case HOME_1: std::cout << "Home1"; break;
-	case HOME_2: std::cout << "Home2"; break;
-	case HOME2START_1: std::cout << "Home2Start1"; break;
-	case HOME2START_2: std::cout << "Home2Start2"; break;
-	case MV_FORWARD: std::cout << "Mv_Forward"; break;
-	case MV_BACKWARD: std::cout << "Mv_Backward"; break;
-	case TURN_LEFT: std::cout << "Turn_Left"; break;
-	case TURN_RIGHT: std::cout << "Turn_Right"; break;
-	}
-}
-
-
-void printState(int state)
-{
-	switch (state)
-	{
-	case UNKNOWN: std::cout << "UNKNOWN"; break;
-	case STARTED: std::cout << "STARTED"; break;
-	case UNKNOWN1_HOMED2: std::cout << "UNKNOWN1_HOMED2"; break;
-	case UNKNOWN1_STARTED2: std::cout << "UNKNOWN1_STARTED2"; break;
-	case HOMED1_UNKNOWN2: std::cout << "HOMED1_UNKNOWN2"; break;
-	case HOMED1_STARTED2: std::cout << "HOMED1_STARTED2"; break;
-	case STARTED1_UNKNOWN2: std::cout << "STARTED1_UNKNOWN2"; break;
-	case STARTED1_HOMED2: std::cout << "STARTED1_HOMED2"; break;
-	}
-}
 
 
 int main()
@@ -65,7 +34,7 @@ int main()
 	}*/
 
 
-	init_interface();
+	//init_interface();
 
 
 
@@ -76,7 +45,7 @@ int main()
 
 
 
-	close_interface();
+	//close_interface();
 
 
 	char a;

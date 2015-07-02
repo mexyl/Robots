@@ -93,6 +93,11 @@ int main()
 	rbt.GetAin(aIn);
 	dsp(aIn, 18, 1);
 
+
+	rbt.SetPin(pIn);
+	rbt.SetVin(vIn);
+	rbt.SetAin(aIn);
+
 	/*compute dynamics*/
 	double fIn[18];
 
@@ -108,10 +113,12 @@ int main()
 	rbt.GetFin(fIn);
 	dsp(fIn, 18, 1);
 
-
-	robot.SetPee(pEE_G, bodyEp, "G");
-	robot.SetVee(vEE_G, bodyVel, "G");
-	robot.SetAee(aEE_G, bodyAcc, "G");
+	robot.SetPin(pIn, bodyEp);
+	robot.SetVin(vIn, bodyVel);
+	robot.SetAin(aIn, bodyAcc);
+	//robot.SetPee(pEE_G, bodyEp, "G");
+	//robot.SetVee(vEE_G, bodyVel, "G");
+	//robot.SetAee(aEE_G, bodyAcc, "G");
 	robot.SetFixedFeet("024", "1278de");
 	robot.FastDyn();
 	robot.GetFin(fIn);

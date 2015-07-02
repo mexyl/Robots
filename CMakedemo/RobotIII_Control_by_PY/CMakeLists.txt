@@ -55,6 +55,8 @@ include_directories("/usr/Robots/include")
 link_directories(/usr/lapack/lib)
 link_directories(/usr/Aris/lib)
 link_directories(/usr/Robots/lib)
+link_directories(/usr/xenomai/lib)
+link_directories(/opt/etherlab/lib)
 endif(UNIX)
 if(WIN32)
 include_directories("C:/lapack/include")
@@ -75,17 +77,19 @@ set(ROBOTS_LINK_LIBS Robot_Base HexapodIII)
 endif(WIN32)
 if(UNIX)
 set(SYSTEM_LINK_LIBS pthread gfortran)
+set(XENOMAI_LINK_LIBS native rtdm xenomai)
+set(ETHERLAB_LINK_LIBS ethercat rt)
 set(LAPACK_LINK_LIBS lapacke lapack cblas refblas)
-set(ARIS_LINK_LIBS Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
-set(ROBOTS_LINK_LIBS Robot_Base HexapodIII)
+set(ARIS_LINK_LIBS Aris_Control Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
+set(ROBOTS_LINK_LIBS HexapodIII Robot_Base)
 endif(UNIX)
 
 ################################### build server ####################################
 
-set(SOURCE_FILES main.cpp robot_interface.h robot_interface.cpp)
+set(SOURCE_FILES main.cpp robot_interface.h robot_interface.cpp trajectory_generator.h trajectory_generator.cpp)
 PREPEND(FULL_SRC Server ${SOURCE_FILES})
 add_executable(Server ${FULL_SRC})
-target_link_libraries(Server ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+target_link_libraries(Server ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${ETHERLAB_LINK_LIBS} ${XENOMAI_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
 ################################### build client ####################################
 

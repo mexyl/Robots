@@ -22,14 +22,14 @@ namespace Robots
 	const unsigned pm_size{ 16 * sizeof(double) };
 	const unsigned vec6_size{ 6 * sizeof(double) };
 	
-	LEG_BASE::LEG_BASE(ROBOT_BASE* pRobot, unsigned beginPos)
+	LEG_BASE::LEG_BASE(ROBOT_BASE* pRobot)
 		: pRobot(pRobot)
-		, pEE(&pRobot->pEE[beginPos])
-		, vEE(&pRobot->vEE[beginPos])
-		, aEE(&pRobot->aEE[beginPos])
-		, pIn(&pRobot->pIn[beginPos])
-		, vIn(&pRobot->vIn[beginPos])
-		, aIn(&pRobot->aIn[beginPos])
+		//, pEE(&pRobot->pEE[beginPos])
+		//, vEE(&pRobot->vEE[beginPos])
+		//, aEE(&pRobot->aEE[beginPos])
+		//, pIn(&pRobot->pIn[beginPos])
+		//, vIn(&pRobot->vIn[beginPos])
+		//, aIn(&pRobot->aIn[beginPos])
 	{
 	}
 	
@@ -389,7 +389,12 @@ namespace Robots
 	}
 	void ROBOT_BASE::GetPin(double *pIn) const
 	{
-		memcpy(pIn, this->pIn, in_size * 6);
+		unsigned i = 0;
+		for (auto &pLeg : pLegs)
+		{
+			pLeg->GetPin(pIn + i);
+			i += 3;
+		}
 	}
 	void ROBOT_BASE::GetBodyPm(double *bodypm) const
 	{
@@ -406,7 +411,12 @@ namespace Robots
 	}
 	void ROBOT_BASE::GetVin(double *vIn) const
 	{
-		memcpy(vIn, this->vIn, in_size * 6);
+		unsigned i = 0;
+		for (auto &pLeg : pLegs)
+		{
+			pLeg->GetVin(vIn + i);
+			i += 3;
+		}
 	}
 	void ROBOT_BASE::GetBodyVel(double *bodyvel) const
 	{
@@ -423,7 +433,12 @@ namespace Robots
 	}
 	void ROBOT_BASE::GetAin(double *aIn) const
 	{
-		memcpy(aIn, this->aIn, in_size * 6);
+		unsigned i = 0;
+		for (auto &pLeg : pLegs)
+		{
+			pLeg->GetAin(aIn + i);
+			i += 3;
+		}
 	}
 	void ROBOT_BASE::GetBodyAcc(double *bodyacc) const
 	{
