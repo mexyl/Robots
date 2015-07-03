@@ -45,7 +45,7 @@ namespace Robots
 		phiC = 25 * PI / 180;
 		Hh = 20;//腿部两个R副之间竖直距离
 
-		blen = 65; //动平台三角形腰长
+		blen = 65.0/2; //动平台三角形腰长
 		lp = 140;
 		l1 = 219.34;
 		l2 = 189;
@@ -151,9 +151,9 @@ namespace Robots
 		S3CU3_xz = acos((S3C_xz*S3C_xz + CU3*CU3 - S3U3_xz*S3U3_xz) / (2 * S3C_xz*CU3));
 		Theta3 = -S3CX - S3CU3_xz;//CU3杆绕y轴转角
 
-		s1 = slid_os*tan(Theta1 - Theta1_h) + s_h;
-		s2 = slid_os*tan(Theta2 - Theta23_h) + s_h;
-		s3 = slid_os*tan(Theta3 - Theta23_h) + s_h;
+		s2 = slid_os*tan(Theta1 - Theta1_h) + s_h;
+		s3 = slid_os*tan(Theta2 - Theta23_h) + s_h;
+		s1 = slid_os*tan(Theta3 - Theta23_h) + s_h;
 
 		//cout << pos_driv[0] << endl;
 		//cout << pos_driv[1] << endl;
