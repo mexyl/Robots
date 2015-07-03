@@ -1,8 +1,23 @@
 ﻿#include "HexapodIV.h"
+#include <Aris_Plan.h>
 
 using namespace std;
 using namespace Aris::DynKer;
 using namespace Robots;
+
+
+int move_forward_acc(unsigned count,double *pIn)
+{
+	unsigned totalCount = 1000;
+
+
+
+
+
+
+
+
+}
 
 
 
@@ -61,7 +76,6 @@ int main()
 	rbt.GetPin(pIn);
 
 	dsp(pIn, 18, 1);
-
 
 
 
