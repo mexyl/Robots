@@ -73,7 +73,7 @@ if(WIN32)
 set(SYSTEM_LINK_LIBS ws2_32)
 set(LAPACK_LINK_LIBS liblapacke liblapack cblas libblas)
 set(ARIS_LINK_LIBS Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
-set(ROBOTS_LINK_LIBS Robot_Base HexapodIII)
+set(ROBOTS_LINK_LIBS HexapodIII Robot_Base)
 endif(WIN32)
 if(UNIX)
 set(SYSTEM_LINK_LIBS pthread gfortran)
@@ -81,7 +81,7 @@ set(XENOMAI_LINK_LIBS native rtdm xenomai)
 set(ETHERLAB_LINK_LIBS ethercat rt)
 set(LAPACK_LINK_LIBS lapacke lapack cblas refblas)
 set(ARIS_LINK_LIBS Aris_Control Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
-set(ROBOTS_LINK_LIBS HexapodIII Robot_Base)
+set(ROBOTS_LINK_LIBS HexapodIV HexapodIII Robot_Base)
 endif(UNIX)
 
 ################################### build server ####################################
@@ -92,18 +92,26 @@ add_executable(Server ${FULL_SRC})
 target_link_libraries(Server ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${ETHERLAB_LINK_LIBS} ${XENOMAI_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
 ################################### build client ####################################
+add_executable(enable Client/enable.cpp)
+target_link_libraries(enable ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
-set(SOURCE_FILES mv_forward.cpp)
-PREPEND(FULL_SRC Client ${SOURCE_FILES})
-add_executable(mv_forward ${FULL_SRC})
-target_link_libraries(mv_forward ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+add_executable(disable Client/disable.cpp)
+target_link_libraries(disable ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
-set(SOURCE_FILES home1.cpp)
-PREPEND(FULL_SRC Client ${SOURCE_FILES})
-add_executable(home1 ${FULL_SRC})
+add_executable(home1 Client/home1.cpp)
 target_link_libraries(home1 ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
+add_executable(home2 Client/home2.cpp)
+target_link_libraries(home2 ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
+add_executable(toStart1 Client/toStart1.cpp)
+target_link_libraries(toStart1 ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+
+add_executable(toStart2 Client/toStart2.cpp)
+target_link_libraries(toStart2 ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+
+add_executable(forward Client/forward.cpp)
+target_link_libraries(forward ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
 
 

@@ -11,7 +11,7 @@ int main()
 
 	Aris::Core::MSG msg(EXECUTE_CMD);
 	ROBOT_CMD cmd;
-	cmd.id=HOME_1;
+	cmd.id=HOME_2;
 	msg.CopyStruct(cmd);
 
 	c.SendRequest(msg);

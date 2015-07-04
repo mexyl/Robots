@@ -136,7 +136,7 @@ endif(WIN32)
 
 
 
-install(TARGETS HexapodIII Robot_Base ARCHIVE DESTINATION lib)
+install(TARGETS HexapodIV HexapodIII Robot_Base ARCHIVE DESTINATION lib)
 install(FILES ${INCLUDE_HEADER_FILES} DESTINATION include)
 install(DIRECTORY src/HexapodIII/resource/ DESTINATION resource/HexapodIII)
 

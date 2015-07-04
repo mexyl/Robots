@@ -21,7 +21,7 @@ int main()
 
 	initParam.motorNum=18;
 	initParam.homeMode=-1;
-	initParam.homeTorqueLimit=200;
+	initParam.homeTorqueLimit=950;
 	initParam.homeHighSpeed=280000;
 	initParam.homeLowSpeed=40000;
 	initParam.homeOffsets=HEXBOT_HOME_OFFSETS_RESOLVER;
@@ -34,79 +34,30 @@ int main()
 	cs.SysStart();
 
 
-	cout<<"now send cmd"<<endl;
+	Aris::Core::CONN control_interface;
+	control_interface.SetCallBackOnReceivedConnection([](Aris::Core::CONN *pConn,const char *pRemoteIP,int remotePort)
+	{
+		cout << "control client received:" << endl;
+		cout << "    remote ip is:" << pRemoteIP << endl;
+		cout << endl;
+		return 0;
+	});
+	control_interface.SetOnReceiveRequest([&cs](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
+	{
+		cout<<"received request"<<endl;
+		cs.NRT_PostMsg(msg);
+		return MSG();
+	});
+	control_interface.SetCallBackOnLoseConnection([](Aris::Core::CONN *pConn)
+	{
+		cout << "control_interface lost" << endl;
+		pConn->StartServer("5866");
+		return 0;
+	});
 
-
-	MSG msg(EXECUTE_CMD);
-
-
-	ROBOT_CMD cmd;
-
-	cmd.id=DISABLE;
-	msg.CopyStruct(cmd);
-	cs.NRT_PostMsg(msg);
-
-	usleep(5000000);
-
-	cmd.id=ENABLE;
-	msg.CopyStruct(cmd);
-	cs.NRT_PostMsg(msg);
-
-	cmd.id=HOME_1;
-	msg.CopyStruct(cmd);
-	cs.NRT_PostMsg(msg);
-
-	usleep(10000000);
-
-	cmd.id=DISABLE;
-	msg.CopyStruct(cmd);
-	cs.NRT_PostMsg(msg);
-
-
-	int i=0;
-//	while(i<5)
-//	{
-//		usleep(500000);
-//
-//		ROBOT_CMD cmd;
-//
-//			cmd.id=ENABLE;
-//			cmd.paramNum=3;
-//			cmd.param[0].toInt=i;
-//			i++;
-//			cmd.param[1].toInt=2;
-//			cmd.param[2].toInt=3;
-//
-//			msg.CopyStruct(cmd);
-//			cs.NRT_PostMsg(msg);
-//	}
-//
-//	usleep(10000000);
-//
-//	i=0;
-//		while(i<25)
-//		{
-//			usleep(100000);
-//
-//			ROBOT_CMD cmd;
-//
-//				cmd.id=ENABLE;
-//				cmd.paramNum=3;
-//				cmd.param[0].toInt=i;
-//				i++;
-//				cmd.param[1].toInt=2;
-//				cmd.param[2].toInt=3;
-//
-//				msg.CopyStruct(cmd);
-//				cs.NRT_PostMsg(msg);
-//		}
-
-
-
+	control_interface.StartServer("5866");
 
 	Aris::Core::RunMsgLoop();
-	//int cmd;
-	//while(cin>>)
 
 
 
