@@ -66,7 +66,7 @@ include_directories("src/HexapodIV")
 include_directories("src/Robot_Base")
 
 # build Robot_Base lib
-set(SOURCE Robot_Base)
+set(SOURCE Robot_Base Robot_Gait)
 PREPEND_CPP(FULL_SRC src/Robot_Base ${SOURCE})
 PREPEND_H(FULL_H src/Robot_Base ${SOURCE})
 add_library(Robot_Base STATIC ${FULL_SRC} ${FULL_H})

@@ -10,6 +10,8 @@
 #include <ctime>
 #include <iostream>
 
+#include <Aris_DynKer.h>
+
 #include "Robot_Base.h"
 
 using namespace Aris::DynKer;
@@ -24,12 +26,6 @@ namespace Robots
 	
 	LEG_BASE::LEG_BASE(ROBOT_BASE* pRobot)
 		: pRobot(pRobot)
-		//, pEE(&pRobot->pEE[beginPos])
-		//, vEE(&pRobot->vEE[beginPos])
-		//, aEE(&pRobot->aEE[beginPos])
-		//, pIn(&pRobot->pIn[beginPos])
-		//, vIn(&pRobot->vIn[beginPos])
-		//, aIn(&pRobot->aIn[beginPos])
 	{
 	}
 	
@@ -375,7 +371,6 @@ namespace Robots
 	}
 
 	ROBOT_BASE::ROBOT_BASE()
-//		:
 	{
 	}
 	void ROBOT_BASE::GetPee(double *pEE, const char *RelativeCoodinate) const

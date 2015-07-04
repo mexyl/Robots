@@ -1,18 +1,6 @@
 ﻿#ifndef ROBOT_BASE_H
 #define ROBOT_BASE_H
 
-#include <Aris_DynKer.h>
-#include <fstream>
-
-
-
-//需要修改默认的堆栈大小
-//在windows里，位于程序属性->链接器->系统->堆栈保留大小
-
-/** \brief 命名空间：六足机器人
-*
-* 用来计算机器人的运动学和动力学等。
-*/
 namespace Robots
 {
 	class ROBOT_BASE;
@@ -96,21 +84,6 @@ namespace Robots
 				double al3;
 			};
 		};
-
-
-		//double * const pEE;
-		//double * const vEE;
-		//double * const aEE;
-		//double * const pIn;
-		//double * const vIn;
-		//double * const aIn;
-
-		//double &x{ pEE[0] }, &y{ pEE[1] }, &z{ pEE[2] };
-		//double &vx{ vEE[0] }, &vy{ vEE[1] }, &vz{ vEE[2] };
-		//double &ax{ aEE[0] }, &ay{ aEE[1] }, &az{ aEE[2] };
-		//double &l1{ pIn[0] }, &l2{ pIn[1] }, &l3{ pIn[2] };
-		//double &vl1{ vIn[0] }, &vl2{ vIn[1] }, &vl3{ vIn[2] };
-		//double &al1{ aIn[0] }, &al2{ aIn[1] }, &al3{ aIn[2] };
 
 		double _c_acc_dir[3];
 		double _c_acc_inv[3];
@@ -221,12 +194,6 @@ namespace Robots
 		LEG_BASE *pLegs[6];
 
 	protected:
-		//double pEE[18];
-		//double vEE[18];
-		//double aEE[18];
-		//double pIn[18];
-		//double vIn[18];
-		//double aIn[18];
 
 		double *const pBodyPm{ *_BodyPm };
 		double *const pBodyVel{ _BodyVel };
