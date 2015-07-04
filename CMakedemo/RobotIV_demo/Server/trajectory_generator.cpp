@@ -189,7 +189,7 @@ int home2(unsigned count , Aris::RT_CONTROL::CMachineData &data)
 	}
 };
 
-int mv_acc(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_CMD &cmd)
+int walk_acc(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_CMD &cmd)
 {
 	double pBodyEp[6];
 	double pIn[18];
@@ -214,7 +214,7 @@ int mv_acc(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_CMD
 
 	return ret+cmd.param[0].toInt;
 }
-int mv_dec(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_CMD &cmd)
+int walk_dec(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_CMD &cmd)
 {
 	double pBodyEp[6];
 	double pIn[18];
@@ -235,6 +235,28 @@ int mv_dec(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_CMD
 	}
 
 	return ret;
+}
+int walk_const(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_CMD &cmd)
+{
+	double pBodyEp[6];
+	double pIn[18];
+	double pEE[18];
+
+	unsigned ret = Robots::walk_const(&robot,count
+			,cmd.param[0].toInt
+			,iniEE
+			,cmd.param[3].toDouble
+			,cmd.param[4].toDouble
+			,cmd.param[1].toChar
+			,cmd.param[2].toChar
+			,pIn,pEE,pBodyEp);
+
+	for(unsigned i=0;i<motorNum;++i)
+	{
+		data.commandData[i].Position=pIn[i]*meter2count;
+	}
+
+	return ret+1;
 }
 int home2start1(unsigned count , Aris::RT_CONTROL::CMachineData &data)
 {
@@ -368,11 +390,15 @@ int execute_cmd(unsigned count,const ROBOT_CMD &cmd,Aris::RT_CONTROL::CMachineDa
 	case MV_FORWARD:
 		if(count<cmd.param[0].toInt)
 		{
-			ret=mv_acc(count,data,cmd);
+			ret=walk_acc(count,data,cmd);
+		}
+		else if( count < (2*cmd.param[5].toInt-1)*cmd.param[0].toInt )
+		{
+			ret=walk_const((count+cmd.param[0].toInt)%(2*cmd.param[0].toInt),data,cmd);
 		}
 		else
 		{
-			ret=mv_dec(count-cmd.param[0].toInt,data,cmd);
+			ret=walk_dec(count%cmd.param[0].toInt , data , cmd);
 		}
 
 		break;

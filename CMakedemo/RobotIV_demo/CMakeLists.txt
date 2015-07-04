@@ -110,8 +110,8 @@ target_link_libraries(toStart1 ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LI
 add_executable(toStart2 Client/toStart2.cpp)
 target_link_libraries(toStart2 ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
-add_executable(forward Client/forward.cpp)
-target_link_libraries(forward ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+add_executable(walk Client/walk.cpp)
+target_link_libraries(walk ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
 
 

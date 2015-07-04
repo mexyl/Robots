@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
 			int t=atoi(argv[i+1]);
 
-			if((t<500)||(t>5000))
+			if((t<400)||(t>5000))
 			{
 				cout<<"invalid param "<<argv[i]<<endl;
 				return -1;
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 
 			double d = atof(argv[i+1]);
 
-			if((d<0)||(d>0.6))
+			if((d<0)||(d>0.5))
 			{
 				cout<<"invalid param "<<argv[i]<<endl;
 				return -1;
