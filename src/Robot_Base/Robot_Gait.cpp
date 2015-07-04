@@ -160,6 +160,78 @@ namespace Robots
 
 		return totalCount - count - 1;
 	}
+
+	int walk_const(
+		ROBOT_BASE *pRobot,
+		unsigned count,
+		unsigned totalCount,
+		const double *iniPee,
+		double d, double h,
+		const char *walkDirection,
+		const char *upDirection,
+		double *pIn,
+		double *pEE,
+		double *pBodyEp)
+	{
+		/*此时totalCount为半个周期，它应等于acc中的totalCount*/
+
+		memset(pBodyEp, 0, sizeof(double) * 6);
+		memset(pIn, 0, sizeof(double) * 18);
+		memcpy(pEE, iniPee, sizeof(double) * 18);
+
+		unsigned walk_axis, up_axis;
+		int walk_sign, up_sign;
+		find_axis(walkDirection, walk_axis, walk_sign);
+		find_axis(upDirection, up_axis, up_sign);
+
+		if (count < totalCount)
+		{
+			/*此时在前半周期*/
+
+			/*设置支撑腿*/
+			for (unsigned i = 0; i < 18; i += 6)
+			{
+				pEE[i + walk_axis] += walk_sign*d / 4;
+			}
+
+			double alpha = -(PI / 2)*cos(PI * (count + 1) / totalCount) + PI / 2;
+
+			/*设置移动腿*/
+			for (unsigned i = 3; i < 18; i += 6)
+			{
+				pEE[i + walk_axis] += walk_sign*(-(d / 2)*cos(alpha) + d / 4);
+				pEE[i + up_axis] += up_sign*h*sin(alpha);
+			}
+
+			/*设置身体*/
+			pBodyEp[3 + walk_axis] = walk_sign*(count+1.0)/totalCount/2*d;
+		}
+		else
+		{
+			/*设置支撑腿*/
+			for (unsigned i = 3; i < 18; i += 6)
+			{
+				pEE[i + walk_axis] += walk_sign * 3 * d / 4;
+			}
+
+			double alpha = -(PI / 2)*cos(PI * (count + 1 - totalCount) / totalCount) + PI / 2;
+
+			/*设置移动腿*/
+			for (unsigned i = 0; i < 18; i += 6)
+			{
+				pEE[i + walk_axis] += walk_sign*(-(d / 2)*cos(alpha) + d *3 / 4);
+				pEE[i + up_axis] += up_sign*h*sin(alpha);
+			}
+
+			/*设置身体*/
+			pBodyEp[3 + walk_axis] = walk_sign*(count + 1.0) / totalCount / 2 * d;
+		}
+
+		pRobot->SetPee(pEE, pBodyEp);
+		pRobot->GetPin(pIn);
+
+		return 2 * totalCount - count - 1;
+	}
 	
 	int home2start(
 		ROBOT_BASE *pRobot,

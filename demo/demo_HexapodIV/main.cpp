@@ -108,6 +108,8 @@ int main()
 	dlmwrite("C:\\Users\\yang\\Desktop\\pEE_acc.txt", *pEE_acc, totalCount, 18);
 	dlmwrite("C:\\Users\\yang\\Desktop\\pBodyEp_acc.txt", *pBodyEp_acc, totalCount, 6);
 
+
+
 	double pEE_dec[totalCount][18], pIn_dec[totalCount][18], pBodyEp_dec[totalCount][6];
 
 	for (unsigned i = 0; i < totalCount; ++i)
@@ -120,17 +122,41 @@ int main()
 	dlmwrite("C:\\Users\\yang\\Desktop\\pBodyEp_dec.txt", *pBodyEp_dec, totalCount, 6);
 
 
-	const int home2startCount = 2000;
-	double pEE_Mat[home2startCount][18], pIn_Mat[home2startCount][18], pBodyEp_Mat[home2startCount][6];
 
-	for (unsigned i = 0; i < home2startCount; ++i)
+	double pEE_const[2 * totalCount][18], pIn_const[2 * totalCount][18], pBodyEp_const[2 * totalCount][6];
+	
+	for (unsigned i = 0; i < 2*totalCount; ++i)
 	{
-		//home2start(&rbt,i, 1000, 1000, homeEE, firstEE, iniEE, pIn_Mat[i], pEE_Mat[i], pBodyEp_Mat[i]);
+		walk_const(&rbt, i, totalCount, iniEE, 0.2, 0.05, "x", "z", pIn_const[i], pEE_const[i], pBodyEp_const[i]);
 	}
 
-	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_Mat.txt", *pIn_Mat, home2startCount, 18);
-	dlmwrite("C:\\Users\\yang\\Desktop\\pEE_Mat.txt", *pEE_Mat, home2startCount, 18);
-	dlmwrite("C:\\Users\\yang\\Desktop\\pBodyEp_Mat.txt", *pBodyEp_Mat, home2startCount, 6);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_const.txt", *pIn_const, 2*totalCount, 18);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pEE_const.txt", *pEE_const, 2*totalCount, 18);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pBodyEp_const.txt", *pBodyEp_const, 2*totalCount, 6);
+
+
+
+
+
+
+
+
+
+
+
+
+
+	//const int home2startCount = 2000;
+	//double pEE_Mat[home2startCount][18], pIn_Mat[home2startCount][18], pBodyEp_Mat[home2startCount][6];
+
+	//for (unsigned i = 0; i < home2startCount; ++i)
+	//{
+	//	home2start(&rbt,i, 1000, 1000, homeEE, firstEE, iniEE, pIn_Mat[i], pEE_Mat[i], pBodyEp_Mat[i]);
+	//}
+
+	//dlmwrite("C:\\Users\\yang\\Desktop\\pIn_Mat.txt", *pIn_Mat, home2startCount, 18);
+	//dlmwrite("C:\\Users\\yang\\Desktop\\pEE_Mat.txt", *pEE_Mat, home2startCount, 18);
+	//dlmwrite("C:\\Users\\yang\\Desktop\\pBodyEp_Mat.txt", *pBodyEp_Mat, home2startCount, 6);
 
 
 	cout << "finished" << endl;

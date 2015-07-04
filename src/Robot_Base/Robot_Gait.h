@@ -29,6 +29,18 @@ namespace Robots
 		double *pEE,
 		double *pBodyEp);
 
+	int walk_const(
+		ROBOT_BASE *pRobot,
+		unsigned count,
+		unsigned totalCount,
+		const double *iniPee,
+		double d, double h,
+		const char *walkDirection,
+		const char *upDirection,
+		double *pIn,
+		double *pEE,
+		double *pBodyEp);
+
 	int home2start(
 		ROBOT_BASE *pRobot,
 		unsigned count,
