@@ -51,7 +51,21 @@ int main()
 	control_interface.SetCallBackOnLoseConnection([](Aris::Core::CONN *pConn)
 	{
 		cout << "control_interface lost" << endl;
-		pConn->StartServer("5866");
+
+		while(true)
+		{
+			try
+			{
+				pConn->StartServer("5866");
+				break;
+			}
+			catch(CONN::START_SERVER_ERROR &e)
+			{
+				cout <<e.what()<<endl<<"will restart in 5s"<<endl;
+				usleep(5000);
+			}
+		}
+
 		return 0;
 	});
 
