@@ -195,13 +195,13 @@ int walk_acc(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_C
 	double pIn[18];
 	double pEE[18];
 
-	unsigned ret = Robots::walk_acc(
-			&robot
-			,count
+	unsigned ret = Robots::walk_acc(&robot,count
 			,cmd.param[0].toInt
 			,iniEE
 			,cmd.param[3].toDouble
 			,cmd.param[4].toDouble
+			,cmd.param[5].toDouble
+			,cmd.param[6].toDouble
 			,cmd.param[1].toChar
 			,cmd.param[2].toChar
 			,pIn,pEE,pBodyEp);
@@ -225,6 +225,8 @@ int walk_dec(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_C
 			,iniEE
 			,cmd.param[3].toDouble
 			,cmd.param[4].toDouble
+			,cmd.param[5].toDouble
+			,cmd.param[6].toDouble
 			,cmd.param[1].toChar
 			,cmd.param[2].toChar
 			,pIn,pEE,pBodyEp);
@@ -247,6 +249,8 @@ int walk_const(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT
 			,iniEE
 			,cmd.param[3].toDouble
 			,cmd.param[4].toDouble
+			,cmd.param[5].toDouble
+			,cmd.param[6].toDouble
 			,cmd.param[1].toChar
 			,cmd.param[2].toChar
 			,pIn,pEE,pBodyEp);
@@ -392,7 +396,7 @@ int execute_cmd(unsigned count,const ROBOT_CMD &cmd,Aris::RT_CONTROL::CMachineDa
 		{
 			ret=walk_acc(count,data,cmd);
 		}
-		else if( count < (2*cmd.param[5].toInt-1)*cmd.param[0].toInt )
+		else if( count < (2*cmd.param[9].toInt-1)*cmd.param[0].toInt )
 		{
 			ret=walk_const((count+cmd.param[0].toInt)%(2*cmd.param[0].toInt),data,cmd);
 		}

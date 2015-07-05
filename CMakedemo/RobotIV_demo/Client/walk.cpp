@@ -20,7 +20,9 @@ int main(int argc, char *argv[])
 	strcpy(cmd.param[2].toChar,"z");
 	cmd.param[3].toDouble=0.2;
 	cmd.param[4].toDouble=0.05;
-	cmd.param[5].toInt=1;
+	cmd.param[5].toDouble=0;
+	cmd.param[6].toDouble=0;
+	cmd.param[9].toInt=1;
 
 
 
@@ -116,6 +118,48 @@ int main(int argc, char *argv[])
 
 			continue;
 		}
+		if(strcmp(argv[i],"-a")==0)
+		{
+			if(i+1>=argc)
+			{
+				cout<<"invalid param "<<argv[i]<<endl;
+				return -1;
+			}
+
+			double alpha = atof(argv[i+1]);
+
+			if((alpha<-0.3)||(alpha>0.3))
+			{
+				cout<<"invalid param "<<argv[i]<<endl;
+				return -1;
+			}
+
+			cmd.param[5].toDouble=alpha;
+			i++;
+
+			continue;
+		}
+		if(strcmp(argv[i],"-b")==0)
+		{
+			if(i+1>=argc)
+			{
+				cout<<"invalid param "<<argv[i]<<endl;
+				return -1;
+			}
+
+			double beta = atof(argv[i+1]);
+
+			if((beta<-0.6)||(beta>0.6))
+			{
+				cout<<"invalid param "<<argv[i]<<endl;
+				return -1;
+			}
+
+			cmd.param[6].toDouble=beta;
+			i++;
+
+			continue;
+		}
 
 
 
@@ -135,7 +179,7 @@ int main(int argc, char *argv[])
 				return -1;
 			}
 
-			cmd.param[5].toInt=n;
+			cmd.param[9].toInt=n;
 			i++;
 
 			continue;
@@ -153,7 +197,9 @@ int main(int argc, char *argv[])
 	cout<<"    up direction:  "<<cmd.param[2].toChar<<endl;
 	cout<<"    step d:        "<<cmd.param[3].toDouble<<endl;
 	cout<<"    step h:        "<<cmd.param[4].toDouble<<endl;
-	cout<<"    step n:        "<<cmd.param[5].toInt<<endl;
+	cout<<"    step alpha:    "<<cmd.param[5].toDouble<<endl;
+	cout<<"    step beta:     "<<cmd.param[6].toDouble<<endl;
+	cout<<"    step number:   "<<cmd.param[9].toInt<<endl;
 
 	Aris::Core::MSG msg(EXECUTE_CMD);
 	msg.CopyStruct(cmd);
