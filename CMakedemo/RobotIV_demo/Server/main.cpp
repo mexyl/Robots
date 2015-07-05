@@ -48,6 +48,39 @@ int main()
 		cs.NRT_PostMsg(msg);
 		return MSG();
 	});
+	control_interface.SetCallBackOnReceivedData([&cs](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
+	{
+		cout<<"received data"<<endl;
+
+		ROBOT_CMD cmd;
+
+		msg.PasteAt(&cmd.param[0].toUInt,sizeof(unsigned),0);
+		msg.PasteAt(&cmd.param[1].toChar,8,4);
+		msg.PasteAt(&cmd.param[2].toChar,8,12);
+		msg.PasteAt(&cmd.param[3].toDouble,sizeof(double),20);
+		msg.PasteAt(&cmd.param[4].toDouble,sizeof(double),28);
+		msg.PasteAt(&cmd.param[5].toDouble,sizeof(double),36);
+		msg.PasteAt(&cmd.param[6].toDouble,sizeof(double),44);
+		msg.PasteAt(&cmd.param[9].toUInt,sizeof(unsigned),52);
+
+		cout<<"    total count:   "<<cmd.param[0].toUInt<<endl;
+		cout<<"    walk direction:"<<cmd.param[1].toChar<<endl;
+		cout<<"    up direction:  "<<cmd.param[2].toChar<<endl;
+		cout<<"    step d:        "<<cmd.param[3].toDouble<<endl;
+		cout<<"    step h:        "<<cmd.param[4].toDouble<<endl;
+		cout<<"    step alpha:    "<<cmd.param[5].toDouble<<endl;
+		cout<<"    step beta:     "<<cmd.param[6].toDouble<<endl;
+		cout<<"    step number:   "<<cmd.param[9].toUInt<<endl;
+
+		msg.SetMsgID(EXECUTE_CMD);
+
+
+
+
+
+			//cs.NRT_PostMsg(msg);
+		return 0;
+	});
 	control_interface.SetCallBackOnLoseConnection([](Aris::Core::CONN *pConn)
 	{
 		cout << "control_interface lost" << endl;
@@ -62,14 +95,26 @@ int main()
 			catch(CONN::START_SERVER_ERROR &e)
 			{
 				cout <<e.what()<<endl<<"will restart in 5s"<<endl;
-				usleep(5000);
+				usleep(5000000);
 			}
 		}
 
 		return 0;
 	});
 
-	control_interface.StartServer("5866");
+	while(true)
+	{
+		try
+		{
+			control_interface.StartServer("5866");
+			break;
+		}
+		catch(CONN::START_SERVER_ERROR &e)
+		{
+			cout <<e.what()<<endl<<"will restart in 5s"<<endl;
+			usleep(5000000);
+		}
+	}
 
 	Aris::Core::RunMsgLoop();
 

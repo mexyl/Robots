@@ -54,6 +54,7 @@ struct ROBOT_CMD
 	union PARAM
 	{
 		char toChar[8];
+		unsigned toUInt;
 		int toInt;
 		float toFload;
 		double toDouble;

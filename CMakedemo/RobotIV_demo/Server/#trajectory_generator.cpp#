@@ -64,7 +64,7 @@ int HEXBOT_HOME_OFFSETS_RESOLVER[18] =
 			0,0,0,
 			0,0,0,
 			0,0,0,
-			0,0,0,
+		n	0,0,0,
 			0,0,0,
 			0,0,0,
 };
@@ -196,7 +196,7 @@ int walk_acc(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_C
 	double pEE[18];
 
 	unsigned ret = Robots::walk_acc(&robot,count
-			,cmd.param[0].toUInt
+			,cmd.param[0].toInt
 			,iniEE
 			,cmd.param[3].toDouble
 			,cmd.param[4].toDouble
@@ -212,7 +212,7 @@ int walk_acc(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_C
 		data.commandData[i].Position=pIn[i]*meter2count;
 	}
 
-	return ret+cmd.param[0].toUInt;
+	return ret+cmd.param[0].toInt;
 }
 int walk_dec(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_CMD &cmd)
 {
@@ -221,7 +221,7 @@ int walk_dec(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT_C
 	double pEE[18];
 
 	unsigned ret = Robots::walk_dec(&robot,count
-			,cmd.param[0].toUInt
+			,cmd.param[0].toInt
 			,iniEE
 			,cmd.param[3].toDouble
 			,cmd.param[4].toDouble
@@ -245,7 +245,7 @@ int walk_const(unsigned count , Aris::RT_CONTROL::CMachineData &data,const ROBOT
 	double pEE[18];
 
 	unsigned ret = Robots::walk_const(&robot,count
-			,cmd.param[0].toUInt
+			,cmd.param[0].toInt
 			,iniEE
 			,cmd.param[3].toDouble
 			,cmd.param[4].toDouble
@@ -392,17 +392,17 @@ int execute_cmd(unsigned count,const ROBOT_CMD &cmd,Aris::RT_CONTROL::CMachineDa
 		ret = home2start2(count,data);
 		break;
 	case MV_FORWARD:
-		if(count<cmd.param[0].toUInt)
+		if(count<cmd.param[0].toInt)
 		{
 			ret=walk_acc(count,data,cmd);
 		}
-		else if( count < (2*cmd.param[9].toUInt-1)*cmd.param[0].toUInt )
+		else if( count < (2*cmd.param[9].toInt-1)*cmd.param[0].toInt )
 		{
-			ret=walk_const((count+cmd.param[0].toUInt)%(2*cmd.param[0].toUInt),data,cmd);
+			ret=walk_const((count+cmd.param[0].toInt)%(2*cmd.param[0].toInt),data,cmd);
 		}
 		else
 		{
-			ret=walk_dec(count%cmd.param[0].toUInt , data , cmd);
+			ret=walk_dec(count%cmd.param[0].toInt , data , cmd);
 		}
 
 		break;
