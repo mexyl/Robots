@@ -10,7 +10,10 @@ namespace Robots
 		unsigned count,
 		unsigned totalCount,
 		const double *iniPee,
-		double d, double h,
+		double d, 
+		double h,
+		double alpha,//平面内直线行走相对于walkAxis的角度
+		double beta,//一个const周期后，机器人相对于upAxis转动的角度
 		const char *walkDirection,
 		const char *upDirection,
 		double *pIn,
@@ -22,7 +25,10 @@ namespace Robots
 		unsigned count,
 		unsigned totalCount,
 		const double *iniPee,
-		double d, double h,
+		double d, 
+		double h,
+		double alpha,//平面内直线行走相对于walkAxis的角度
+		double beta,//一个const周期后，机器人相对于upAxis转动的角度
 		const char *walkDirection,
 		const char *upDirection,
 		double *pIn,
@@ -34,7 +40,10 @@ namespace Robots
 		unsigned count,
 		unsigned totalCount,
 		const double *iniPee,
-		double d, double h,
+		double d, 
+		double h,
+		double alpha,//平面内直线行走相对于walkAxis的角度
+		double beta,//一个const周期后，机器人相对于upAxis转动的角度
 		const char *walkDirection,
 		const char *upDirection,
 		double *pIn,

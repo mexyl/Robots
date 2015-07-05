@@ -95,13 +95,16 @@ int main()
 
 	dsp(pIn, 18, 1);
 
-
+	double d = 0.2;
+	double h = 0.05;
+	double alpha = 0;
+	double beta = 0;
 
 	double pEE_acc[totalCount][18] , pIn_acc[totalCount][18], pBodyEp_acc[totalCount][6];
 
 	for (unsigned i = 0; i < totalCount; ++i)
 	{
-		walk_acc(&rbt, i, totalCount, iniEE, 0.2, 0.05, "x", "z", pIn_acc[i], pEE_acc[i], pBodyEp_acc[i]);
+		walk_acc(&rbt, i, totalCount, iniEE, d, h, alpha, beta, "x", "z", pIn_acc[i], pEE_acc[i], pBodyEp_acc[i]);
 	}
 
 	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_acc.txt", *pIn_acc, totalCount, 18);
@@ -114,7 +117,7 @@ int main()
 
 	for (unsigned i = 0; i < totalCount; ++i)
 	{
-		walk_dec(&rbt, i, totalCount, iniEE, 0.2, 0.05, "x", "z", pIn_dec[i], pEE_dec[i], pBodyEp_dec[i]);
+		walk_dec(&rbt, i, totalCount, iniEE, d, h, alpha, beta, "x", "z", pIn_dec[i], pEE_dec[i], pBodyEp_dec[i]);
 	}
 
 	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_dec.txt", *pIn_dec, totalCount, 18);
@@ -127,7 +130,7 @@ int main()
 	
 	for (unsigned i = 0; i < 2*totalCount; ++i)
 	{
-		walk_const(&rbt, i, totalCount, iniEE, 0.2, 0.05, "x", "z", pIn_const[i], pEE_const[i], pBodyEp_const[i]);
+		walk_const(&rbt, i, totalCount, iniEE, d, h, alpha, beta, "x", "z", pIn_const[i], pEE_const[i], pBodyEp_const[i]);
 	}
 
 	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_const.txt", *pIn_const, 2*totalCount, 18);
