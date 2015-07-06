@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 				return -1;
 			}
 
-			cmd.param[0].toInt=t;
+			cmd.param[0].toUInt=t;
 			i++;
 
 			continue;
@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
 				return -1;
 			}
 
-			cmd.param[9].toInt=n;
+			cmd.param[9].toUInt=n;
 			i++;
 
 			continue;
@@ -192,14 +192,14 @@ int main(int argc, char *argv[])
 	}
 
 	cout<<"forward:"<<endl;
-	cout<<"    total count:   "<<cmd.param[0].toInt<<endl;
+	cout<<"    total count:   "<<cmd.param[0].toUInt<<endl;
 	cout<<"    walk direction:"<<cmd.param[1].toChar<<endl;
 	cout<<"    up direction:  "<<cmd.param[2].toChar<<endl;
 	cout<<"    step d:        "<<cmd.param[3].toDouble<<endl;
 	cout<<"    step h:        "<<cmd.param[4].toDouble<<endl;
 	cout<<"    step alpha:    "<<cmd.param[5].toDouble<<endl;
 	cout<<"    step beta:     "<<cmd.param[6].toDouble<<endl;
-	cout<<"    step number:   "<<cmd.param[9].toInt<<endl;
+	cout<<"    step number:   "<<cmd.param[9].toUInt<<endl;
 
 	Aris::Core::MSG msg(EXECUTE_CMD);
 	msg.CopyStruct(cmd);
