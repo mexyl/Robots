@@ -62,8 +62,8 @@ namespace Robots
 
 			return 0;
 		}
-		else if (!(strcmp(direction, "-x")
-			&& strcmp(direction, "-X")))
+		else if (!(strcmp(direction, "-z")
+			&& strcmp(direction, "-Z")))
 		{
 			axis = 2;
 			sign = -1;
@@ -99,17 +99,17 @@ namespace Robots
 
 		/*求解三个坐标轴及其符号*/
 		unsigned walk_axis, up_axis, side_axis;
-		int walk_sign, up_sign, side_sign;
+		int walk_sign, up_sign, left_sign;
 		find_axis(walkAxis, walk_axis, walk_sign);
 		find_axis(upAxis, up_axis, up_sign);
 		side_axis = 3 - up_axis - walk_axis;
 		if (((3 + walk_axis - up_axis) % 3) == 1)// find left axis sign
 		{
-			side_sign = walk_sign* up_sign;
+			left_sign = walk_sign* up_sign;
 		}
 		else
 		{
-			side_sign = -walk_sign* up_sign;
+			left_sign = -walk_sign* up_sign;
 		}
 
 		/*求解当前在地面坐标系下的初始位置*/
@@ -121,14 +121,14 @@ namespace Robots
 		/*设置移动腿*/
 		for (unsigned i = 0; i < 18; i += 6)
 		{
-			pEE[i + walk_axis] = walk_sign*(0.5*d / cos(beta / 2)*cos(beta / 4)*(1 - cos(s)) / 2
+			pEE[i + walk_axis] = walk_sign*(0.5*d / cos(beta / 2)*cos(alpha - beta / 4)*(1 - cos(s)) / 2
 				+ walk_sign*beginPos[i + walk_axis] * cos((1 - cos(s)) / 4 * beta)
-				- side_sign*beginPos[i + side_axis] * sin((1 - cos(s)) / 4 * beta));
+				- left_sign*beginPos[i + side_axis] * sin((1 - cos(s)) / 4 * beta));
 			pEE[i + up_axis] = up_sign*h*sin(s)
 				+ beginPos[i + up_axis];
-			pEE[i + side_axis] = side_sign*(-0.5*d / cos(beta / 2)*sin(beta / 4)*(1 - cos(s)) / 2
+			pEE[i + side_axis] = left_sign*(0.5*d / cos(beta / 2)*sin(alpha - beta / 4)*(1 - cos(s)) / 2
 				+ walk_sign*beginPos[i + walk_axis] * sin((1 - cos(s)) / 4 * beta)
-				+ side_sign*beginPos[i + side_axis] * cos((1 - cos(s)) / 4 * beta));
+				+ left_sign*beginPos[i + side_axis] * cos((1 - cos(s)) / 4 * beta));
 		}
 
 		/*设置支撑腿*/
@@ -152,9 +152,9 @@ namespace Robots
 
 		memcpy(pBodyEp, ep, sizeof(double) * 6);
 
-		pBodyEp[3 + walk_axis] = walk_sign*0.25*d / cos(beta / 2)*cos(beta / 4)*(acc_even(totalCount, count + 1));
+		pBodyEp[3 + walk_axis] = walk_sign*0.25*d / cos(beta / 2)*cos(alpha - beta / 4)*(acc_even(totalCount, count + 1));
 		pBodyEp[3 + up_axis] = 0;
-		pBodyEp[3 + side_axis] = -side_sign*0.25*d / cos(beta / 2)*sin(beta / 4)*(acc_even(totalCount, count + 1));
+		pBodyEp[3 + side_axis] = left_sign*0.25*d / cos(beta / 2)*sin(alpha - beta / 4)*(acc_even(totalCount, count + 1));
 
 
 		pRobot->SetPee(pEE,pBodyEp);
@@ -185,17 +185,17 @@ namespace Robots
 
 		/*求解三个坐标轴及其符号*/
 		unsigned walk_axis, up_axis, side_axis;
-		int walk_sign, up_sign, side_sign;
+		int walk_sign, up_sign, left_sign;
 		find_axis(walkAxis, walk_axis, walk_sign);
 		find_axis(upAxis, up_axis, up_sign);
 		side_axis = 3 - up_axis - walk_axis;
 		if (((3 + walk_axis - up_axis) % 3) == 1)
 		{
-			side_sign = walk_sign* up_sign;
+			left_sign = walk_sign* up_sign;
 		}
 		else
 		{
-			side_sign = -walk_sign* up_sign;
+			left_sign = -walk_sign* up_sign;
 		}
 
 		
@@ -205,14 +205,14 @@ namespace Robots
 		memcpy(beginPos, iniPee, sizeof(beginPos));
 		for (unsigned i = 0; i < 18; i += 6)
 		{
-			beginPos[i + walk_axis] = walk_sign*(0.5*d / cos(beta / 2)*cos(beta / 4)
+			beginPos[i + walk_axis] = walk_sign*(0.5*d / cos(beta / 2)*cos(alpha - beta / 4)
 				+ walk_sign*iniPee[i + walk_axis] * cos(beta / 2)
-				- side_sign*iniPee[i + side_axis] * sin(beta / 2));
+				- left_sign*iniPee[i + side_axis] * sin(beta / 2));
 			beginPos[i + up_axis] =
 				+ iniPee[i + up_axis];
-			beginPos[i + side_axis] = side_sign*(-0.5*d / cos(beta / 2)*sin(beta / 4)
+			beginPos[i + side_axis] = left_sign*(0.5*d / cos(beta / 2)*sin(alpha - beta / 4)
 				+ walk_sign*iniPee[i + walk_axis] * sin(beta / 2)
-				+ side_sign*iniPee[i + side_axis] * cos(beta / 2));
+				+ left_sign*iniPee[i + side_axis] * cos(beta / 2));
 		}
 
 
@@ -221,14 +221,14 @@ namespace Robots
 		/*设置移动腿*/
 		for (unsigned i = 3; i < 18; i += 6)
 		{
-			pEE[i + walk_axis] = walk_sign*(0.5*d / cos(beta / 2)*cos(beta / 4)*(1 - cos(s)) / 2
+			pEE[i + walk_axis] = walk_sign*(0.5*d / cos(beta / 2)*cos(alpha - beta / 4)*(1 - cos(s)) / 2
 				+ walk_sign*beginPos[i + walk_axis] * cos((1 - cos(s)) / 4 * beta)
-				- side_sign*beginPos[i + side_axis] * sin((1 - cos(s)) / 4 * beta));
+				- left_sign*beginPos[i + side_axis] * sin((1 - cos(s)) / 4 * beta));
 			pEE[i + up_axis] = up_sign*h*sin(s)
 				+ beginPos[i + up_axis];
-			pEE[i + side_axis] = side_sign*(-0.5*d / cos(beta / 2)*sin(beta / 4)*(1 - cos(s)) / 2
+			pEE[i + side_axis] = left_sign*(0.5*d / cos(beta / 2)*sin(alpha - beta / 4)*(1 - cos(s)) / 2
 				+ walk_sign*beginPos[i + walk_axis] * sin((1 - cos(s)) / 4 * beta)
-				+ side_sign*beginPos[i + side_axis] * cos((1 - cos(s)) / 4 * beta));
+				+ left_sign*beginPos[i + side_axis] * cos((1 - cos(s)) / 4 * beta));
 		}
 
 		/*设置支撑腿*/
@@ -251,9 +251,9 @@ namespace Robots
 
 		memcpy(pBodyEp, ep, sizeof(double) * 6);
 
-		pBodyEp[3 + walk_axis] = walk_sign*0.25*d / cos(beta / 2)*cos(beta / 4)*(dec_even(totalCount, count + 1) + 1);
+		pBodyEp[3 + walk_axis] = walk_sign*0.25*d / cos(beta / 2)*cos(alpha - beta / 4)*(dec_even(totalCount, count + 1) + 1);
 		pBodyEp[3 + up_axis] = 0;
-		pBodyEp[3 + side_axis] = -side_sign*0.25*d / cos(beta / 2)*sin(beta / 4)*(dec_even(totalCount, count + 1) + 1);
+		pBodyEp[3 + side_axis] = left_sign*0.25*d / cos(beta / 2)*sin(alpha - beta / 4)*(dec_even(totalCount, count + 1) + 1);
 
 
 
@@ -288,8 +288,6 @@ namespace Robots
 		double *pEE,
 		double *pBodyEp)
 	{
-		
-		
 		/*此时totalCount为半个周期，它应等于acc中的totalCount*/
 		memset(pBodyEp, 0, sizeof(double) * 6);
 		memset(pIn, 0, sizeof(double) * 18);
@@ -297,17 +295,17 @@ namespace Robots
 
 		/*求解三个坐标轴及其符号*/
 		unsigned walk_axis, up_axis, side_axis;
-		int walk_sign, up_sign, side_sign;
+		int walk_sign, up_sign, left_sign;
 		find_axis(walkAxis, walk_axis, walk_sign);
 		find_axis(upAxis, up_axis, up_sign);
 		side_axis = 3 - up_axis - walk_axis;
 		if (((3 + walk_axis - up_axis) % 3) == 1)
 		{
-			side_sign = walk_sign* up_sign;
+			left_sign = walk_sign* up_sign;
 		}
 		else
 		{
-			side_sign = -walk_sign* up_sign;
+			left_sign = -walk_sign* up_sign;
 		}
 
 		/*求解当前在地面坐标系下的初始位置*/
@@ -316,26 +314,26 @@ namespace Robots
 		/*这是上一轮的移动腿，也就是马上支撑的腿*/
 		for (unsigned i = 0; i < 18; i += 6)
 		{
-			beginPos[i + walk_axis] = walk_sign*(0.25*d / cos(beta / 2)*cos(beta / 2)
+			beginPos[i + walk_axis] = walk_sign*(0.25*d / cos(beta / 2)*cos(alpha - beta / 2)
 				+ walk_sign*iniPee[i + walk_axis] * cos(beta / 4)
-				- side_sign*iniPee[i + side_axis] * sin(beta / 4));
+				- left_sign*iniPee[i + side_axis] * sin(beta / 4));
 			beginPos[i + up_axis] =
 				+ iniPee[i + up_axis];
-			beginPos[i + side_axis] = side_sign*(-0.25*d / cos(beta / 2)*sin(beta / 2)
+			beginPos[i + side_axis] = left_sign*(0.25*d / cos(beta / 2)*sin(alpha - beta / 2)
 				+ walk_sign*iniPee[i + walk_axis] * sin(beta / 4)
-				+ side_sign*iniPee[i + side_axis] * cos(beta / 4));
+				+ left_sign*iniPee[i + side_axis] * cos(beta / 4));
 		}
 		/*这是上一轮的支撑腿，也就是马上移动的腿*/
 		for (unsigned i = 3; i < 18; i += 6)
 		{
-			beginPos[i + walk_axis] = walk_sign*(-0.25*d / cos(beta / 2)*cos(beta / 2)
+			beginPos[i + walk_axis] = walk_sign*(-0.25*d / cos(beta / 2)*cos(alpha - beta / 2)
 				+ walk_sign*iniPee[i + walk_axis] * cos(beta / 4)
-				+ side_sign*iniPee[i + side_axis] * sin(beta / 4));
+				+ left_sign*iniPee[i + side_axis] * sin(beta / 4));
 			beginPos[i + up_axis] =
 				+iniPee[i + up_axis];
-			beginPos[i + side_axis] = side_sign*(0.25*d / cos(beta / 2)*sin(beta / 2)
+			beginPos[i + side_axis] = left_sign*(-0.25*d / cos(beta / 2)*sin(alpha - beta / 2)
 				- walk_sign*iniPee[i + walk_axis] * sin(beta / 4)
-				+ side_sign*iniPee[i + side_axis] * cos(beta / 4));
+				+ left_sign*iniPee[i + side_axis] * cos(beta / 4));
 		}
 
 		if (count < totalCount)
@@ -355,14 +353,14 @@ namespace Robots
 			/*设置移动腿*/
 			for (unsigned i = 3; i < 18; i += 6)
 			{
-				pEE[i + walk_axis] = walk_sign*(-(d / 2)*cos(s) + d / 2
+				pEE[i + walk_axis] = walk_sign*((-(d / 2)*cos(s) + d / 2) * cos(alpha)
 					+ walk_sign*beginPos[i + walk_axis] * cos((1 - cos(s)) / 2 * beta)
-					- side_sign*beginPos[i + side_axis] * sin((1 - cos(s)) / 2 * beta));
+					- left_sign*beginPos[i + side_axis] * sin((1 - cos(s)) / 2 * beta));
 				pEE[i + up_axis] = up_sign*h*sin(s)
 					+ beginPos[i + up_axis];
-				pEE[i + side_axis] = side_sign*(
+				pEE[i + side_axis] = left_sign*((-(d / 2)*cos(s) + d / 2) * sin(alpha)
 					+ walk_sign*beginPos[i + walk_axis] * sin((1 - cos(s)) / 2 * beta)
-					+ side_sign*beginPos[i + side_axis] * cos((1 - cos(s)) / 2 * beta));
+					+ left_sign*beginPos[i + side_axis] * cos((1 - cos(s)) / 2 * beta));
 			}
 		}
 		else
@@ -370,14 +368,14 @@ namespace Robots
 			/*设置支撑腿*/
 			for (unsigned i = 3; i < 18; i += 6)
 			{
-				pEE[i + walk_axis] = walk_sign * (d
+				pEE[i + walk_axis] = walk_sign * (d * cos(alpha)
 					+ walk_sign*beginPos[i + walk_axis] * cos(beta)
-					- side_sign*beginPos[i + side_axis] * sin(beta));
+					- left_sign*beginPos[i + side_axis] * sin(beta));
 				pEE[i + up_axis] =
 					+ beginPos[i + up_axis];
-				pEE[i + side_axis] = side_sign * (
+				pEE[i + side_axis] = left_sign * (d * sin(alpha)
 					+ walk_sign*beginPos[i + walk_axis] * sin(beta)
-					+ side_sign*beginPos[i + side_axis] * cos(beta));
+					+ left_sign*beginPos[i + side_axis] * cos(beta));
 			}
 
 			double s = -(PI / 2)*cos(PI * (count + 1 - totalCount) / totalCount) + PI / 2;
@@ -385,14 +383,14 @@ namespace Robots
 			/*设置移动腿*/
 			for (unsigned i = 0; i < 18; i += 6)
 			{
-				pEE[i + walk_axis] = walk_sign*(-(d / 2)*cos(s) + d / 2
+				pEE[i + walk_axis] = walk_sign*((-(d / 2)*cos(s) + d / 2)*cos(alpha)
 					+ walk_sign*beginPos[i + walk_axis] * cos((1 - cos(s)) / 2 * beta)
-					- side_sign*beginPos[i + side_axis] * sin((1 - cos(s)) / 2 * beta));
+					- left_sign*beginPos[i + side_axis] * sin((1 - cos(s)) / 2 * beta));
 				pEE[i + up_axis] = up_sign*h*sin(s)
 					+ beginPos[i + up_axis];
-				pEE[i + side_axis] = side_sign*(
+				pEE[i + side_axis] = left_sign*((-(d / 2)*cos(s) + d / 2)*sin(alpha)
 					+ walk_sign*beginPos[i + walk_axis] * sin((1 - cos(s)) / 2 * beta)
-					+ side_sign*beginPos[i + side_axis] * cos((1 - cos(s)) / 2 * beta));
+					+ left_sign*beginPos[i + side_axis] * cos((1 - cos(s)) / 2 * beta));
 			}
 		}
 		
@@ -408,9 +406,9 @@ namespace Robots
 
 		memcpy(pBodyEp, ep, sizeof(double) * 6);
 
-		pBodyEp[3 + walk_axis] = walk_sign*d*(t / T);
+		pBodyEp[3 + walk_axis] = walk_sign*(d*(t / T)*cos(alpha) + tan(beta / 2)*d*t / T*(1 - t / T)*sin(alpha));
 		pBodyEp[3 + up_axis] = 0;
-		pBodyEp[3 + side_axis] = -side_sign*(tan(beta / 2)*d*t / T*(1 - t / T));
+		pBodyEp[3 + side_axis] = left_sign*(d*(t / T)*sin(alpha) - tan(beta / 2)*d*t / T*(1 - t / T)*cos(alpha));
 
 		
 

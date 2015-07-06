@@ -65,12 +65,34 @@ int initFun(Aris::RT_CONTROL::CSysInitParameters& param)
 	return 0;
 };
 
-int tg(Aris::RT_CONTROL::CMachineData& machineData,Aris::RT_CONTROL::RT_MSG& msg)
+int tg(Aris::RT_CONTROL::CMachineData& machineData,Aris::Core::RT_MSG& msgRecv,Aris::Core::RT_MSG& msgSend)
 {
-	// for(int i = 0; i < 3; i++)
-	// rt_printf("Linear Acc[%d] = %.3lf   ", machineData.IMUData.LinearAccleration[i]);
-	// rt_printf("\n");
+	static int tg_count;
+	tg_count++;
+	if(tg_count%1000==0)
+	{
+ 		    msgSend.SetMsgID(RT_Data_Received);
 
+	    	msgSend.SetLength(sizeof(int)*18*5);
+	    	//states , mode, pos, vel, current
+
+	    	for(int i=0;i<18;i++)
+	    	{
+	    		msgSend.CopyAt(&machineData.motorsStates[i],sizeof(int),i*5);
+	    		msgSend.CopyAt(&machineData.motorsModesDisplay[i],sizeof(int),i*5+1);
+		    	msgSend.CopyAt(&machineData.feedbackData[0].Position,sizeof(int),i*5+2);
+		    	msgSend.CopyAt(&machineData.feedbackData[0].Position,sizeof(int),i*5+3);
+		    	msgSend.CopyAt(&machineData.feedbackData[0].Position,sizeof(int),i*5+4);
+	    	}
+
+
+		 //     rt_printf("ty give msg id %d data length %d \n",msgSend.GetMsgID(),msgSend.GetLength());
+ 		//  rt_machine_msg.SetMsgID(1000);
+		//  rt_machine_msg.Copy(&machineData,sizeof(machineData));
+
+	         cs.RT_PostMsg(msgSend);
+	}
+ 
 	const int MapAbsToPhy[18]=
 	{
 			10,	11,	9,
@@ -92,7 +114,7 @@ int tg(Aris::RT_CONTROL::CMachineData& machineData,Aris::RT_CONTROL::RT_MSG& msg
 
  	int CommandID;
 
-	 CommandID=msg.GetMsgID();
+	 CommandID=msgRecv.GetMsgID();
  	switch(CommandID)
 	{
 	case NOCMD:
@@ -496,34 +518,26 @@ int OnGetControlCommand(Aris::Core::MSG &msg)
     return CommandID;
 
 };
-//static int driverIDs[18]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
+
+
+int On_RT_DataReceived(Aris::Core::MSG &data)
+{
+	if(Is_CS_Connected==true)
+	{
+	    printf("Sending data to client,data length: %d\n",data.GetLength());
+		ControlSystem.SendData(data);
+	}
+}
+ 
 
 int main(int argc, char** argv)
-{	/*	cout<<"sizeof double:"<< sizeof(double)<<endl;
-cout<<"foot_pos:"<<endl;
-cout<<foot_pos[0]<<"  "<<foot_pos[1]<<"  "<<foot_pos[2]<<endl;
-cout<<foot_pos[3]<<"  "<<foot_pos[4]<<"  "<<foot_pos[5]<<endl;
-cout<<foot_pos[6]<<"  "<<foot_pos[7]<<"  "<<foot_pos[8]<<endl;
-cout<<foot_pos[9]<<"  "<<foot_pos[10]<<"  "<<foot_pos[11]<<endl;
-cout<<foot_pos[12]<<"  "<<foot_pos[13]<<"  "<<foot_pos[14]<<endl;
-cout<<foot_pos[15]<<"  "<<foot_pos[16]<<"  "<<foot_pos[17]<<endl;
-
-cout<<"body pos:"<<endl;
-cout<<body_pos[0]<<"  "<<body_pos[1]<<"  "<<body_pos[2]<<endl;
-cout<<body_pos[3]<<"  "<<body_pos[4]<<"  "<<body_pos[5]<<endl;
-
-cout<<"screw_pos:"<<endl;
-cout<<screw_pos[0]<<"  "<<screw_pos[1]<<"  "<<screw_pos[2]<<endl;
-cout<<screw_pos[3]<<"  "<<screw_pos[4]<<"  "<<screw_pos[5]<<endl;
-cout<<screw_pos[6]<<"  "<<screw_pos[7]<<"  "<<screw_pos[8]<<endl;
-cout<<screw_pos[9]<<"  "<<screw_pos[10]<<"  "<<screw_pos[11]<<endl;
-cout<<screw_pos[12]<<"  "<<screw_pos[13]<<"  "<<screw_pos[14]<<endl;
-cout<<screw_pos[15]<<"  "<<screw_pos[16]<<"  "<<screw_pos[17]<<endl;*/
+{ 
 
     Aris::Core::RegisterMsgCallback(CS_Connected,On_CS_Connected);
     Aris::Core::RegisterMsgCallback(CS_CMD_Received,On_CS_CMD_Received);
     Aris::Core::RegisterMsgCallback(CS_Lost,On_CS_Lost);
     Aris::Core::RegisterMsgCallback(GetControlCommand,OnGetControlCommand);
+    Aris::Core::RegisterMsgCallback(RT_Data_Received,On_RT_DataReceived);
 
 //   CONN call back
 	/*设置所有CONN类型的回调函数*/
