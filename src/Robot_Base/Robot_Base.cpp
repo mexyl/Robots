@@ -443,7 +443,7 @@ namespace Robots
 	{
 		if (bodyep != nullptr)
 		{
-			s_ep2pm(bodyep, pBodyPm);
+			s_pe2pm(bodyep, pBodyPm);
 		}
 
 		if (pEE != nullptr)
@@ -460,7 +460,7 @@ namespace Robots
 	{
 		if (bodyep != nullptr)
 		{
-			s_ep2pm(bodyep, pBodyPm);
+			s_pe2pm(bodyep, pBodyPm);
 		}
 
 		if (pIn != nullptr)

@@ -91,9 +91,9 @@ namespace Robots
 		const char *upAxis,
 		double *pIn, 
 		double *pEE, 
-		double *pBodyEp)
+		double *pBodyPE)
 	{
-		memset(pBodyEp, 0, sizeof(double) * 6);
+		memset(pBodyPE, 0, sizeof(double) * 6);
 		memset(pIn, 0, sizeof(double) * 18);
 		memcpy(pEE, iniPee, sizeof(double) * 18);
 
@@ -144,22 +144,22 @@ namespace Robots
 		double t = count + 1;
 		double T = totalCount * 2;
 
-		double ap[6] = { 0 }, ep[6] = { 0 };
+		double pr[6] = { 0 }, pe[6] = { 0 };
 		double pm[4][4];
-		ap[up_axis] = up_sign*beta / 4 * acc_even(totalCount,count + 1);
-		s_ap2pm(ap, *pm);
-		s_pm2ep(*pm, ep);
+		pr[up_axis + 3] = up_sign*beta / 4 * acc_even(totalCount, count + 1);
+		s_pr2pm(pr, *pm);
+		s_pm2pe(*pm, pe);
 
-		memcpy(pBodyEp, ep, sizeof(double) * 6);
+		memcpy(pBodyPE, pe, sizeof(double) * 6);
 
-		pBodyEp[3 + walk_axis] = walk_sign*0.25*d / cos(beta / 2)*cos(alpha - beta / 4)*(acc_even(totalCount, count + 1));
-		pBodyEp[3 + up_axis] = 0;
-		pBodyEp[3 + side_axis] = left_sign*0.25*d / cos(beta / 2)*sin(alpha - beta / 4)*(acc_even(totalCount, count + 1));
+		pBodyPE[walk_axis] = walk_sign*0.25*d / cos(beta / 2)*cos(alpha - beta / 4)*(acc_even(totalCount, count + 1));
+		pBodyPE[up_axis] = 0;
+		pBodyPE[side_axis] = left_sign*0.25*d / cos(beta / 2)*sin(alpha - beta / 4)*(acc_even(totalCount, count + 1));
 
 
-		pRobot->SetPee(pEE,pBodyEp);
-		pRobot->GetPee(pEE, "B");
-		//pRobot->GetPin(pIn);
+		pRobot->SetPee(pEE, pBodyPE);
+		//pRobot->GetPee(pEE, "B");
+		pRobot->GetPin(pIn);
 
 		return totalCount - count - 1;
 	}
@@ -177,9 +177,9 @@ namespace Robots
 		const char *upAxis,
 		double *pIn,
 		double *pEE,
-		double *pBodyEp)
+		double *pBodyPE)
 	{
-		memset(pBodyEp, 0, sizeof(double) * 6);
+		memset(pBodyPE, 0, sizeof(double) * 6);
 		memset(pIn, 0, sizeof(double) * 18);
 		memcpy(pEE, iniPee, sizeof(double) * 18);
 
@@ -243,17 +243,17 @@ namespace Robots
 		double t = count + 1;
 		double T = totalCount * 2;
 
-		double ap[6] = { 0 }, ep[6];
+		double pr[6] = { 0 }, pe[6];
 		double pm[4][4];
-		ap[up_axis] = up_sign*(beta / 4 * (dec_even(totalCount, count + 1) + 1));
-		s_ap2pm(ap, *pm);
-		s_pm2ep(*pm, ep);
+		pr[up_axis+3] = up_sign*(beta / 4 * (dec_even(totalCount, count + 1) + 1));
+		s_pr2pm(pr, *pm);
+		s_pm2pe(*pm, pe);
 
-		memcpy(pBodyEp, ep, sizeof(double) * 6);
+		memcpy(pBodyPE, pe, sizeof(double) * 6);
 
-		pBodyEp[3 + walk_axis] = walk_sign*0.25*d / cos(beta / 2)*cos(alpha - beta / 4)*(dec_even(totalCount, count + 1) + 1);
-		pBodyEp[3 + up_axis] = 0;
-		pBodyEp[3 + side_axis] = left_sign*0.25*d / cos(beta / 2)*sin(alpha - beta / 4)*(dec_even(totalCount, count + 1) + 1);
+		pBodyPE[walk_axis] = walk_sign*0.25*d / cos(beta / 2)*cos(alpha - beta / 4)*(dec_even(totalCount, count + 1) + 1);
+		pBodyPE[up_axis] = 0;
+		pBodyPE[side_axis] = left_sign*0.25*d / cos(beta / 2)*sin(alpha - beta / 4)*(dec_even(totalCount, count + 1) + 1);
 
 
 
@@ -266,9 +266,9 @@ namespace Robots
 
 
 		/*向外复制*/
-		pRobot->SetPee(pEE, pBodyEp);
-		pRobot->GetPee(pEE, "B");
-		//pRobot->GetPin(pIn);
+		pRobot->SetPee(pEE, pBodyPE);
+		//pRobot->GetPee(pEE, "B");
+		pRobot->GetPin(pIn);
 
 		return totalCount - count - 1;
 	}
@@ -286,10 +286,10 @@ namespace Robots
 		const char *upAxis,
 		double *pIn,
 		double *pEE,
-		double *pBodyEp)
+		double *pBodyPE)
 	{
 		/*此时totalCount为半个周期，它应等于acc中的totalCount*/
-		memset(pBodyEp, 0, sizeof(double) * 6);
+		memset(pBodyPE, 0, sizeof(double) * 6);
 		memset(pIn, 0, sizeof(double) * 18);
 		memcpy(pEE, iniPee, sizeof(double) * 18);
 
@@ -398,17 +398,17 @@ namespace Robots
 		double t = count + 1;
 		double T = totalCount * 2;
 
-		double ap[6] = { 0 }, ep[6];
+		double pr[6] = { 0 }, pe[6];
 		double pm[4][4];
-		ap[up_axis] = up_sign*beta*(count+1)/totalCount/2;
-		s_ap2pm(ap, *pm);
-		s_pm2ep(*pm, ep);
+		pr[up_axis+3] = up_sign*beta*(count+1)/totalCount/2;
+		s_pr2pm(pr, *pm);
+		s_pm2pe(*pm, pe);
 
-		memcpy(pBodyEp, ep, sizeof(double) * 6);
+		memcpy(pBodyPE, pe, sizeof(double) * 6);
 
-		pBodyEp[3 + walk_axis] = walk_sign*(d*(t / T)*cos(alpha) + tan(beta / 2)*d*t / T*(1 - t / T)*sin(alpha));
-		pBodyEp[3 + up_axis] = 0;
-		pBodyEp[3 + side_axis] = left_sign*(d*(t / T)*sin(alpha) - tan(beta / 2)*d*t / T*(1 - t / T)*cos(alpha));
+		pBodyPE[walk_axis] = walk_sign*(d*(t / T)*cos(alpha) + tan(beta / 2)*d*t / T*(1 - t / T)*sin(alpha));
+		pBodyPE[up_axis] = 0;
+		pBodyPE[side_axis] = left_sign*(d*(t / T)*sin(alpha) - tan(beta / 2)*d*t / T*(1 - t / T)*cos(alpha));
 
 		
 
@@ -417,13 +417,61 @@ namespace Robots
 
 
 
-		pRobot->SetPee(pEE, pBodyEp);
+		pRobot->SetPee(pEE, pBodyPE);
 		pRobot->GetPee(pEE, "B");
-		//pRobot->GetPin(pIn);
+		pRobot->GetPin(pIn);
 
 		return 2 * totalCount - count - 1;
 	}
 	
+	int move(
+		ROBOT_BASE *pRobot,
+		unsigned count,
+		unsigned totalCount,
+		const double *moveDirection,
+		const double *beginPee,
+		const double *beginBodyEp,
+		const double *beginBodyVel,
+		const double *endPee,
+		const double *endBodyEp,
+		const double *endBodyVel,
+		double h,
+		int upAxis,
+		double *pIn,
+		double *pEE,
+		double *pBodyEp)
+	{
+
+
+		return totalCount - count + 1;
+	}
+
+	int moveLeg(
+		ROBOT_BASE *pRobot,
+		unsigned count,
+		unsigned totalCount,
+		const double *beginPee,
+		const double *beginBodyEp,
+		const double *endPee,
+		const unsigned *legID,
+		int upAxis,
+		double *pIn,
+		double *pEE,
+		double *pBodyEp)
+	{
+		
+		
+		
+		
+		return totalCount - count + 1;
+	}
+
+
+
+
+
+
+
 	int home2start(
 		ROBOT_BASE *pRobot,
 		unsigned count,

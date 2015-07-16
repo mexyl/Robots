@@ -12,7 +12,7 @@ namespace Robots
 		const double *iniPee,
 		double d, 
 		double h,
-		double alpha,//平面内直线行走相对于walkAxis的角度
+		double alpha,//平面内直线行走相对于walkAxis绕upAxis转动的角度
 		double beta,//一个const周期后，机器人相对于upAxis转动的角度
 		const char *walkDirection,
 		const char *upDirection,
@@ -29,8 +29,8 @@ namespace Robots
 		double h,
 		double alpha,//平面内直线行走相对于walkAxis的角度
 		double beta,//一个const周期后，机器人相对于upAxis转动的角度
-		const char *walkDirection,
-		const char *upDirection,
+		const char *walkAxis,
+		const char *upAxis,
 		double *pIn,
 		double *pEE,
 		double *pBodyEp);
@@ -44,8 +44,24 @@ namespace Robots
 		double h,
 		double alpha,//平面内直线行走相对于walkAxis的角度
 		double beta,//一个const周期后，机器人相对于upAxis转动的角度
-		const char *walkDirection,
-		const char *upDirection,
+		const char *walkAxis,
+		const char *upAxis,
+		double *pIn,
+		double *pEE,
+		double *pBodyEp);
+
+	int move(
+		ROBOT_BASE *pRobot,
+		unsigned count,
+		unsigned totalCount,
+		const double *beginPee,
+		const double *beginBodyEp,
+		const double *beginBodyVel,
+		const double *endPee,
+		const double *endBodyEp,
+		const double *endBodyVel,
+		double h,
+		int upAxis,
 		double *pIn,
 		double *pEE,
 		double *pBodyEp);

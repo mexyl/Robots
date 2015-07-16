@@ -54,15 +54,18 @@ int main()
 
 		ROBOT_CMD cmd;
 
-		msg.PasteAt(&cmd.param[0].toUInt,sizeof(unsigned),0);
-		msg.PasteAt(&cmd.param[1].toChar,8,4);
-		msg.PasteAt(&cmd.param[2].toChar,8,12);
-		msg.PasteAt(&cmd.param[3].toDouble,sizeof(double),20);
-		msg.PasteAt(&cmd.param[4].toDouble,sizeof(double),28);
-		msg.PasteAt(&cmd.param[5].toDouble,sizeof(double),36);
-		msg.PasteAt(&cmd.param[6].toDouble,sizeof(double),44);
-		msg.PasteAt(&cmd.param[9].toUInt,sizeof(unsigned),52);
+		msg.PasteAt(&cmd.id,sizeof(int),0);
 
+		msg.PasteAt(&cmd.param[0].toUInt,sizeof(unsigned),4);
+		msg.PasteAt(&cmd.param[1].toChar,8,8);
+		msg.PasteAt(&cmd.param[2].toChar,8,16);
+		msg.PasteAt(&cmd.param[3].toDouble,sizeof(double),24);
+		msg.PasteAt(&cmd.param[4].toDouble,sizeof(double),32);
+		msg.PasteAt(&cmd.param[5].toDouble,sizeof(double),40);
+		msg.PasteAt(&cmd.param[6].toDouble,sizeof(double),48);
+		msg.PasteAt(&cmd.param[9].toUInt,sizeof(unsigned),56);
+
+		cout<<"cmd:   "<<cmd.id<<endl;
 		cout<<"    total count:   "<<cmd.param[0].toUInt<<endl;
 		cout<<"    walk direction:"<<cmd.param[1].toChar<<endl;
 		cout<<"    up direction:  "<<cmd.param[2].toChar<<endl;
@@ -72,13 +75,15 @@ int main()
 		cout<<"    step beta:     "<<cmd.param[6].toDouble<<endl;
 		cout<<"    step number:   "<<cmd.param[9].toUInt<<endl;
 
-		msg.SetMsgID(EXECUTE_CMD);
+
+		if((cmd.id>=0)&&(cmd.id<=6))
+			msg.SetMsgID(EXECUTE_CMD);
 
 
 
 
 
-			//cs.NRT_PostMsg(msg);
+		cs.NRT_PostMsg(msg);
 		return 0;
 	});
 	control_interface.SetCallBackOnLoseConnection([](Aris::Core::CONN *pConn)

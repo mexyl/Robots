@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
 	msg.CopyStruct(cmd);
 
 	Aris::Core::CONN c;
-	c.Connect("127.0.0.1","5866");
+	c.Connect("192.168.0.104","5866");
 	c.SendRequest(msg);
 
 	return 0;

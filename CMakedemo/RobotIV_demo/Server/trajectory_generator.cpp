@@ -314,6 +314,77 @@ int home2start1(unsigned count , Aris::RT_CONTROL::CMachineData &data)
 
 	return period1 + period2 - count -1;
 }
+
+int home2start(unsigned count , Aris::RT_CONTROL::CMachineData &data)
+{
+	const unsigned period1 = 1000;
+	const unsigned period2 = 3000;
+
+	double pBodyEp[6];
+	double pIn[18];
+	double pEE[18];
+
+	memset(pBodyEp, 0, sizeof(double) * 6);
+	memset(pIn, 0, sizeof(double) * 18);
+	memcpy(pEE, homeEE, sizeof(double) * 18);
+
+	double locHeight = -0.55;
+
+
+	if (count < period1)
+	{
+		double alpha = -(PI / 2)*cos(PI * (count + 1) / period1) + PI / 2;//0 to PI,cos(alpha)is 1 to -1
+
+		pEE[0] = homeEE[0] * (cos(alpha) + 1) / 2 - iniEE[0] * (cos(alpha) - 1) / 2;
+		pEE[6] = homeEE[6] * (cos(alpha) + 1) / 2 - iniEE[6] * (cos(alpha) - 1) / 2;
+		pEE[12] = homeEE[12] * (cos(alpha) + 1) / 2 - iniEE[12] * (cos(alpha) - 1) / 2;
+
+		pEE[2] = homeEE[2] * (cos(alpha) + 1) / 2 - locHeight * (cos(alpha) - 1) / 2;
+		pEE[8] = homeEE[8] * (cos(alpha) + 1) / 2 - locHeight * (cos(alpha) - 1) / 2;
+		pEE[14] = homeEE[14] * (cos(alpha) + 1) / 2 - locHeight * (cos(alpha) - 1) / 2;
+
+		pEE[3] = homeEE[3] * (cos(alpha) + 1) / 2 - iniEE[3] * (cos(alpha) - 1) / 2;
+		pEE[9] = homeEE[9] * (cos(alpha) + 1) / 2 - iniEE[9] * (cos(alpha) - 1) / 2;
+		pEE[15] = homeEE[15] * (cos(alpha) + 1) / 2 - iniEE[15] * (cos(alpha) - 1) / 2;
+
+		pEE[5] = homeEE[5] * (cos(alpha) + 1) / 2 - locHeight * (cos(alpha) - 1) / 2;
+		pEE[11] = homeEE[11] * (cos(alpha) + 1) / 2 - locHeight * (cos(alpha) - 1) / 2;
+		pEE[17] = homeEE[17] * (cos(alpha) + 1) / 2 - locHeight * (cos(alpha) - 1) / 2;
+	}
+	else
+	{
+		double alpha = -(PI / 2)*cos(PI * (count + 1 - period1) / period2) + PI / 2;//0 to PI,cos(alpha)is 1 to -1
+		pEE[3] = iniEE[3];
+		pEE[9] = iniEE[9];
+		pEE[15] = iniEE[15];
+
+		pEE[5] = locHeight * (cos(alpha) + 1) / 2 - iniEE[5] * (cos(alpha) - 1) / 2;
+		pEE[11] = locHeight * (cos(alpha) + 1) / 2 - iniEE[11] * (cos(alpha) - 1) / 2;
+		pEE[17] = locHeight * (cos(alpha) + 1) / 2 - iniEE[17] * (cos(alpha) - 1) / 2;
+
+		pEE[0] = iniEE[0];
+		pEE[6] = iniEE[6];
+		pEE[12] = iniEE[12];
+
+		pEE[2] = locHeight * (cos(alpha) + 1) / 2 - iniEE[2] * (cos(alpha) - 1) / 2;
+		pEE[8] = locHeight * (cos(alpha) + 1) / 2 - iniEE[8] * (cos(alpha) - 1) / 2;
+		pEE[14] = locHeight * (cos(alpha) + 1) / 2 - iniEE[14] * (cos(alpha) - 1) / 2;
+	}
+
+	robot.SetPee(pEE, pBodyEp);
+	robot.GetPin(pIn);
+
+	for(unsigned i=0;i<18;++i)
+		{
+			data.motorsCommands[i]=Aris::RT_CONTROL::EMCMD_RUNNING;
+			data.commandData[i].Position=pIn[i]*meter2count;
+		}
+
+	return period1 + period2 - count - 1;
+}
+
+
+
 int home2start2(unsigned count , Aris::RT_CONTROL::CMachineData &data)
 {
 	static unsigned homeMotors[9]={3,4,5,9,10,11,15,16,17};
@@ -386,7 +457,7 @@ int execute_cmd(unsigned count,const ROBOT_CMD &cmd,Aris::RT_CONTROL::CMachineDa
 		ret = home2(count,data);
 		break;
 	case HOME2START_1:
-		ret = home2start1(count,data);
+		ret = home2start(count,data);
 		break;
 	case HOME2START_2:
 		ret = home2start2(count,data);

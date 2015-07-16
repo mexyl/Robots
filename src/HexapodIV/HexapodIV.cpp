@@ -182,20 +182,20 @@ namespace Robots
 		ROBOT_BASE::pLegs[5] = static_cast<LEG_BASE*>(&leg5);
 
 
-		double ep0[] = { PI, 0, 0, -0.396, 0.357, 0 };
-		double ep1[] = { PI, 0, 0, -0.539, 0, 0 };
-		double ep2[] = { PI, 0, 0, -0.396, -0.357, 0 };
-		double ep3[] = { 0, 0, 0, 0.396, 0.357, 0 };
-		double ep4[] = { 0, 0, 0, 0.539, 0, 0 };
-		double ep5[] = { 0, 0, 0, 0.396, -0.357, 0 };
+		double ep0[] = { -0.396, 0.357, 0, PI, 0, 0, };
+		double ep1[] = { -0.539, 0, 0, PI, 0, 0};
+		double ep2[] = { -0.396, -0.357, 0, PI, 0, 0};
+		double ep3[] = { 0.396, 0.357, 0, 0, 0, 0, };
+		double ep4[] = { 0.539, 0, 0, 0, 0, 0 };
+		double ep5[] = { 0.396, -0.357, 0, 0, 0, 0 };
 
 
 
-		s_ep2pm(ep0, const_cast<double * const>(leg0.pBasePrtPm));
-		s_ep2pm(ep1, const_cast<double * const>(leg1.pBasePrtPm));
-		s_ep2pm(ep2, const_cast<double * const>(leg2.pBasePrtPm));
-		s_ep2pm(ep3, const_cast<double * const>(leg3.pBasePrtPm));
-		s_ep2pm(ep4, const_cast<double * const>(leg4.pBasePrtPm));
-		s_ep2pm(ep5, const_cast<double * const>(leg5.pBasePrtPm));
+		s_pe2pm(ep0, const_cast<double * const>(leg0.pBasePrtPm));
+		s_pe2pm(ep1, const_cast<double * const>(leg1.pBasePrtPm));
+		s_pe2pm(ep2, const_cast<double * const>(leg2.pBasePrtPm));
+		s_pe2pm(ep3, const_cast<double * const>(leg3.pBasePrtPm));
+		s_pe2pm(ep4, const_cast<double * const>(leg4.pBasePrtPm));
+		s_pe2pm(ep5, const_cast<double * const>(leg5.pBasePrtPm));
 	}
 }
