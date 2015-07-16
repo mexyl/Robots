@@ -1,0 +1,238 @@
+﻿#ifndef ROBOT_BASE_H
+#define ROBOT_BASE_H
+
+namespace Robots
+{
+	class ROBOT_BASE;
+	
+	class LEG_BASE
+	{
+		friend class ROBOT_BASE;
+
+	private:
+		double _BasePrtPm[4][4];
+		double _BasePm[4][4];
+
+	protected:		
+		ROBOT_BASE *pRobot;
+
+		const double * const pBasePrtPm{ *_BasePrtPm };
+		double * const pBasePm{ *_BasePm };
+
+		union
+		{
+			double pEE[3];
+			struct
+			{
+				double x;
+				double y;
+				double z;
+			};
+		};
+
+		union
+		{
+			double vEE[3];
+			struct
+			{
+				double vx;
+				double vy;
+				double vz;
+			};
+		};
+
+		union
+		{
+			double aEE[3];
+			struct
+			{
+				double ax;
+				double ay;
+				double az;
+			};
+		};
+
+		union
+		{
+			double pIn[3];
+			struct
+			{
+				double l1;
+				double l2;
+				double l3;
+			};
+		};
+
+		union
+		{
+			double vIn[3];
+			struct
+			{
+				double vl1;
+				double vl2;
+				double vl3;
+			};
+		};
+
+		union
+		{
+			double aIn[3];
+			struct
+			{
+				double al1;
+				double al2;
+				double al3;
+			};
+		};
+
+		double _c_acc_dir[3];
+		double _c_acc_inv[3];
+
+		double _jac_vel_dir[3][3];
+		double _jac_vel_inv[3][3];
+
+	protected:
+		virtual void calculate_from_pEE(){};
+		virtual void calculate_from_pIn(){};
+		virtual void calculate_from_vEE(){};
+		virtual void calculate_from_vIn(){};
+		virtual void calculate_from_aEE(){};
+		virtual void calculate_from_aIn(){};
+
+		virtual void calculate_jac(){};
+		virtual void calculate_jac_c(){};
+
+	protected:
+		LEG_BASE(ROBOT_BASE* pRobot);
+		virtual ~LEG_BASE() = default;
+
+	public:
+		/*!
+		* \brief Set the position of end-effector
+		* \param pEE position of end-effector, double array with 3 elements
+		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void SetPee(const double *pEE, const char *RelativeCoodinate = "G");
+		/*!
+		* \brief Set the velocity of end-effector, must be called after position is set
+		* \param vEE velocity of end-effector, double array with 3 elements
+		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void SetVee(const double *vEE, const char *RelativeCoodinate = "G");
+		/*!
+		* \brief Set the velocity of end-effector, must be called after velocity is set
+		* \param vEE acceleration of end-effector, double array with 3 elements
+		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void SetAee(const double *aEE, const char *RelativeCoodinate = "G");
+		/*!
+		* \brief Set the position of inputs
+		* \param pIn position of inputs, double array with 3 elements
+		*/
+		void SetPin(const double *pIn);
+		/*!
+		* \brief Set the velocity of inputs
+		* \param vIn velocity of inputs, double array with 3 elements
+		*/
+		void SetVin(const double *vIn);
+		/*!
+		* \brief Set the acceleration of inputs
+		* \param aIn acceleration of inputs, double array with 3 elements
+		*/
+		void SetAin(const double *aIn);
+		/*!
+		* \brief Get the position of end-effector
+		* \param pEE position of end-effector, double array with 3 elements
+		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void GetPee(double *pEE, const char *RelativeCoodinate = "G") const;
+		/*!
+		* \brief Get the velocity of end-effector
+		* \param vEE velocity of end-effector, double array with 3 elements
+		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void GetVee(double *vEE, const char *RelativeCoodinate = "G") const;
+		/*!
+		* \brief Get the acceleration of end-effector
+		* \param pEE acceleration of end-effector, double array with 3 elements
+		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void GetAee(double *aEE, const char *RelativeCoodinate = "G") const;
+		/*!
+		* \brief Get the position of inputs
+		* \param pIn position of inputs, double array with 3 elements
+		*/
+		void GetPin(double *pIn) const;
+		/*!
+		* \brief Get the velocity of inputs
+		* \param vIn velocity of inputs, double array with 3 elements
+		*/
+		void GetVin(double *vIn) const;
+		/*!
+		* \brief Get the acceleration of inputs
+		* \param aIn acceleration of inputs, double array with 3 elements
+		*/
+		void GetAin(double *aIn) const;
+
+
+		void GetFceJacDir(double *jac, const char *RelativeCoodinate = "G") const;
+		void GetFceJacInv(double *jac, const char *RelativeCoodinate = "G") const;
+		void GetVelJacDir(double *jac, double *c = 0, const char *RelativeCoodinate = "G") const;
+		void GetVelJacInv(double *jac, double *c = 0, const char *RelativeCoodinate = "G") const;
+		void GetAccJacDir(double *jac, double *c = 0, const char *RelativeCoodinate = "G") const;
+		void GetAccJacInv(double *jac, double *c = 0, const char *RelativeCoodinate = "G") const;
+	};
+
+	class ROBOT_BASE
+	{
+		friend class LEG_BASE;
+
+	private:
+		double _BodyPm[4][4], _BodyVel[6], _BodyAcc[6];
+
+	protected:
+		LEG_BASE *pLegs[6];
+
+	protected:
+
+		double *const pBodyPm{ *_BodyPm };
+		double *const pBodyVel{ _BodyVel };
+		double *const pBodyAcc{ _BodyAcc };
+		
+
+	public:
+		ROBOT_BASE();
+		virtual ~ROBOT_BASE() = default;
+
+		/*!
+		* \brief Get the body pose matrix
+		* \param body pose matrix, double array with 16 elements
+		*/
+		void GetBodyPm(double *bodypm) const;
+		/*!
+		* \brief Get the body velocity
+		* \param body velocity, double array with 6 elements
+		*/
+		void GetBodyVel(double *bodyvel) const;
+		/*!
+		* \brief Get the body acceleration
+		* \param body acceleration, double array with 6 elements
+		*/
+		void GetBodyAcc(double *bodyacc) const;
+
+		void SetPee(const double *pEE = nullptr, const double *bodyep = nullptr, const char *RelativeCoodinate = "G");
+		void SetVee(const double *aEE = nullptr, const double *bodyep = nullptr, const char *RelativeCoodinate = "G");
+		void SetAee(const double *vEE = nullptr, const double *bodyep = nullptr, const char *RelativeCoodinate = "G");
+		void SetPin(const double *pIn = nullptr, const double *bodyep = nullptr);
+		void SetVin(const double *vIn = nullptr, const double *bodyep = nullptr);
+		void SetAin(const double *aIn = nullptr, const double *bodyep = nullptr);
+		void GetPee(double *pEE, const char *RelativeCoodinate = "G") const;
+		void GetVee(double *aEE, const char *RelativeCoodinate = "G") const;
+		void GetAee(double *vEE, const char *RelativeCoodinate = "G") const;
+		void GetPin(double *pIn) const;
+		void GetVin(double *vIn) const;
+		void GetAin(double *aIn) const;
+	};
+}
+
+#endif
