@@ -1,10 +1,49 @@
 ﻿#ifndef ROBOT_GAIT_H
 #define ROBOT_GAIT_H
 
-#include "Robot_Base.h"
+#include <functional>
 
 namespace Robots
 {
+	class ROBOT_BASE;
+	
+	struct GAIT_PARAM_BASE
+	{
+		double beginPee[18];
+		double beginVee[18];
+		double beginBodyPE[6];
+		double beginBodyVel[6];
+
+		virtual ~GAIT_PARAM_BASE() = default;
+	};
+
+	typedef std::function<int(ROBOT_BASE *, GAIT_PARAM_BASE *, unsigned)> GAIT_FUNC;
+
+	struct WALK_PARAM :public GAIT_PARAM_BASE
+	{
+		unsigned totalCount;
+		double d;
+		double h;
+		double alpha;
+		double beta;
+		int walkDirection;// 1 means positive x axis; while -3 means negative z axis
+		int upDirection;
+
+		virtual ~WALK_PARAM() = default;
+	};
+
+	int walkAcc(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam, unsigned count);
+	int walkConst(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam, unsigned count);
+	int walkDec(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam, unsigned count);
+
+
+	//int move(ROBOT_BASE *pRobot, GAIT_PARAM_BASE *pParam, unsigned count);
+	
+	
+	
+	
+	
+	
 	int walk_acc(
 		ROBOT_BASE *pRobot,
 		unsigned count,
@@ -76,6 +115,13 @@ namespace Robots
 		double *pIn,
 		double *pEE,
 		double *pBodyEp);
+
+
+	
+
+
+
+
 }
 
 #endif

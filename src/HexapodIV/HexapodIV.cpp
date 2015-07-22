@@ -19,7 +19,7 @@ using namespace std;
 
 namespace Robots
 {	
-	LEG_IV::LEG_IV(ROBOT_BASE* pRobot, unsigned beginPos)
+	LEG_IV::LEG_IV(ROBOT_BASE* pRobot)
 		:LEG_BASE(pRobot)
 	{
 

@@ -31,6 +31,8 @@ namespace Robots
 	
 	void LEG_BASE::SetPee(const double *pEE, const char *RelativeCoodinate)
 	{
+		s_pm_dot_pm(pRobot->pBodyPm, pBasePrtPm, pBasePm);
+
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
@@ -43,7 +45,6 @@ namespace Robots
 		case 'G':
 		case 'O':
 		default:
-			s_pm_dot_pm(pRobot->pBodyPm, pBasePrtPm, pBasePm);
 			s_inv_pm_dot_pnt(pBasePm, pEE, this->pEE);
 			break;
 		}
@@ -373,169 +374,153 @@ namespace Robots
 	ROBOT_BASE::ROBOT_BASE()
 	{
 	}
+	void ROBOT_BASE::GetBodyPm(double *bodypm) const
+	{ 
+		memcpy(bodypm, pBodyPm, sizeof(double) * 16); 
+	};
+	void ROBOT_BASE::GetBodyPe(double *bodype, const char *eurType) const
+	{ 
+		s_pm2pe(pBodyPm, bodype, eurType); 
+	};
+	void ROBOT_BASE::GetBodyVel(double *bodyvel) const
+	{ 
+		memcpy(bodyvel, pBodyVel, sizeof(double) * 6); 
+	};
+	void ROBOT_BASE::GetBodyAcc(double *bodyacc) const
+	{ 
+		memcpy(bodyacc, this->pBodyAcc, vec6_size); 
+	};
 	void ROBOT_BASE::GetPee(double *pEE, const char *RelativeCoodinate) const
 	{
-		unsigned i = 0;
-		for (auto &pLeg : pLegs)
+		for (unsigned i = 0; i < 6; ++i)
 		{
-			pLeg->GetPee(pEE + i, RelativeCoodinate);
-			i += 3;
+			pLegs[i]->GetPee(pEE + i * 3, RelativeCoodinate);
 		}
 	}
 	void ROBOT_BASE::GetPin(double *pIn) const
 	{
-		unsigned i = 0;
-		for (auto &pLeg : pLegs)
+		for (unsigned i = 0; i < 6; ++i)
 		{
-			pLeg->GetPin(pIn + i);
-			i += 3;
+			pLegs[i]->GetPin(pIn + i * 3);
 		}
-	}
-	void ROBOT_BASE::GetBodyPm(double *bodypm) const
-	{
-		memcpy(bodypm, pBodyPm, pm_size);
 	}
 	void ROBOT_BASE::GetVee(double *vEE, const char *RelativeCoodinate) const
 	{
-		unsigned i = 0;
-		for (auto &pLeg : pLegs)
+		for (unsigned i = 0; i < 6; ++i)
 		{
-			pLeg->GetVee(vEE + i, RelativeCoodinate);
-			i += 3;
+			pLegs[i]->GetVee(vEE + i * 3, RelativeCoodinate);
 		}
 	}
 	void ROBOT_BASE::GetVin(double *vIn) const
 	{
-		unsigned i = 0;
-		for (auto &pLeg : pLegs)
+		for (unsigned i = 0; i < 6; ++i)
 		{
-			pLeg->GetVin(vIn + i);
-			i += 3;
+			pLegs[i]->GetVin(vIn + i * 3);
 		}
-	}
-	void ROBOT_BASE::GetBodyVel(double *bodyvel) const
-	{
-		memcpy(bodyvel, this->pBodyVel, vec6_size);
 	}
 	void ROBOT_BASE::GetAee(double *aEE, const char *RelativeCoodinate) const
 	{
-		unsigned i = 0;
-		for (auto &pLeg : pLegs)
+		for (unsigned i = 0; i < 6; ++i)
 		{
-			pLeg->GetAee(aEE + i, RelativeCoodinate);
-			i += 3;
+			pLegs[i]->GetAee(aEE + i * 3, RelativeCoodinate);
 		}
 	}
 	void ROBOT_BASE::GetAin(double *aIn) const
 	{
-		unsigned i = 0;
-		for (auto &pLeg : pLegs)
+		for (unsigned i = 0; i < 6; ++i)
 		{
-			pLeg->GetAin(aIn + i);
-			i += 3;
+			pLegs[i]->GetAin(aIn + i*3);
 		}
 	}
-	void ROBOT_BASE::GetBodyAcc(double *bodyacc) const
+	void ROBOT_BASE::SetPee(const double *pEE, const double *bodyep, const char *RelativeCoodinate, const char *eurType)
 	{
-		memcpy(bodyacc, this->pBodyAcc, vec6_size);
-	}
-	void ROBOT_BASE::SetPee(const double *pEE, const double *bodyep, const char *RelativeCoodinate)
-	{
-		if (bodyep != nullptr)
+		if (bodyep)
 		{
-			s_pe2pm(bodyep, pBodyPm);
+			s_pe2pm(bodyep, pBodyPm, eurType);
 		}
 
-		if (pEE != nullptr)
+		if (pEE)
 		{
-			unsigned i = 0;
-			for (auto &pLeg : pLegs)
+			for (unsigned i = 0; i < 6; i++)
 			{
-				pLeg->SetPee(pEE + i, RelativeCoodinate);
-				i += 3;
+				pLegs[i]->SetPee(pEE + i * 3, RelativeCoodinate);
 			}
 		}
 	}
-	void ROBOT_BASE::SetPin(const double *pIn, const double *bodyep)
+	void ROBOT_BASE::SetPin(const double *pIn, const double *bodyep, const char *eurType)
 	{
-		if (bodyep != nullptr)
+		if (bodyep)
 		{
-			s_pe2pm(bodyep, pBodyPm);
+			s_pe2pm(bodyep, pBodyPm, eurType);
 		}
 
-		if (pIn != nullptr)
+		if (pIn)
 		{
-			unsigned i = 0;
-			for (auto &pLeg : pLegs)
+			for (unsigned i = 0; i < 6; i++)
 			{
-				pLeg->SetPin(pIn + i);
-				i += 3;
+				pLegs[i]->SetPin(pIn + i * 3);
 			}
 		}
 	}
 	void ROBOT_BASE::SetVee(const double *vEE, const double *bodyvel, const char *RelativeCoodinate)
 	{
-		if (bodyvel != nullptr)
+		if (bodyvel)
 		{
 			memcpy(pBodyVel, bodyvel, vec6_size);
 		}
 
-		if (vEE != nullptr)
+		if (vEE)
 		{
-			unsigned i = 0;
-			for (auto &pLeg : pLegs)
+			for (unsigned i = 0; i < 6; i++)
 			{
-				pLeg->SetVee(vEE + i, RelativeCoodinate);
-				i += 3;
+				pLegs[i]->SetVee(vEE + i * 3, RelativeCoodinate);
 			}
 		}
 	}
 	void ROBOT_BASE::SetVin(const double *vIn, const double *bodyvel)
 	{
-		if (bodyvel != nullptr)
+		if (bodyvel)
 		{
 			memcpy(pBodyVel, bodyvel, vec6_size);
 		}
-		if (vIn != nullptr)
+		if (vIn)
 		{
-			unsigned i = 0;
-			for (auto &pLeg : pLegs)
+			for (unsigned i = 0; i < 6; i++)
 			{
-				pLeg->SetVin(vIn + i);
-				i += 3;
+				pLegs[i]->SetVin(vIn + i * 3);
 			}
 		}
 	}
 	void ROBOT_BASE::SetAee(const double *aEE, const double *bodyacc, const char *RelativeCoodinate)
 	{
-		if (bodyacc != nullptr)
+		if (bodyacc)
 		{
 			memcpy(pBodyAcc, bodyacc, vec6_size);
 		}
-		if (aEE != nullptr)
+		if (aEE)
 		{
-			unsigned i = 0;
-			for (auto &pLeg : pLegs)
+			for (unsigned i = 0; i < 6; i++)
 			{
-				pLeg->SetAee(aEE + i, RelativeCoodinate);
-				i += 3;
+				pLegs[i]->SetAee(aEE + i * 3, RelativeCoodinate);
 			}
 		}
 	}
 	void ROBOT_BASE::SetAin(const double *aIn, const double *bodyacc)
 	{
-		if (bodyacc != nullptr)
+		if (bodyacc)
 		{
 			memcpy(pBodyAcc, bodyacc, vec6_size);
 		}
-		if (aIn != nullptr)
+		if (aIn)//= if(aIn!=nullptr)
 		{
-			unsigned i = 0;
-			for (auto &pLeg : pLegs)
+			for (unsigned i = 0; i < 6; i++)
 			{
-				pLeg->SetAin(aIn + i);
-				i += 3;
+				pLegs[i]->SetAin(aIn + i * 3);
 			}
 		}
 	}
+
+
+
+
 }

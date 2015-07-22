@@ -97,8 +97,8 @@ int main()
 
 	double d = 0.2;
 	double h = 0.05;
-	double alpha = 0.1;
-	double beta = 0.1;
+	double alpha = 0.2;
+	double beta = 0.12;
 
 	double pEE_acc[totalCount][18] , pIn_acc[totalCount][18], pBodyEp_acc[totalCount][6];
 
@@ -110,6 +110,16 @@ int main()
 	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_acc.txt", *pIn_acc, totalCount, 18);
 	dlmwrite("C:\\Users\\yang\\Desktop\\pEE_acc.txt", *pEE_acc, totalCount, 18);
 	dlmwrite("C:\\Users\\yang\\Desktop\\pBodyEp_acc.txt", *pBodyEp_acc, totalCount, 6);
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -139,6 +149,54 @@ int main()
 
 
 
+	WALK_PARAM param;
+	param.alpha = alpha;
+	param.beta = beta;
+	param.d = d;
+	param.h = h;
+	param.totalCount = totalCount;
+	param.walkDirection = -3;
+	param.upDirection = 2;
+
+	double beginBodyPE[6] = { 0, 0, 0, PI / 2, 0, -PI / 2 };
+	//double beginBodyPE[6] = { 0, 0, 0, 0, 0, 0 };
+	rbt.SetPee(iniEE, beginBodyPE, "B");
+	rbt.GetPee(param.beginPee, "G");
+
+	memcpy(param.beginBodyPE, beginBodyPE, sizeof(double) * 6);
+
+	for (unsigned i = 0; i < totalCount; ++i)
+	{
+		walkAcc(&rbt, &param, i);
+		rbt.GetPin(pIn_acc[i]);
+		rbt.GetPee(pEE_acc[i]);
+
+		double pm[4][4];
+		rbt.GetBodyPm(*pm);
+		s_pm2pe(*pm, pBodyEp_acc[i]);
+	}
+
+	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_acc2.txt", *pIn_acc, totalCount, 18);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pEE_acc2.txt", *pEE_acc, totalCount, 18);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pBodyEp_acc2.txt", *pBodyEp_acc, totalCount, 6);
+
+	rbt.GetPee(param.beginPee);
+	rbt.GetBodyPe(param.beginBodyPE,"313");
+
+	for (unsigned i = 0; i < totalCount; ++i)
+	{
+		walkDec(&rbt, &param, i);
+		rbt.GetPin(pIn_dec[i]);
+		rbt.GetPee(pEE_dec[i]);
+
+		double pm[4][4];
+		rbt.GetBodyPe(pBodyEp_dec[i]);
+	}
+
+
+	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_dec2.txt", *pIn_dec, totalCount, 18);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pEE_dec2.txt", *pEE_dec, totalCount, 18);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pBodyEp_dec2.txt", *pBodyEp_dec, totalCount, 6);
 
 
 

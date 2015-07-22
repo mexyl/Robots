@@ -34,7 +34,7 @@ namespace Robots
 		return 1.0 / n*i;
 	}
 	
-	LEG_III::LEG_III(const char *Name, ROBOT_III* pRobot, unsigned beginPos)
+	LEG_III::LEG_III(const char *Name, ROBOT_III* pRobot)
 		: OBJECT(static_cast<Aris::DynKer::MODEL *>(pRobot), Name)
 		, pRobot(pRobot)
 		, LEG_BASE(pRobot)
@@ -766,7 +766,6 @@ namespace Robots
 		{
 			Robots::ROBOT_BASE::pLegs[i] = static_cast<Robots::LEG_BASE *>(pLegs[i]);
 		}
-		
 	}
 	void ROBOT_III::GetFin(double *fIn) const
 	{
@@ -1173,7 +1172,85 @@ namespace Robots
 
 	}
 
+	void ROBOT_III::SimulateInverse(GAIT_FUNC fun, GAIT_PARAM_BASE *param)
+	{
+		unsigned totalCount = fun(this, param, 0) + 1;
+
+		ForEachElement([totalCount](Aris::DynKer::ELEMENT *e)
+		{
+			e->SetResultSize(totalCount);
+		});
+	}
+	void ROBOT_III::SimulateForwardByAdams(GAIT_FUNC fun, GAIT_PARAM_BASE *param, const char *adamsFile, SIMULATE_SCRIPT *pScript)
+	{
+		unsigned totalCount = fun(this, param, 0) + 1;
+		unsigned akimaSize = totalCount / 10 + 1;//需加上0点
+
+		std::vector<double> time(akimaSize);
+		for (unsigned i = 0; i < akimaSize; ++i)
+		{
+			time.at(i) = i*0.01;
+		}
+
+		std::vector<std::vector<double> > motionPos(18);
+		std::vector<std::vector<double> > motionFce(18);
+		for (auto &mot : motionPos)
+		{
+			mot.resize(akimaSize);
+		}
+
+		/*设置起始点机器人驱动的位置*/
+		this->SetPee(param->beginPee, param->beginBodyPE, "G");
+		for (unsigned j = 0; j < 18; ++j)
+		{
+			motionPos.at(j).at(0) = this->GetMotion(j)->GetP_mPtr()[0];
+		}
+
+		/*设置其他时间节点上机器人驱动的位置*/
+		for (unsigned i = 1; i < akimaSize; ++i)
+		{
+			fun(this, param, i * 10 - 1);
+
+			for (unsigned j = 0; j < 18; ++j)
+			{
+				motionPos.at(j).at(i) = this->GetMotion(j)->GetP_mPtr()[0];
+			}
+		}
+
+		/*设置驱动的位置akima函数*/
+		for (unsigned i = 0; i < 18; ++i)
+		{
+			this->GetMotion(i)->SetPosAkimaCurve(akimaSize, time.data(), motionPos.at(i).data());
+		}
+		
+		/*设置仿真脚本*/
+		if (pScript)
+		{
+			for (auto &i : pScript->script)
+			{
+				for (auto &j : i.second.joints)
+				{
+					if (i.first == 0)
+					{
+						this->SetPee(param->beginPee, param->beginBodyPE, "G");
+						s_pm2pe(j.first->GetMakJ()->GetPrtPmPtr(), j.second.peMakJ);
+						j.second.isModifyMakJ = true;
+					}
+					else
+					{
+						fun(this, param, i.first);
+						s_pm2pe(j.first->GetMakJ()->GetPrtPmPtr(), j.second.peMakJ);
+						j.second.isModifyMakJ = true;
+					}
+				}
+			}
+
+			pScript->ScriptEndTime(totalCount);
+		}
 
 
-
+		/*将机器人当前位置设置到初始位置处*/
+		this->SetPee(param->beginPee, param->beginBodyPE, "G");
+		MODEL::SaveAdams(adamsFile, pScript);
+	}
 }
