@@ -950,7 +950,7 @@ namespace Robots
 			}
 			else
 			{
-				/*计算k*/
+				/*计算k，使用最小二乘法计算所有支撑腿的输入力*/
 				s_dgesv(36, 4, *Loc_C, 36, ipiv, *(k_L[i]), 4);
 
 
@@ -1172,18 +1172,9 @@ namespace Robots
 
 	}
 
-	void ROBOT_III::SimulateInverse(GAIT_FUNC fun, GAIT_PARAM_BASE *param)
+	void SetAkima(ROBOT_III *pRobot, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param)
 	{
-		unsigned totalCount = fun(this, param, 0) + 1;
-
-		ForEachElement([totalCount](Aris::DynKer::ELEMENT *e)
-		{
-			e->SetResultSize(totalCount);
-		});
-	}
-	void ROBOT_III::SimulateForwardByAdams(GAIT_FUNC fun, GAIT_PARAM_BASE *param, const char *adamsFile, SIMULATE_SCRIPT *pScript)
-	{
-		unsigned totalCount = fun(this, param, 0) + 1;
+		unsigned totalCount = fun(pRobot, param, 0) + 1;
 		unsigned akimaSize = totalCount / 10 + 1;//需加上0点
 
 		std::vector<double> time(akimaSize);
@@ -1200,28 +1191,48 @@ namespace Robots
 		}
 
 		/*设置起始点机器人驱动的位置*/
-		this->SetPee(param->beginPee, param->beginBodyPE, "G");
+		pRobot->SetPee(param->beginPee, param->beginBodyPE, "G");
 		for (unsigned j = 0; j < 18; ++j)
 		{
-			motionPos.at(j).at(0) = this->GetMotion(j)->GetP_mPtr()[0];
+			motionPos.at(j).at(0) = pRobot->GetMotion(j)->GetP_mPtr()[0];
 		}
 
 		/*设置其他时间节点上机器人驱动的位置*/
 		for (unsigned i = 1; i < akimaSize; ++i)
 		{
-			fun(this, param, i * 10 - 1);
+			fun(pRobot, param, i * 10 - 1);
 
 			for (unsigned j = 0; j < 18; ++j)
 			{
-				motionPos.at(j).at(i) = this->GetMotion(j)->GetP_mPtr()[0];
+				motionPos.at(j).at(i) = pRobot->GetMotion(j)->GetP_mPtr()[0];
 			}
 		}
 
 		/*设置驱动的位置akima函数*/
 		for (unsigned i = 0; i < 18; ++i)
 		{
-			this->GetMotion(i)->SetPosAkimaCurve(akimaSize, time.data(), motionPos.at(i).data());
+			pRobot->GetMotion(i)->SetPosAkimaCurve(akimaSize, time.data(), motionPos.at(i).data());
 		}
+	}
+
+	void ROBOT_III::SimulateInverse(GAIT_FUNC fun, GAIT_PARAM_BASE *param)
+	{
+		unsigned totalCount = fun(this, param, 0) + 1;
+
+		ForEachElement([totalCount](Aris::DynKer::ELEMENT *e)
+		{
+			e->SetResultSize(totalCount);
+		});
+	}
+	void ROBOT_III::SimulateForward(GAIT_FUNC fun, GAIT_PARAM_BASE *param, Aris::DynKer::SIMULATE_SCRIPT *script)
+	{
+		SetAkima(this, fun, param);
+
+	};
+	void ROBOT_III::SimulateForwardByAdams(const char *adamsFile, GAIT_FUNC fun, GAIT_PARAM_BASE *param, SIMULATE_SCRIPT *pScript)
+	{
+		/*设置驱动的Akima函数*/
+		SetAkima(this, fun, param);
 		
 		/*设置仿真脚本*/
 		if (pScript)
@@ -1245,9 +1256,9 @@ namespace Robots
 				}
 			}
 
+			unsigned totalCount = fun(this, param, 0) + 1;
 			pScript->ScriptEndTime(totalCount);
 		}
-
 
 		/*将机器人当前位置设置到初始位置处*/
 		this->SetPee(param->beginPee, param->beginBodyPE, "G");

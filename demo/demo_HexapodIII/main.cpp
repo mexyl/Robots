@@ -165,10 +165,10 @@ int main()
 	script.ScriptDt(10);
 
 	Activate135(&rbt);
-	rbt.SimulateForwardByAdams(walkFun, &param, "robot", &script);
+	rbt.SimulateForwardByAdams("robot", walkFun, &param, &script);
 
 	Activate246(&rbt);
-	rbt.SimulateForwardByAdams(walkDec, &param, "simulate");
+	rbt.SimulateForwardByAdams("simulate", walkDec, &param);
 
 	char aaa;
 	cin >> aaa;

@@ -179,8 +179,8 @@ namespace Robots
 		void LoadXML(const char *filename);
 
 		void SimulateInverse(GAIT_FUNC fun, GAIT_PARAM_BASE *param);
-		void SimulateForward(GAIT_FUNC fun, GAIT_PARAM_BASE *param);
-		void SimulateForwardByAdams(GAIT_FUNC fun, GAIT_PARAM_BASE *param, const char *adamsFile,Aris::DynKer::SIMULATE_SCRIPT *script=nullptr);
+		void SimulateForward(GAIT_FUNC fun, GAIT_PARAM_BASE *param, Aris::DynKer::SIMULATE_SCRIPT *script = nullptr);
+		void SimulateForwardByAdams(const char *adamsFile, GAIT_FUNC fun, GAIT_PARAM_BASE *param, Aris::DynKer::SIMULATE_SCRIPT *script = nullptr);
 
 	public:
 		union

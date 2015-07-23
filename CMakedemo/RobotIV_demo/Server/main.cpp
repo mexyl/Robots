@@ -35,7 +35,7 @@ int main()
 
 
 	Aris::Core::CONN control_interface;
-	control_interface.SetCallBackOnReceivedConnection([](Aris::Core::CONN *pConn,const char *pRemoteIP,int remotePort)
+	control_interface.SetOnReceivedConnection([](Aris::Core::CONN *pConn,const char *pRemoteIP,int remotePort)
 	{
 		cout << "control client received:" << endl;
 		cout << "    remote ip is:" << pRemoteIP << endl;
@@ -48,7 +48,7 @@ int main()
 		cs.NRT_PostMsg(msg);
 		return MSG();
 	});
-	control_interface.SetCallBackOnReceivedData([&cs](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
+	control_interface.SetOnReceivedData([&cs](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
 	{
 		cout<<"received data"<<endl;
 
@@ -86,7 +86,7 @@ int main()
 		cs.NRT_PostMsg(msg);
 		return 0;
 	});
-	control_interface.SetCallBackOnLoseConnection([](Aris::Core::CONN *pConn)
+	control_interface.SetOnLoseConnection([](Aris::Core::CONN *pConn)
 	{
 		cout << "control_interface lost" << endl;
 
