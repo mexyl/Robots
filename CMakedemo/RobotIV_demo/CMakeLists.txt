@@ -92,26 +92,28 @@ add_executable(Server ${FULL_SRC})
 target_link_libraries(Server ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${ETHERLAB_LINK_LIBS} ${XENOMAI_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
 ################################### build client ####################################
-add_executable(enable Client/enable.cpp)
-target_link_libraries(enable ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+add_executable(Client Client/client.cpp)
+target_link_libraries(Client ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
-add_executable(disable Client/disable.cpp)
-target_link_libraries(disable ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+################################### install ####################################
+if(UNIX)
+	set(CMAKE_INSTALL_PREFIX "/usr/Robots/CMakeDemo/Robot_III")
+endif(UNIX)
 
-add_executable(home1 Client/home1.cpp)
-target_link_libraries(home1 ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+install(TARGETS Server Client RUNTIME DESTINATION bin)
+install(DIRECTORY resource/ DESTINATION resource)
 
-add_executable(home2 Client/home2.cpp)
-target_link_libraries(home2 ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
-add_executable(toStart1 Client/toStart1.cpp)
-target_link_libraries(toStart1 ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
-add_executable(toStart2 Client/toStart2.cpp)
-target_link_libraries(toStart2 ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
-add_executable(walk Client/walk.cpp)
-target_link_libraries(walk ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+
+
+
+
+
+
+
+
 
 
 

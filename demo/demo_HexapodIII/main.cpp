@@ -21,16 +21,13 @@ using namespace Aris::DynKer;
 
 ROBOT_III rbt;
 
-
-
-
 int main()
 {
 #ifdef PLATFORM_IS_WINDOWS
-	rbt.LoadXML("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
+	rbt.LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
 #endif
 #ifdef PLATFORM_IS_LINUX
-	rbt.LoadXML("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
+	rbt.LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
 #endif
 
 	/*Compute inverse position kinematics in Ground coordinates*/
@@ -143,7 +140,7 @@ int main()
 	
 	auto walkFun = [](ROBOT_BASE *pRobot, GAIT_PARAM_BASE *pBaseParam,unsigned id)
 	{
-		WALK_PARAM *param = dynamic_cast<WALK_PARAM *>(pBaseParam);
+		WALK_PARAM *param = static_cast<WALK_PARAM *>(pBaseParam);
 		
 		if (id < param->totalCount)
 		{

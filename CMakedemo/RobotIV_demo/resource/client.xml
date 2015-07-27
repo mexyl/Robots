@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Commands>
+    <en default="all">
+        <all abbreviation="a"/>
+        <left abbreviation="l"/>
+        <right abbreviation="r"/>
+        <motor abbreviation="m" type="intArray" default="1"/>
+    </en>
+    <ds/>
+    <hm/>
+    <bg/>
+    <wk/>
+</Commands>

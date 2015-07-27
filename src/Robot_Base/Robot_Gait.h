@@ -2,6 +2,7 @@
 #define ROBOT_GAIT_H
 
 #include <functional>
+#include <cstdint>
 
 namespace Robots
 {
@@ -13,23 +14,20 @@ namespace Robots
 		double beginVee[18];
 		double beginBodyPE[6];
 		double beginBodyVel[6];
-
-		virtual ~GAIT_PARAM_BASE() = default;
 	};
 
 	typedef std::function<int(ROBOT_BASE *, GAIT_PARAM_BASE *, unsigned)> GAIT_FUNC;
 
 	struct WALK_PARAM :public GAIT_PARAM_BASE
 	{
-		unsigned totalCount;
+		std::uint32_t totalCount;
+		std::uint32_t n;
+		std::int32_t walkDirection;// 1 means positive x axis; while -3 means negative z axis
+		std::int32_t upDirection;
 		double d;
 		double h;
 		double alpha;
 		double beta;
-		int walkDirection;// 1 means positive x axis; while -3 means negative z axis
-		int upDirection;
-
-		virtual ~WALK_PARAM() = default;
 	};
 
 	int walkAcc(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam, unsigned count);

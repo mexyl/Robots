@@ -69,7 +69,7 @@ int HEXBOT_HOME_OFFSETS_RESOLVER[18] =
 			0,0,0,
 };
 
-double meter2count = 1/0.005*1.5*65536;
+const double meter2count = 1/0.005*1.5*65536;
 
 int enable(unsigned count , Aris::RT_CONTROL::CMachineData &data)
 {

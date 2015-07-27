@@ -950,7 +950,7 @@ namespace Robots
 			}
 			else
 			{
-				/*计算k，使用最小二乘法计算所有支撑腿的输入力*/
+				/*计算k，使用最小二乘法计算所有支撑腿的驱动输入力*/
 				s_dgesv(36, 4, *Loc_C, 36, ipiv, *(k_L[i]), 4);
 
 
@@ -994,9 +994,9 @@ namespace Robots
 			}
 		}
 	}
-	void ROBOT_III::LoadXML(const char *filename)
+	void ROBOT_III::LoadXml(const char *filename)
 	{
-		MODEL::LoadXML(filename);
+		MODEL::LoadXml(filename);
 
 		char temName[40];
 

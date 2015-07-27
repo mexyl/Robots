@@ -1,4 +1,5 @@
 ﻿#include "HexapodIV.h"
+#include "HexapodIII.h"
 #include "Robot_Gait.h"
 #include <Aris_Plan.h>
 
@@ -39,10 +40,14 @@ double firstEE[18] =
 	 + 0.396, -0.357, -0.55,
 };
 
-Robots::ROBOT_IV rbt;
+//Robots::ROBOT_IV rbt;
+Robots::ROBOT_III rbt;
+
 
 int main()
 {
+	rbt.LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
+	
 	double pIn[18];
 	
 	/*在地面坐标系下计算反解*/
@@ -56,7 +61,7 @@ int main()
 		0, 0, -0.65,
 	};
 	
-	double bodyEp[6] = { 0,0,0,0,0,0 };
+	double bodyEp[6] = { 0, 0, 0, 0, 0, 0 };
 	
 	rbt.SetPee(pEE_G, bodyEp, "G");
 	rbt.GetPin(pIn);

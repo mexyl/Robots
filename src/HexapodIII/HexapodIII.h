@@ -176,7 +176,7 @@ namespace Robots
 
 		void SetFixedFeet(const char *fixedLeg = 0, const char *ActiveMotion = 0);
 		void FastDyn();
-		void LoadXML(const char *filename);
+		void LoadXml(const char *filename);
 
 		void SimulateInverse(GAIT_FUNC fun, GAIT_PARAM_BASE *param);
 		void SimulateForward(GAIT_FUNC fun, GAIT_PARAM_BASE *param, Aris::DynKer::SIMULATE_SCRIPT *script = nullptr);

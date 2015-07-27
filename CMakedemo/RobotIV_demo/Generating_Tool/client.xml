@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Commands>
+    <enable>
+        <group1>
+            <all/>
+            <left/>
+            <right/>
+                <shortName>r</shortName>
+            <motor>
+                <valueType>array</valueType>
+                <defaultValue>1</defaultValue>
+                <maxValue>18</maxValue>
+                <minValue>1</minValue>
+            </motor>   
+        </group1>
+    </enable>
+    <disable/>
+    <home/>
+    <toStart/>
+    <walk/>
+</Commands>

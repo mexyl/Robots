@@ -79,7 +79,7 @@ namespace Robots
 	int walkAcc(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam, unsigned count)
 	{
 		/*初始化参数*/
-		WALK_PARAM *pRealParam = dynamic_cast<WALK_PARAM *>(pParam);
+		WALK_PARAM *pRealParam = static_cast<WALK_PARAM *>(pParam);
 
 		unsigned wAxis = std::abs(pRealParam->walkDirection) - 1;
 		unsigned uAxis = std::abs(pRealParam->upDirection) - 1;
@@ -153,7 +153,7 @@ namespace Robots
 	int walkDec(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam, unsigned count)
 	{
 		/*初始化参数*/
-		WALK_PARAM *pRealParam = dynamic_cast<WALK_PARAM *>(pParam);
+		WALK_PARAM *pRealParam = static_cast<WALK_PARAM *>(pParam);
 
 		unsigned wAxis = std::abs(pRealParam->walkDirection) - 1;
 		unsigned uAxis = std::abs(pRealParam->upDirection) - 1;
