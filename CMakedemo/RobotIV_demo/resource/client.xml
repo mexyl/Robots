@@ -4,10 +4,20 @@
         <all abbreviation="a"/>
         <left abbreviation="l"/>
         <right abbreviation="r"/>
-        <motor abbreviation="m" type="intArray" default="1"/>
+        <motor abbreviation="m" type="intArray" default="0"/>
     </en>
-    <ds/>
-    <hm/>
+    <ds default="all">
+        <all abbreviation="a"/>
+        <left abbreviation="l"/>
+        <right abbreviation="r"/>
+        <motor abbreviation="m" type="intArray" default="0"/>
+    </ds>
+    <hm default="all">
+        <all abbreviation="a"/>
+        <left abbreviation="l"/>
+        <right abbreviation="r"/>
+        <motor abbreviation="m" type="intArray" default="0"/>
+    </hm>
     <bg/>
     <wk/>
 </Commands>

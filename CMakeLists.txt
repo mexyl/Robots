@@ -38,7 +38,7 @@ endif(UNIX)
 
 # set compile options
 if(UNIX)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O2")
 endif(UNIX)
 
 # set binary and library folders
@@ -136,7 +136,7 @@ endif(WIN32)
 
 
 
-install(RUNTIME HexapodIV HexapodIII Robot_Base ARCHIVE DESTINATION lib)
+install(TARGETS HexapodIV HexapodIII Robot_Base ARCHIVE DESTINATION lib)
 install(FILES ${INCLUDE_HEADER_FILES} DESTINATION include)
 install(DIRECTORY src/HexapodIII/resource/ DESTINATION resource/HexapodIII)
 

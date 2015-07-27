@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cstdint>
 
+#include <Aris_Socket.h>
 #include <Aris_XML.h>
 #include <Aris_Core.h>
 
@@ -496,7 +497,7 @@ int main(int argc, char *argv[])
 	/*pack all datas*/
 	Aris::Core::MSG msg{0,0};
 
-	uint32_t size=cmd.size()+1;
+	int32_t size=cmd.size()+1;
 
 	msg.CopyStructMore(size);
 	msg.CopyMore(cmd.c_str(),size);
@@ -516,84 +517,18 @@ int main(int argc, char *argv[])
 	}
 
 
-	map<string,string> second;
-	char content[500];
-	string cmd2;
-
-	size=0;
-	uint32_t beginPos=0;
-
-	msg.PasteStruct(size);
-	beginPos+=4;
-	msg.PasteAt(content,size,beginPos);
-	cmd2.assign(content);
-	beginPos+=size;
-
-	uint32_t paramNum;
-	msg.PasteAt(&paramNum,4,beginPos);
-	beginPos+=4;
-
-
 
 	for(auto &i:params)
-		{
-			cout<<i.first<<":"<<i.second<<endl;
-		}
-
-
-	for(unsigned i=0;i<paramNum;++i)
-	{
-		string cmdd,param;
-
-
-		msg.PasteAt(&size,4,beginPos);
-		beginPos+=4;
-		msg.PasteAt(content,size,beginPos);
-		cmdd.assign(content);
-		beginPos+=size;
-
-		msg.PasteAt(&size,4,beginPos);
-		beginPos+=4;
-		msg.PasteAt(content,size,beginPos);
-		param.assign(content);
-		beginPos+=size;
-
-		second.insert(make_pair(cmdd,param));
-	}
-
-
-	cout<<paramNum<<endl;
-	cout<<cmd2<<endl;
-
-
-
-
-
-
-	//paramNum
-
-/*
-
-	msg.CopyStructMore(cmd.size()+1);
-	msg.CopyMore(cmd.c_str(),cmd.size()+1);
-
-	msg.CopyStructMore(params.size());
-
-	for(auto &i:params)
-	{
-		msg.CopyStructMore(i.first.size()+1);
-		msg.CopyMore(i.first.c_str(),i.first.size()+1);
-		msg.CopyStructMore(i.second.size()+1);
-		msg.CopyMore(i.second.c_str(),i.second.size()+1);
-	}
-*/
-
-
-
-	for(auto &i:second)
 	{
 		cout<<i.first<<":"<<i.second<<endl;
 	}
+
+	Aris::Core::CONN conn;
+
+	conn.Connect("127.0.0.1","5866");
+	conn.SendRequest(msg);
+
+	cout<<"send finished"<<endl;
 
 	return 0;
 }
