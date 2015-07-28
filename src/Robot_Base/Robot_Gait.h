@@ -32,11 +32,18 @@ namespace Robots
 		double beta;
 	};
 
+	struct ADJUST_PARAM :public GAIT_PARAM_BASE
+	{
+		double targetPee[18];
+		double targetBodyPE[6];
+		std::uint32_t totalCount;
+	};
+
 	int walkAcc(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
 	int walkConst(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
 	int walkDec(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
 
-
+	int adjust(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
 	//int move(ROBOT_BASE *pRobot, GAIT_PARAM_BASE *pParam, unsigned count);
 	
 	

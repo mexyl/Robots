@@ -95,6 +95,8 @@ int main()
 		0.1279292, 0, -0.4902687,
 	};
 
+	
+
 	rbt.SetPee(pEE_L, nullptr, "L");
 	rbt.GetPin(pIn);
 
@@ -206,10 +208,42 @@ int main()
 	dlmwrite("C:\\Users\\yang\\Desktop\\pBodyEp_dec2.txt", *pBodyEp_dec, totalCount, 6);
 
 
+	double pEE_start[18]
+	{
+		0.1279292, 0, -0.55,
+			0.1279292, 0, -0.55,
+			0.1279292, 0, -0.55,
+			0.1279292, 0, -0.55,
+			0.1279292, 0, -0.55,
+			0.1279292, 0, -0.55,
+	};
 
 
+	ADJUST_PARAM ap;
+	memcpy(ap.beginPee, homeEE, sizeof(double) * 18);
+	memcpy(ap.targetPee, pEE_start, sizeof(double) * 18);
+
+	memset(ap.beginBodyPE, 0, sizeof(double) * 6);
+	memset(ap.targetBodyPE, 0, sizeof(double) * 6);
+
+	ap.totalCount = totalCount;
 
 
+	for (unsigned i = 0; i < totalCount; ++i)
+	{
+		ap.count = i;
+		adjust(&rbt, &ap);
+		rbt.GetPin(pIn_acc[i]);
+		rbt.GetPee(pEE_acc[i]);
+
+		double pm[4][4];
+		rbt.GetBodyPm(*pm);
+		s_pm2pe(*pm, pBodyEp_acc[i]);
+	}
+
+	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_acc2.txt", *pIn_acc, totalCount, 18);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pEE_acc2.txt", *pEE_acc, totalCount, 18);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pBodyEp_acc2.txt", *pBodyEp_acc, totalCount, 6);
 
 
 

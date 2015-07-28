@@ -234,6 +234,30 @@ namespace Robots
 		return totalCount - count - 1;
 	}
 
+	int adjust(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
+	{
+		auto pAP = static_cast<const ADJUST_PARAM*>(pParam);
+
+		unsigned count = pAP->count;
+		double s = -(PI / 2)*cos(PI * (count + 1) / pAP->totalCount) + PI / 2;
+
+		double pEE[18], pBody[6];
+
+		for (int i = 0; i < 18; ++i)
+		{
+			pEE[i] = pAP->beginPee[i] * (cos(s) - 1) / 2 + pAP->targetPee[i] * (1 - cos(s)) / 2;
+		}
+
+		for (int i = 0; i < 6; ++i)
+		{
+			pBody[i] = pAP->beginBodyPE[i] * (cos(s) - 1) / 2 + pAP->targetBodyPE[i] * (1 - cos(s)) / 2;
+		}
+
+
+		pRobot->SetPee(pEE, pBody);
+
+		return pAP->totalCount - pAP->count - 1;
+	}
 
 	int walk_acc(
 		ROBOT_BASE *pRobot, 
