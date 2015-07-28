@@ -76,10 +76,10 @@ namespace Robots
 		}
 	}
 
-	int walkAcc(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam)
+	int walkAcc(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		/*初始化参数*/
-		WALK_PARAM *pRealParam = static_cast<WALK_PARAM *>(pParam);
+		const WALK_PARAM *pRealParam = static_cast<const WALK_PARAM *>(pParam);
 
 		unsigned wAxis = std::abs(pRealParam->walkDirection) - 1;
 		unsigned uAxis = std::abs(pRealParam->upDirection) - 1;
@@ -98,8 +98,8 @@ namespace Robots
 		double a = pRealParam->alpha + uSign*pe[5 - uAxis];
 		double b = pRealParam->beta;
 
-		double *beginPee = pRealParam->beginPee;
-		double *beginBodyPE = pRealParam->beginBodyPE;
+		const double *beginPee = pRealParam->beginPee;
+		const double *beginBodyPE = pRealParam->beginBodyPE;
 
 		double pEE[18];
 		double pBodyPE[6];
@@ -151,10 +151,10 @@ namespace Robots
 		pRobot->SetPee(pEE, pBodyPE, "G");
 		return totalCount - count - 1;
 	}
-	int walkDec(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam)
+	int walkDec(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		/*初始化参数*/
-		WALK_PARAM *pRealParam = static_cast<WALK_PARAM *>(pParam);
+		const WALK_PARAM *pRealParam = static_cast<const WALK_PARAM *>(pParam);
 
 		unsigned wAxis = std::abs(pRealParam->walkDirection) - 1;
 		unsigned uAxis = std::abs(pRealParam->upDirection) - 1;
@@ -173,8 +173,8 @@ namespace Robots
 		double a = pRealParam->alpha + uSign*pe[5 - uAxis];
 		double b = pRealParam->beta;
 
-		double *beginPee = pRealParam->beginPee;
-		double *beginBodyPE = pRealParam->beginBodyPE;
+		const double *beginPee = pRealParam->beginPee;
+		const double *beginBodyPE = pRealParam->beginBodyPE;
 
 		double pEE[18];
 		double pBodyPE[6];

@@ -163,6 +163,59 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 		msg.CopyStruct(robotState);
 		return;
 	}
+
+
+	if(cmd=="bg")
+	{
+
+	}
+
+
+	if(cmd=="wk")
+	{
+		Robots::WALK_PARAM  param;
+
+		for(auto &i:params)
+		{
+			if(i.first=="totalCount")
+			{
+				param.totalCount=std::stoi(i.second);
+			}
+			else if(i.first=="n")
+			{
+				param.n=stoi(i.second);
+			}
+			else if(i.first=="walkDirection")
+			{
+				param.walkDirection=stoi(i.second);
+			}
+			else if(i.first=="upDirection")
+			{
+				param.upDirection=stoi(i.second);
+			}
+			else if(i.first=="distance")
+			{
+				param.d=stod(i.second);
+			}
+			else if(i.first=="height")
+			{
+				param.h=stod(i.second);
+			}
+			else if(i.first=="alpha")
+			{
+				param.alpha=stod(i.second);
+			}
+			else if(i.first=="beta")
+			{
+				param.beta=stod(i.second);
+			}
+		}
+
+
+		param.cmdID=WALK;
+		msg.CopyStruct(param);
+		return;
+	}
 }
 
 int HEXBOT_HOME_OFFSETS_RESOLVER[18]=
@@ -212,6 +265,71 @@ void inline a2p(const int *abs, int *phy, int num = 18)
 }
 
 
+int walk(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam)
+{
+	static double lastPee[18];
+	static double lastPbody[6];
+
+	const Robots::WALK_PARAM *pWP=static_cast<const Robots::WALK_PARAM *>(pParam);
+
+
+	if(pParam->count < pWP->totalCount)
+	{
+		walkAcc(pRobot,pParam);
+	}
+	else
+	{
+		Robots::WALK_PARAM param2=*pWP;
+		param2.count=pWP->count - pWP->totalCount;
+
+		memcpy(param2.beginPee,lastPee,sizeof(lastPee));
+		memcpy(param2.beginBodyPE,lastPbody,sizeof(lastPbody));
+
+		walkDec(pRobot,&param2);
+	}
+
+	if(pParam->count%100==0)
+	{
+		double pEE[18];
+		double pBody[18];
+		pRobot->GetPee(pEE,"G");
+				pRobot->GetBodyPe(pBody,"313");
+
+
+
+		rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
+					,pEE[0],pEE[1],pEE[2],pEE[3],pEE[4],pEE[5],pEE[6],pEE[7],pEE[8]
+						,pEE[9],pEE[10],pEE[11],pEE[12],pEE[13],pEE[14],pEE[15],pEE[16],pEE[17]);
+				//rt_printf("%f %f %f %f %f %f\n"
+					//			,pBody[0],pBody[1],pBody[2],pBody[3],pBody[4],pBody[5]);
+	}
+
+
+	if(pParam->count==pWP->totalCount-1)
+	{
+		pRobot->GetPee(lastPee,"G");
+		pRobot->GetBodyPe(lastPbody,"313");
+
+		double *pEE=lastPee;
+		double *pBody=lastPbody;
+
+		/*rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
+				,pEE[0],pEE[1],pEE[2],pEE[3],pEE[4],pEE[5],pEE[6],pEE[7],pEE[8]
+				,pEE[9],pEE[10],pEE[11],pEE[12],pEE[13],pEE[14],pEE[15],pEE[16],pEE[17]);
+		rt_printf("%f %f %f %f %f %f\n"
+						,pBody[0],pBody[1],pBody[2],pBody[3],pBody[4],pBody[5]);*/
+	}
+
+	//rt_printf("value is:%d",2* pWP->totalCount - pWP->count-1);
+
+
+	return 2* pWP->totalCount - pWP->count-1;
+
+
+}
+
+
+
 int home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
 {
 	double homeIn[18]=
@@ -222,16 +340,6 @@ int home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris
 			0.675784824916295,0.697784816196987,0.697784816196987,
 			0.675784824916295,0.697784816196987,0.697784816196987,
 			0.675784824916295,0.697784816196987,0.697784816196987,};
-
-	double homeEE[18]=
-		{
-				0.7,0,0,
-				0.7,0,0,
-				0.7,0,0,
-				0.7,0,0,
-				0.7,0,0,
-				0.7,0,0,};
-
 
 	bool isAllHomed=true;
 
@@ -349,6 +457,35 @@ int resetOrigin(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pPara
 
 	return 0;
 }
+int runGait(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+{
+	int ret=0;
+	double pIn[18];
+	switch(pParam->cmdID)
+	{
+	case WALK:
+		ret = walk(pRobot,pParam);
+		break;
+	case BEGIN:
+		//ret=begin(pRobot,pParam);
+		break;
+	default:
+		break;
+	}
+
+	pRobot->GetPin(pIn);
+
+	for(int i=0;i<18;++i)
+	{
+		data.motorsCommands[MapAbsToPhy[i]]=Aris::RT_CONTROL::EMCMD_RUNNING;
+		data.commandData[MapAbsToPhy[i]].Position=pIn[i]*meter2count;
+	}
+
+
+	return ret;
+}
+
+
 
 Robots::ROBOT_III robot;
 int execute_cmd(int count,char *cmd, Aris::RT_CONTROL::CMachineData &data)
@@ -358,11 +495,12 @@ int execute_cmd(int count,char *cmd, Aris::RT_CONTROL::CMachineData &data)
 	int ret;
 
 	Robots::GAIT_PARAM_BASE *pParam=reinterpret_cast<Robots::GAIT_PARAM_BASE *>(cmd);
+	pParam->count=count;
 
 	memcpy(pParam->beginPee,pEE,sizeof(pEE));
 	memcpy(pParam->beginVee,vEE,sizeof(vEE));
-	memcpy(pParam->beginBodyPE,pEE,sizeof(pBody));
-	memcpy(pParam->beginBodyVel,pEE,sizeof(vBody));
+	memcpy(pParam->beginBodyPE,pBody,sizeof(pBody));
+	memcpy(pParam->beginBodyVel,pBody,sizeof(vBody));
 
 	switch (pParam->cmdID)
 	{
@@ -385,7 +523,8 @@ int execute_cmd(int count,char *cmd, Aris::RT_CONTROL::CMachineData &data)
 		ret = resetOrigin(&robot, pParam,data);
 		break;
 	default:
-		rt_printf("unknown cmd\n");
+		ret = runGait(&robot, pParam,data);
+		break;
 
 	}
 

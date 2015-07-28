@@ -32,9 +32,9 @@ namespace Robots
 		double beta;
 	};
 
-	int walkAcc(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam);
-	int walkConst(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam);
-	int walkDec(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam);
+	int walkAcc(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
+	int walkConst(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
+	int walkDec(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
 
 
 	//int move(ROBOT_BASE *pRobot, GAIT_PARAM_BASE *pParam, unsigned count);

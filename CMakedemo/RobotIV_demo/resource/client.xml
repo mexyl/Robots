@@ -20,5 +20,16 @@
     </hm>
     <ro/>
     <bg/>
-    <wk/>
+    <wk>
+    	<wk_param type="group">
+    		<totalCount abbreviation="t" type="int" default="3000"/>
+        	<n abbreviation="n" type="int" default="1"/>
+        	<walkDirection abbreviation="w" type="int" default="-3"/>
+        	<upDirection abbreviation="u" type="int" default="2"/>
+        	<distance abbreviation="d" type="double" default="0.5"/>
+        	<height abbreviation="h" type="double" default="0.05"/>
+        	<alpha abbreviation="a" type="double" default="0"/>
+        	<beta abbreviation="b" type="double" default="0"/>
+    	</wk_param>
+    </wk>
 </Commands>
