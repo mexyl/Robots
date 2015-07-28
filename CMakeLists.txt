@@ -29,16 +29,16 @@ project(ROBOTS)
 
 
 if(UNIX)
-#	set(CMAKE_C_COMPILER "/usr/bin/gcc")
-#	set(CMAKE_CXX_COMPILER "/usr/bin/g++")
-	set(CMAKE_C_COMPILER "/usr/bin/clang")
-	set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+	set(CMAKE_C_COMPILER "/usr/bin/gcc")
+	set(CMAKE_CXX_COMPILER "/usr/bin/g++")
+#	set(CMAKE_C_COMPILER "/usr/bin/clang")
+#	set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 endif(UNIX)
 
 
 # set compile options
 if(UNIX)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif(UNIX)
 
 # set binary and library folders

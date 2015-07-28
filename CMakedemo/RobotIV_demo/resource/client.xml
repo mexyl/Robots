@@ -18,6 +18,7 @@
         <right abbreviation="r"/>
         <motor abbreviation="m" type="intArray" default="0"/>
     </hm>
+    <ro/>
     <bg/>
     <wk/>
 </Commands>

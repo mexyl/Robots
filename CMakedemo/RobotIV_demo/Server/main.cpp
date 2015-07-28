@@ -14,7 +14,6 @@
 
 using namespace Aris::Core;
 
-#include "robot_interface.h"
 #include "trajectory_generator.h"
 
 
@@ -23,6 +22,8 @@ extern int HEXBOT_HOME_OFFSETS_RESOLVER[18];
 
 int copyClient()
 {
+	robot.LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
+
 	const int TASK_NAME_LEN =1024;
 
 	std::int32_t count = 0;
@@ -103,182 +104,51 @@ int main()
 	cs.SysStart();
 
 	/**/
-
 	copyClient();
-	//system(cp )
 
 
 
 	Aris::Core::CONN control_interface;
 	control_interface.SetOnReceivedConnection([](Aris::Core::CONN *pConn,const char *pRemoteIP,int remotePort)
 	{
-		cout << "control client received:" << endl;
-		cout << "    remote ip is:" << pRemoteIP << endl;
-		cout << endl;
+		std::cout << "control client received:" << std::endl;
+		std::cout << "    remote ip is:" << pRemoteIP << std::endl;
+		std::cout << std::endl;
 		return 0;
 	});
 	control_interface.SetOnReceiveRequest([&cs](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
 	{
-		cout<<"received request"<<endl;
+		std::cout<<"received request"<<std::endl;
 
-		map<string,string> params;
-		char content[500];
-		string cmd;
+		/*now decode msg to cmd and params*/
+		std::string cmd;
+		std::map<std::string,std::string> params;
+		DecodeMsg(msg,cmd,params);
 
-		int32_t size=0;
-		int32_t beginPos=0;
+		/*decode finished, now generate command msg*/
+		GenerateCmdMsg(cmd,params,msg);
 
-		msg.PasteStruct(size);
-		beginPos+=4;
-		msg.PasteAt(content,size,beginPos);
-		cmd.assign(content);
-		beginPos+=size;
-
-		int32_t paramNum;
-		msg.PasteAt(&paramNum,4,beginPos);
-		beginPos+=4;
-
-		for(int i=0;i<paramNum;++i)
-		{
-			string cmdd,param;
-
-
-			msg.PasteAt(&size,4,beginPos);
-			beginPos+=4;
-			msg.PasteAt(content,size,beginPos);
-			cmdd.assign(content);
-			beginPos+=size;
-
-			msg.PasteAt(&size,4,beginPos);
-			beginPos+=4;
-			msg.PasteAt(content,size,beginPos);
-			param.assign(content);
-			beginPos+=size;
-
-			params.insert(make_pair(cmdd,param));
-		}
-
-		if(cmd=="en")
-		{
-			int allMotors[18]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
-			int leftMotors[9]={0,1,2,6,7,8,12,13,14};
-			int rightMotors[9]={3,4,5,9,10,11,15,16,17};
-
-			for(auto &i:params)
-			{
-				if(i.first=="all")
-				{
-					msg.CopyStruct(ENABLE,18);
-					msg.CopyMore(allMotors,sizeof(allMotors));
-				}
-				else if(i.first=="left")
-				{
-					msg.CopyStruct(ENABLE,9);
-					msg.CopyMore(leftMotors,sizeof(leftMotors));
-				}
-				else if(i.first=="right")
-				{
-					msg.CopyStruct(ENABLE,9);
-					msg.CopyMore(rightMotors,sizeof(rightMotors));
-				}
-				else if(i.first=="motor")
-				{
-					int id = stoi(i.second);
-					cout<<"motor id is:"<<id<<endl;
-					msg.CopyStruct(ENABLE,1,id);
-				}
-			}
-		}
-
-		if(cmd=="ds")
-		{
-			int allMotors[18]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
-			int leftMotors[9]={0,1,2,6,7,8,12,13,14};
-			int rightMotors[9]={3,4,5,9,10,11,15,16,17};
-
-			for(auto &i:params)
-			{
-
-				if(i.first=="all")
-				{
-					msg.CopyStruct(DISABLE,18);
-					msg.CopyMore(allMotors,sizeof(allMotors));
-				}
-				else if(i.first=="left")
-				{
-					msg.CopyStruct(DISABLE,9);
-					msg.CopyMore(leftMotors,sizeof(leftMotors));
-				}
-				else if(i.first=="right")
-				{
-					msg.CopyStruct(DISABLE,9);
-					msg.CopyMore(rightMotors,sizeof(rightMotors));
-				}
-				else if(i.first=="motor")
-				{
-					int id = stoi(i.second);
-					cout<<"motor id is:"<<id<<endl;
-					msg.CopyStruct(DISABLE,1,id);
-				}
-			}
-		}
-
-		if(cmd=="hm")
-		{
-			int allMotors[18]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
-			int leftMotors[9]={0,1,2,6,7,8,12,13,14};
-			int rightMotors[9]={3,4,5,9,10,11,15,16,17};
-
-			for(auto &i:params)
-			{
-
-				if(i.first=="all")
-				{
-					msg.CopyStruct(HOME,18);
-					msg.CopyMore(allMotors,sizeof(allMotors));
-				}
-				else if(i.first=="left")
-				{
-					msg.CopyStruct(HOME,9);
-					msg.CopyMore(leftMotors,sizeof(leftMotors));
-				}
-				else if(i.first=="right")
-				{
-					msg.CopyStruct(HOME,9);
-					msg.CopyMore(rightMotors,sizeof(rightMotors));
-				}
-				else if(i.first=="motor")
-				{
-					int id = stoi(i.second);
-					cout<<"motor id is:"<<id<<endl;
-					msg.CopyStruct(HOME,1,id);
-				}
-			}
-		}
-
-		cout<<cmd<<endl;
+		std::cout<<cmd<<std::endl;
 		for(auto &i:params)
 		{
-			cout<<i.first<<":"<<i.second<<endl;
+			std::cout<<i.first<<":"<<i.second<<std::endl;
 		}
 
-
 		msg.SetMsgID(0);
+
 		cs.NRT_PostMsg(msg);
 
 		return MSG();
 	});
 	control_interface.SetOnReceivedData([&cs](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
 	{
-		cout<<"received data"<<endl;
-
-
+		std::cout<<"received data"<<std::endl;
 		cs.NRT_PostMsg(msg);
 		return 0;
 	});
 	control_interface.SetOnLoseConnection([](Aris::Core::CONN *pConn)
 	{
-		cout << "control_interface lost" << endl;
+		std::cout << "control_interface lost" << std::endl;
 
 		while(true)
 		{
@@ -289,7 +159,7 @@ int main()
 			}
 			catch(CONN::START_SERVER_ERROR &e)
 			{
-				cout <<e.what()<<endl<<"will restart in 5s"<<endl;
+				std::cout <<e.what()<<std::endl<<"will restart in 5s"<<std::endl;
 				usleep(5000000);
 			}
 		}
@@ -308,14 +178,14 @@ int main()
 		}
 		catch(CONN::START_SERVER_ERROR &e)
 		{
-			cout <<e.what()<<endl<<"will restart in 5s"<<endl;
+			std::cout <<e.what()<<std::endl<<"will restart in 5s"<<std::endl;
 			usleep(5000000);
 		}
 	}
 
 
 	/**/
-	cout<<"finished"<<endl;
+	std::cout<<"finished"<<std::endl;
 
 
 	Aris::Core::RunMsgLoop();

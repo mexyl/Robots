@@ -10,6 +10,8 @@ namespace Robots
 	
 	struct GAIT_PARAM_BASE
 	{
+		std::int32_t cmdID;			
+		std::uint32_t count;	
 		double beginPee[18];
 		double beginVee[18];
 		double beginBodyPE[6];
