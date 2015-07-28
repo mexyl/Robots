@@ -172,7 +172,8 @@ int main()
 
 	for (unsigned i = 0; i < totalCount; ++i)
 	{
-		walkAcc(&rbt, &param, i);
+		param.count = i;
+		walkAcc(&rbt, &param);
 		rbt.GetPin(pIn_acc[i]);
 		rbt.GetPee(pEE_acc[i]);
 
@@ -190,7 +191,8 @@ int main()
 
 	for (unsigned i = 0; i < totalCount; ++i)
 	{
-		walkDec(&rbt, &param, i);
+		param.count = i;
+		walkDec(&rbt, &param);
 		rbt.GetPin(pIn_dec[i]);
 		rbt.GetPee(pEE_dec[i]);
 

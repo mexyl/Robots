@@ -76,7 +76,7 @@ namespace Robots
 		}
 	}
 
-	int walkAcc(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam, unsigned count)
+	int walkAcc(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam)
 	{
 		/*初始化参数*/
 		WALK_PARAM *pRealParam = static_cast<WALK_PARAM *>(pParam);
@@ -105,6 +105,7 @@ namespace Robots
 		double pBodyPE[6];
 
 		/*初始化完毕，开始计算*/
+		unsigned count = pRealParam->count;
 		double s = -(PI / 2)*cos(PI * (count + 1) / totalCount) + PI / 2;
 		/*设置移动腿*/
 		for (unsigned i = 0; i < 18; i += 6)
@@ -150,7 +151,7 @@ namespace Robots
 		pRobot->SetPee(pEE, pBodyPE, "G");
 		return totalCount - count - 1;
 	}
-	int walkDec(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam, unsigned count)
+	int walkDec(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam)
 	{
 		/*初始化参数*/
 		WALK_PARAM *pRealParam = static_cast<WALK_PARAM *>(pParam);
@@ -179,6 +180,7 @@ namespace Robots
 		double pBodyPE[6];
 
 		/*初始化完毕，开始计算*/
+		unsigned count = pRealParam->count;
 		double s = -(PI / 2)*cos(PI * (count + 1) / totalCount) + PI / 2;
 		/*设置移动腿*/
 		for (unsigned i = 3; i < 18; i += 6)

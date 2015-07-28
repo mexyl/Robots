@@ -5,7 +5,7 @@ namespace Robots
 {
 	class ROBOT_BASE;
 	struct GAIT_PARAM_BASE;
-	typedef std::function<int(ROBOT_BASE *, GAIT_PARAM_BASE *, unsigned)> GAIT_FUNC;
+	typedef std::function<int(ROBOT_BASE *, GAIT_PARAM_BASE *)> GAIT_FUNC;
 
 	class LEG_BASE
 	{

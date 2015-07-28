@@ -4,6 +4,8 @@
 #include <functional>
 #include <cstdint>
 
+#include <Robot_Base.h>
+
 namespace Robots
 {
 	class ROBOT_BASE;
@@ -18,8 +20,6 @@ namespace Robots
 		double beginBodyVel[6];
 	};
 
-	typedef std::function<int(ROBOT_BASE *, GAIT_PARAM_BASE *, unsigned)> GAIT_FUNC;
-
 	struct WALK_PARAM :public GAIT_PARAM_BASE
 	{
 		std::uint32_t totalCount;
@@ -32,9 +32,9 @@ namespace Robots
 		double beta;
 	};
 
-	int walkAcc(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam, unsigned count);
-	int walkConst(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam, unsigned count);
-	int walkDec(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam, unsigned count);
+	int walkAcc(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam);
+	int walkConst(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam);
+	int walkDec(ROBOT_BASE * pRobot, GAIT_PARAM_BASE * pParam);
 
 
 	//int move(ROBOT_BASE *pRobot, GAIT_PARAM_BASE *pParam, unsigned count);

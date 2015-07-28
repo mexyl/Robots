@@ -1174,7 +1174,9 @@ namespace Robots
 
 	void SetAkima(ROBOT_III *pRobot, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param)
 	{
-		unsigned totalCount = fun(pRobot, param, 0) + 1;
+		param->count = 0;
+		
+		unsigned totalCount = fun(pRobot, param) + 1;
 		unsigned akimaSize = totalCount / 10 + 1;//需加上0点
 
 		std::vector<double> time(akimaSize);
@@ -1200,7 +1202,8 @@ namespace Robots
 		/*设置其他时间节点上机器人驱动的位置*/
 		for (unsigned i = 1; i < akimaSize; ++i)
 		{
-			fun(pRobot, param, i * 10 - 1);
+			param->count = i * 10 - 1;
+			fun(pRobot, param);
 
 			for (unsigned j = 0; j < 18; ++j)
 			{
@@ -1217,7 +1220,8 @@ namespace Robots
 
 	void ROBOT_III::SimulateInverse(GAIT_FUNC fun, GAIT_PARAM_BASE *param)
 	{
-		unsigned totalCount = fun(this, param, 0) + 1;
+		param->count = 0;
+		unsigned totalCount = fun(this, param) + 1;
 
 		ForEachElement([totalCount](Aris::DynKer::ELEMENT *e)
 		{
@@ -1249,14 +1253,16 @@ namespace Robots
 					}
 					else
 					{
-						fun(this, param, i.first);
+						param->count = i.first;
+						fun(this, param);
 						s_pm2pe(j.first->GetMakJ()->GetPrtPmPtr(), j.second.peMakJ);
 						j.second.isModifyMakJ = true;
 					}
 				}
 			}
 
-			unsigned totalCount = fun(this, param, 0) + 1;
+			param->count = 0;
+			unsigned totalCount = fun(this, param) + 1;
 			pScript->ScriptEndTime(totalCount);
 		}
 

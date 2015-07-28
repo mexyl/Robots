@@ -121,7 +121,7 @@ int main()
 	}
 
 	rbt.pLM->pM1->SetPosAkimaCurve(6, time, pos);
-	rbt.SaveAdams("adams.cmd");
+	rbt.SaveAdams("adams");
 
 
 	Robots::WALK_PARAM param;
@@ -138,23 +138,25 @@ int main()
 	param.beginBodyPE[2] += 0.1;
 	SIMULATE_SCRIPT script;
 	
-	auto walkFun = [](ROBOT_BASE *pRobot, GAIT_PARAM_BASE *pBaseParam,unsigned id)
+	auto walkFun = [](ROBOT_BASE *pRobot, GAIT_PARAM_BASE *pBaseParam)
 	{
 		WALK_PARAM *param = static_cast<WALK_PARAM *>(pBaseParam);
 		
-		if (id < param->totalCount)
+		if (pBaseParam->count < param->totalCount)
 		{
-			return int(param->totalCount) + Robots::walkAcc(pRobot, pBaseParam, id);
+			return int(param->totalCount) + Robots::walkAcc(pRobot, pBaseParam);
 		}
 		else
 		{
 			WALK_PARAM param2 = *param;
-			
-			Robots::walkAcc(pRobot, pBaseParam, param->totalCount-1);
+			param2.count = pBaseParam->count - param->totalCount;
+
+			pBaseParam->count = param->totalCount - 1;
+			Robots::walkAcc(pRobot, pBaseParam);
 			pRobot->GetPee(param2.beginPee);
 			pRobot->GetBodyPe(param2.beginBodyPE);
 
-			return Robots::walkDec(pRobot, &param2, id - param->totalCount);
+			return Robots::walkDec(pRobot, &param2);
 		}
 	};
 
