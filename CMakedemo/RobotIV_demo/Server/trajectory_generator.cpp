@@ -184,6 +184,10 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 				param.legID[0]=0;
 				param.legID[1]=2;
 				param.legID[2]=4;
+
+				param.motorNum=9;
+				int id[9]={0,1,2,6,7,8,12,13,14};
+				std::memcpy(param.motorID,id,sizeof(id));
 			}
 
 			if(i.first=="right")
@@ -192,6 +196,10 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 				param.legID[0]=1;
 				param.legID[1]=3;
 				param.legID[2]=5;
+
+				param.motorNum=9;
+				int id[9]={3,4,5,9,10,11,15,16,17};
+				std::memcpy(param.motorID,id,sizeof(id));
 			}
 		}
 
@@ -234,6 +242,15 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 		Robots::WALK_PARAM  param;
 		param.cmdType=RUN_GAIT;
 		param.cmdID=1;
+
+		param.motorNum=18;
+		int id[18]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
+		std::memcpy(param.motorID,id,sizeof(id));
+
+		param.motorNum=6;
+		int legid[6]={0,1,2,3,4,5};
+		std::memcpy(param.motorID,legid,sizeof(legid));
+
 
 		for(auto &i:params)
 		{
@@ -355,6 +372,14 @@ int home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris:
 			data.motorsCommands[id[i]]=Aris::RT_CONTROL::EMCMD_GOHOME;
 			data.commandData[id[i]].Position=-HEXBOT_HOME_OFFSETS_RESOLVER[id[i]];
 			isAllHomed=false;
+
+			if(param->count%1000==0)
+			{
+				rt_printf("motor %d not homed\n",id[i]);
+				rt_printf("motor %d not homed\n",param->motorID[i]);
+			}
+
+
 		}
 	}
 
@@ -370,6 +395,8 @@ int home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris:
 	}
 	else
 	{
+
+
 		return -1;
 	}
 };
@@ -392,7 +419,7 @@ int enable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Ari
 		else if(data.motorsStates[id[i]]==Aris::RT_CONTROL::EMSTAT_ENABLED)
 		{
 			data.motorsCommands[id[i]]=Aris::RT_CONTROL::EMCMD_RUNNING;
-			data.commandData[id[i]]=data.feedbackData[param->motorID[i]];
+			data.commandData[id[i]]=data.feedbackData[id[i]];
 			lastCmdData.commandData[id[i]]=data.feedbackData[id[i]];
 			isAllRunning=false;
 		}
@@ -459,10 +486,10 @@ int runGait(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, A
 
 	pRobot->GetPin(pIn);
 
-	for(int i=0;i<18;++i)
+	for(int i=0;i<pParam->motorNum;++i)
 	{
-		data.motorsCommands[MapAbsToPhy[i]]=Aris::RT_CONTROL::EMCMD_RUNNING;
-		data.commandData[MapAbsToPhy[i]].Position=pIn[i]*meter2count;
+		data.motorsCommands[MapAbsToPhy[pParam->motorID[i]]]=Aris::RT_CONTROL::EMCMD_RUNNING;
+		data.commandData[MapAbsToPhy[pParam->motorID[i]]].Position=pIn[pParam->motorID[i]]*meter2count;
 	}
 
 
@@ -582,10 +609,34 @@ int tg(Aris::RT_CONTROL::CMachineData &data,Aris::Core::RT_MSG &recvMsg,Aris::Co
 	}
 
 
+
+	for(int i=0;i<18;++i)
+	{
+		if(lastCmdData.motorsCommands[i]==Aris::RT_CONTROL::EMCMD_RUNNING)
+		{
+			if(cmdData.motorsCommands[i]==Aris::RT_CONTROL::EMCMD_RUNNING)
+			{
+
+
+				if(std::abs(lastCmdData.commandData[i].Position-cmdData.commandData[i].Position)>10000)
+				{
+					rt_printf("data is not continuous\n");
+					data=lastCmdData;
+					return 0;
+				}
+			}
+		}
+	}
+
+
 	data=cmdData;
 
 	lastStateData=stateData;
 	lastCmdData=cmdData;
+
+
+
+
 
 	return 0;
 }
