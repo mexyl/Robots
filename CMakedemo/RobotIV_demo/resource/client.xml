@@ -19,7 +19,10 @@
         <motor abbreviation="m" type="intArray" default="0"/>
     </hm>
     <ro/>
-    <bg/>
+    <ad>
+    	<left abbreviation="l"/>
+        <right abbreviation="r"/>
+    </ad>
     <wk>
     	<wk_param type="group">
     		<totalCount abbreviation="t" type="int" default="3000"/>

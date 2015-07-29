@@ -248,7 +248,7 @@ namespace Robots
 		{
 			for (int j = 0; j < 3; ++j)
 			{
-				pEE[i * 3 + j] = pAP->beginPee[i * 3 + j] * (cos(s) + 1) / 2 + pAP->targetPee[i * 3 + j] * (1 - cos(s)) / 2;
+				pEE[pAP->legID[i] * 3 + j] = pAP->beginPee[pAP->legID[i] * 3 + j] * (cos(s) + 1) / 2 + pAP->targetPee[pAP->legID[i] * 3 + j] * (1 - cos(s)) / 2;
 			}
 		}
 

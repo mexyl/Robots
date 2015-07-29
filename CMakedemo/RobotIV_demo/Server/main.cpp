@@ -51,14 +51,6 @@ int walk(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam)
 		double pBody[18];
 		pRobot->GetPee(pEE,"G");
 				pRobot->GetBodyPe(pBody,"313");
-
-
-
-		rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
-					,pEE[0],pEE[1],pEE[2],pEE[3],pEE[4],pEE[5],pEE[6],pEE[7],pEE[8]
-						,pEE[9],pEE[10],pEE[11],pEE[12],pEE[13],pEE[14],pEE[15],pEE[16],pEE[17]);
-				//rt_printf("%f %f %f %f %f %f\n"
-					//			,pBody[0],pBody[1],pBody[2],pBody[3],pBody[4],pBody[5]);
 	}
 
 
@@ -69,20 +61,8 @@ int walk(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam)
 
 		double *pEE=lastPee;
 		double *pBody=lastPbody;
-
-		/*rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
-				,pEE[0],pEE[1],pEE[2],pEE[3],pEE[4],pEE[5],pEE[6],pEE[7],pEE[8]
-				,pEE[9],pEE[10],pEE[11],pEE[12],pEE[13],pEE[14],pEE[15],pEE[16],pEE[17]);
-		rt_printf("%f %f %f %f %f %f\n"
-						,pBody[0],pBody[1],pBody[2],pBody[3],pBody[4],pBody[5]);*/
 	}
-
-	//rt_printf("value is:%d",2* pWP->totalCount - pWP->count-1);
-
-
 	return 2* pWP->totalCount - pWP->count-1;
-
-
 }
 
 

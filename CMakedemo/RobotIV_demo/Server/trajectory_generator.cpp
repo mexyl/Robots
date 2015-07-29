@@ -167,11 +167,13 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 	}
 
 
-	if(cmd=="bg")
+	if(cmd=="ad")
 	{
 		Robots::ADJUST_PARAM  param;
 		param.cmdType=RUN_GAIT;
 		param.cmdID=0;
+
+		param.totalCount=1000;
 
 		param.legNum=0;
 		for(auto &i:params)
@@ -187,9 +189,9 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 			if(i.first=="right")
 			{
 				param.legNum=3;
-				param.legID[0]=0;
-				param.legID[1]=2;
-				param.legID[2]=4;
+				param.legID[0]=1;
+				param.legID[1]=3;
+				param.legID[2]=5;
 			}
 		}
 
@@ -223,7 +225,6 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 
 		std::memcpy(param.targetPee,targetPee,sizeof(targetPee));
 		msg.CopyStruct(param);
-		cs.NRT_PostMsg(msg);
 		return;
 	}
 
@@ -454,6 +455,8 @@ int runGait(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, A
 
 	ret = pRobot->RunGait(pParam->cmdID,pParam);
 
+	rt_printf("return %d\n",ret);
+
 	pRobot->GetPin(pIn);
 
 	for(int i=0;i<18;++i)
@@ -486,20 +489,14 @@ int execute_cmd(int count,char *cmd, Aris::RT_CONTROL::CMachineData &data)
 	switch (pParam->cmdType)
 	{
 	case ENABLE:
-	{
 		ret = enable(&robot, pParam , data);
 		break;
-	}
 	case DISABLE:
-	{
 		ret = disable(&robot, pParam ,data);
 		break;
-	}
 	case HOME:
-	{
 		ret = home(&robot, pParam, data);
 		break;
-	}
 	case RESET_ORIGIN:
 		ret = resetOrigin(&robot, pParam,data);
 		break;
@@ -530,14 +527,13 @@ int execute_cmd(int count,char *cmd, Aris::RT_CONTROL::CMachineData &data)
 
 	return ret;
 }
-
 int tg(Aris::RT_CONTROL::CMachineData &data,Aris::Core::RT_MSG &recvMsg,Aris::Core::RT_MSG &sendMsg)
 {
 	static double pBodyPE[6]{0},pEE[18]{0};
 
 	static const int cmdSize=8192;
 
-	static char cmdQueue[10][cmdSize];
+	static char cmdQueue[50][cmdSize];
 
 	static int currentCmd=0;
 	static int cmdNum=0;
