@@ -138,9 +138,9 @@ int main()
 	param.beginBodyPE[2] += 0.1;
 	SIMULATE_SCRIPT script;
 	
-	auto walkFun = [](ROBOT_BASE *pRobot, GAIT_PARAM_BASE *pBaseParam)
+	auto walkFun = [](ROBOT_BASE *pRobot, const GAIT_PARAM_BASE *pBaseParam)
 	{
-		WALK_PARAM *param = static_cast<WALK_PARAM *>(pBaseParam);
+		const WALK_PARAM *param = static_cast<const WALK_PARAM *>(pBaseParam);
 		
 		if (pBaseParam->count < param->totalCount)
 		{
@@ -149,10 +149,10 @@ int main()
 		else
 		{
 			WALK_PARAM param2 = *param;
+			param2.count = param->totalCount - 1;
+			Robots::walkAcc(pRobot, &param2);
+			
 			param2.count = pBaseParam->count - param->totalCount;
-
-			pBaseParam->count = param->totalCount - 1;
-			Robots::walkAcc(pRobot, pBaseParam);
 			pRobot->GetPee(param2.beginPee);
 			pRobot->GetBodyPe(param2.beginBodyPE);
 

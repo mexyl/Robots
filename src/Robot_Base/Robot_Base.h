@@ -1,11 +1,13 @@
 ﻿#ifndef ROBOT_BASE_H
 #define ROBOT_BASE_H
 
+#include <cstdint>
+
 namespace Robots
 {
 	class ROBOT_BASE;
 	struct GAIT_PARAM_BASE;
-	typedef std::function<int(ROBOT_BASE *, GAIT_PARAM_BASE *)> GAIT_FUNC;
+	typedef std::function<int(ROBOT_BASE *, const GAIT_PARAM_BASE *)> GAIT_FUNC;
 
 	class LEG_BASE
 	{
@@ -94,7 +96,6 @@ namespace Robots
 		virtual void calculate_from_vIn(){};
 		virtual void calculate_from_aEE(){};
 		virtual void calculate_from_aIn(){};
-
 		virtual void calculate_jac(){};
 		virtual void calculate_jac_c(){};
 
@@ -114,7 +115,6 @@ namespace Robots
 				double z;
 			};
 		};
-
 		union
 		{
 			double vEE[3];
@@ -125,7 +125,6 @@ namespace Robots
 				double vz;
 			};
 		};
-
 		union
 		{
 			double aEE[3];
@@ -136,7 +135,6 @@ namespace Robots
 				double az;
 			};
 		};
-
 		union
 		{
 			double pIn[3];
@@ -147,7 +145,6 @@ namespace Robots
 				double l3;
 			};
 		};
-
 		union
 		{
 			double vIn[3];
@@ -158,7 +155,6 @@ namespace Robots
 				double vl3;
 			};
 		};
-
 		union
 		{
 			double aIn[3];
@@ -182,7 +178,6 @@ namespace Robots
 
 		friend class ROBOT_BASE;
 };
-
 	class ROBOT_BASE
 	{
 	public:
@@ -223,7 +218,14 @@ namespace Robots
 		void GetVin(double *vIn) const;
 		void GetAin(double *aIn) const;
 
-
+		void AddGait(std::uint32_t id, GAIT_FUNC func)
+		{
+			gaitList.insert(std::make_pair(id, func));
+		}
+		void RunGait(std::uint32_t gaitID, const GAIT_PARAM_BASE *param)
+		{
+			gaitList.at(gaitID).operator()(this, param);
+		}
 
 	protected:
 		LEG_BASE *pLegs[6];
@@ -234,6 +236,8 @@ namespace Robots
 
 	private:
 		double _BodyPm[4][4], _BodyVel[6], _BodyAcc[6];
+
+		std::map<std::uint32_t, GAIT_FUNC> gaitList;
 
 		friend class LEG_BASE;
 	};
