@@ -20,10 +20,77 @@ using namespace Aris::Core;
 extern int HEXBOT_HOME_OFFSETS_RESOLVER[18];
 
 
+
+
+int walk(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam)
+{
+	static double lastPee[18];
+	static double lastPbody[6];
+
+	const Robots::WALK_PARAM *pWP=static_cast<const Robots::WALK_PARAM *>(pParam);
+
+
+	if(pParam->count < pWP->totalCount)
+	{
+		walkAcc(pRobot,pParam);
+	}
+	else
+	{
+		Robots::WALK_PARAM param2=*pWP;
+		param2.count=pWP->count - pWP->totalCount;
+
+		memcpy(param2.beginPee,lastPee,sizeof(lastPee));
+		memcpy(param2.beginBodyPE,lastPbody,sizeof(lastPbody));
+
+		walkDec(pRobot,&param2);
+	}
+
+	if(pParam->count%100==0)
+	{
+		double pEE[18];
+		double pBody[18];
+		pRobot->GetPee(pEE,"G");
+				pRobot->GetBodyPe(pBody,"313");
+
+
+
+		rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
+					,pEE[0],pEE[1],pEE[2],pEE[3],pEE[4],pEE[5],pEE[6],pEE[7],pEE[8]
+						,pEE[9],pEE[10],pEE[11],pEE[12],pEE[13],pEE[14],pEE[15],pEE[16],pEE[17]);
+				//rt_printf("%f %f %f %f %f %f\n"
+					//			,pBody[0],pBody[1],pBody[2],pBody[3],pBody[4],pBody[5]);
+	}
+
+
+	if(pParam->count==pWP->totalCount-1)
+	{
+		pRobot->GetPee(lastPee,"G");
+		pRobot->GetBodyPe(lastPbody,"313");
+
+		double *pEE=lastPee;
+		double *pBody=lastPbody;
+
+		/*rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
+				,pEE[0],pEE[1],pEE[2],pEE[3],pEE[4],pEE[5],pEE[6],pEE[7],pEE[8]
+				,pEE[9],pEE[10],pEE[11],pEE[12],pEE[13],pEE[14],pEE[15],pEE[16],pEE[17]);
+		rt_printf("%f %f %f %f %f %f\n"
+						,pBody[0],pBody[1],pBody[2],pBody[3],pBody[4],pBody[5]);*/
+	}
+
+	//rt_printf("value is:%d",2* pWP->totalCount - pWP->count-1);
+
+
+	return 2* pWP->totalCount - pWP->count-1;
+
+
+}
+
+
+
+
+
 int copyClient()
 {
-	robot.LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
-
 	const int TASK_NAME_LEN =1024;
 
 	std::int32_t count = 0;
@@ -85,8 +152,18 @@ int copyClient()
 };
 
 
+Aris::RT_CONTROL::ACTUATION cs;
 int main()
 {
+	robot.LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
+
+	robot.AddGait(Robots::adjust);
+	robot.AddGait(walk);
+
+
+
+
+
 	Aris::RT_CONTROL::CSysInitParameters initParam;
 
 	initParam.motorNum=18;
@@ -96,7 +173,7 @@ int main()
 	initParam.homeLowSpeed=40000;
 	initParam.homeOffsets=HEXBOT_HOME_OFFSETS_RESOLVER;
 
-	Aris::RT_CONTROL::ACTUATION cs;
+
 
 	cs.SetTrajectoryGenerator(tg);
 	cs.SysInit(initParam);

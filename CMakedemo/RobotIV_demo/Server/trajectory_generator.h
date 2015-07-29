@@ -11,7 +11,7 @@ enum ROBOT_CMD_ID
 	DISABLE,
 	HOME,
 	RESET_ORIGIN,
-	BEGIN,
+	RUN_GAIT,
 	WALK,
 
 	ROBOT_CMD_COUNT
@@ -19,13 +19,6 @@ enum ROBOT_CMD_ID
 
 
 extern Robots::ROBOT_III robot;
-
-struct MOTOR_PARAM:public Robots::GAIT_PARAM_BASE
-{
-	int motorNum;
-	int motorID[18];
-};
-
 
 
 void DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string,std::string> &params);

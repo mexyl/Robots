@@ -238,14 +238,18 @@ namespace Robots
 	{
 		auto pAP = static_cast<const ADJUST_PARAM*>(pParam);
 
-		unsigned count = pAP->count;
-		double s = -(PI / 2)*cos(PI * (count + 1) / pAP->totalCount) + PI / 2;
+		double s = -(PI / 2)*cos(PI * (pAP->count + 1) / pAP->totalCount) + PI / 2;
 
 		double pEE[18], pBody[6];
 
-		for (int i = 0; i < 18; ++i)
+		memcpy(pEE, pAP->beginPee, sizeof(pEE));
+
+		for (int i = 0; i < pAP->legNum; ++i)
 		{
-			pEE[i] = pAP->beginPee[i] * (cos(s) + 1) / 2 + pAP->targetPee[i] * (1 - cos(s)) / 2;
+			for (int j = 0; j < 3; ++j)
+			{
+				pEE[i * 3 + j] = pAP->beginPee[i * 3 + j] * (cos(s) + 1) / 2 + pAP->targetPee[i * 3 + j] * (1 - cos(s)) / 2;
+			}
 		}
 
 		for (int i = 0; i < 6; ++i)

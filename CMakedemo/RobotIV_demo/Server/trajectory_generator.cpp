@@ -6,6 +6,8 @@
 
 using namespace std;
 
+extern Aris::RT_CONTROL::ACTUATION cs;
+
 void DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string,std::string> &params)
 {
 	char content[500];
@@ -47,8 +49,8 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 {
 	if(cmd=="en")
 	{
-		MOTOR_PARAM robotState;
-		robotState.cmdID=ENABLE;
+		Robots::GAIT_PARAM_BASE robotState;
+		robotState.cmdType=ENABLE;
 
 		for(auto &i:params)
 		{
@@ -84,8 +86,8 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 
 	if(cmd=="ds")
 	{
-		MOTOR_PARAM robotState;
-		robotState.cmdID=DISABLE;
+		Robots::GAIT_PARAM_BASE robotState;
+		robotState.cmdType=DISABLE;
 
 		for(auto &i:params)
 		{
@@ -121,8 +123,8 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 
 	if(cmd=="hm")
 	{
-		MOTOR_PARAM robotState;
-		robotState.cmdID=HOME;
+		Robots::GAIT_PARAM_BASE robotState;
+		robotState.cmdType=HOME;
 
 		for(auto &i:params)
 		{
@@ -158,8 +160,8 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 
 	if(cmd=="ro")
 	{
-		MOTOR_PARAM robotState;
-		robotState.cmdID=RESET_ORIGIN;
+		Robots::GAIT_PARAM_BASE robotState;
+		robotState.cmdType=RESET_ORIGIN;
 		msg.CopyStruct(robotState);
 		return;
 	}
@@ -167,13 +169,70 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 
 	if(cmd=="bg")
 	{
+		Robots::ADJUST_PARAM  param;
+		param.cmdType=RUN_GAIT;
+		param.cmdID=0;
 
+		param.legNum=0;
+		for(auto &i:params)
+		{
+			if(i.first=="left")
+			{
+				param.legNum=3;
+				param.legID[0]=0;
+				param.legID[1]=2;
+				param.legID[2]=4;
+			}
+
+			if(i.first=="right")
+			{
+				param.legNum=3;
+				param.legID[0]=0;
+				param.legID[1]=2;
+				param.legID[2]=4;
+			}
+		}
+
+
+
+		double middlePee[18]
+		{
+			-0.3,-0.75,-0.65,
+			-0.45,-0.75,0,
+			-0.3,-0.75,0.65,
+			0.3,-0.75,-0.65,
+			0.45,-0.75,0,
+			0.3,-0.75,0.65,
+		};
+		double targetPee[18]
+		{
+			-0.3,-0.85,-0.65,
+			-0.45,-0.85,0,
+			-0.3,-0.85,0.65,
+			0.3,-0.85,-0.65,
+			0.45,-0.85,0,
+			0.3,-0.85,0.65,
+		};
+
+		std::memcpy(param.targetPee,middlePee,sizeof(middlePee));
+		std::memset(param.targetBodyPE,0,sizeof(param.targetBodyPE));
+
+
+		msg.CopyStruct(param);
+		cs.NRT_PostMsg(msg);
+
+		std::memcpy(param.targetPee,targetPee,sizeof(targetPee));
+		msg.CopyStruct(param);
+		cs.NRT_PostMsg(msg);
+		return;
 	}
 
 
 	if(cmd=="wk")
 	{
 		Robots::WALK_PARAM  param;
+		param.cmdType=RUN_GAIT;
+		param.cmdID=1;
 
 		for(auto &i:params)
 		{
@@ -212,7 +271,7 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 		}
 
 
-		param.cmdID=WALK;
+
 		msg.CopyStruct(param);
 		return;
 	}
@@ -265,72 +324,9 @@ void inline a2p(const int *abs, int *phy, int num = 18)
 }
 
 
-int walk(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam)
-{
-	static double lastPee[18];
-	static double lastPbody[6];
-
-	const Robots::WALK_PARAM *pWP=static_cast<const Robots::WALK_PARAM *>(pParam);
 
 
-	if(pParam->count < pWP->totalCount)
-	{
-		walkAcc(pRobot,pParam);
-	}
-	else
-	{
-		Robots::WALK_PARAM param2=*pWP;
-		param2.count=pWP->count - pWP->totalCount;
-
-		memcpy(param2.beginPee,lastPee,sizeof(lastPee));
-		memcpy(param2.beginBodyPE,lastPbody,sizeof(lastPbody));
-
-		walkDec(pRobot,&param2);
-	}
-
-	if(pParam->count%100==0)
-	{
-		double pEE[18];
-		double pBody[18];
-		pRobot->GetPee(pEE,"G");
-				pRobot->GetBodyPe(pBody,"313");
-
-
-
-		rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
-					,pEE[0],pEE[1],pEE[2],pEE[3],pEE[4],pEE[5],pEE[6],pEE[7],pEE[8]
-						,pEE[9],pEE[10],pEE[11],pEE[12],pEE[13],pEE[14],pEE[15],pEE[16],pEE[17]);
-				//rt_printf("%f %f %f %f %f %f\n"
-					//			,pBody[0],pBody[1],pBody[2],pBody[3],pBody[4],pBody[5]);
-	}
-
-
-	if(pParam->count==pWP->totalCount-1)
-	{
-		pRobot->GetPee(lastPee,"G");
-		pRobot->GetBodyPe(lastPbody,"313");
-
-		double *pEE=lastPee;
-		double *pBody=lastPbody;
-
-		/*rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
-				,pEE[0],pEE[1],pEE[2],pEE[3],pEE[4],pEE[5],pEE[6],pEE[7],pEE[8]
-				,pEE[9],pEE[10],pEE[11],pEE[12],pEE[13],pEE[14],pEE[15],pEE[16],pEE[17]);
-		rt_printf("%f %f %f %f %f %f\n"
-						,pBody[0],pBody[1],pBody[2],pBody[3],pBody[4],pBody[5]);*/
-	}
-
-	//rt_printf("value is:%d",2* pWP->totalCount - pWP->count-1);
-
-
-	return 2* pWP->totalCount - pWP->count-1;
-
-
-}
-
-
-
-int home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+int home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
 {
 	double homeIn[18]=
 	{
@@ -342,8 +338,6 @@ int home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris
 			0.675784824916295,0.697784816196987,0.697784816196987,};
 
 	bool isAllHomed=true;
-
-	auto param=static_cast<const MOTOR_PARAM *>(pParam);
 
 	int id[18];
 	a2p(param->motorID,id,param->motorNum);
@@ -378,11 +372,9 @@ int home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris
 		return -1;
 	}
 };
-int enable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+int enable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
 {
 	static Aris::RT_CONTROL::CMachineData lastCmdData;
-
-	auto param=static_cast<const MOTOR_PARAM *>(pParam);
 
 	bool isAllRunning=true;
 
@@ -419,10 +411,8 @@ int enable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Ar
 		return -1;
 	}
 };
-int disable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+int disable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
 {
-	auto param=static_cast<const MOTOR_PARAM *>(pParam);
-
 	int id[18];
 	a2p(param->motorID,id,param->motorNum);
 
@@ -446,7 +436,7 @@ int disable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, A
 		return -1;
 	}
 }
-int resetOrigin(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+int resetOrigin(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
 {
 	double pEE[18],pBody[6]{0},vEE[18],vBody[6]{0};
 	pRobot->GetPee(pEE,"B");
@@ -461,17 +451,8 @@ int runGait(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, A
 {
 	int ret=0;
 	double pIn[18];
-	switch(pParam->cmdID)
-	{
-	case WALK:
-		ret = walk(pRobot,pParam);
-		break;
-	case BEGIN:
-		//ret=begin(pRobot,pParam);
-		break;
-	default:
-		break;
-	}
+
+	ret = pRobot->RunGait(pParam->cmdID,pParam);
 
 	pRobot->GetPin(pIn);
 
@@ -502,7 +483,7 @@ int execute_cmd(int count,char *cmd, Aris::RT_CONTROL::CMachineData &data)
 	memcpy(pParam->beginBodyPE,pBody,sizeof(pBody));
 	memcpy(pParam->beginBodyVel,pBody,sizeof(vBody));
 
-	switch (pParam->cmdID)
+	switch (pParam->cmdType)
 	{
 	case ENABLE:
 	{
@@ -522,8 +503,11 @@ int execute_cmd(int count,char *cmd, Aris::RT_CONTROL::CMachineData &data)
 	case RESET_ORIGIN:
 		ret = resetOrigin(&robot, pParam,data);
 		break;
-	default:
+	case RUN_GAIT:
 		ret = runGait(&robot, pParam,data);
+		break;
+	default:
+		rt_printf("unknown cmd type\n");
 		break;
 
 	}

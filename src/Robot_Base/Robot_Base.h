@@ -2,6 +2,7 @@
 #define ROBOT_BASE_H
 
 #include <cstdint>
+#include <vector>
 
 namespace Robots
 {
@@ -218,13 +219,14 @@ namespace Robots
 		void GetVin(double *vIn) const;
 		void GetAin(double *aIn) const;
 
-		void AddGait(std::uint32_t id, GAIT_FUNC func)
+		std::int32_t AddGait(GAIT_FUNC func)
 		{
-			gaitList.insert(std::make_pair(id, func));
+			gaitList.push_back(func);
+			return gaitList.size();
 		}
-		void RunGait(std::uint32_t gaitID, const GAIT_PARAM_BASE *param)
+		std::int32_t RunGait(std::int32_t gaitID, const GAIT_PARAM_BASE *param)
 		{
-			gaitList.at(gaitID).operator()(this, param);
+			return gaitList.at(gaitID).operator()(this, param);
 		}
 
 	protected:
@@ -237,7 +239,7 @@ namespace Robots
 	private:
 		double _BodyPm[4][4], _BodyVel[6], _BodyAcc[6];
 
-		std::map<std::uint32_t, GAIT_FUNC> gaitList;
+		std::vector<GAIT_FUNC> gaitList;
 
 		friend class LEG_BASE;
 	};

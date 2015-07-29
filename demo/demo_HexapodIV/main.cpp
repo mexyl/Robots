@@ -61,7 +61,7 @@ int main()
 	//dlmwrite("C:\\Users\\yang\\Desktop\\pBodyEp_Mat.txt", *pBodyEp_Mat, home2startCount, 6);
 
 
-	cout << "finished" << endl;
+	cout << "finished" <<sizeof(GAIT_PARAM_BASE)<< endl;
 
 
 	char aaa;
