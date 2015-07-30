@@ -265,9 +265,9 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 		int id[18]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
 		std::memcpy(param.motorID,id,sizeof(id));
 
-		param.motorNum=6;
+		param.legNum=6;
 		int legid[6]={0,1,2,3,4,5};
-		std::memcpy(param.motorID,legid,sizeof(legid));
+		std::memcpy(param.legID,legid,sizeof(legid));
 
 
 		for(auto &i:params)
@@ -409,9 +409,11 @@ int home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris:
 
 		for(int i=0;i < param->legNum;++i)
 		{
-			pRobot->pLegs[i]->SetPin(&homeIn[param->legID[i]*3]);
+
+			rt_printf("leg:%d\n",param->legID[i]);
+			pRobot->pLegs[param->legID[i]]->SetPin(&homeIn[param->legID[i]*3]);
 		}
-		pRobot->SetPin(homeIn,pBody);
+		//pRobot->SetPin(homeIn,pBody);
 		pRobot->SetVee(vEE,vBody);
 
 		return 0;
