@@ -229,9 +229,9 @@ namespace Robots
 			return gaitList.at(gaitID).operator()(this, param);
 		}
 
-	protected:
 		LEG_BASE *pLegs[6];
 
+	protected:
 		double *const pBodyPm{ *_BodyPm };
 		double *const pBodyVel{ _BodyVel };
 		double *const pBodyAcc{ _BodyAcc };

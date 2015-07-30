@@ -62,15 +62,19 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 			}
 			else if(i.first=="left")
 			{
+				robotState.motorNum=9;
 				int motors[9]={0,1,2,6,7,8,12,13,14};
 				std::memcpy(robotState.motorID,motors,sizeof(motors));
-				robotState.motorNum=9;
+
+
+
+
 			}
 			else if(i.first=="right")
 			{
+				robotState.motorNum=9;
 				int motors[9]={3,4,5,9,10,11,15,16,17};
 				std::memcpy(robotState.motorID,motors,sizeof(motors));
-				robotState.motorNum=9;
 			}
 			else if(i.first=="motor")
 			{
@@ -133,24 +137,38 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 				int motors[18]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
 				std::memcpy(robotState.motorID,motors,sizeof(motors));
 				robotState.motorNum=18;
+
+				robotState.legNum=6;
+				int legs[6]={0,1,2,3,4,5};
+				std::memcpy(robotState.legID,legs,sizeof(legs));
 			}
 			else if(i.first=="left")
 			{
 				int motors[9]={0,1,2,6,7,8,12,13,14};
 				std::memcpy(robotState.motorID,motors,sizeof(motors));
 				robotState.motorNum=9;
+
+				robotState.legNum=3;
+				int legs[3]={0,2,4};
+				std::memcpy(robotState.legID,legs,sizeof(legs));
 			}
 			else if(i.first=="right")
 			{
 				int motors[9]={3,4,5,9,10,11,15,16,17};
 				std::memcpy(robotState.motorID,motors,sizeof(motors));
 				robotState.motorNum=9;
+
+				robotState.legNum=3;
+				int legs[3]={1,3,5};
+				std::memcpy(robotState.legID,legs,sizeof(legs));
 			}
 			else if(i.first=="motor")
 			{
 				int motors[1]={stoi(i.second)};
 				std::memcpy(robotState.motorID,motors,sizeof(motors));
 				robotState.motorNum=1;
+
+				robotState.legNum=0;
 			}
 		}
 
@@ -375,11 +393,9 @@ int home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris:
 
 			if(param->count%1000==0)
 			{
-				rt_printf("motor %d not homed\n",id[i]);
-				rt_printf("motor %d not homed\n",param->motorID[i]);
+				rt_printf("motor %d not homed, physical id is:\n",id[i]);
+				rt_printf("motor %d not homed, absolute id is:\n",param->motorID[i]);
 			}
-
-
 		}
 	}
 
@@ -388,6 +404,13 @@ int home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris:
 	{
 		double pBody[6]{0,0,0,0,0,0},vBody[6]{0};
 		double vEE[18]{0};
+
+		pRobot->SetPin(nullptr,pBody);
+
+		for(int i=0;i < param->legNum;++i)
+		{
+			pRobot->pLegs[i]->SetPin(&homeIn[param->legID[i]*3]);
+		}
 		pRobot->SetPin(homeIn,pBody);
 		pRobot->SetVee(vEE,vBody);
 
