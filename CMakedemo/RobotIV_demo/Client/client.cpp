@@ -467,10 +467,9 @@ int main(int argc, char *argv[])
 
 			continue;
 		}
-
-		/*start with '--'*/
-		if(paramName.data()[0]!='-')
+		else
 		{
+		/*start with '--'*/
 			if(paramName.size()<3)
 			{
 				throw std::logic_error("param start with single '--' must is a full name");

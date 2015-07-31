@@ -643,7 +643,7 @@ int tg(Aris::RT_CONTROL::CMachineData &data,Aris::Core::RT_MSG &recvMsg,Aris::Co
 			{
 
 
-				if(std::abs(lastCmdData.commandData[i].Position-cmdData.commandData[i].Position)>10000)
+				if(std::abs(lastCmdData.commandData[i].Position-cmdData.commandData[i].Position)>20000)
 				{
 					rt_printf("data is not continuous\n");
 					data=lastCmdData;

@@ -16,10 +16,13 @@
 using namespace std;
 using namespace Robots;
 
-using namespace Aris::Core;
+//using namespace Aris::Core;
 using namespace Aris::DynKer;
 
 ROBOT_III rbt;
+
+
+#include<ctime>
 
 int main()
 {
@@ -54,7 +57,7 @@ int main()
 	double vEE_G[18] =
 	{
 		0, 0, 0,
-		0, 0, 0,
+		10, 10, 10,
 		0, 0, 0,
 		0, 0, 0,
 		0, 0, 0,
@@ -71,7 +74,7 @@ int main()
 	double aEE_G[18] =
 	{
 		0, 0, 0,
-		0, 0, 0,
+		20, 10, -10,
 		0, 0, 0,
 		0, 0, 0,
 		0, 0, 0,
@@ -98,6 +101,42 @@ int main()
 	rbt.GetFin(fIn);
 	dsp(fIn, 18, 1);
 
+
+
+	clock_t  clockBegin, clockEnd;
+	clockBegin = clock();
+
+
+
+
+
+
+
+	for (int i = 0; i < 10000; ++i)
+	{
+		rbt.SetPin(pIn);
+		rbt.SetVin(vIn);
+		rbt.SetAin(aIn);
+		rbt.SetPee(pEE_G, bodyPE, "G");
+		rbt.SetVee(vEE_G, bodyVel, "G");
+		rbt.SetAee(aEE_G, bodyAcc, "G");
+		rbt.FastDyn();
+	}
+
+	clockEnd = clock();
+	std::cout << "consumed time is:" << double(clockEnd - clockBegin)/ CLOCKS_PER_SEC << std::endl;
+	
+
+
+
+
+	cout << "finished" << endl;
+
+
+
+
+
+
 	rbt.SaveAdams("adams.cmd");
 
 	
@@ -109,7 +148,7 @@ int main()
 
 	cout << "finished" << endl;
 
-
+	/*
 	double pIni = rbt.pLF->pM1->GetP_mPtr()[0];
 
 	double time[] = { 0, 1, 2, 3, 4, 5 };
@@ -168,9 +207,11 @@ int main()
 
 	Activate246(&rbt);
 	rbt.SimulateForwardByAdams("simulate", walkDec, &param);
-
+	*/
 	char aaa;
 	cin >> aaa;
+
+	
 	return 0;
 }
 

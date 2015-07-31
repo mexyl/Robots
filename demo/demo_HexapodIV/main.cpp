@@ -44,24 +44,114 @@ double firstEE[18] =
 Robots::ROBOT_III rbt;
 
 
+int walk(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam)
+{
+	static double lastPee[18];
+	static double lastPbody[6];
+
+	const Robots::WALK_PARAM *pWP = static_cast<const Robots::WALK_PARAM *>(pParam);
+
+	if (pParam->count < pWP->totalCount)
+	{
+		walkAcc(pRobot, pParam);
+	}
+	else
+	{
+		Robots::WALK_PARAM param2 = *pWP;
+		param2.count = pWP->count - pWP->totalCount;
+
+		memcpy(param2.beginPee, lastPee, sizeof(lastPee));
+		memcpy(param2.beginBodyPE, lastPbody, sizeof(lastPbody));
+
+		walkDec(pRobot, &param2);
+	}
+
+	if (pParam->count % 100 == 0)
+	{
+		double pEE[18];
+		double pBody[18];
+		pRobot->GetPee(pEE, "G");
+		pRobot->GetBodyPe(pBody, "313");
+	}
+
+
+	if (pParam->count == pWP->totalCount - 1)
+	{
+		pRobot->GetPee(lastPee, "G");
+		pRobot->GetBodyPe(lastPbody, "313");
+
+		double *pEE = lastPee;
+		double *pBody = lastPbody;
+	}
+	return 2 * pWP->totalCount - pWP->count - 1;
+}
+
 int main()
 {
 	rbt.LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
-	
-	//const int home2startCount = 2000;
-	//double pEE_Mat[home2startCount][18], pIn_Mat[home2startCount][18], pBodyEp_Mat[home2startCount][6];
 
-	//for (unsigned i = 0; i < home2startCount; ++i)
-	//{
-	//	home2start(&rbt,i, 1000, 1000, homeEE, firstEE, iniEE, pIn_Mat[i], pEE_Mat[i], pBodyEp_Mat[i]);
-	//}
+	double beginPee[18]
+	{
+		-0.3,-0.85,-0.65,
+		-0.45,-0.85,0,
+		-0.3,-0.85,0.65,
+		0.3,-0.85,-0.65,
+		0.45,-0.85,0,
+		0.3,-0.85,0.65,
+	};
 
-	//dlmwrite("C:\\Users\\yang\\Desktop\\pIn_Mat.txt", *pIn_Mat, home2startCount, 18);
-	//dlmwrite("C:\\Users\\yang\\Desktop\\pEE_Mat.txt", *pEE_Mat, home2startCount, 18);
-	//dlmwrite("C:\\Users\\yang\\Desktop\\pBodyEp_Mat.txt", *pBodyEp_Mat, home2startCount, 6);
+	Robots::WALK_PARAM param;
+	param.alpha = 0;
+	param.beta = 0.3;
+	param.h = 0.1;
+	param.d = 0;
+	param.totalCount = 3000;
+	param.n = 1;
+	param.upDirection = 2;
+	param.walkDirection = -3;
+
+	std::copy_n(beginPee, 18, param.beginPee);
+	std::fill_n(param.beginBodyPE, 6, 0);
+
+	const int totalCount = 6000;
+	double pEE_Mat[totalCount][18], pIn_Mat[totalCount][18], pBodyEp_Mat[totalCount][6];
+
+	for (int j = 0; j < 2; ++j)
+	{
+		for (unsigned i = 0; i < totalCount; ++i)
+		{
+			param.count = i;
+			walk(&rbt, &param);
+		}
+
+		rbt.GetPee(param.beginPee);
+		rbt.GetBodyPe(param.beginBodyPE);
+	}
+
+	rbt.GetPee(param.beginPee);
+	rbt.GetBodyPe(param.beginBodyPE);
+
+	for (unsigned i = 0; i < totalCount; ++i)
+	{
+		param.count = i;
+		walk(&rbt, &param);
+		rbt.GetPee(pEE_Mat[i]);
+		rbt.GetPin(pIn_Mat[i]);
+		rbt.GetBodyPe(pBodyEp_Mat[i]);
+	}
+
+	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_Mat.txt", *pIn_Mat, totalCount, 18);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pEE_Mat.txt", *pEE_Mat, totalCount, 18);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pBody_Mat.txt", *pBodyEp_Mat, totalCount, 6);
 
 
-	cout << "finished" <<sizeof(GAIT_PARAM_BASE)<< endl;
+
+
+
+
+
+
+	cout << "finished" << endl;
 
 
 	char aaa;
