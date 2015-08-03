@@ -8,11 +8,6 @@
 #include "Robot_Base.h"
 #include "Robot_Gait.h"
 
-
-
-//需要修改默认的堆栈大小
-//在windows里，位于程序属性->链接器->系统->堆栈保留大小
-
 /** \brief 命名空间：六足机器人
 *
 * 用来计算机器人的运动学和动力学等。

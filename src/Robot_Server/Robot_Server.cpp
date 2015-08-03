@@ -22,292 +22,76 @@ using namespace std;
 
 namespace Robots
 {
-	int HEXBOT_HOME_OFFSETS_RESOLVER[18] =
-	{
-		-15849882 + 349000,-16354509 + 349000,-16354509 + 349000,
-		-15849882 + 349000,-16354509 + 349000,-16354509 + 349000,
-		-15849882 + 349000,-16354509 + 349000,-16354509 + 349000,
-		-16354509 + 349000,-15849882 + 349000,-16354509 + 349000,
-		-15849882 + 349000,-16354509 + 349000,-16354509 + 349000,
-		-16354509 + 349000,-16354509 + 349000,-15849882 + 349000,
-	};
-
 	const double meter2count = 1 / 0.01*3.5 * 65536;
 
-	const int MapAbsToPhy[18]
+	void ROBOT_SERVER::LoadXml(const char *fileName)
 	{
-		10,11,9,
-		12,14,13,
-		17,15,16,
-		6,8,7,
-		3,5,4,
-		0,2,1
-	};
+		Aris::Core::DOCUMENT doc;
 
-	const int MapPhyToAbs[18]
-	{
-		15,17,16,
-		12,14,13,
-		9,11,10,
-		2,0,1,
-		3,5,4,
-		7,8,6
-	};
-
-	void inline p2a(const int *phy, int *abs, int num = 18)
-	{
-		for (int i = 0; i<num; ++i)
+		if (doc.LoadFile(fileName) != 0)
 		{
-			abs[i] = MapPhyToAbs[phy[i]];
+			throw std::logic_error((std::string("could not open file:") + std::string(fileName)));
+		}
+
+		auto pConnEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Connection");
+		ip = pConnEle->Attribute("IP");
+		port = pConnEle->Attribute("Port");
+
+		auto pContEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control");
+		Aris::DynKer::CALCULATOR c;
+		auto mat = c.CalculateExpression(pContEle->FirstChildElement("HomeEE")->GetText());
+		std::copy_n(mat.Data(), 18, homeEE);
+
+		std::string mapPhy2AbsText{ pContEle->FirstChildElement("MapPhy2Abs")->GetText() };
+		std::stringstream stream(mapPhy2AbsText);
+
+		for (int i = 0; i < 18; ++i)
+		{
+			std::string word;
+
+			while (stream >> word)
+			{
+				std::stringstream intStream{ word };
+				if (intStream >> mapPhy2Abs[i])
+					break;
+			}
+		}
+
+		for (int i = 0; i < 18; ++i)
+		{
+			mapAbs2Phy[i] = std::find(mapPhy2Abs, mapPhy2Abs + 18, i) - mapPhy2Abs;
+		}
+
+		std::string docName{ doc.RootElement()->Name() };
+
+		if (docName == "HexapodIII")
+		{
+			pRobot = std::unique_ptr<Robots::ROBOT_BASE>{ new ROBOT_III };
+			pRobot->LoadXml(fileName);
+		}
+
+		double pe[6]{ 0 };
+		pRobot->SetPee(homeEE, pe, "B");
+		pRobot->GetPin(homeIn);
+
+		for (int i = 0; i < 18; ++i)
+		{
+			homeCount[i] = -static_cast<int>(homeIn[i] * meter2count);
 		}
 	}
-	void inline a2p(const int *abs, int *phy, int num = 18)
+	void ROBOT_SERVER::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 	{
-		for (int i = 0; i<num; ++i)
+		if (mapName2ID.find(cmdName) == mapName2ID.end())
 		{
-			phy[i] = MapAbsToPhy[abs[i]];
-		}
-	}
+			allGaits.push_back(gaitFunc);
+			allParsers.push_back(parseFunc);
 
-	int home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
-	{
-		double homeIn[18]
-		{
-			0.675784824916295,0.697784816196987,0.697784816196987,
-			0.675784824916295,0.697784816196987,0.697784816196987,
-			0.675784824916295,0.697784816196987,0.697784816196987,
-			0.675784824916295,0.697784816196987,0.697784816196987,
-			0.675784824916295,0.697784816196987,0.697784816196987,
-			0.675784824916295,0.697784816196987,0.697784816196987,
-		};
+			mapName2ID.insert(std::make_pair(cmdName, allGaits.size() - 1));
 
-		bool isAllHomed = true;
+			std::cout << cmdName << ":" << mapName2ID.at(cmdName) << std::endl;
 
-		int id[18];
-		a2p(param->motorID, id, param->motorNum);
-
-		for (int i = 0; i< param->motorNum; ++i)
-		{
-			if (data.isMotorHomed[id[i]])
-			{
-				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_RUNNING;
-				data.commandData[id[i]].Position = -HEXBOT_HOME_OFFSETS_RESOLVER[id[i]];
-			}
-			else
-			{
-				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_GOHOME;
-				data.commandData[id[i]].Position = -HEXBOT_HOME_OFFSETS_RESOLVER[id[i]];
-				isAllHomed = false;
-
-				if (param->count % 1000 == 0)
-				{
-					rt_printf("motor %d not homed, physical id is:\n", id[i]);
-					rt_printf("motor %d not homed, absolute id is:\n", param->motorID[i]);
-				}
-			}
-		}
-
-
-		if (isAllHomed)
-		{
-			double pBody[6]{ 0,0,0,0,0,0 }, vBody[6]{ 0 };
-			double vEE[18]{ 0 };
-
-			pRobot->SetPin(nullptr, pBody);
-
-			for (int i = 0; i < param->legNum; ++i)
-			{
-				rt_printf("leg:%d\n", param->legID[i]);
-				pRobot->pLegs[param->legID[i]]->SetPin(&homeIn[param->legID[i] * 3]);
-			}
-			//pRobot->SetPin(homeIn,pBody);
-			pRobot->SetVee(vEE, vBody);
-
-			return 0;
-		}
-		else
-		{
-
-
-			return -1;
 		}
 	};
-	int enable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
-	{
-		static Aris::RT_CONTROL::CMachineData lastCmdData;
-
-		bool isAllRunning = true;
-
-		int id[18];
-		a2p(param->motorID, id, param->motorNum);
-
-		for (int i = 0; i< param->motorNum; ++i)
-		{
-			if (data.motorsStates[id[i]] == Aris::RT_CONTROL::EMSTAT_RUNNING)
-			{
-				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_RUNNING;
-				data.commandData[id[i]] = lastCmdData.commandData[id[i]];
-			}
-			else if (data.motorsStates[id[i]] == Aris::RT_CONTROL::EMSTAT_ENABLED)
-			{
-				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_RUNNING;
-				data.commandData[id[i]] = data.feedbackData[id[i]];
-				lastCmdData.commandData[id[i]] = data.feedbackData[id[i]];
-				isAllRunning = false;
-			}
-			else
-			{
-				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_ENABLE;
-				isAllRunning = false;
-			}
-		}
-
-		if (isAllRunning)
-		{
-			return 0;
-		}
-		else
-		{
-			return -1;
-		}
-	};
-	int disable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
-	{
-		int id[18];
-		a2p(param->motorID, id, param->motorNum);
-
-
-		bool isAllDisabled = true;
-		for (int i = 0; i< param->motorNum; ++i)
-		{
-			if (data.motorsStates[id[i]] != Aris::RT_CONTROL::EMSTAT_STOPPED)
-			{
-				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_STOP;
-				isAllDisabled = false;
-			}
-		}
-
-		if (isAllDisabled)
-		{
-			return 0;
-		}
-		else
-		{
-			return -1;
-		}
-	}
-	int resetOrigin(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
-	{
-		double pEE[18], pBody[6]{ 0 }, vEE[18], vBody[6]{ 0 };
-		pRobot->GetPee(pEE, "B");
-		pRobot->GetVee(vEE, "B");
-
-		pRobot->SetPee(pEE, pBody, "G");
-		pRobot->SetVee(vEE, vBody, "G");
-
-		return 0;
-	}
-	int ROBOT_SERVER::runGait(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
-	{
-		int ret = 0;
-		double pIn[18];
-
-		ret = this->allGaits.at(pParam->cmdID).operator()(pRobot,pParam);
-
-		pRobot->GetPin(pIn);
-
-		for (int i = 0; i<pParam->motorNum; ++i)
-		{
-			data.motorsCommands[MapAbsToPhy[pParam->motorID[i]]] = Aris::RT_CONTROL::EMCMD_RUNNING;
-			data.commandData[MapAbsToPhy[pParam->motorID[i]]].Position = static_cast<int>(pIn[pParam->motorID[i]] * meter2count);
-		}
-
-		return ret;
-	}
-
-	int tg(Aris::RT_CONTROL::CMachineData &data, Aris::Core::RT_MSG &recvMsg, Aris::Core::RT_MSG &sendMsg)
-	{
-		static double pBodyPE[6]{ 0 }, pEE[18]{ 0 };
-
-		static const int cmdSize = 8192;
-
-		static char cmdQueue[50][cmdSize];
-
-		static int currentCmd = 0;
-		static int cmdNum = 0;
-
-		static int count = 0;
-
-		static Aris::RT_CONTROL::CMachineData lastCmdData = data, lastStateData = data;
-		static Aris::RT_CONTROL::CMachineData stateData, cmdData;
-
-		stateData = data;
-		cmdData = data;
-
-		switch (recvMsg.GetMsgID())
-		{
-		case 0:
-			recvMsg.Paste(cmdQueue[(currentCmd + cmdNum) % 10]);
-			++cmdNum;
-			break;
-		default:
-			break;
-		}
-
-
-		if (cmdNum>0)
-		{
-			if (Robots::ROBOT_SERVER::GetInstance()->execute_cmd(count, cmdQueue[currentCmd], cmdData) == 0)
-			{
-				count = 0;
-				currentCmd = (currentCmd + 1) % 10;
-				cmdNum--;
-				rt_printf("cmd finished\n");
-			}
-			else
-			{
-				count++;
-			}
-
-			if (count % 1000 == 0)
-			{
-				rt_printf("the cmd is:%d in count:%d\n", cmdData.motorsCommands[0], count);
-			}
-		}
-		else
-		{
-			cmdData = lastCmdData;
-		}
-
-
-
-		for (int i = 0; i<18; ++i)
-		{
-			if (lastCmdData.motorsCommands[i] == Aris::RT_CONTROL::EMCMD_RUNNING)
-			{
-				if (cmdData.motorsCommands[i] == Aris::RT_CONTROL::EMCMD_RUNNING)
-				{
-
-
-					if (std::abs(lastCmdData.commandData[i].Position - cmdData.commandData[i].Position)>20000)
-					{
-						rt_printf("data is not continuous\n");
-						data = lastCmdData;
-						return 0;
-					}
-				}
-			}
-		}
-
-
-		data = cmdData;
-
-		lastStateData = stateData;
-		lastCmdData = cmdData;
-
-		return 0;
-	}
-	
 	void ROBOT_SERVER::Start()
 	{
 #ifdef PLATFORM_IS_LINUX
@@ -318,14 +102,14 @@ namespace Robots
 		initParam.homeTorqueLimit = 100;
 		initParam.homeHighSpeed = 280000;
 		initParam.homeLowSpeed = 160000;
-		initParam.homeOffsets = HEXBOT_HOME_OFFSETS_RESOLVER;
+		initParam.homeOffsets = homeCount;
 
 		cs.SetTrajectoryGenerator(tg);
 		cs.SysInit(initParam);
 		cs.SysInitCommunication();
 		cs.SysStart();
 #endif
-		
+
 		server.SetOnReceivedConnection([](Aris::Core::CONN *pConn, const char *pRemoteIP, int remotePort)
 		{
 			std::cout << "control client received:" << std::endl;
@@ -363,7 +147,7 @@ namespace Robots
 
 			return 0;
 		});
-		
+
 		while (true)
 		{
 			try
@@ -380,22 +164,43 @@ namespace Robots
 			}
 		}
 	}
-	void ROBOT_SERVER::ExecuteMsg(const Aris::Core::MSG &msg)
+
+	void ROBOT_SERVER::DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string, std::string> &params)
 	{
-		std::string cmd;
-		std::map<std::string, std::string> params;
-		DecodeMsg(msg, cmd, params);
+		char content[500];
 
-		Aris::Core::MSG cmdMsg;
-		GenerateCmdMsg(cmd, params, cmdMsg);
+		std::int32_t size = 0;
+		std::int32_t beginPos = 0;
 
-		cmdMsg.SetMsgID(0);
+		msg.PasteStruct(size);
+		beginPos += 4;
+		msg.PasteAt(content, size, beginPos);
+		cmd.assign(content);
+		beginPos += size;
 
-#ifdef PLATFORM_IS_LINUX
-		cs.NRT_PostMsg(cmdMsg);
-#endif
+		std::int32_t paramNum;
+		msg.PasteAt(&paramNum, 4, beginPos);
+		beginPos += 4;
+
+		for (int i = 0; i<paramNum; ++i)
+		{
+			std::string cmdd, param;
+
+			msg.PasteAt(&size, 4, beginPos);
+			beginPos += 4;
+			msg.PasteAt(content, size, beginPos);
+			cmdd.assign(content);
+			beginPos += size;
+
+			msg.PasteAt(&size, 4, beginPos);
+			beginPos += 4;
+			msg.PasteAt(content, size, beginPos);
+			param.assign(content);
+			beginPos += size;
+
+			params.insert(std::make_pair(cmdd, param));
+		}
 	}
-
 	void ROBOT_SERVER::GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::MSG &msg)
 	{
 		if (cmd == "en")
@@ -546,42 +351,168 @@ namespace Robots
 			cout << "cmd not found" << endl;
 		}
 	}
-	void ROBOT_SERVER::DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string, std::string> &params)
+	void ROBOT_SERVER::ExecuteMsg(const Aris::Core::MSG &msg)
 	{
-		char content[500];
+		std::string cmd;
+		std::map<std::string, std::string> params;
+		DecodeMsg(msg, cmd, params);
 
-		std::int32_t size = 0;
-		std::int32_t beginPos = 0;
+		Aris::Core::MSG cmdMsg;
+		GenerateCmdMsg(cmd, params, cmdMsg);
 
-		msg.PasteStruct(size);
-		beginPos += 4;
-		msg.PasteAt(content, size, beginPos);
-		cmd.assign(content);
-		beginPos += size;
+		cmdMsg.SetMsgID(0);
 
-		std::int32_t paramNum;
-		msg.PasteAt(&paramNum, 4, beginPos);
-		beginPos += 4;
+#ifdef PLATFORM_IS_LINUX
+		cs.NRT_PostMsg(cmdMsg);
+#endif
+	}
 
-		for (int i = 0; i<paramNum; ++i)
+	int ROBOT_SERVER::home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
+	{
+		bool isAllHomed = true;
+
+		int id[18];
+		a2p(param->motorID, id, param->motorNum);
+
+		for (int i = 0; i< param->motorNum; ++i)
 		{
-			std::string cmdd, param;
+			if (data.isMotorHomed[id[i]])
+			{
+				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_RUNNING;
+				data.commandData[id[i]].Position = -homeCount[id[i]];
+			}
+			else
+			{
+				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_GOHOME;
+				data.commandData[id[i]].Position = -homeCount[id[i]];
+				isAllHomed = false;
 
-			msg.PasteAt(&size, 4, beginPos);
-			beginPos += 4;
-			msg.PasteAt(content, size, beginPos);
-			cmdd.assign(content);
-			beginPos += size;
+				if (param->count % 1000 == 0)
+				{
+					rt_printf("motor %d not homed, physical id is:\n", id[i]);
+					rt_printf("motor %d not homed, absolute id is:\n", param->motorID[i]);
+				}
+			}
+		}
 
-			msg.PasteAt(&size, 4, beginPos);
-			beginPos += 4;
-			msg.PasteAt(content, size, beginPos);
-			param.assign(content);
-			beginPos += size;
 
-			params.insert(std::make_pair(cmdd, param));
+		if (isAllHomed)
+		{
+			double pBody[6]{ 0,0,0,0,0,0 }, vBody[6]{ 0 };
+			double vEE[18]{ 0 };
+
+			pRobot->SetPin(nullptr, pBody);
+
+			for (int i = 0; i < param->legNum; ++i)
+			{
+				rt_printf("leg:%d\n", param->legID[i]);
+				pRobot->pLegs[param->legID[i]]->SetPee(&homeEE[param->legID[i] * 3],"B");
+			}
+			//pRobot->SetPin(homeIn,pBody);
+			pRobot->SetVee(vEE, vBody);
+
+			return 0;
+		}
+		else
+		{
+
+
+			return -1;
+		}
+	};
+	int ROBOT_SERVER::enable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
+	{
+		static Aris::RT_CONTROL::CMachineData lastCmdData;
+
+		bool isAllRunning = true;
+
+		int id[18];
+		a2p(param->motorID, id, param->motorNum);
+
+		for (int i = 0; i< param->motorNum; ++i)
+		{
+			if (data.motorsStates[id[i]] == Aris::RT_CONTROL::EMSTAT_RUNNING)
+			{
+				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_RUNNING;
+				data.commandData[id[i]] = lastCmdData.commandData[id[i]];
+			}
+			else if (data.motorsStates[id[i]] == Aris::RT_CONTROL::EMSTAT_ENABLED)
+			{
+				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_RUNNING;
+				data.commandData[id[i]] = data.feedbackData[id[i]];
+				lastCmdData.commandData[id[i]] = data.feedbackData[id[i]];
+				isAllRunning = false;
+			}
+			else
+			{
+				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_ENABLE;
+				isAllRunning = false;
+			}
+		}
+
+		if (isAllRunning)
+		{
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
+	};
+	int ROBOT_SERVER::disable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
+	{
+		int id[18];
+		a2p(param->motorID, id, param->motorNum);
+
+
+		bool isAllDisabled = true;
+		for (int i = 0; i< param->motorNum; ++i)
+		{
+			if (data.motorsStates[id[i]] != Aris::RT_CONTROL::EMSTAT_STOPPED)
+			{
+				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_STOP;
+				isAllDisabled = false;
+			}
+		}
+
+		if (isAllDisabled)
+		{
+			return 0;
+		}
+		else
+		{
+			return -1;
 		}
 	}
+	int ROBOT_SERVER::resetOrigin(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
+	{
+		double pEE[18], pBody[6]{ 0 }, vEE[18], vBody[6]{ 0 };
+		pRobot->GetPee(pEE, "B");
+		pRobot->GetVee(vEE, "B");
+
+		pRobot->SetPee(pEE, pBody, "G");
+		pRobot->SetVee(vEE, vBody, "G");
+
+		return 0;
+	}
+	int ROBOT_SERVER::runGait(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+	{
+		int ret = 0;
+		double pIn[18];
+
+		ret = this->allGaits.at(pParam->cmdID).operator()(pRobot,pParam);
+
+		pRobot->GetPin(pIn);
+
+		for (int i = 0; i<pParam->motorNum; ++i)
+		{
+			data.motorsCommands[mapAbs2Phy[pParam->motorID[i]]] = Aris::RT_CONTROL::EMCMD_RUNNING;
+			data.commandData[mapAbs2Phy[pParam->motorID[i]]].Position = static_cast<int>(pIn[pParam->motorID[i]] * meter2count);
+		}
+
+		return ret;
+	}
+
 	int ROBOT_SERVER::execute_cmd(int count, char *cmd, Aris::RT_CONTROL::CMachineData &data)
 	{
 		static double pBody[6]{ 0 }, vBody[6]{ 0 }, pEE[18]{ 0 }, vEE[18]{ 0 };
@@ -638,7 +569,86 @@ namespace Robots
 		return ret;
 	}
 
+	int ROBOT_SERVER::tg(Aris::RT_CONTROL::CMachineData &data, Aris::Core::RT_MSG &recvMsg, Aris::Core::RT_MSG &sendMsg)
+	{
+		static double pBodyPE[6]{ 0 }, pEE[18]{ 0 };
 
+		static const int cmdSize = 8192;
+
+		static char cmdQueue[50][cmdSize];
+
+		static int currentCmd = 0;
+		static int cmdNum = 0;
+
+		static int count = 0;
+
+		static Aris::RT_CONTROL::CMachineData lastCmdData = data, lastStateData = data;
+		static Aris::RT_CONTROL::CMachineData stateData, cmdData;
+
+		stateData = data;
+		cmdData = data;
+
+		switch (recvMsg.GetMsgID())
+		{
+		case 0:
+			recvMsg.Paste(cmdQueue[(currentCmd + cmdNum) % 10]);
+			++cmdNum;
+			break;
+		default:
+			break;
+		}
+
+
+		if (cmdNum>0)
+		{
+			if (Robots::ROBOT_SERVER::GetInstance()->execute_cmd(count, cmdQueue[currentCmd], cmdData) == 0)
+			{
+				count = 0;
+				currentCmd = (currentCmd + 1) % 10;
+				cmdNum--;
+				rt_printf("cmd finished\n");
+			}
+			else
+			{
+				count++;
+			}
+
+			if (count % 1000 == 0)
+			{
+				rt_printf("the cmd is:%d in count:%d\n", cmdData.motorsCommands[0], count);
+			}
+		}
+		else
+		{
+			cmdData = lastCmdData;
+		}
+
+		for (int i = 0; i<18; ++i)
+		{
+			if (lastCmdData.motorsCommands[i] == Aris::RT_CONTROL::EMCMD_RUNNING)
+			{
+				if (cmdData.motorsCommands[i] == Aris::RT_CONTROL::EMCMD_RUNNING)
+				{
+
+
+					if (std::abs(lastCmdData.commandData[i].Position - cmdData.commandData[i].Position)>20000)
+					{
+						rt_printf("data is not continuous\n");
+						data = lastCmdData;
+						return 0;
+					}
+				}
+			}
+		}
+
+
+		data = cmdData;
+
+		lastStateData = stateData;
+		lastCmdData = cmdData;
+
+		return 0;
+	}
 
 
 

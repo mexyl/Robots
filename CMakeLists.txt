@@ -111,7 +111,7 @@ endif(WIN32)
 if(UNIX)
 set(SYSTEM_LINK_LIBS pthread gfortran)
 set(LAPACK_LINK_LIBS lapacke lapack cblas refblas)
-set(ARIS_LINK_LIBS Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
+set(ARIS_LINK_LIBS Aris_Control Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
 endif(UNIX)
 set(ROBOTS_LINK_LIBS HexapodIV HexapodIII Robot_Server Robot_Base)
 
@@ -131,6 +131,12 @@ PREPEND(FULL_SRC demo/demo_Test ${SOURCE_FILES})
 add_executable(demo_Test ${FULL_SRC})
 target_link_libraries(demo_Test ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 
+if(WIN32)
+set(SOURCE_FILES main.cpp)
+PREPEND(FULL_SRC demo/demo_RobotServerIII ${SOURCE_FILES})
+add_executable(demo_RobotServerIII ${FULL_SRC})
+target_link_libraries(demo_RobotServerIII ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${SYSTEM_LINK_LIBS})
+endif(WIN32)
 
 endif(MAKE_DEMO)
 
