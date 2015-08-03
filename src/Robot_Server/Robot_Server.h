@@ -52,12 +52,15 @@ namespace Robots
 		};
 		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 		{
-			if (mapName2ID.find(cmdName) != mapName2ID.end())
+			if (mapName2ID.find(cmdName) == mapName2ID.end())
 			{
 				allGaits.push_back(gaitFunc);
 				allParsers.push_back(parseFunc);
 
 				mapName2ID.insert(std::make_pair(cmdName, allGaits.size() - 1));
+
+				std::cout<<cmdName<<":"<<mapName2ID.at(cmdName)<<std::endl;
+
 			}
 		};
 		void ExecuteMsg(const Aris::Core::MSG &m);

@@ -189,7 +189,9 @@ Aris::Core::MSG parse(const std::string &cmd, const map<std::string, std::string
 
 	msg.CopyStruct(param);
 
+	std::cout<<"finished parse"<<std::endl;
 
+	return msg;
 }
 
 

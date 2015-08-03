@@ -213,9 +213,6 @@ namespace Robots
 		double pIn[18];
 
 		ret = this->allGaits.at(pParam->cmdID).operator()(pRobot,pParam);
-		//ret = pRobot->RunGait(pParam->cmdID, pParam);
-
-		rt_printf("return %d\n", ret);
 
 		pRobot->GetPin(pIn);
 
@@ -318,7 +315,7 @@ namespace Robots
 
 		initParam.motorNum = 18;
 		initParam.homeMode = -1;
-		initParam.homeTorqueLimit = 950;
+		initParam.homeTorqueLimit = 100;
 		initParam.homeHighSpeed = 280000;
 		initParam.homeLowSpeed = 160000;
 		initParam.homeOffsets = HEXBOT_HOME_OFFSETS_RESOLVER;
@@ -391,6 +388,8 @@ namespace Robots
 
 		Aris::Core::MSG cmdMsg;
 		GenerateCmdMsg(cmd, params, cmdMsg);
+
+		cmdMsg.SetMsgID(0);
 
 #ifdef PLATFORM_IS_LINUX
 		cs.NRT_PostMsg(cmdMsg);
@@ -516,7 +515,9 @@ namespace Robots
 					std::memcpy(robotState.motorID, motors, sizeof(motors));
 					robotState.motorNum = 1;
 
-					robotState.legNum = 0;
+					robotState.legNum = 6;
+					int legs[6] = { 0,1,2,3,4,5 };
+					std::memcpy(robotState.legID, legs, sizeof(legs));
 				}
 			}
 
@@ -532,12 +533,13 @@ namespace Robots
 			return;
 		}
 
-
 		auto cmdPair = this->mapName2ID.find(cmd);
 
 		if (cmdPair != this->mapName2ID.end())
 		{
 			msg = this->allParsers.at(cmdPair->second).operator()(cmd, params);
+			reinterpret_cast<GAIT_PARAM_BASE *>(msg.GetDataAddress())->cmdType=RUN_GAIT;
+			reinterpret_cast<GAIT_PARAM_BASE *>(msg.GetDataAddress())->cmdID=cmdPair->second;
 		}
 		else
 		{
