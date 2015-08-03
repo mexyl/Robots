@@ -1,4 +1,10 @@
-﻿#include <Aris_ControlData.h>
+﻿#include <Platform.h>
+
+#ifdef PLATFORM_IS_LINUX
+#include <Aris_Control.h>
+#endif
+
+#include <Aris_ControlData.h>
 #include <Aris_Socket.h>
 #include <Robot_Gait.h>
 #include <HexapodIII.h>

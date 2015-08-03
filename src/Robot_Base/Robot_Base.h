@@ -87,7 +87,7 @@ namespace Robots
 		void GetAccJacDir(double *jac, double *c = 0, const char *RelativeCoodinate = "G") const;
 		void GetAccJacInv(double *jac, double *c = 0, const char *RelativeCoodinate = "G") const;
 
-		virtual void LoadXml(const char *) {};
+
 
 	protected:
 		LEG_BASE(ROBOT_BASE* pRobot);
@@ -220,6 +220,8 @@ namespace Robots
 		void GetPin(double *pIn) const;
 		void GetVin(double *vIn) const;
 		void GetAin(double *aIn) const;
+
+		virtual void LoadXml(const char *) {};
 
 		LEG_BASE *pLegs[6];
 

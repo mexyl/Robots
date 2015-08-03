@@ -81,12 +81,12 @@ set(XENOMAI_LINK_LIBS native rtdm xenomai)
 set(ETHERLAB_LINK_LIBS ethercat rt)
 set(LAPACK_LINK_LIBS lapacke lapack cblas refblas)
 set(ARIS_LINK_LIBS Aris_Control Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
-set(ROBOTS_LINK_LIBS HexapodIV HexapodIII Robot_Base)
+set(ROBOTS_LINK_LIBS HexapodIV HexapodIII Robot_Server Robot_Base)
 endif(UNIX)
 
 ################################### build server ####################################
 
-set(SOURCE_FILES main.cpp trajectory_generator.h trajectory_generator.cpp)
+set(SOURCE_FILES main.cpp)
 PREPEND(FULL_SRC Server ${SOURCE_FILES})
 add_executable(Server ${FULL_SRC})
 target_link_libraries(Server ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${ETHERLAB_LINK_LIBS} ${XENOMAI_LINK_LIBS} ${SYSTEM_LINK_LIBS})

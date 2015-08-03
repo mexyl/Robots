@@ -6,11 +6,14 @@
 #include <map>
 #include <string>
 
+using namespace std;
+
 #include <stdlib.h>
 
 #include <Aris_Core.h>
 #include <Aris_Message.h>
 #include <Aris_Control.h>
+#include <Robot_Server.h>
 
 using namespace Aris::Core;
 
@@ -131,116 +134,73 @@ int copyClient()
 	return 0;
 };
 
-
-Aris::RT_CONTROL::ACTUATION cs;
-int main()
+Aris::Core::MSG parse(const std::string &cmd, const map<std::string, std::string> &params)
 {
-	robot.LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
+	Robots::WALK_PARAM  param;
+	param.cmdType=RUN_GAIT;
+	param.cmdID=1;
 
-	robot.AddGait(Robots::adjust);
-	robot.AddGait(walk);
+	param.motorNum=18;
+	int id[18]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
+	std::memcpy(param.motorID,id,sizeof(id));
 
-
-
-
-
-	Aris::RT_CONTROL::CSysInitParameters initParam;
-
-	initParam.motorNum=18;
-	initParam.homeMode=-1;
-	initParam.homeTorqueLimit=950;
-	initParam.homeHighSpeed=280000;
-	initParam.homeLowSpeed=160000;
-	initParam.homeOffsets=HEXBOT_HOME_OFFSETS_RESOLVER;
+	param.legNum=6;
+	int legid[6]={0,1,2,3,4,5};
+	std::memcpy(param.legID,legid,sizeof(legid));
 
 
-
-	cs.SetTrajectoryGenerator(tg);
-	cs.SysInit(initParam);
-	cs.SysInitCommunication();
-	cs.SysStart();
-
-	/**/
-	copyClient();
-
-
-
-	Aris::Core::CONN control_interface;
-	control_interface.SetOnReceivedConnection([](Aris::Core::CONN *pConn,const char *pRemoteIP,int remotePort)
+	for(auto &i:params)
 	{
-		std::cout << "control client received:" << std::endl;
-		std::cout << "    remote ip is:" << pRemoteIP << std::endl;
-		std::cout << std::endl;
-		return 0;
-	});
-	control_interface.SetOnReceiveRequest([&cs](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
-	{
-		std::cout<<"received request"<<std::endl;
-
-		/*now decode msg to cmd and params*/
-		std::string cmd;
-		std::map<std::string,std::string> params;
-		DecodeMsg(msg,cmd,params);
-
-		/*decode finished, now generate command msg*/
-		GenerateCmdMsg(cmd,params,msg);
-
-		std::cout<<cmd<<std::endl;
-		for(auto &i:params)
+		if(i.first=="totalCount")
 		{
-			std::cout<<i.first<<":"<<i.second<<std::endl;
+			param.totalCount=std::stoi(i.second);
 		}
-
-		msg.SetMsgID(0);
-
-		cs.NRT_PostMsg(msg);
-
-		return MSG();
-	});
-	control_interface.SetOnReceivedData([&cs](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
-	{
-		std::cout<<"received data"<<std::endl;
-		cs.NRT_PostMsg(msg);
-		return 0;
-	});
-	control_interface.SetOnLoseConnection([](Aris::Core::CONN *pConn)
-	{
-		std::cout << "control_interface lost" << std::endl;
-
-		while(true)
+		else if(i.first=="n")
 		{
-			try
-			{
-				pConn->StartServer("5866");
-				break;
-			}
-			catch(CONN::START_SERVER_ERROR &e)
-			{
-				std::cout <<e.what()<<std::endl<<"will restart in 5s"<<std::endl;
-				usleep(5000000);
-			}
+			param.n=stoi(i.second);
 		}
-
-		return 0;
-	});
-
-
-	/*start server*/
-	while(true)
-	{
-		try
+		else if(i.first=="walkDirection")
 		{
-			control_interface.StartServer("5866");
-			break;
+			param.walkDirection=stoi(i.second);
 		}
-		catch(CONN::START_SERVER_ERROR &e)
+		else if(i.first=="upDirection")
 		{
-			std::cout <<e.what()<<std::endl<<"will restart in 5s"<<std::endl;
-			usleep(5000000);
+			param.upDirection=stoi(i.second);
+		}
+		else if(i.first=="distance")
+		{
+			param.d=stod(i.second);
+		}
+		else if(i.first=="height")
+		{
+			param.h=stod(i.second);
+		}
+		else if(i.first=="alpha")
+		{
+			param.alpha=stod(i.second);
+		}
+		else if(i.first=="beta")
+		{
+			param.beta=stod(i.second);
 		}
 	}
 
+	Aris::Core::MSG msg;
 
+	msg.CopyStruct(param);
+
+
+}
+
+
+int main()
+{
+	copyClient();
+
+	auto rs = Robots::ROBOT_SERVER::GetInstance();
+	rs->CreateRobot<Robots::ROBOT_III>("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
+	rs->AddGait("wk",walk,parse);
+	rs->Start();
 	/**/
 	std::cout<<"finished"<<std::endl;
 

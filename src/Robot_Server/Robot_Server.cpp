@@ -2,6 +2,9 @@
 #ifdef PLATFORM_IS_WINDOWS
 #define rt_printf printf
 #endif
+#ifdef PLATFORM_IS_LINUX
+#include <Aris_Control.h>
+#endif
 
 #include "Robot_Server.h"
 #include <cstring>
@@ -388,6 +391,10 @@ namespace Robots
 
 		Aris::Core::MSG cmdMsg;
 		GenerateCmdMsg(cmd, params, cmdMsg);
+
+#ifdef PLATFORM_IS_LINUX
+		cs.NRT_PostMsg(cmdMsg);
+#endif
 	}
 
 	void ROBOT_SERVER::GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::MSG &msg)

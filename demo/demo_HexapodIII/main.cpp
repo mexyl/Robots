@@ -23,14 +23,11 @@ using namespace Robots;
 using namespace Aris::DynKer;
 
 ROBOT_III rbt;
-ROBOT_SERVER rs;
 
 #include<ctime>
 
 int main()
 {
-
-	rs.CreateRobot<ROBOT_III>();
 
 #ifdef PLATFORM_IS_WINDOWS
 	rbt.LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
