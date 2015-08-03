@@ -87,6 +87,8 @@ namespace Robots
 		void GetAccJacDir(double *jac, double *c = 0, const char *RelativeCoodinate = "G") const;
 		void GetAccJacInv(double *jac, double *c = 0, const char *RelativeCoodinate = "G") const;
 
+		virtual void LoadXml(const char *) {};
+
 	protected:
 		LEG_BASE(ROBOT_BASE* pRobot);
 		virtual ~LEG_BASE() = default;
@@ -218,16 +220,6 @@ namespace Robots
 		void GetPin(double *pIn) const;
 		void GetVin(double *vIn) const;
 		void GetAin(double *aIn) const;
-
-		std::int32_t AddGait(GAIT_FUNC func)
-		{
-			gaitList.push_back(func);
-			return gaitList.size();
-		}
-		std::int32_t RunGait(std::int32_t gaitID, const GAIT_PARAM_BASE *param)
-		{
-			return gaitList.at(gaitID).operator()(this, param);
-		}
 
 		LEG_BASE *pLegs[6];
 

@@ -64,12 +64,20 @@ endif(WIN32)
 include_directories("src/HexapodIII")
 include_directories("src/HexapodIV")
 include_directories("src/Robot_Base")
+include_directories("src/Robot_Server")
 
 # build Robot_Base lib
 set(SOURCE Robot_Base Robot_Gait)
 PREPEND_CPP(FULL_SRC src/Robot_Base ${SOURCE})
 PREPEND_H(FULL_H src/Robot_Base ${SOURCE})
 add_library(Robot_Base STATIC ${FULL_SRC} ${FULL_H})
+set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
+
+# build Robot_Server lib
+set(SOURCE Robot_Server)
+PREPEND_CPP(FULL_SRC src/Robot_Server ${SOURCE})
+PREPEND_H(FULL_H src/Robot_Server ${SOURCE})
+add_library(Robot_Server STATIC ${FULL_SRC} ${FULL_H})
 set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
 
 # build HexapodIII lib
@@ -105,7 +113,7 @@ set(SYSTEM_LINK_LIBS pthread gfortran)
 set(LAPACK_LINK_LIBS lapacke lapack cblas refblas)
 set(ARIS_LINK_LIBS Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
 endif(UNIX)
-set(ROBOTS_LINK_LIBS HexapodIV HexapodIII Robot_Base)
+set(ROBOTS_LINK_LIBS HexapodIV HexapodIII Robot_Server Robot_Base)
 
 # build programs
 set(SOURCE_FILES main.cpp)
@@ -136,7 +144,7 @@ endif(WIN32)
 
 
 
-install(TARGETS HexapodIV HexapodIII Robot_Base ARCHIVE DESTINATION lib)
+install(TARGETS HexapodIV HexapodIII Robot_Base Robot_Server ARCHIVE DESTINATION lib)
 install(FILES ${INCLUDE_HEADER_FILES} DESTINATION include)
 install(DIRECTORY src/HexapodIII/resource/ DESTINATION resource/HexapodIII)
 

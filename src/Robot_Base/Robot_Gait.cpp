@@ -110,13 +110,13 @@ namespace Robots
 		/*设置移动腿*/
 		for (unsigned i = 0; i < 18; i += 6)
 		{
-			pEE[i + wAxis] = wSign*(0.5*d / cos(b / 2)*cos(a - b / 4)*(1 - cos(s)) / 2
+			pEE[i + wAxis] = wSign*(0.5*d / cos(b / 2)*cos(-a - b / 4)*(1 - cos(s)) / 2
 				+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis]) * cos((1 - cos(s)) / 4 * b)
 				- lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis]) * sin((1 - cos(s)) / 4 * b))
 				+ beginBodyPE[wAxis];
 			pEE[i + uAxis] = uSign*h*sin(s)
 				+ beginPee[i + uAxis];
-			pEE[i + lAxis] = lSign*(0.5*d / cos(b / 2)*sin(a - b / 4)*(1 - cos(s)) / 2
+			pEE[i + lAxis] = lSign*(0.5*d / cos(b / 2)*sin(-a - b / 4)*(1 - cos(s)) / 2
 				+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis]) * sin((1 - cos(s)) / 4 * b)
 				+ lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis]) * cos((1 - cos(s)) / 4 * b))
 				+ beginBodyPE[lAxis];
@@ -143,9 +143,9 @@ namespace Robots
 		s_pm2pe(*pm, pBodyPE);
 
 		/*以下计算位置*/
-		pBodyPE[wAxis] += wSign*0.25*d / cos(b / 2)*cos(a - b / 4)*(acc_even(totalCount, count + 1));
+		pBodyPE[wAxis] += wSign*0.25*d / cos(b / 2)*cos(-a - b / 4)*(acc_even(totalCount, count + 1));
 		pBodyPE[uAxis] += 0;
-		pBodyPE[lAxis] += lSign*0.25*d / cos(b / 2)*sin(a - b / 4)*(acc_even(totalCount, count + 1));
+		pBodyPE[lAxis] += lSign*0.25*d / cos(b / 2)*sin(-a - b / 4)*(acc_even(totalCount, count + 1));
 
 		/*计算完毕，更新pRobot*/
 		pRobot->SetPee(pEE, pBodyPE, "G");
@@ -187,16 +187,16 @@ namespace Robots
 		{
 			double aaa = cos((1 - cos(s)) / 4 * b);
 
-			pEE[i + wAxis] = wSign*(0.5*d / cos(b / 2)*cos(a - b / 2)*(1 - cos(s)) / 2
-				+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis] + wSign*0.25*d / cos(b / 2)*cos(a - b / 2)) * cos((1 - cos(s)) / 4 * b)
-				- lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis] + lSign*0.25*d / cos(b / 2)*sin(a - b / 2)) * sin((1 - cos(s)) / 4 * b))
-				+ beginBodyPE[wAxis] - wSign*0.25*d / cos(b / 2)*cos(a - b / 2);
+			pEE[i + wAxis] = wSign*(0.5*d / cos(b / 2)*cos(-a)*(1 - cos(s)) / 2
+				+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis] + wSign*0.25*d / cos(b / 2)*cos(-a)) * cos((1 - cos(s)) / 4 * b)
+				- lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis] + lSign*0.25*d / cos(b / 2)*sin(-a)) * sin((1 - cos(s)) / 4 * b))
+				+ beginBodyPE[wAxis] - wSign*0.25*d / cos(b / 2)*cos(-a);
 			pEE[i + uAxis] = uSign*h*sin(s)
 				+ beginPee[i + uAxis];
-			pEE[i + lAxis] = lSign*(0.5*d / cos(b / 2)*sin(a - b / 2)*(1 - cos(s)) / 2
-				+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis] + wSign*0.25*d / cos(b / 2)*cos(a - b / 2)) * sin((1 - cos(s)) / 4 * b)
-				+ lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis] + lSign*0.25*d / cos(b / 2)*sin(a - b / 2)) * cos((1 - cos(s)) / 4 * b))
-				+ beginBodyPE[lAxis] - lSign*0.25*d / cos(b / 2)*sin(a - b / 2);
+			pEE[i + lAxis] = lSign*(0.5*d / cos(b / 2)*sin(-a)*(1 - cos(s)) / 2
+				+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis] + wSign*0.25*d / cos(b / 2)*cos(-a)) * sin((1 - cos(s)) / 4 * b)
+				+ lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis] + lSign*0.25*d / cos(b / 2)*sin(-a)) * cos((1 - cos(s)) / 4 * b))
+				+ beginBodyPE[lAxis] - lSign*0.25*d / cos(b / 2)*sin(-a);
 		}
 
 
@@ -223,9 +223,9 @@ namespace Robots
 		s_pm2pe(*pm, pBodyPE);
 
 		/*以下计算位置*/
-		pBodyPE[wAxis] += wSign*0.25*d / cos(b / 2)*cos(a - b / 2)*(dec_even(totalCount, count + 1));
+		pBodyPE[wAxis] += wSign*0.25*d / cos(b / 2)*cos(-a)*(dec_even(totalCount, count + 1));
 		pBodyPE[uAxis] += 0;
-		pBodyPE[lAxis] += lSign*0.25*d / cos(b / 2)*sin(a - b / 2)*(dec_even(totalCount, count + 1));
+		pBodyPE[lAxis] += lSign*0.25*d / cos(b / 2)*sin(-a)*(dec_even(totalCount, count + 1));
 
 
 

@@ -19,11 +19,6 @@ using namespace std;
 
 namespace Robots
 {
-	const unsigned ee_size{ 3 * sizeof(double) };
-	const unsigned in_size{ 3 * sizeof(double) };
-	const unsigned pm_size{ 16 * sizeof(double) };
-	const unsigned vec6_size{ 6 * sizeof(double) };
-	
 	LEG_BASE::LEG_BASE(ROBOT_BASE* pRobot)
 		: pRobot(pRobot)
 	{
@@ -36,7 +31,7 @@ namespace Robots
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
-			memcpy(this->pEE, pEE, ee_size);
+			std::copy_n(pEE, 3, this->pEE);
 			break;
 		case 'B':
 		case 'M':
@@ -54,7 +49,7 @@ namespace Robots
 	}
 	void LEG_BASE::SetPin(const double *pIn)
 	{
-		memcpy(this->pIn, pIn, in_size);
+		std::copy_n(pIn, 3, this->pIn);
 		calculate_from_pIn();
 		calculate_jac();
 	}
@@ -65,7 +60,7 @@ namespace Robots
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
-			memcpy(this->vEE, vEE, ee_size);
+			std::copy_n(vEE, 3, this->vEE);
 			break;
 		case 'B':
 		case 'M':
@@ -84,7 +79,7 @@ namespace Robots
 	}
 	void LEG_BASE::SetVin(const double *vIn)
 	{
-		memcpy(this->vIn, vIn, in_size);
+		std::copy_n(vIn, 3, this->vIn);
 
 		calculate_from_vIn();
 		calculate_jac_c();
@@ -96,7 +91,7 @@ namespace Robots
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
-			memcpy(this->aEE, aEE, ee_size);
+			std::copy_n(aEE, 3, this->aEE);
 			break;
 		case 'B':
 		case 'M':
@@ -115,7 +110,7 @@ namespace Robots
 	}
 	void LEG_BASE::SetAin(const double *aIn)
 	{
-		memcpy(this->aIn, aIn, in_size);
+		std::copy_n(aIn, 3, this->aIn);
 		calculate_from_aIn();
 	}
 	void LEG_BASE::GetPee(double *pEE, const char *RelativeCoodinate) const
@@ -123,7 +118,7 @@ namespace Robots
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
-			memcpy(pEE, this->pEE, ee_size);
+			std::copy_n(this->pEE, 3, pEE);
 			break;
 		case 'B':
 		case 'M':
@@ -138,14 +133,14 @@ namespace Robots
 	}
 	void LEG_BASE::GetPin(double *pIn) const
 	{
-		memcpy(pIn, this->pIn, in_size);
+		std::copy_n(this->pIn, 3, pIn);
 	}
 	void LEG_BASE::GetVee(double *vEE, const char *RelativeCoodinate) const
 	{
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
-			memcpy(vEE, this->vEE, ee_size);
+			std::copy_n(this->vEE, 3, vEE);
 			break;
 		case 'B':
 		case 'M':
@@ -160,14 +155,14 @@ namespace Robots
 	}
 	void LEG_BASE::GetVin(double *vIn) const
 	{
-		memcpy(vIn, this->vIn, in_size);
+		std::copy_n(this->vIn, 3, vIn);
 	}
 	void LEG_BASE::GetAee(double *aEE, const char *RelativeCoodinate) const
 	{
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
-			memcpy(aEE, this->aEE, ee_size);
+			std::copy_n(this->aEE, 3, aEE);
 			break;
 		case 'B':
 		case 'M':
@@ -182,7 +177,7 @@ namespace Robots
 	}
 	void LEG_BASE::GetAin(double *aIn) const
 	{
-		memcpy(aIn, this->aIn, in_size);
+		std::copy_n(this->aIn, 3, aIn);
 	}
 
 	void LEG_BASE::GetFceJacDir(double *jac, const char *RelativeCoodinate) const
@@ -376,7 +371,7 @@ namespace Robots
 	}
 	void ROBOT_BASE::GetBodyPm(double *bodypm) const
 	{ 
-		memcpy(bodypm, pBodyPm, sizeof(double) * 16); 
+		std::copy_n(pBodyPm, 16, bodypm);
 	};
 	void ROBOT_BASE::GetBodyPe(double *bodype, const char *eurType) const
 	{ 
@@ -384,11 +379,11 @@ namespace Robots
 	};
 	void ROBOT_BASE::GetBodyVel(double *bodyvel) const
 	{ 
-		memcpy(bodyvel, pBodyVel, sizeof(double) * 6); 
+		std::copy_n(this->pBodyVel, 6, bodyvel);
 	};
 	void ROBOT_BASE::GetBodyAcc(double *bodyacc) const
 	{ 
-		memcpy(bodyacc, this->pBodyAcc, vec6_size); 
+		std::copy_n(this->pBodyAcc, 6, bodyacc);
 	};
 	void ROBOT_BASE::GetPee(double *pEE, const char *RelativeCoodinate) const
 	{
@@ -466,7 +461,7 @@ namespace Robots
 	{
 		if (bodyvel)
 		{
-			memcpy(pBodyVel, bodyvel, vec6_size);
+			std::copy_n(bodyvel, 6, pBodyVel);
 		}
 
 		if (vEE)
@@ -481,7 +476,7 @@ namespace Robots
 	{
 		if (bodyvel)
 		{
-			memcpy(pBodyVel, bodyvel, vec6_size);
+			std::copy_n(bodyvel, 6, pBodyVel);
 		}
 		if (vIn)
 		{
@@ -495,7 +490,7 @@ namespace Robots
 	{
 		if (bodyacc)
 		{
-			memcpy(pBodyAcc, bodyacc, vec6_size);
+			std::copy_n(bodyacc, 6, pBodyAcc);
 		}
 		if (aEE)
 		{
@@ -509,7 +504,7 @@ namespace Robots
 	{
 		if (bodyacc)
 		{
-			memcpy(pBodyAcc, bodyacc, vec6_size);
+			std::copy_n(bodyacc, 6, pBodyAcc);
 		}
 		if (aIn)//= if(aIn!=nullptr)
 		{

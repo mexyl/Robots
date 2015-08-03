@@ -102,10 +102,10 @@ int main()
 
 	Robots::WALK_PARAM param;
 	param.alpha = 0;
-	param.beta = 0.3;
-	param.h = 0.1;
-	param.d = 0;
-	param.totalCount = 3000;
+	param.beta = 0;
+	param.h = 0.05;
+	param.d = 0.8;
+	param.totalCount = 2000;
 	param.n = 1;
 	param.upDirection = 2;
 	param.walkDirection = -3;
@@ -113,15 +113,19 @@ int main()
 	std::copy_n(beginPee, 18, param.beginPee);
 	std::fill_n(param.beginBodyPE, 6, 0);
 
-	const int totalCount = 6000;
+	const int totalCount = 8000;
 	double pEE_Mat[totalCount][18], pIn_Mat[totalCount][18], pBodyEp_Mat[totalCount][6];
 
-	for (int j = 0; j < 2; ++j)
+	for (int j = 0; j < 1; ++j)
 	{
-		for (unsigned i = 0; i < totalCount; ++i)
+		for (unsigned i = 0; i < 4000; ++i)
 		{
 			param.count = i;
 			walk(&rbt, &param);
+			rbt.GetPee(pEE_Mat[i]);
+			rbt.GetPin(pIn_Mat[i]);
+			rbt.GetBodyPe(pBodyEp_Mat[i]);
+
 		}
 
 		rbt.GetPee(param.beginPee);
@@ -131,13 +135,19 @@ int main()
 	rbt.GetPee(param.beginPee);
 	rbt.GetBodyPe(param.beginBodyPE);
 
-	for (unsigned i = 0; i < totalCount; ++i)
+	param.alpha = 0;
+	param.beta = 0;
+	param.h = 0.05;
+	param.d = 0.8;
+	param.walkDirection = -3;
+
+	for (unsigned i = 0; i < 4000; ++i)
 	{
 		param.count = i;
 		walk(&rbt, &param);
-		rbt.GetPee(pEE_Mat[i]);
-		rbt.GetPin(pIn_Mat[i]);
-		rbt.GetBodyPe(pBodyEp_Mat[i]);
+		rbt.GetPee(pEE_Mat[i+4000]);
+		rbt.GetPin(pIn_Mat[i + 4000]);
+		rbt.GetBodyPe(pBodyEp_Mat[i + 4000]);
 	}
 
 	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_Mat.txt", *pIn_Mat, totalCount, 18);
