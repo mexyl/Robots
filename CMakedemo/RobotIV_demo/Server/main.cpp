@@ -137,8 +137,6 @@ int copyClient()
 Aris::Core::MSG parse(const std::string &cmd, const map<std::string, std::string> &params)
 {
 	Robots::WALK_PARAM  param;
-	param.cmdType=RUN_GAIT;
-	param.cmdID=1;
 
 	param.motorNum=18;
 	int id[18]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
@@ -200,7 +198,7 @@ int main()
 	copyClient();
 
 	auto rs = Robots::ROBOT_SERVER::GetInstance();
-	rs->CreateRobot<Robots::ROBOT_III>("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
+	rs->LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
 	rs->AddGait("wk",walk,parse);
 	rs->Start();
 	/**/

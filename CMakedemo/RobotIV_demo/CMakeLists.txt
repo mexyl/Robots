@@ -80,8 +80,8 @@ set(SYSTEM_LINK_LIBS pthread gfortran)
 set(XENOMAI_LINK_LIBS native rtdm xenomai)
 set(ETHERLAB_LINK_LIBS ethercat rt)
 set(LAPACK_LINK_LIBS lapacke lapack cblas refblas)
-set(ARIS_LINK_LIBS Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
-set(ROBOTS_LINK_LIBS HexapodIV HexapodIII Robot_Server Robot_Base)
+set(ARIS_LINK_LIBS Aris_Control Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
+set(ROBOTS_LINK_LIBS Robot_Server HexapodIV HexapodIII Robot_Base)
 endif(UNIX)
 
 ################################### build server ####################################
