@@ -68,72 +68,6 @@ int walk(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam)
 	return 2* pWP->totalCount - pWP->count-1;
 }
 
-
-
-
-
-int copyClient()
-{
-	const int TASK_NAME_LEN =1024;
-
-	std::int32_t count = 0;
-	std::int32_t nIndex = 0;
-	char path[TASK_NAME_LEN] = {0};
-	char cParam[100] = {0};
-	char *proName = path;
-	std::int32_t tmp_len;
-
-	pid_t pId = getpid();
-	sprintf(cParam,"/proc/%d/exe",pId);
-	count = readlink(cParam, path, TASK_NAME_LEN);
-
-	if (count < 0 || count >= TASK_NAME_LEN)
-    {
-        throw std::logic_error("Current System Not Surport Proc.\n");
-    }
-	else
-	{
-		nIndex = count - 1;
-
-		for( ; nIndex >= 0; nIndex--)
-		{
-			if( path[nIndex] == '/' )//筛选出进程名
-		    {
-				nIndex++;
-				proName += nIndex;
-				break;
-		    }
-		}
-	}
-
-	std::string pwd(path,nIndex);
-
-
-	Aris::Core::DOCUMENT doc;
-
-	/*get all cmd names*/
-	if(doc.LoadFile("/usr/Robots/CMakeDemo/Robot_III/resource/client.xml")!=0)
-		throw std::logic_error("failed to read client.xml");
-
-	auto pCmds=doc.FirstChildElement("Commands");
-
-	if(pCmds==nullptr)
-		throw std::logic_error("invalid client.xml");
-
-	for (auto pChild = pCmds->FirstChildElement();
-		pChild != nullptr;
-		pChild = pChild->NextSiblingElement())
-	{
-		std::string fullpath=std::string("cp ")+pwd+std::string("Client ")+pwd+pChild->Name();
-
-		//cout<<fullpath<<endl;
-		system(fullpath.c_str());
-
-	}
-
-	return 0;
-};
-
 Aris::Core::MSG parse(const std::string &cmd, const map<std::string, std::string> &params)
 {
 	Robots::WALK_PARAM  param;
@@ -195,9 +129,8 @@ Aris::Core::MSG parse(const std::string &cmd, const map<std::string, std::string
 
 int main()
 {
-	copyClient();
-
 	auto rs = Robots::ROBOT_SERVER::GetInstance();
+	rs->CreateRobot<Robots::ROBOT_III>();
 	rs->LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
 	rs->AddGait("wk",walk,parse);
 	rs->Start();

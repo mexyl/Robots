@@ -1,3 +1,5 @@
+#include <Platform.h>
+
 #include <iostream>
 #include <list>
 #include <vector>
@@ -379,155 +381,163 @@ void addAllDefault(NODE *pNode, map<string,string> &params)
 
 }
 
-int main(int argc, char *argv[])
+namespace Robots
 {
-	Aris::Core::DOCUMENT doc;
-
-	/*get param tree of this cmd*/
-	if(doc.LoadFile("/usr/Robots/CMakeDemo/Robot_III/resource/client.xml")!=0)
-		throw std::logic_error("failed to read client.xml");
-
-	auto pCmds=doc.FirstChildElement("Commands");
-
-	if(pCmds==nullptr)
-		throw std::logic_error("invalid client.xml");
-
-	auto thisCmd=pCmds->FirstChildElement(argv[0]);
-	if(thisCmd==nullptr)
-		throw std::logic_error("client.xml:not find this cmd");
-
-	ROOT_NODE root(argv[0]);
-
-	map<string,NODE *> allParams;
-	map<char,string> shortNames;
-
-	addAllParams(thisCmd,&root,allParams,shortNames);
-
-
-	/*get all params of this cmd*/
-	string cmd(thisCmd->Name());
-
-	map<string,string> params;
-	for(int i=1;i<argc;++i)
+	int SendRequest(int argc, char *argv[], const char *xmlFileName)
 	{
-		string str{argv[i]};
-		string paramName,paramValue;
-		if(str.find("=")==string::npos)
-		{
-			paramName = str;
-			paramValue = "";
-		}
-		else
-		{
-			paramName.assign(str,0,str.find("="));
-			paramValue.assign(str,str.find("=")+1,str.size()-str.find("="));
-		}
+		Aris::Core::DOCUMENT doc;
 
-		if(paramName.size()==0)
-			throw logic_error("invalid param:what the hell, param should not start with '='");
+		if (doc.LoadFile(xmlFileName) != 0)
+			throw std::logic_error("failed to read client.xml");
 
-		/*not start with '-'*/
-		if(paramName.data()[0]!='-')
+		/*get param tree of this cmd*/
+
+
+		auto pCmds = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Commands");
+
+		if (pCmds == nullptr)
+			throw std::logic_error("invalid client.xml");
+
+		auto thisCmd = pCmds->FirstChildElement(argv[0]);
+		if (thisCmd == nullptr)
+			throw std::logic_error("client.xml:not find this cmd");
+
+		ROOT_NODE root(argv[0]);
+
+		map<string, NODE *> allParams;
+		map<char, string> shortNames;
+
+		addAllParams(thisCmd, &root, allParams, shortNames);
+
+
+		/*get all params of this cmd*/
+		string cmd(thisCmd->Name());
+
+		map<string, string> params;
+		for (int i = 1; i<argc; ++i)
 		{
-			if(paramValue!="")
+			string str{ argv[i] };
+			string paramName, paramValue;
+			if (str.find("=") == string::npos)
 			{
-				throw logic_error("invalid param:only param start with - or -- can be assigned a value");
+				paramName = str;
+				paramValue = "";
+			}
+			else
+			{
+				paramName.assign(str, 0, str.find("="));
+				paramValue.assign(str, str.find("=") + 1, str.size() - str.find("="));
+			}
+
+			if (paramName.size() == 0)
+				throw logic_error("invalid param:what the hell, param should not start with '='");
+
+			/*not start with '-'*/
+			if (paramName.data()[0] != '-')
+			{
+				if (paramValue != "")
+				{
+					throw logic_error("invalid param:only param start with - or -- can be assigned a value");
+				}
+
+
+				for (auto c : paramName)
+				{
+					params.insert(make_pair(shortNames.at(c), string("")));
+					allParams.at(shortNames.at(c))->Take();
+				}
+
+				continue;
 			}
 
 
-			for(auto c:paramName)
+
+			/*all following part start with at least one '-'*/
+			if (paramName.size() == 1)
 			{
-				params.insert(make_pair(shortNames.at(c),string("")));
+				throw logic_error("invalid param:param must have a name");
+			}
+
+			/*start with '-', but only one '-'*/
+			if (paramName.data()[1] != '-')
+			{
+				if (paramName.size() != 2)
+				{
+					throw std::logic_error("param start with single '-' must is an abbreviation");
+				}
+
+				char c = paramName.data()[1];
+
+				params.insert(make_pair(shortNames.at(c), paramValue));
 				allParams.at(shortNames.at(c))->Take();
+
+				continue;
 			}
-
-			continue;
-		}
-
-
-
-		/*all following part start with at least one '-'*/
-		if(paramName.size()==1)
-		{
-			throw logic_error("invalid param:param must have a name");
-		}
-
-		/*start with '-', but only one '-'*/
-		if(paramName.data()[1]!='-')
-		{
-			if(paramName.size()!=2)
+			else
 			{
-				throw std::logic_error("param start with single '-' must is an abbreviation");
+				/*start with '--'*/
+				if (paramName.size()<3)
+				{
+					throw std::logic_error("param start with single '--' must is a full name");
+				}
+
+				string str = paramName;
+				paramName.assign(str, 2, str.size() - 2);
+
+				params.insert(make_pair(paramName, paramValue));
+				allParams.at(paramName)->Take();
+
+				continue;
 			}
-
-			char c=paramName.data()[1];
-
-			params.insert(make_pair(shortNames.at(c),paramValue));
-			allParams.at(shortNames.at(c))->Take();
-
-			continue;
 		}
-		else
+
+
+
+
+
+		/*add all default values*/
+		addAllDefault(&root, params);
+
+
+		/*pack all datas*/
+		Aris::Core::MSG msg{ 0,0 };
+
+		int32_t size = cmd.size() + 1;
+
+		msg.CopyStructMore(size);
+		msg.CopyMore(cmd.c_str(), size);
+
+
+		size = params.size();
+		msg.CopyStructMore(size);
+
+		for (auto &i : params)
 		{
-		/*start with '--'*/
-			if(paramName.size()<3)
-			{
-				throw std::logic_error("param start with single '--' must is a full name");
-			}
-
-			string str=paramName;
-			paramName.assign(str,2,str.size()-2);
-
-			params.insert(make_pair(paramName,paramValue));
-			allParams.at(paramName)->Take();
-
-			continue;
+			size = i.first.size() + 1;
+			msg.CopyStructMore(size);
+			msg.CopyMore(i.first.c_str(), i.first.size() + 1);
+			size = i.second.size() + 1;
+			msg.CopyStructMore(size);
+			msg.CopyMore(i.second.c_str(), i.second.size() + 1);
 		}
+
+		for (auto &i : params)
+		{
+			cout << i.first << ":" << i.second << endl;
+		}
+
+		
+		std::string ip = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Connection")->Attribute("IP");
+		std::string port = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Connection")->Attribute("Port");
+
+		Aris::Core::CONN conn;
+
+		conn.Connect(ip.c_str(), port.c_str());
+		conn.SendRequest(msg);
+
+		cout << "send finished" << endl;
+
+		return 0;
 	}
-
-
-
-
-
-	/*add all default values*/
-	addAllDefault(&root,params);
-
-
-	/*pack all datas*/
-	Aris::Core::MSG msg{0,0};
-
-	int32_t size=cmd.size()+1;
-
-	msg.CopyStructMore(size);
-	msg.CopyMore(cmd.c_str(),size);
-
-
-	size=params.size();
-	msg.CopyStructMore(size);
-
-	for(auto &i:params)
-	{
-		size=i.first.size()+1;
-		msg.CopyStructMore(size);
-		msg.CopyMore(i.first.c_str(),i.first.size()+1);
-		size=i.second.size()+1;
-		msg.CopyStructMore(size);
-		msg.CopyMore(i.second.c_str(),i.second.size()+1);
-	}
-
-
-
-	for(auto &i:params)
-	{
-		cout<<i.first<<":"<<i.second<<endl;
-	}
-
-	Aris::Core::CONN conn;
-
-	conn.Connect("127.0.0.1","5866");
-	conn.SendRequest(msg);
-
-	cout<<"send finished"<<endl;
-
-	return 0;
 }
+

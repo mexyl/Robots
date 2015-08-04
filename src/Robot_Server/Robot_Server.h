@@ -38,6 +38,14 @@ namespace Robots
 			return &instance;
 		}
 
+		template<typename T>
+		void CreateRobot() 
+		{
+			if (pRobot.get() == nullptr)
+			{
+				pRobot = std::unique_ptr<Robots::ROBOT_BASE>(new T);
+			}
+		};
 		void LoadXml(const char *fileName);
 		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc);
 		void Start();

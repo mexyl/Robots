@@ -66,6 +66,22 @@ include_directories("src/HexapodIV")
 include_directories("src/Robot_Base")
 include_directories("src/Robot_Server")
 
+
+# set link files
+if(WIN32)
+set(SYSTEM_LINK_LIBS ws2_32)
+set(LAPACK_LINK_LIBS liblapacke liblapack cblas libblas)
+set(ARIS_LINK_LIBS Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
+endif(WIN32)
+if(UNIX)
+set(SYSTEM_LINK_LIBS pthread gfortran)
+set(LAPACK_LINK_LIBS lapacke lapack cblas refblas)
+set(ARIS_LINK_LIBS Aris_Control Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
+endif(UNIX)
+set(ROBOTS_LINK_LIBS HexapodIV HexapodIII Robot_Server Robot_Base)
+
+
+
 # build Robot_Base lib
 set(SOURCE Robot_Base Robot_Gait)
 PREPEND_CPP(FULL_SRC src/Robot_Base ${SOURCE})
@@ -78,6 +94,13 @@ set(SOURCE Robot_Server)
 PREPEND_CPP(FULL_SRC src/Robot_Server ${SOURCE})
 PREPEND_H(FULL_H src/Robot_Server ${SOURCE})
 add_library(Robot_Server STATIC ${FULL_SRC} ${FULL_H})
+set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
+
+# build Robot_Server lib
+set(SOURCE Robot_Client)
+PREPEND_CPP(FULL_SRC src/Robot_Client ${SOURCE})
+PREPEND_H(FULL_H src/Robot_Client ${SOURCE})
+add_library(Robot_Client STATIC ${FULL_SRC} ${FULL_H})
 set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
 
 # build HexapodIII lib
@@ -102,18 +125,7 @@ set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
 set(MAKE_DEMO " ")
 if(MAKE_DEMO)
 
-# set link files
-if(WIN32)
-set(SYSTEM_LINK_LIBS ws2_32)
-set(LAPACK_LINK_LIBS liblapacke liblapack cblas libblas)
-set(ARIS_LINK_LIBS Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
-endif(WIN32)
-if(UNIX)
-set(SYSTEM_LINK_LIBS pthread gfortran)
-set(LAPACK_LINK_LIBS lapacke lapack cblas refblas)
-set(ARIS_LINK_LIBS Aris_Control Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
-endif(UNIX)
-set(ROBOTS_LINK_LIBS HexapodIV HexapodIII Robot_Server Robot_Base)
+
 
 # build programs
 set(SOURCE_FILES main.cpp)
@@ -148,12 +160,9 @@ if(WIN32)
 	set(CMAKE_INSTALL_PREFIX "C:/Robots")
 endif(WIN32)
 
-
-
-install(TARGETS HexapodIV HexapodIII Robot_Base Robot_Server ARCHIVE DESTINATION lib)
+install(TARGETS HexapodIV HexapodIII Robot_Client Robot_Base Robot_Server ARCHIVE DESTINATION lib)
 install(FILES ${INCLUDE_HEADER_FILES} DESTINATION include)
 install(DIRECTORY src/HexapodIII/resource/ DESTINATION resource/HexapodIII)
-
 
 ############################################ uninstall ############################################
 if(UNIX)

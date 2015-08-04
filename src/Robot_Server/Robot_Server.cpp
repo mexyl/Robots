@@ -15,17 +15,13 @@
 
 using namespace std;
 
-
-
-
-
-
 namespace Robots
 {
 	const double meter2count = 1 / 0.01*3.5 * 65536;
 
 	void ROBOT_SERVER::LoadXml(const char *fileName)
 	{
+		/*open xml file*/
 		Aris::Core::DOCUMENT doc;
 
 		if (doc.LoadFile(fileName) != 0)
@@ -33,10 +29,14 @@ namespace Robots
 			throw std::logic_error((std::string("could not open file:") + std::string(fileName)));
 		}
 
+
+		/*load connection param*/
 		auto pConnEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Connection");
 		ip = pConnEle->Attribute("IP");
 		port = pConnEle->Attribute("Port");
 
+		
+		/*load home parameters and map*/
 		auto pContEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control");
 		Aris::DynKer::CALCULATOR c;
 		auto mat = c.CalculateExpression(pContEle->FirstChildElement("HomeEE")->GetText());
@@ -64,11 +64,7 @@ namespace Robots
 
 		std::string docName{ doc.RootElement()->Name() };
 
-		if (docName == "HexapodIII")
-		{
-			pRobot = std::unique_ptr<Robots::ROBOT_BASE>{ new ROBOT_III };
-			pRobot->LoadXml(fileName);
-		}
+		pRobot->LoadXml(fileName);
 
 		double pe[6]{ 0 };
 		pRobot->SetPee(homeEE, pe, "B");
@@ -78,6 +74,56 @@ namespace Robots
 		{
 			homeCount[i] = -static_cast<int>(homeIn[i] * meter2count);
 		}
+
+		/*copy client*/
+#ifdef PLATFORM_IS_LINUX
+		const int TASK_NAME_LEN = 1024;
+
+		std::int32_t count = 0;
+		std::int32_t nIndex = 0;
+		char path[TASK_NAME_LEN] = { 0 };
+		char cParam[100] = { 0 };
+		char *proName = path;
+		std::int32_t tmp_len;
+
+		pid_t pId = getpid();
+		sprintf(cParam, "/proc/%d/exe", pId);
+		count = readlink(cParam, path, TASK_NAME_LEN);
+
+		if (count < 0 || count >= TASK_NAME_LEN)
+		{
+			throw std::logic_error("Current System Not Surport Proc.\n");
+		}
+		else
+		{
+			nIndex = count - 1;
+			
+			for (; nIndex >= 0; nIndex--)
+			{
+				if (path[nIndex] == '/')//筛选出进程名
+				{
+					nIndex++;
+					proName += nIndex;
+					break;
+				}
+			}
+		}
+
+		std::string pwd(path, nIndex);
+
+		auto pCmds = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Commands");
+		
+		if (pCmds == nullptr)
+			throw std::logic_error("invalid client.xml");
+
+		for (auto pChild = pCmds->FirstChildElement();
+		pChild != nullptr;
+		pChild = pChild->NextSiblingElement())
+		{
+			std::string fullpath = std::string("cp ") + pwd + std::string("Client ") + pwd + pChild->Name();
+			auto ret=system(fullpath.c_str());
+		}
+#endif
 	}
 	void ROBOT_SERVER::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 	{
@@ -125,7 +171,7 @@ namespace Robots
 
 			return Aris::Core::MSG();
 		});
-		server.SetOnLoseConnection([](Aris::Core::CONN *pConn)
+		server.SetOnLoseConnection([this](Aris::Core::CONN *pConn)
 		{
 			std::cout << "control interface lost" << std::endl;
 
@@ -133,7 +179,7 @@ namespace Robots
 			{
 				try
 				{
-					pConn->StartServer("5866");
+					pConn->StartServer(this->port.c_str());
 					break;
 				}
 				catch (Aris::Core::CONN::START_SERVER_ERROR &e)
@@ -152,7 +198,7 @@ namespace Robots
 		{
 			try
 			{
-				server.StartServer("5866");
+				server.StartServer(port.c_str());
 				break;
 			}
 			catch (Aris::Core::CONN::START_SERVER_ERROR &e)
