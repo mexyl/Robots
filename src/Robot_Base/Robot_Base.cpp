@@ -2,6 +2,7 @@
 
 #ifdef PLATFORM_IS_WINDOWS
 #define _CRT_SECURE_NO_WARNINGS
+#define _SCL_SECURE_NO_WARNINGS
 #endif
 
 
@@ -366,9 +367,6 @@ namespace Robots
 		}
 	}
 
-	ROBOT_BASE::ROBOT_BASE()
-	{
-	}
 	void ROBOT_BASE::GetBodyPm(double *bodypm) const
 	{ 
 		std::copy_n(pBodyPm, 16, bodypm);
@@ -387,42 +385,42 @@ namespace Robots
 	};
 	void ROBOT_BASE::GetPee(double *pEE, const char *RelativeCoodinate) const
 	{
-		for (unsigned i = 0; i < 6; ++i)
+		for (int i = 0; i < 6; ++i)
 		{
 			pLegs[i]->GetPee(pEE + i * 3, RelativeCoodinate);
 		}
 	}
 	void ROBOT_BASE::GetPin(double *pIn) const
 	{
-		for (unsigned i = 0; i < 6; ++i)
+		for (int i = 0; i < 6; ++i)
 		{
 			pLegs[i]->GetPin(pIn + i * 3);
 		}
 	}
 	void ROBOT_BASE::GetVee(double *vEE, const char *RelativeCoodinate) const
 	{
-		for (unsigned i = 0; i < 6; ++i)
+		for (int i = 0; i < 6; ++i)
 		{
 			pLegs[i]->GetVee(vEE + i * 3, RelativeCoodinate);
 		}
 	}
 	void ROBOT_BASE::GetVin(double *vIn) const
 	{
-		for (unsigned i = 0; i < 6; ++i)
+		for (int i = 0; i < 6; ++i)
 		{
 			pLegs[i]->GetVin(vIn + i * 3);
 		}
 	}
 	void ROBOT_BASE::GetAee(double *aEE, const char *RelativeCoodinate) const
 	{
-		for (unsigned i = 0; i < 6; ++i)
+		for (int i = 0; i < 6; ++i)
 		{
 			pLegs[i]->GetAee(aEE + i * 3, RelativeCoodinate);
 		}
 	}
 	void ROBOT_BASE::GetAin(double *aIn) const
 	{
-		for (unsigned i = 0; i < 6; ++i)
+		for (int i = 0; i < 6; ++i)
 		{
 			pLegs[i]->GetAin(aIn + i*3);
 		}
@@ -436,7 +434,7 @@ namespace Robots
 
 		if (pEE)
 		{
-			for (unsigned i = 0; i < 6; i++)
+			for (int i = 0; i < 6; i++)
 			{
 				pLegs[i]->SetPee(pEE + i * 3, RelativeCoodinate);
 			}
@@ -451,7 +449,7 @@ namespace Robots
 
 		if (pIn)
 		{
-			for (unsigned i = 0; i < 6; i++)
+			for (int i = 0; i < 6; i++)
 			{
 				pLegs[i]->SetPin(pIn + i * 3);
 			}
@@ -466,7 +464,7 @@ namespace Robots
 
 		if (vEE)
 		{
-			for (unsigned i = 0; i < 6; i++)
+			for (int i = 0; i < 6; i++)
 			{
 				pLegs[i]->SetVee(vEE + i * 3, RelativeCoodinate);
 			}
@@ -480,7 +478,7 @@ namespace Robots
 		}
 		if (vIn)
 		{
-			for (unsigned i = 0; i < 6; i++)
+			for (int i = 0; i < 6; i++)
 			{
 				pLegs[i]->SetVin(vIn + i * 3);
 			}
@@ -494,7 +492,7 @@ namespace Robots
 		}
 		if (aEE)
 		{
-			for (unsigned i = 0; i < 6; i++)
+			for (int i = 0; i < 6; i++)
 			{
 				pLegs[i]->SetAee(aEE + i * 3, RelativeCoodinate);
 			}
@@ -508,7 +506,7 @@ namespace Robots
 		}
 		if (aIn)//= if(aIn!=nullptr)
 		{
-			for (unsigned i = 0; i < 6; i++)
+			for (int i = 0; i < 6; i++)
 			{
 				pLegs[i]->SetAin(aIn + i * 3);
 			}

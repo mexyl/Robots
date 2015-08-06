@@ -1,4 +1,11 @@
-﻿#include "HexapodIV.h"
+﻿#include <Platform.h>
+
+#ifdef PLATFORM_IS_WINDOWS
+#define _CRT_SECURE_NO_WARNINGS
+#define _SCL_SECURE_NO_WARNINGS
+#endif
+
+#include "HexapodIV.h"
 #include "HexapodIII.h"
 #include "Robot_Gait.h"
 #include <Aris_Plan.h>
@@ -8,154 +15,154 @@ using namespace Aris::DynKer;
 using namespace Aris::Plan;
 using namespace Robots;
 
-const unsigned totalCount = 500;
-
-double iniEE[18]=
-{
-	-0.396, 0.357, -0.65,
-	-0.539, 0, -0.65,
-	-0.396, -0.357, -0.65,
-	0.396, 0.357, -0.65,
-	0.539, 0, -0.65,
-	0.396, -0.357, -0.65,
-};
+const int totalCount = 500;
 
 double homeEE[18] =
 { 
-	-0.1279292015817467 - 0.396, 0.357, -0.4902687415900912,
-	-0.1279292015817467 - 0.539, 0, -0.4902687415900912,
-	-0.1279292015817467 - 0.396, -0.357, -0.4902687415900912,
-	0.1279292015817467 + 0.396, 0.357, -0.4902687415900912,
-	0.1279292015817467 + 0.539, 0, -0.4902687415900912,
-	0.1279292015817467 + 0.396, -0.357, -0.4902687415900912,
+-0.318791579531186,   -0.719675656557493,   -0.500049789146799,
+-0.413084678293599,   -0.719675656557493,    0,
+-0.318791579531187,   -0.719675656557493,    0.498125689146798,
+0.318791579531186,   -0.719675656557493,   -0.500049789146799,
+0.413084678293599,   -0.719675656557493,    0,
+0.318791579531187,   -0.719675656557493,    0.498125689146798,
 };
 
 double firstEE[18] =
 {
-	 - 0.396, 0.357, -0.55,
-	 - 0.539, 0, -0.55,
-	 - 0.396, -0.357, -0.55,
-	 + 0.396, 0.357, -0.55,
-	 + 0.539, 0, -0.55,
-	 + 0.396, -0.357, -0.55,
+	-0.3,-0.75,-0.65,
+	-0.45,-0.75,0,
+	-0.3,-0.75,0.65,
+	0.3,-0.75,-0.65,
+	0.45,-0.75,0,
+	0.3,-0.75,0.65,
+};
+
+double beginEE[18]
+{
+	-0.3,-0.85,-0.65,
+	-0.45,-0.85,0,
+	-0.3,-0.85,0.65,
+	0.3,-0.85,-0.65,
+	0.45,-0.85,0,
+	0.3,-0.85,0.65,
 };
 
 //Robots::ROBOT_IV rbt;
 Robots::ROBOT_III rbt;
 
-
-int walk(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam)
-{
-	static double lastPee[18];
-	static double lastPbody[6];
-
-	const Robots::WALK_PARAM *pWP = static_cast<const Robots::WALK_PARAM *>(pParam);
-
-	if (pParam->count < pWP->totalCount)
-	{
-		walkAcc(pRobot, pParam);
-	}
-	else
-	{
-		Robots::WALK_PARAM param2 = *pWP;
-		param2.count = pWP->count - pWP->totalCount;
-
-		memcpy(param2.beginPee, lastPee, sizeof(lastPee));
-		memcpy(param2.beginBodyPE, lastPbody, sizeof(lastPbody));
-
-		walkDec(pRobot, &param2);
-	}
-
-	if (pParam->count % 100 == 0)
-	{
-		double pEE[18];
-		double pBody[18];
-		pRobot->GetPee(pEE, "G");
-		pRobot->GetBodyPe(pBody, "313");
-	}
-
-
-	if (pParam->count == pWP->totalCount - 1)
-	{
-		pRobot->GetPee(lastPee, "G");
-		pRobot->GetBodyPe(lastPbody, "313");
-
-		double *pEE = lastPee;
-		double *pBody = lastPbody;
-	}
-	return 2 * pWP->totalCount - pWP->count - 1;
-}
-
 int main()
 {
+	const int totalCount = 12000;
+	double pEE_Mat[totalCount][18], pIn_Mat[totalCount][18], pBodyEp_Mat[totalCount][6];
+	
+	
 	rbt.LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
 
-	double beginPee[18]
-	{
-		-0.3,-0.85,-0.65,
-		-0.45,-0.85,0,
-		-0.3,-0.85,0.65,
-		0.3,-0.85,-0.65,
-		0.45,-0.85,0,
-		0.3,-0.85,0.65,
-	};
+	double beginPE[6]{ 0.2,0.3,0.4,0,0,0 };
+
+	rbt.SetPee(beginEE, beginPE, "B");
 
 	Robots::WALK_PARAM param;
-	param.alpha = 0;
-	param.beta = 0;
-	param.h = 0.05;
+	param.alpha = 0.3;
+	param.beta = 0.4;
+	param.h = 0.04;
 	param.d = 0.8;
-	param.totalCount = 2000;
-	param.n = 1;
-	param.upDirection = 2;
-	param.walkDirection = -3;
+	param.totalCount = 500;
+	param.n = 3;
+	param.upDirection = -3;
+	param.walkDirection = 1;
 
-	std::copy_n(beginPee, 18, param.beginPee);
-	std::fill_n(param.beginBodyPE, 6, 0);
-
-	const int totalCount = 8000;
-	double pEE_Mat[totalCount][18], pIn_Mat[totalCount][18], pBodyEp_Mat[totalCount][6];
-
-	for (int j = 0; j < 1; ++j)
-	{
-		for (unsigned i = 0; i < 4000; ++i)
-		{
-			param.count = i;
-			walk(&rbt, &param);
-			rbt.GetPee(pEE_Mat[i]);
-			rbt.GetPin(pIn_Mat[i]);
-			rbt.GetBodyPe(pBodyEp_Mat[i]);
-
-		}
-
-		rbt.GetPee(param.beginPee);
-		rbt.GetBodyPe(param.beginBodyPE);
-	}
-
+	//std::copy_n(beginPee, 18, param.beginPee);
+	//std::copy_n(beginPE, 6, param.beginBodyPE);
+	//std::fill_n(param.beginBodyPE, 6, 0);
 	rbt.GetPee(param.beginPee);
 	rbt.GetBodyPe(param.beginBodyPE);
 
-	param.alpha = 0;
-	param.beta = 0;
-	param.h = 0.05;
-	param.d = 0.8;
-	param.walkDirection = -3;
 
-	for (unsigned i = 0; i < 4000; ++i)
+	
+
+
+
+
+
+
+
+
+	param.count = 0;
+	
+	while (true)
 	{
-		param.count = i;
-		walk(&rbt, &param);
-		rbt.GetPee(pEE_Mat[i+4000]);
-		rbt.GetPin(pIn_Mat[i + 4000]);
-		rbt.GetBodyPe(pBodyEp_Mat[i + 4000]);
+		int ret = walk(&rbt, &param);
+		rbt.GetPee(pEE_Mat[param.count],"B");
+		rbt.GetPin(pIn_Mat[param.count]);
+		rbt.GetBodyPe(pBodyEp_Mat[param.count]);
+		param.count++;
+
+		if (ret == 0)
+			break;
 	}
 
-	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_Mat.txt", *pIn_Mat, totalCount, 18);
-	dlmwrite("C:\\Users\\yang\\Desktop\\pEE_Mat.txt", *pEE_Mat, totalCount, 18);
-	dlmwrite("C:\\Users\\yang\\Desktop\\pBody_Mat.txt", *pBodyEp_Mat, totalCount, 6);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pIn_Mat.txt", *pIn_Mat, param.count, 18);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pEE_Mat.txt", *pEE_Mat, param.count, 18);
+	dlmwrite("C:\\Users\\yang\\Desktop\\pBody_Mat.txt", *pBodyEp_Mat, param.count, 6);
+	
 
 
+	//Robots::ADJUST_PARAM adParam;
 
+	//adParam.periodNum = 2;
+	//adParam.periodCount[0] = 1000;
+	//adParam.periodCount[1] = 1500;
+
+	//std::copy_n(homeEE, 18, adParam.beginPee);
+	//std::fill_n(adParam.beginBodyPE, 6, 0);
+	//std::copy_n(firstEE, 18, adParam.targetPee[0]);
+	//std::fill_n(adParam.targetBodyPE[0], 6, 0);
+	//std::copy_n(beginEE, 18, adParam.targetPee[1]);
+	//std::fill_n(adParam.targetBodyPE[1], 6, 0);
+
+	//adParam.count = 0;
+
+	//adjust(&rbt, &adParam);
+
+	//while (true)
+	//{
+	//	int ret = adjust(&rbt, &adParam);
+	//	rbt.GetPee(pEE_Mat[adParam.count], "G");
+	//	rbt.GetPin(pIn_Mat[adParam.count]);
+	//	rbt.GetBodyPe(pBodyEp_Mat[adParam.count]);
+	//	adParam.count++;
+
+	//	if (ret == 0)
+	//		break;
+	//}
+
+	//dlmwrite("C:\\Users\\yang\\Desktop\\pIn_Mat.txt", *pIn_Mat, adParam.count, 18);
+	//dlmwrite("C:\\Users\\yang\\Desktop\\pEE_Mat.txt", *pEE_Mat, adParam.count, 18);
+	//dlmwrite("C:\\Users\\yang\\Desktop\\pBody_Mat.txt", *pBodyEp_Mat, adParam.count, 6);
+	
+
+
+	double pBody[6], pEE[3];
+
+	param.count = 499;
+	walk(&rbt, &param);
+
+	
+
+
+	rbt.GetBodyPe(pBody);
+	dsp(pBody, 6, 1);
+
+	param.count = 1499;
+	walk(&rbt, &param);
+
+	
+	rbt.GetBodyPe(pBody);
+	dsp(pBody, 6, 1);
+
+	rbt.pLM->GetPee(pEE, "G");
+	dsp(pEE, 3, 1);
 
 
 

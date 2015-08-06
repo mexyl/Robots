@@ -1,11 +1,8 @@
-﻿#ifndef ROBOT_EXPORTS
-#define ROBOT_EXPORTS
-#endif
-
-#include "Platform.h"
+﻿#include "Platform.h"
 
 #ifdef PLATFORM_IS_WINDOWS
 #define _CRT_SECURE_NO_WARNINGS
+#define _SCL_SECURE_NO_WARNINGS
 #endif
 
 #include "HexapodIII.h"
@@ -19,17 +16,17 @@ using namespace std;
 
 namespace Robots
 {	
-	double acc_even(unsigned int n, unsigned int i)
+	double acc_even(int n, int i)
 	{
 		return 1.0 / n / n  * i * i;
 	}
 
-	double dec_even(unsigned int n, unsigned int i)
+	double dec_even(int n, int i)
 	{
 		return 1.0 - 1.0 / n / n * (n-i)*(n-i);
 	}
 
-	double even(unsigned int n, unsigned int i)
+	double even(int n, int i)
 	{
 		return 1.0 / n*i;
 	}
@@ -43,7 +40,7 @@ namespace Robots
 
 	void LEG_III::GetFin(double *fIn) const
 	{
-		for (unsigned i = 0; i < 3; ++i)
+		for (int i = 0; i < 3; ++i)
 		{
 			fIn[i] = *pMots[i]->GetF_mPtr();
 		}
@@ -768,14 +765,14 @@ namespace Robots
 		, pRM{ &RM_Leg }
 		, pRR{ &RR_Leg }
 	{
-		for (unsigned int i = 0; i < 6; ++i)
+		for (int i = 0; i < 6; ++i)
 		{
 			Robots::ROBOT_BASE::pLegs[i] = static_cast<Robots::LEG_BASE *>(pLegs[i]);
 		}
 	}
 	void ROBOT_III::GetFin(double *fIn) const
 	{
-		for (unsigned i = 0; i < 6; ++i)
+		for (int i = 0; i < 6; ++i)
 		{
 			pLegs[i]->GetFin(&fIn[i*3]);
 		}
@@ -977,7 +974,7 @@ namespace Robots
 			{
 				/*以下输入动力学计算，并补偿摩擦力*/
 				double fce;
-				for (unsigned j = 0; j < 3; ++j)
+				for (int j = 0; j < 3; ++j)
 				{
 					fce = h[supported_id[i] * 3 + j]
 						+ s_sgn(pLegs[i]->pMots[j]->GetV_mPtr()[0]) * pLegs[i]->pMots[j]->GetFrcCoePtr()[0]
@@ -990,7 +987,7 @@ namespace Robots
 			{
 				/*以下输入动力学计算，并补偿摩擦力*/
 				double fce;
-				for (unsigned j = 0; j < 3; ++j)
+				for (int j = 0; j < 3; ++j)
 				{
 					fce = k_L[i][33 + j][0]
 						+ s_sgn(pLegs[i]->pMots[j]->GetV_mPtr()[0]) * pLegs[i]->pMots[j]->GetFrcCoePtr()[0]
@@ -1183,11 +1180,11 @@ namespace Robots
 	{
 		param->count = 0;
 		
-		unsigned totalCount = fun(pRobot, param) + 1;
-		unsigned akimaSize = totalCount / 10 + 1;//需加上0点
+		int totalCount = fun(pRobot, param) + 1;
+		int akimaSize = totalCount / 10 + 1;//需加上0点
 
 		std::vector<double> time(akimaSize);
-		for (unsigned i = 0; i < akimaSize; ++i)
+		for (int i = 0; i < akimaSize; ++i)
 		{
 			time.at(i) = i*0.01;
 		}
@@ -1201,25 +1198,25 @@ namespace Robots
 
 		/*设置起始点机器人驱动的位置*/
 		pRobot->SetPee(param->beginPee, param->beginBodyPE, "G");
-		for (unsigned j = 0; j < 18; ++j)
+		for (int j = 0; j < 18; ++j)
 		{
 			motionPos.at(j).at(0) = pRobot->GetMotion(j)->GetP_mPtr()[0];
 		}
 
 		/*设置其他时间节点上机器人驱动的位置*/
-		for (unsigned i = 1; i < akimaSize; ++i)
+		for (int i = 1; i < akimaSize; ++i)
 		{
 			param->count = i * 10 - 1;
 			fun(pRobot, param);
 
-			for (unsigned j = 0; j < 18; ++j)
+			for (int j = 0; j < 18; ++j)
 			{
 				motionPos.at(j).at(i) = pRobot->GetMotion(j)->GetP_mPtr()[0];
 			}
 		}
 
 		/*设置驱动的位置akima函数*/
-		for (unsigned i = 0; i < 18; ++i)
+		for (int i = 0; i < 18; ++i)
 		{
 			pRobot->GetMotion(i)->SetPosAkimaCurve(akimaSize, time.data(), motionPos.at(i).data());
 		}
@@ -1228,7 +1225,7 @@ namespace Robots
 	void ROBOT_III::SimulateInverse(GAIT_FUNC fun, GAIT_PARAM_BASE *param)
 	{
 		param->count = 0;
-		unsigned totalCount = fun(this, param) + 1;
+		int totalCount = fun(this, param) + 1;
 
 		ForEachElement([totalCount](Aris::DynKer::ELEMENT *e)
 		{
@@ -1238,7 +1235,6 @@ namespace Robots
 	void ROBOT_III::SimulateForward(GAIT_FUNC fun, GAIT_PARAM_BASE *param, Aris::DynKer::SIMULATE_SCRIPT *script)
 	{
 		SetAkima(this, fun, param);
-
 	};
 	void ROBOT_III::SimulateForwardByAdams(const char *adamsFile, GAIT_FUNC fun, GAIT_PARAM_BASE *param, SIMULATE_SCRIPT *pScript)
 	{
@@ -1269,7 +1265,7 @@ namespace Robots
 			}
 
 			param->count = 0;
-			unsigned totalCount = fun(this, param) + 1;
+			int totalCount = fun(this, param) + 1;
 			pScript->ScriptEndTime(totalCount);
 		}
 

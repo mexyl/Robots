@@ -1,4 +1,11 @@
-﻿#include <iostream>
+﻿#include <Platform.h>
+
+#ifdef PLATFORM_IS_WINDOWS
+#define _CRT_SECURE_NO_WARNINGS
+#define _SCL_SECURE_NO_WARNINGS
+#endif
+
+#include <iostream>
 #include <iomanip>
 #include <cmath>
 
@@ -176,7 +183,7 @@ int main()
 	double time[] = { 0, 1, 2, 3, 4, 5 };
 	double pos[6] = {0};
 
-	for (unsigned i = 0; i < 6;++i)
+	for (int i = 0; i < 6;++i)
 	{
 		pos[i] = pIni+std::sin(time[i])*0.1;
 	}

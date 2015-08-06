@@ -43,7 +43,7 @@ namespace Robots
 		{
 			if (pRobot.get() == nullptr)
 			{
-				pRobot = std::unique_ptr<Robots::ROBOT_BASE>(new T);
+				pRobot = std::unique_ptr<Robots::ROBOT_BASE>{ new T };
 			}
 		};
 		void LoadXml(const char *fileName);

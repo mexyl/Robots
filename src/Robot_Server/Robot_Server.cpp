@@ -1,6 +1,7 @@
 #include <Platform.h>
 #ifdef PLATFORM_IS_WINDOWS
 #define rt_printf printf
+#define _SCL_SECURE_NO_WARNINGS
 #endif
 #ifdef PLATFORM_IS_LINUX
 #include <Aris_Control.h>
@@ -262,13 +263,13 @@ namespace Robots
 					std::memcpy(robotState.motorID, motors, sizeof(motors));
 					robotState.motorNum = 18;
 				}
-				else if (i.first == "left")
+				else if (i.first == "first")
 				{
 					robotState.motorNum = 9;
 					int motors[9] = { 0,1,2,6,7,8,12,13,14 };
 					std::memcpy(robotState.motorID, motors, sizeof(motors));
 				}
-				else if (i.first == "right")
+				else if (i.first == "second")
 				{
 					robotState.motorNum = 9;
 					int motors[9] = { 3,4,5,9,10,11,15,16,17 };
@@ -299,13 +300,13 @@ namespace Robots
 					std::memcpy(robotState.motorID, motors, sizeof(motors));
 					robotState.motorNum = 18;
 				}
-				else if (i.first == "left")
+				else if (i.first == "first")
 				{
 					int motors[9] = { 0,1,2,6,7,8,12,13,14 };
 					std::memcpy(robotState.motorID, motors, sizeof(motors));
 					robotState.motorNum = 9;
 				}
-				else if (i.first == "right")
+				else if (i.first == "second")
 				{
 					int motors[9] = { 3,4,5,9,10,11,15,16,17 };
 					std::memcpy(robotState.motorID, motors, sizeof(motors));
@@ -340,7 +341,7 @@ namespace Robots
 					int legs[6] = { 0,1,2,3,4,5 };
 					std::memcpy(robotState.legID, legs, sizeof(legs));
 				}
-				else if (i.first == "left")
+				else if (i.first == "first")
 				{
 					int motors[9] = { 0,1,2,6,7,8,12,13,14 };
 					std::memcpy(robotState.motorID, motors, sizeof(motors));
@@ -350,7 +351,7 @@ namespace Robots
 					int legs[3] = { 0,2,4 };
 					std::memcpy(robotState.legID, legs, sizeof(legs));
 				}
-				else if (i.first == "right")
+				else if (i.first == "second")
 				{
 					int motors[9] = { 3,4,5,9,10,11,15,16,17 };
 					std::memcpy(robotState.motorID, motors, sizeof(motors));

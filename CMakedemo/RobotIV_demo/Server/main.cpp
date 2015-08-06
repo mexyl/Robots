@@ -20,66 +20,9 @@ using namespace Aris::Core;
 #include "trajectory_generator.h"
 
 
-extern int HEXBOT_HOME_OFFSETS_RESOLVER[18];
-
-
-
-
-int walk(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam)
-{
-	static double lastPee[18];
-	static double lastPbody[6];
-
-	const Robots::WALK_PARAM *pWP=static_cast<const Robots::WALK_PARAM *>(pParam);
-
-
-	if(pParam->count < pWP->totalCount)
-	{
-		walkAcc(pRobot,pParam);
-	}
-	else
-	{
-		Robots::WALK_PARAM param2=*pWP;
-		param2.count=pWP->count - pWP->totalCount;
-
-		memcpy(param2.beginPee,lastPee,sizeof(lastPee));
-		memcpy(param2.beginBodyPE,lastPbody,sizeof(lastPbody));
-
-		walkDec(pRobot,&param2);
-	}
-
-	if(pParam->count%100==0)
-	{
-		double pEE[18];
-		double pBody[18];
-		pRobot->GetPee(pEE,"G");
-				pRobot->GetBodyPe(pBody,"313");
-	}
-
-
-	if(pParam->count==pWP->totalCount-1)
-	{
-		pRobot->GetPee(lastPee,"G");
-		pRobot->GetBodyPe(lastPbody,"313");
-
-		double *pEE=lastPee;
-		double *pBody=lastPbody;
-	}
-	return 2* pWP->totalCount - pWP->count-1;
-}
-
-Aris::Core::MSG parse(const std::string &cmd, const map<std::string, std::string> &params)
+Aris::Core::MSG parseWalk(const std::string &cmd, const map<std::string, std::string> &params)
 {
 	Robots::WALK_PARAM  param;
-
-	param.motorNum=18;
-	int id[18]={0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17};
-	std::memcpy(param.motorID,id,sizeof(id));
-
-	param.legNum=6;
-	int legid[6]={0,1,2,3,4,5};
-	std::memcpy(param.legID,legid,sizeof(legid));
-
 
 	for(auto &i:params)
 	{
@@ -126,13 +69,93 @@ Aris::Core::MSG parse(const std::string &cmd, const map<std::string, std::string
 	return msg;
 }
 
+Aris::Core::MSG parseAdjust(const std::string &cmd, const map<std::string, std::string> &params)
+{
+	double firstEE[18] =
+	{
+		-0.3,-0.75,-0.65,
+		-0.45,-0.75,0,
+		-0.3,-0.75,0.65,
+		0.3,-0.75,-0.65,
+		0.45,-0.75,0,
+		0.3,-0.75,0.65,
+	};
+
+	double beginEE[18]
+	{
+		-0.3,-0.85,-0.65,
+		-0.45,-0.85,0,
+		-0.3,-0.85,0.65,
+		0.3,-0.85,-0.65,
+		0.45,-0.85,0,
+		0.3,-0.85,0.65,
+	};
+
+	Robots::ADJUST_PARAM  param;
+
+	std::copy_n(firstEE, 18, param.targetPee[0]);
+	std::fill_n(param.targetBodyPE[0], 6, 0);
+	std::copy_n(beginEE, 18, param.targetPee[1]);
+	std::fill_n(param.targetBodyPE[1], 6, 0);
+
+	param.periodNum = 2;
+	param.periodCount[0]=1000;
+	param.periodCount[1]=1500;
+
+	for(auto &i:params)
+	{
+		if(i.first=="all")
+		{
+
+		}
+		else if(i.first=="first")
+		{
+			param.legNum=3;
+			param.motorNum=9;
+
+			param.legID[0]=0;
+			param.legID[1]=2;
+			param.legID[2]=4;
+
+			int motors[9] = { 0,1,2,6,7,8,12,13,14 };
+			std::copy_n(motors, 9, param.motorID);
+		}
+		else if(i.first=="second")
+		{
+			param.legNum=3;
+			param.motorNum=9;
+
+			param.legID[0]=1;
+			param.legID[1]=3;
+			param.legID[2]=5;
+
+			int motors[9] = { 3,4,5,9,10,11,15,16,17 };
+			std::copy_n(motors, 9, param.motorID);
+		}
+		else
+		{
+			std::cout<<"parse failed"<<std::endl;
+			return MSG{};
+		}
+	}
+
+	Aris::Core::MSG msg;
+
+	msg.CopyStruct(param);
+
+	std::cout<<"finished parse"<<std::endl;
+
+	return msg;
+}
+
 
 int main()
 {
 	auto rs = Robots::ROBOT_SERVER::GetInstance();
 	rs->CreateRobot<Robots::ROBOT_III>();
 	rs->LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
-	rs->AddGait("wk",walk,parse);
+	rs->AddGait("wk",Robots::walk,parseWalk);
+	rs->AddGait("ad",Robots::adjust,parseAdjust);
 	rs->Start();
 	/**/
 	std::cout<<"finished"<<std::endl;

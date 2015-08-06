@@ -1,5 +1,10 @@
 ﻿#include <Platform.h>
 
+#ifdef PLATFORM_IS_WINDOWS
+#define _CRT_SECURE_NO_WARNINGS
+#define _SCL_SECURE_NO_WARNINGS
+#endif
+
 #include <iostream>
 #include <cstring>
 #include <iomanip> 
@@ -27,53 +32,6 @@ using namespace std;
 using namespace Aris::Core;
 
 extern int HEXBOT_HOME_OFFSETS_RESOLVER[18];
-
-
-
-
-int walk(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam)
-{
-	static double lastPee[18];
-	static double lastPbody[6];
-
-	const Robots::WALK_PARAM *pWP=static_cast<const Robots::WALK_PARAM *>(pParam);
-
-
-	if(pParam->count < pWP->totalCount)
-	{
-		walkAcc(pRobot,pParam);
-	}
-	else
-	{
-		Robots::WALK_PARAM param2=*pWP;
-		param2.count=pWP->count - pWP->totalCount;
-
-		memcpy(param2.beginPee,lastPee,sizeof(lastPee));
-		memcpy(param2.beginBodyPE,lastPbody,sizeof(lastPbody));
-
-		walkDec(pRobot,&param2);
-	}
-
-	if(pParam->count%100==0)
-	{
-		double pEE[18];
-		double pBody[18];
-		pRobot->GetPee(pEE,"G");
-		pRobot->GetBodyPe(pBody,"313");
-	}
-
-
-	if(pParam->count==pWP->totalCount-1)
-	{
-		pRobot->GetPee(lastPee,"G");
-		pRobot->GetBodyPe(lastPbody,"313");
-
-		double *pEE=lastPee;
-		double *pBody=lastPbody;
-	}
-	return 2* pWP->totalCount - pWP->count-1;
-}
-
 
 
 
@@ -218,7 +176,7 @@ int main()
 #endif
 #ifdef PLATFORM_IS_WINDOWS
 	rs->LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
-	rs->AddGait("wk", walk, parse);
+	rs->AddGait("wk", Robots::walk, parse);
 #endif
 
 

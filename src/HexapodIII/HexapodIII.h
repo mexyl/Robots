@@ -204,7 +204,7 @@ namespace Robots
 		LEG_III RR_Leg{ "RR", this };
 	};
 
-	inline void Activate135(unsigned time, ROBOT_III *pRobot, Aris::DynKer::SIMULATE_SCRIPT *script)
+	inline void Activate135(int time, ROBOT_III *pRobot, Aris::DynKer::SIMULATE_SCRIPT *script)
 	{
 		script->ScriptDeactivate(time, pRobot->pLF->pSf);
 		script->ScriptActivate(time, pRobot->pLM->pSf);
@@ -220,7 +220,7 @@ namespace Robots
 		script->ScriptSwitchMode(time, pRobot->pRM->pM1, Aris::DynKer::MOTION::POS_CONTROL);
 		script->ScriptSwitchMode(time, pRobot->pRR->pM1, Aris::DynKer::MOTION::FCE_CONTROL);
 	}
-	inline void Activate246(unsigned time, ROBOT_III *pRobot, Aris::DynKer::SIMULATE_SCRIPT *script)
+	inline void Activate246(int time, ROBOT_III *pRobot, Aris::DynKer::SIMULATE_SCRIPT *script)
 	{
 		script->ScriptActivate(time, pRobot->pLF->pSf);
 		script->ScriptDeactivate(time, pRobot->pLM->pSf);

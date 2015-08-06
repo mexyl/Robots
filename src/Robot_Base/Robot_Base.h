@@ -184,7 +184,7 @@ namespace Robots
 	class ROBOT_BASE
 	{
 	public:
-		ROBOT_BASE();
+		ROBOT_BASE() = default;
 		virtual ~ROBOT_BASE() = default;
 
 		/*!
