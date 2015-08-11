@@ -414,6 +414,13 @@ namespace Robots
 		auto pAP = static_cast<const ADJUST_PARAM*>(pParam);
 
 		int pos, periodBeginCount{ 0 }, periodEndCount{ 0 };
+		double realTargetPee[ADJUST_PARAM::MAX_PERIOD_NUM][18];
+
+		for (int i = 0; i < pAP->periodNum; ++i)
+		{
+			pRobot->TransformCoordinatePee(pAP->beginBodyPE, "G", pAP->targetPee[i], pAP->relativeCoordinate,realTargetPee[i]);
+		}
+
 
 		for (int i = 0; i < pAP->periodNum; ++i)
 		{
@@ -436,7 +443,7 @@ namespace Robots
 		{
 			for (int i = 0; i < 18; ++i)
 			{
-				pEE[i] = pAP->beginPee[i] * (cos(s) + 1) / 2 + pAP->targetPee[pos][i] * (1 - cos(s)) / 2;
+				pEE[i] = pAP->beginPee[i] * (cos(s) + 1) / 2 + realTargetPee[pos][i] * (1 - cos(s)) / 2;
 				
 			}
 			for (int i = 0; i < 6; ++i)
@@ -448,7 +455,7 @@ namespace Robots
 		{
 			for (int i = 0; i < 18; ++i)
 			{
-				pEE[i] = pAP->targetPee[pos-1][i] * (cos(s) + 1) / 2 + pAP->targetPee[pos][i] * (1 - cos(s)) / 2;
+				pEE[i] = realTargetPee[pos-1][i] * (cos(s) + 1) / 2 + realTargetPee[pos][i] * (1 - cos(s)) / 2;
 				
 			}
 			for (int i = 0; i < 6; ++i)
