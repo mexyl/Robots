@@ -1516,8 +1516,8 @@
             </en>
             <ds default="all">
                 <all abbreviation="a"/>
-                <first abbreviation="l"/>
-                <second abbreviation="r"/>
+                <first abbreviation="f"/>
+                <second abbreviation="s"/>
                 <motor abbreviation="m" type="intArray" default="0"/>
             </ds>
             <hm default="all">

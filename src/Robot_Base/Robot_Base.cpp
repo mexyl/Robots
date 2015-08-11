@@ -367,6 +367,100 @@ namespace Robots
 		}
 	}
 
+	void LEG_BASE::TransformCoordinatePee(const double *bodyPe, const char *fromMak, const double *fromPee
+		, const char *toMak, double *toPee) const
+	{
+		switch (*fromMak)
+		{
+		case 'L':
+		{
+			switch (*toMak)
+			{
+			case 'L':
+			{
+				std::copy_n(fromPee, 3, toPee);
+				return;
+			}
+			case 'B':
+			case 'M':
+			{
+				s_pm_dot_pnt(pBasePrtPm, fromPee, toPee);
+				return;
+			}
+			case 'G':
+			case 'O':
+			default:
+			{
+				double bodyPm[16], pnt[3];
+				s_pe2pm(bodyPe, bodyPm);
+				s_pm_dot_pnt(pBasePrtPm, fromPee, pnt);
+				s_pm_dot_pnt(bodyPm, pnt, toPee);
+				return;
+			}
+			}
+		}
+		case 'B':
+		case 'M':
+		{
+			switch (*toMak)
+			{
+			case 'L':
+			{
+				s_inv_pm_dot_pnt(pBasePrtPm, fromPee, toPee);
+				return;
+			}
+			case 'B':
+			case 'M':
+			{
+				std::copy_n(fromPee, 3, toPee);
+				return;
+			}
+			case 'G':
+			case 'O':
+			default:
+			{
+				double bodyPm[16];
+				s_pe2pm(bodyPe, bodyPm);
+				s_pm_dot_pnt(bodyPm, fromPee, toPee);
+				return;
+			}
+			}
+		}
+		case 'G':
+		case 'O':
+		default:
+		{
+			switch (*toMak)
+			{
+			case 'L':
+			{
+				double bodyPm[16];
+				double pnt[3];
+				s_pe2pm(bodyPe, bodyPm);
+				s_inv_pm_dot_pnt(bodyPm, fromPee, pnt);
+				s_inv_pm_dot_pnt(pBasePrtPm, pnt, toPee);
+				return;
+			}
+			case 'B':
+			case 'M':
+			{
+				double bodyPm[16];
+				s_pe2pm(bodyPe, bodyPm);
+				s_inv_pm_dot_pnt(bodyPm, fromPee, toPee);
+				return;
+			}
+			case 'G':
+			case 'O':
+			default:
+			{
+				std::copy_n(fromPee, 3, toPee);
+				return;
+			}
+			}
+		}
+		}
+	}
+
 	void ROBOT_BASE::GetBodyPm(double *bodypm) const
 	{ 
 		std::copy_n(pBodyPm, 16, bodypm);
@@ -513,7 +607,13 @@ namespace Robots
 		}
 	}
 
-
-
+	void ROBOT_BASE::TransformCoordinatePee(const double *bodyPe, const char *fromMak, const double *fromPee
+		, const char *toMak, double *toPee) const
+	{
+		for (int i = 0; i < 6; ++i)
+		{
+			this->pLegs[i]->TransformCoordinatePee(bodyPe, fromMak, fromPee + i * 3, toMak, toPee + i * 3);
+		}
+	}
 
 }

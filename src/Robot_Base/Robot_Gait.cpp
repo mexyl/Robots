@@ -288,6 +288,9 @@ namespace Robots
 		return totalCount - count - 1;
 	}
 
+	
+
+
 	int walk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		const Robots::WALK_PARAM *pWP = static_cast<const Robots::WALK_PARAM *>(pParam);
@@ -356,17 +359,6 @@ namespace Robots
 		double pm[4][4], pe[6];
 		s_pe2pm(pParam->beginBodyPE, *pm, "313");
 		s_pm2pe(*pm, pe, order);
-
-		
-
-		if (pParam->count == 500)
-		{
-			int i=0;
-			++i;
-
-		}
-
-
 
 		for (int i = 0; i < 18; i += 3)
 		{
@@ -474,5 +466,58 @@ namespace Robots
 		}
 
 		return totalCount - pAP->count - 1;
+	}
+	
+	
+	
+	int move(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
+	{
+		const Robots::MOVE_PARAM *param = static_cast<const Robots::MOVE_PARAM *>(pParam);
+
+		double beginPq[7], beginVq[7], endPq[7], endVq[7];
+		
+		/*计算末端位置和速度在初始位置下的相对值*/
+		double relativeBeginPm[16], relativeBeginPq[7]{0,0,0,0,0,0,1};
+		double relativeBeginVel[6], relativeBeginVq[6];
+		double relativeEndPm[16], relativeEndPq[7];
+		double relativeEndVel[6], relativeEndVq[6];
+
+		/*begin pm and pq*/
+		s_pq2pm(relativeBeginPq, relativeBeginPm);
+
+		/*begin vq*/
+		double pm1[16], pm2[16];
+		s_pe2pm(param->beginBodyPE, pm1);
+		s_inv_v2v(pm1, nullptr, param->beginBodyVel, relativeBeginVel);
+		s_v2vq(relativeBeginPm, relativeBeginVel, relativeBeginVq);
+
+		/*end pq*/
+		s_pe2pm(param->targetBodyPE, pm2);
+		s_inv_pm_dot_pm(pm1, pm2, relativeEndPm);
+
+		/*end vq*/
+		s_inv_v2v(pm1, nullptr, param->beginBodyVel, relativeEndVel);
+		
+
+
+
+
+		//s_v2v(nullptr,nullptr);
+		//Aris::DynKer::s_pm2pq();
+
+
+
+		
+
+
+
+		param->beginBodyVel;
+
+
+
+
+
+
+		return 0;
 	}
 }

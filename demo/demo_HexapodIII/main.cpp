@@ -141,7 +141,7 @@ int main()
 
 
 
-	for (int i = 0; i < 10000; ++i)
+	for (int i = 0; i < 1; ++i)
 	{
 		rbt.SetPin(pIn);
 		rbt.SetVin(vIn);
@@ -162,10 +162,6 @@ int main()
 	cout << "finished" << endl;
 
 
-
-
-
-
 	rbt.SaveAdams("adams.cmd");
 
 	
@@ -176,6 +172,17 @@ int main()
 	dsp(fIn, 18, 1);
 
 	cout << "finished" << endl;
+
+	double vel[6]{ 1,2,3,4,5,6 };
+	double pe[6]{ 0,0,0,-PI/2,0,0 };
+	double pm[16];
+
+	s_pe2pm(pe, pm);
+	
+
+	double inv_vel[6];
+	s_inv_v2v(pm,vel,nullptr,inv_vel);
+	dsp(inv_vel,6,1);
 
 	/*
 	double pIni = rbt.pLF->pM1->GetP_mPtr()[0];

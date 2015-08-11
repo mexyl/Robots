@@ -36,6 +36,8 @@ namespace Robots
 		double alpha;
 		double beta;
 	};
+	int walk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
+
 	struct ADJUST_PARAM :public GAIT_PARAM_BASE
 	{
 		enum { MAX_PERIOD_NUM = 10};
@@ -45,10 +47,16 @@ namespace Robots
 		std::int32_t periodCount[MAX_PERIOD_NUM];
 		std::int32_t periodNum;
 	};
-
-	int walk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
-
 	int adjust(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
+
+	struct MOVE_PARAM :public GAIT_PARAM_BASE
+	{
+		double targetPee[18];
+		double targetVee[18];
+		double targetBodyVel[6];
+		double targetBodyPE[6];
+		std::int32_t totalCount;
+	};
 }
 
 #endif
