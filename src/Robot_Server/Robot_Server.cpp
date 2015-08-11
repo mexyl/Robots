@@ -101,7 +101,7 @@ namespace Robots
 			
 			for (; nIndex >= 0; nIndex--)
 			{
-				if (path[nIndex] == '/')//É¸Ñ¡³ö½ø³ÌÃû
+				if (path[nIndex] == '/')//É¸Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				{
 					nIndex++;
 					proName += nIndex;
@@ -545,7 +545,9 @@ namespace Robots
 	int ROBOT_SERVER::runGait(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
 	{
 		int ret = 0;
-		double pIn[18];
+		double pIn[18], pEE_B[18];
+
+		pRobot->TransformCoordinatePee(pParam->beginBodyPE,"G",pParam->beginPee,"B",pEE_B);
 
 		ret = this->allGaits.at(pParam->cmdID).operator()(pRobot,pParam);
 
@@ -555,6 +557,14 @@ namespace Robots
 		{
 			data.motorsCommands[mapAbs2Phy[pParam->motorID[i]]] = Aris::RT_CONTROL::EMCMD_RUNNING;
 			data.commandData[mapAbs2Phy[pParam->motorID[i]]].Position = static_cast<int>(pIn[pParam->motorID[i]] * meter2count);
+		}
+
+		for(int i=0;i<6;++i)
+		{
+			if((std::find(pParam->legID,pParam->legID+pParam->legNum,i))==(pParam->legID+pParam->legNum))
+			{
+				pRobot->pLegs[i]->SetPee(pEE_B+i*3,"B");
+			}
 		}
 
 		return ret;
