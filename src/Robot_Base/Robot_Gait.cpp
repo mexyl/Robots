@@ -415,13 +415,39 @@ namespace Robots
 
 		int pos, periodBeginCount{ 0 }, periodEndCount{ 0 };
 		double realTargetPee[ADJUST_PARAM::MAX_PERIOD_NUM][18];
+		double realTargetPbody[ADJUST_PARAM::MAX_PERIOD_NUM][6];
 
+		/*转换末端和身体目标位置的坐标到地面坐标系下*/
 		for (int i = 0; i < pAP->periodNum; ++i)
 		{
 			pRobot->TransformCoordinatePee(pAP->beginBodyPE, "G", pAP->targetPee[i], pAP->relativeCoordinate,realTargetPee[i]);
 		}
 
+		switch (*(pAP->relativeBodyCoordinate))
+		{
+		case 'B':
+		case 'M':
+		{
+			double beginPm[16];
+			s_pe2pm(pAP->beginBodyPE, beginPm);
+			for (int i = 0; i < pAP->periodNum; ++i)
+			{
+				double pm1[16], pm2[16];
 
+				s_pe2pm(pAP->targetBodyPE[i], pm1);
+				s_pm_dot_pm(beginPm, pm1, pm2);
+				s_pm2pe(pm2, realTargetPbody[i]);
+			}
+		}
+			
+		case 'G':
+		case 'O':
+		default:
+			std::copy_n(*pAP->targetBodyPE, ADJUST_PARAM::MAX_PERIOD_NUM*6, *realTargetPbody);
+		}
+
+
+		/*判断当前所处的周期*/
 		for (int i = 0; i < pAP->periodNum; ++i)
 		{
 			periodEndCount += pAP->periodCount[i];
@@ -437,6 +463,7 @@ namespace Robots
 
 		double s = -(PI / 2)*cos(PI * (pAP->count - periodBeginCount + 1) / (periodEndCount- periodBeginCount)) + PI / 2;
 		
+		/*插值当前的末端和身体位置*/
 		double pEE[18], pBody[6];
 
 		if (pos == 0)
@@ -448,7 +475,7 @@ namespace Robots
 			}
 			for (int i = 0; i < 6; ++i)
 			{
-				pBody[i] = pAP->beginBodyPE[i] * (cos(s) + 1) / 2 + pAP->targetBodyPE[pos][i] * (1 - cos(s)) / 2;
+				pBody[i] = pAP->beginBodyPE[i] * (cos(s) + 1) / 2 + realTargetPbody[pos][i] * (1 - cos(s)) / 2;
 			}
 		}
 		else
@@ -460,12 +487,13 @@ namespace Robots
 			}
 			for (int i = 0; i < 6; ++i)
 			{
-				pBody[i] = pAP->targetBodyPE[pos - 1][i] * (cos(s) + 1) / 2 + pAP->targetBodyPE[pos][i] * (1 - cos(s)) / 2;
+				pBody[i] = realTargetPbody[pos - 1][i] * (cos(s) + 1) / 2 + realTargetPbody[pos][i] * (1 - cos(s)) / 2;
 			}
 		}
 
 		pRobot->SetPee(pEE, pBody);
 
+		/*计算总共所需要花的时间，以便返回剩余的count数*/
 		int totalCount{ 0 };
 		for (int i = 0; i < pAP->periodNum; ++i)
 		{
