@@ -312,7 +312,7 @@ void GenerateCmdMsg(const std::string &cmd, const std::map<std::string,std::stri
 		return;
 	}
 }
-
+/*
 int HEXBOT_HOME_OFFSETS_RESOLVER[18]=
 {
 		-15849882+349000,-16354509+349000,-16354509+349000,
@@ -321,7 +321,7 @@ int HEXBOT_HOME_OFFSETS_RESOLVER[18]=
 		-16354509+349000,-15849882+349000,-16354509+349000,
 		-15849882+349000,-16354509+349000,-16354509+349000,
 		-16354509+349000,-16354509+349000,-15849882+349000,
-};
+};*/
 const double meter2count = 1/0.01*3.5*65536;
 
 const int MapAbsToPhy[18]

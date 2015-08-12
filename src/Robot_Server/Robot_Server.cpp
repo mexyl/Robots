@@ -63,6 +63,8 @@ namespace Robots
 			mapAbs2Phy[i] = std::find(mapPhy2Abs, mapPhy2Abs + 18, i) - mapPhy2Abs;
 		}
 
+
+
 		std::string docName{ doc.RootElement()->Name() };
 
 		pRobot->LoadXml(fileName);
@@ -71,10 +73,19 @@ namespace Robots
 		pRobot->SetPee(homeEE, pe, "B");
 		pRobot->GetPin(homeIn);
 
+
+
 		for (int i = 0; i < 18; ++i)
 		{
-			homeCount[i] = -static_cast<int>(homeIn[i] * meter2count);
+			homeCount[i] = -static_cast<int>(homeIn[mapPhy2Abs[i]] * meter2count);
 		}
+
+		std::cout<<"abs to phy:"<<std::endl;
+				for(int i=0;i<18;++i)cout<<mapAbs2Phy[i]<<std::endl;
+
+		std::cout<<"home count:"<<std::endl;
+				for(int i=0;i<18;++i)cout<<homeCount[i]<<std::endl;
+
 
 		/*copy client*/
 #ifdef PLATFORM_IS_LINUX
@@ -146,7 +157,7 @@ namespace Robots
 
 		initParam.motorNum = 18;
 		initParam.homeMode = -1;
-		initParam.homeTorqueLimit = 100;
+		initParam.homeTorqueLimit = 950;
 		initParam.homeHighSpeed = 280000;
 		initParam.homeLowSpeed = 160000;
 		initParam.homeOffsets = homeCount;
@@ -421,6 +432,9 @@ namespace Robots
 		int id[18];
 		a2p(param->motorID, id, param->motorNum);
 
+		if(param->count%1000==0)
+		rt_printf("motor %d is homing",id[0]);
+
 		for (int i = 0; i< param->motorNum; ++i)
 		{
 			if (data.isMotorHomed[id[i]])
@@ -553,16 +567,24 @@ namespace Robots
 
 		pRobot->GetPin(pIn);
 
+
+		int id[18];
+		a2p(pParam->motorID, id, pParam->motorNum);
+
 		for (int i = 0; i<pParam->motorNum; ++i)
 		{
-			data.motorsCommands[mapAbs2Phy[pParam->motorID[i]]] = Aris::RT_CONTROL::EMCMD_RUNNING;
-			data.commandData[mapAbs2Phy[pParam->motorID[i]]].Position = static_cast<int>(pIn[pParam->motorID[i]] * meter2count);
+			data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_RUNNING;
+			data.commandData[id[i]].Position = static_cast<int>(pIn[pParam->motorID[i]] * meter2count);
 		}
 
 		for(int i=0;i<6;++i)
 		{
+			//auto found=std::find(pParam->legID,pParam->legID+pParam->legNum,i);
 			if((std::find(pParam->legID,pParam->legID+pParam->legNum,i))==(pParam->legID+pParam->legNum))
 			{
+				if(pParam->count%1000==0)
+				rt_printf("%d leg not found\n",i);
+
 				pRobot->pLegs[i]->SetPee(pEE_B+i*3,"B");
 			}
 		}
@@ -680,22 +702,42 @@ namespace Robots
 			cmdData = lastCmdData;
 		}
 
+		static bool firstError=true;
+
 		for (int i = 0; i<18; ++i)
 		{
 			if (lastCmdData.motorsCommands[i] == Aris::RT_CONTROL::EMCMD_RUNNING)
 			{
 				if (cmdData.motorsCommands[i] == Aris::RT_CONTROL::EMCMD_RUNNING)
 				{
-
-
 					if (std::abs(lastCmdData.commandData[i].Position - cmdData.commandData[i].Position)>20000)
 					{
-						rt_printf("data is not continuous\n");
+						if(firstError)
+						{
+							rt_printf("data %d not continuous\n",i);
+							rt_printf("last:%d, now:%d\n",lastCmdData.commandData[i].Position
+									, cmdData.commandData[i].Position);
+
+							for(int i=0;i<18;++i)
+							{
+								rt_printf("%d %d\n",lastCmdData.commandData[i].Position,cmdData.commandData[i].Position);
+							}
+							firstError=false;
+						}
+
+
 						data = lastCmdData;
 						return 0;
 					}
 				}
 			}
+		}
+
+
+		if(!firstError)
+		{
+			data = lastCmdData;
+			return 0;
 		}
 
 

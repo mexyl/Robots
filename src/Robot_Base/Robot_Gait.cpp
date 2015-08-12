@@ -420,7 +420,7 @@ namespace Robots
 		/*转换末端和身体目标位置的坐标到地面坐标系下*/
 		for (int i = 0; i < pAP->periodNum; ++i)
 		{
-			pRobot->TransformCoordinatePee(pAP->beginBodyPE, "G", pAP->targetPee[i], pAP->relativeCoordinate,realTargetPee[i]);
+			pRobot->TransformCoordinatePee(pAP->beginBodyPE, pAP->relativeCoordinate, pAP->targetPee[i], "G",realTargetPee[i]);
 		}
 
 		switch (*(pAP->relativeBodyCoordinate))
@@ -430,6 +430,7 @@ namespace Robots
 		{
 			double beginPm[16];
 			s_pe2pm(pAP->beginBodyPE, beginPm);
+
 			for (int i = 0; i < pAP->periodNum; ++i)
 			{
 				double pm1[16], pm2[16];
@@ -438,14 +439,15 @@ namespace Robots
 				s_pm_dot_pm(beginPm, pm1, pm2);
 				s_pm2pe(pm2, realTargetPbody[i]);
 			}
+			break;
 		}
 			
 		case 'G':
 		case 'O':
 		default:
 			std::copy_n(*pAP->targetBodyPE, ADJUST_PARAM::MAX_PERIOD_NUM*6, *realTargetPbody);
+			break;
 		}
-
 
 		/*判断当前所处的周期*/
 		for (int i = 0; i < pAP->periodNum; ++i)
@@ -499,6 +501,7 @@ namespace Robots
 		{
 			totalCount += pAP->periodCount[i];
 		}
+
 
 		return totalCount - pAP->count - 1;
 	}

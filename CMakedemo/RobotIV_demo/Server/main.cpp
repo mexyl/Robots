@@ -103,6 +103,7 @@ Aris::Core::MSG parseAdjust(const std::string &cmd, const map<std::string, std::
 	param.periodCount[1]=1500;
 
 	std::strcpy(param.relativeCoordinate,"B");
+	std::strcpy(param.relativeBodyCoordinate,"B");
 
 	for(auto &i:params)
 	{
