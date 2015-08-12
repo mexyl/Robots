@@ -37,6 +37,7 @@ namespace Robots
 		double beta;
 	};
 	int walk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
+	int walk2(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
 
 	struct ADJUST_PARAM :public GAIT_PARAM_BASE
 	{

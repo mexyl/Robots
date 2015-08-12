@@ -50,34 +50,35 @@ double beginEE[18]
 //Robots::ROBOT_IV rbt;
 Robots::ROBOT_III rbt;
 
+
+
 int main()
 {
-	const int totalCount = 12000;
+	const int totalCount = 30000;
 	double pEE_Mat[totalCount][18], pIn_Mat[totalCount][18], pBodyEp_Mat[totalCount][6];
 	
 	
 	rbt.LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
 
-	double beginPE[6]{ 0.2,0.3,0.4,0,0,0 };
+	double beginPE[6]{ 0,0,-0.25,PI/2,0.3,-PI/2 };
 
 	rbt.SetPee(beginEE, beginPE, "B");
 
 	Robots::WALK_PARAM param;
 	param.alpha = 0.3;
-	param.beta = 0.4;
-	param.h = 0.04;
+	param.beta = 0.5;
+	param.h = 0.05;
 	param.d = 0.8;
 	param.totalCount = 500;
 	param.n = 3;
-	param.upDirection = -3;
-	param.walkDirection = 1;
+	param.upDirection = 2;
+	param.walkDirection = -3;
 
 	//std::copy_n(beginPee, 18, param.beginPee);
 	//std::copy_n(beginPE, 6, param.beginBodyPE);
 	//std::fill_n(param.beginBodyPE, 6, 0);
 	rbt.GetPee(param.beginPee);
 	rbt.GetBodyPe(param.beginBodyPE);
-
 
 	
 
@@ -92,8 +93,8 @@ int main()
 	
 	while (true)
 	{
-		int ret = walk(&rbt, &param);
-		rbt.GetPee(pEE_Mat[param.count],"B");
+		int ret = walk2(&rbt, &param);
+		rbt.GetPee(pEE_Mat[param.count],"G");
 		rbt.GetPin(pIn_Mat[param.count]);
 		rbt.GetBodyPe(pBodyEp_Mat[param.count]);
 		param.count++;
