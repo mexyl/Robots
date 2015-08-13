@@ -1,5 +1,9 @@
 ﻿#include <Platform.h>
 
+#ifdef PLATFORM_IS_LINUX
+#include <Aris_Control.h>
+#endif
+
 #include <cstring>
 #include <cmath>
 #include <algorithm>
@@ -174,7 +178,7 @@ namespace Robots
 					+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis]) * cos(b)
 					- lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis]) * sin(b))
 					+ beginBodyPE[wAxis];
-				pEE[i + uAxis] = uSign*h*sin(s)
+				pEE[i + uAxis] = 0
 					+ beginPee[i + uAxis];
 				pEE[i + lAxis] = lSign*(d *sin(a + b)
 					+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis]) * sin(b)
@@ -580,7 +584,7 @@ namespace Robots
 
 
 
-	int walk2(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
+	int walk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		const Robots::WALK_PARAM *pWP = static_cast<const Robots::WALK_PARAM *>(pParam);
 
@@ -698,7 +702,7 @@ namespace Robots
 
 		return 2 * pWP->n * pWP->totalCount - pWP->count - 1;
 	}
-	int walk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
+	int walk2(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		const Robots::WALK_PARAM *pWP = static_cast<const Robots::WALK_PARAM *>(pParam);
 

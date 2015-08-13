@@ -718,6 +718,20 @@ namespace Robots
 							rt_printf("last:%d, now:%d\n",lastCmdData.commandData[i].Position
 									, cmdData.commandData[i].Position);
 
+							rt_printf("data not continuous in count:%d\n",count);
+
+							auto pR=GetInstance()->pRobot.get();
+							double pEE[18];
+							double pBody[6];
+							pR->GetPee(pEE);
+							pR->GetBodyPe(pBody);
+							rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
+											, pEE[0], pEE[1], pEE[2], pEE[3], pEE[4], pEE[5], pEE[6], pEE[7], pEE[8]
+											, pEE[9], pEE[10], pEE[11], pEE[12], pEE[13], pEE[14], pEE[15], pEE[16], pEE[17]);
+										rt_printf("%f %f %f %f %f %f\n"
+											, pBody[0], pBody[1], pBody[2], pBody[3], pBody[4], pBody[5]);
+
+
 							for(int i=0;i<18;++i)
 							{
 								rt_printf("%d %d\n",lastCmdData.commandData[i].Position,cmdData.commandData[i].Position);
