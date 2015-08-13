@@ -694,7 +694,7 @@ namespace Robots
 		s_block_cpy(6, 3, pS3->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 18, 30, 36);
 		s_block_cpy(6, 3, pS3->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 30, 30, 36);
 
-		if (pSf->GetActive())
+		if (pSf->Active())
 		{
 			/*若该腿支撑，则使用Sf副约束*/
 			pSf->UpdateInPrt();
@@ -868,7 +868,7 @@ namespace Robots
 
 				for (int i = 0; i < 6; ++i)
 				{
-					if (!pLegs[i]->pSf->GetActive())
+					if (!pLegs[i]->pSf->Active())
 					{
 						pLegs[i]->pM1->SetMode(MOTION::POS_CONTROL);
 						pLegs[i]->pM2->SetMode(MOTION::POS_CONTROL);
@@ -939,7 +939,7 @@ namespace Robots
 			memcpy(Loc_C, pLegs[i]->_C, 36 * 36 * sizeof(double));
 			memcpy(*(k_L[i]), pLegs[i]->_c_M, 36 * 4 * sizeof(double));
 
-			if (pLegs[i]->pSf->GetActive())
+			if (pLegs[i]->pSf->Active())
 			{
 				/*更新支撑腿数量与id*/
 				supported_id[i] = supported_Leg_Num;
@@ -970,7 +970,7 @@ namespace Robots
 
 		for (int i = 0; i < 6; ++i)
 		{
-			if (pLegs[i]->pSf->GetActive())
+			if (pLegs[i]->pSf->Active())
 			{
 				/*以下输入动力学计算，并补偿摩擦力*/
 				double fce;
@@ -1009,27 +1009,27 @@ namespace Robots
 
 		for (int j = 0; j < 6; ++j)
 		{
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_P1a");
 			pLegs[j]->pP1a = GetPart(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_P2a");
 			pLegs[j]->pP2a = GetPart(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_P3a");
 			pLegs[j]->pP3a = GetPart(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_Thigh");
 			pLegs[j]->pThigh = GetPart(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_P2b");
 			pLegs[j]->pP2b = GetPart(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_P3b");
 			pLegs[j]->pP3b = GetPart(temName);
 		}
@@ -1039,19 +1039,19 @@ namespace Robots
 
 		for (int j = 0; j < 6; ++j)
 		{
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_Base");
 			pLegs[j]->pBase = pBody->GetMarker(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_U1i");
 			pLegs[j]->pU1i = pBody->GetMarker(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_U2i");
 			pLegs[j]->pU2i = pBody->GetMarker(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_U3i");
 			pLegs[j]->pU3i = pBody->GetMarker(temName);
 
@@ -1074,7 +1074,7 @@ namespace Robots
 			pLegs[j]->pS2j = pLegs[j]->pP2b->GetMarker("S2j");
 			pLegs[j]->pS3j = pLegs[j]->pP3b->GetMarker("S3j");
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_Sfj");
 			pLegs[j]->pSfj = pGround->GetMarker(temName);
 		}
@@ -1082,39 +1082,39 @@ namespace Robots
 		/*Update Joints*/
 		for (int j = 0; j < 6; ++j)
 		{
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_U1");
 			pLegs[j]->pU1 = GetJoint(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_U2");
 			pLegs[j]->pU2 = GetJoint(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_U3");
 			pLegs[j]->pU3 = GetJoint(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_P1");
 			pLegs[j]->pP1 = GetJoint(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_P2");
 			pLegs[j]->pP2 = GetJoint(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_P3");
 			pLegs[j]->pP3 = GetJoint(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_Sf");
 			pLegs[j]->pSf = GetJoint(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_S2");
 			pLegs[j]->pS2 = GetJoint(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_S3");
 			pLegs[j]->pS3 = GetJoint(temName);
 		}
@@ -1122,15 +1122,15 @@ namespace Robots
 		/*Update Motions*/
 		for (int j = 0; j < 6; ++j)
 		{
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_M1");
 			pLegs[j]->pM1 = GetMotion(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_M2");
 			pLegs[j]->pM2 = GetMotion(temName);
 
-			strcpy(temName, pLegs[j]->_Name.data());
+			strcpy(temName, pLegs[j]->Name().data());
 			strcat(temName, "_M3");
 			pLegs[j]->pM3 = GetMotion(temName);
 		}

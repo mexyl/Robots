@@ -54,7 +54,7 @@ Robots::ROBOT_III rbt;
 
 int main()
 {
-	const int totalCount = 30000;
+	const int totalCount = 3000;
 	double pEE_Mat[totalCount][18], pIn_Mat[totalCount][18], pBodyEp_Mat[totalCount][6];
 	
 	
@@ -70,7 +70,7 @@ int main()
 	param.h = 0.05;
 	param.d = 0.8;
 	param.totalCount = 500;
-	param.n = 3;
+	param.n = 1;
 	param.upDirection = 2;
 	param.walkDirection = -3;
 

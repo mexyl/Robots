@@ -600,6 +600,7 @@ namespace Robots
 
 		Robots::GAIT_PARAM_BASE *pParam = reinterpret_cast<Robots::GAIT_PARAM_BASE *>(cmd);
 		pParam->count = count;
+		pParam->pActuationData = &data;
 
 		memcpy(pParam->beginPee, pEE, sizeof(pEE));
 		memcpy(pParam->beginVee, vEE, sizeof(vEE));

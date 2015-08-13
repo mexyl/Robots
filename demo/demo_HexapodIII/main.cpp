@@ -162,8 +162,6 @@ int main()
 	cout << "finished" << endl;
 
 
-	rbt.SaveAdams("adams.cmd");
-
 	
 	rbt.DynPre();
 	rbt.DynPrtMtx();
@@ -186,7 +184,15 @@ int main()
 
 
 
+	Aris::DynKer::SIMULATE_SCRIPT script;
+	Robots::Activate024(0, &rbt, &script);
+	Robots::Activate135(3000, &rbt, &script);
+	script.ScriptDt(10);
 
+	Robots::WALK_PARAM wp;
+	std::copy(pEE_G, pEE_G + 18, wp.beginPee);
+
+	//rbt.SimulateForwardByAdams("adams", walk, &wp, &script);
 
 
 	/*

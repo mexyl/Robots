@@ -4,6 +4,7 @@
 #include <functional>
 #include <cstdint>
 
+#include <Aris_ControlData.h>
 #include <Robot_Base.h>
 
 namespace Robots
@@ -23,18 +24,19 @@ namespace Robots
 		double beginVee[18]{0};
 		double beginBodyPE[6]{0};
 		double beginBodyVel[6]{0};
+		const Aris::RT_CONTROL::CMachineData *pActuationData{nullptr};
 	};
 
 	struct WALK_PARAM :public GAIT_PARAM_BASE
 	{
-		std::int32_t totalCount;
-		std::int32_t n;
-		std::int32_t walkDirection;// 1 means positive x axis; while -3 means negative z axis
-		std::int32_t upDirection;
-		double d;
-		double h;
-		double alpha;
-		double beta;
+		std::int32_t totalCount{3000};
+		std::int32_t n{1};
+		std::int32_t walkDirection{-3};// 1 means positive x axis; while -3 means negative z axis
+		std::int32_t upDirection{2};
+		double d{0.5};
+		double h{0.05};
+		double alpha{0};
+		double beta{0};
 	};
 	int walk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
 	int walk2(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
