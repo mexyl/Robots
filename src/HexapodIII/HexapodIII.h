@@ -35,17 +35,17 @@ namespace Robots
 		{
 			struct
 			{
-				Aris::DynKer::JOINT *pU1;/*!< \brief 指向关节U1的指针 */
-				Aris::DynKer::JOINT *pU2;/*!< \brief 指向关节U2的指针 */
-				Aris::DynKer::JOINT *pU3;/*!< \brief 指向关节U3的指针 */
-				Aris::DynKer::JOINT *pP1;/*!< \brief 指向关节P1的指针 */
-				Aris::DynKer::JOINT *pP2;/*!< \brief 指向关节P2的指针 */
-				Aris::DynKer::JOINT *pP3;/*!< \brief 指向关节P3的指针 */
-				Aris::DynKer::JOINT *pS2;/*!< \brief 指向关节S2的指针 */
-				Aris::DynKer::JOINT *pS3;/*!< \brief 指向关节S3的指针 */
-				Aris::DynKer::JOINT *pSf;/*!< \brief 指向关节Sf的指针 */
+				Aris::DynKer::JOINT_BASE *pU1;/*!< \brief 指向关节U1的指针 */
+				Aris::DynKer::JOINT_BASE *pU2;/*!< \brief 指向关节U2的指针 */
+				Aris::DynKer::JOINT_BASE *pU3;/*!< \brief 指向关节U3的指针 */
+				Aris::DynKer::JOINT_BASE *pP1;/*!< \brief 指向关节P1的指针 */
+				Aris::DynKer::JOINT_BASE *pP2;/*!< \brief 指向关节P2的指针 */
+				Aris::DynKer::JOINT_BASE *pP3;/*!< \brief 指向关节P3的指针 */
+				Aris::DynKer::JOINT_BASE *pS2;/*!< \brief 指向关节S2的指针 */
+				Aris::DynKer::JOINT_BASE *pS3;/*!< \brief 指向关节S3的指针 */
+				Aris::DynKer::JOINT_BASE *pSf;/*!< \brief 指向关节Sf的指针 */
 			};
-			Aris::DynKer::JOINT *pJnts[9];
+			Aris::DynKer::JOINT_BASE *pJnts[9];
 		};
 		union
 		{
@@ -77,12 +77,23 @@ namespace Robots
 		{
 			struct
 			{
-				Aris::DynKer::MOTION *pM1;/*!< \brief 指向驱动M1的指针 */
-				Aris::DynKer::MOTION *pM2;/*!< \brief 指向驱动M2的指针 */
-				Aris::DynKer::MOTION *pM3;/*!< \brief 指向驱动M3的指针 */
+				Aris::DynKer::MOTION_BASE *pM1;/*!< \brief 指向驱动M1的指针 */
+				Aris::DynKer::MOTION_BASE *pM2;/*!< \brief 指向驱动M2的指针 */
+				Aris::DynKer::MOTION_BASE *pM3;/*!< \brief 指向驱动M3的指针 */
 			};
 
-			Aris::DynKer::MOTION *pMots[3];
+			Aris::DynKer::MOTION_BASE *pMots[3];
+		};
+		union
+		{
+			struct
+			{
+				Aris::DynKer::SINGLE_COMPONENT_FORCE *pF1;/*!< \brief 指向驱动M1的指针 */
+				Aris::DynKer::SINGLE_COMPONENT_FORCE *pF2;/*!< \brief 指向驱动M2的指针 */
+				Aris::DynKer::SINGLE_COMPONENT_FORCE *pF3;/*!< \brief 指向驱动M3的指针 */
+			};
+
+			Aris::DynKer::SINGLE_COMPONENT_FORCE *pFces[3];
 		};
 		
 	private:
@@ -213,12 +224,12 @@ namespace Robots
 		script->ScriptDeactivate(time, pRobot->pRM->pSf);
 		script->ScriptActivate(time, pRobot->pRR->pSf);
 
-		script->ScriptSwitchMode(time, pRobot->pLF->pM1, Aris::DynKer::MOTION::POS_CONTROL);
-		script->ScriptSwitchMode(time, pRobot->pLM->pM1, Aris::DynKer::MOTION::FCE_CONTROL);
-		script->ScriptSwitchMode(time, pRobot->pLR->pM1, Aris::DynKer::MOTION::POS_CONTROL);
-		script->ScriptSwitchMode(time, pRobot->pRF->pM1, Aris::DynKer::MOTION::FCE_CONTROL);
-		script->ScriptSwitchMode(time, pRobot->pRM->pM1, Aris::DynKer::MOTION::POS_CONTROL);
-		script->ScriptSwitchMode(time, pRobot->pRR->pM1, Aris::DynKer::MOTION::FCE_CONTROL);
+		script->ScriptSwitchMode(time, pRobot->pLF->pM1, Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		script->ScriptSwitchMode(time, pRobot->pLM->pM1, Aris::DynKer::MOTION_BASE::FCE_CONTROL);
+		script->ScriptSwitchMode(time, pRobot->pLR->pM1, Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		script->ScriptSwitchMode(time, pRobot->pRF->pM1, Aris::DynKer::MOTION_BASE::FCE_CONTROL);
+		script->ScriptSwitchMode(time, pRobot->pRM->pM1, Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		script->ScriptSwitchMode(time, pRobot->pRR->pM1, Aris::DynKer::MOTION_BASE::FCE_CONTROL);
 	}
 	inline void Activate135(int time, ROBOT_III *pRobot, Aris::DynKer::SIMULATE_SCRIPT *script)
 	{
@@ -229,12 +240,12 @@ namespace Robots
 		script->ScriptActivate(time, pRobot->pRM->pSf);
 		script->ScriptDeactivate(time, pRobot->pRR->pSf);
 
-		script->ScriptSwitchMode(time, pRobot->pLF->pM1, Aris::DynKer::MOTION::FCE_CONTROL);
-		script->ScriptSwitchMode(time, pRobot->pLM->pM1, Aris::DynKer::MOTION::POS_CONTROL);
-		script->ScriptSwitchMode(time, pRobot->pLR->pM1, Aris::DynKer::MOTION::FCE_CONTROL);
-		script->ScriptSwitchMode(time, pRobot->pRF->pM1, Aris::DynKer::MOTION::POS_CONTROL);
-		script->ScriptSwitchMode(time, pRobot->pRM->pM1, Aris::DynKer::MOTION::FCE_CONTROL);
-		script->ScriptSwitchMode(time, pRobot->pRR->pM1, Aris::DynKer::MOTION::POS_CONTROL);
+		script->ScriptSwitchMode(time, pRobot->pLF->pM1, Aris::DynKer::MOTION_BASE::FCE_CONTROL);
+		script->ScriptSwitchMode(time, pRobot->pLM->pM1, Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		script->ScriptSwitchMode(time, pRobot->pLR->pM1, Aris::DynKer::MOTION_BASE::FCE_CONTROL);
+		script->ScriptSwitchMode(time, pRobot->pRF->pM1, Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		script->ScriptSwitchMode(time, pRobot->pRM->pM1, Aris::DynKer::MOTION_BASE::FCE_CONTROL);
+		script->ScriptSwitchMode(time, pRobot->pRR->pM1, Aris::DynKer::MOTION_BASE::POS_CONTROL);
 
 	}
 	inline void Activate024(ROBOT_III *pRobot)
@@ -246,29 +257,29 @@ namespace Robots
 		pRobot->pRM->pSf->Deactivate();
 		pRobot->pRR->pSf->Activate();
 
-		pRobot->pLF->pM1->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pLF->pM2->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pLF->pM3->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
+		pRobot->pLF->pM1->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pLF->pM2->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pLF->pM3->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
 
-		pRobot->pLM->pM1->SetMode(Aris::DynKer::MOTION::FCE_CONTROL);
-		pRobot->pLM->pM2->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pLM->pM3->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
+		pRobot->pLM->pM1->SetMode(Aris::DynKer::MOTION_BASE::FCE_CONTROL);
+		pRobot->pLM->pM2->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pLM->pM3->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
 
-		pRobot->pLR->pM1->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pLR->pM2->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pLR->pM3->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
+		pRobot->pLR->pM1->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pLR->pM2->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pLR->pM3->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
 
-		pRobot->pRF->pM1->SetMode(Aris::DynKer::MOTION::FCE_CONTROL);
-		pRobot->pRF->pM2->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pRF->pM3->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
+		pRobot->pRF->pM1->SetMode(Aris::DynKer::MOTION_BASE::FCE_CONTROL);
+		pRobot->pRF->pM2->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pRF->pM3->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
 
-		pRobot->pRM->pM1->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pRM->pM2->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pRM->pM3->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
+		pRobot->pRM->pM1->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pRM->pM2->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pRM->pM3->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
 
-		pRobot->pRR->pM1->SetMode(Aris::DynKer::MOTION::FCE_CONTROL);
-		pRobot->pRR->pM2->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pRR->pM3->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
+		pRobot->pRR->pM1->SetMode(Aris::DynKer::MOTION_BASE::FCE_CONTROL);
+		pRobot->pRR->pM2->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pRR->pM3->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
 	}
 	inline void Activate135(ROBOT_III *pRobot)
 	{
@@ -279,29 +290,29 @@ namespace Robots
 		pRobot->pRM->pSf->Activate();
 		pRobot->pRR->pSf->Deactivate();
 
-		pRobot->pLF->pM1->SetMode(Aris::DynKer::MOTION::FCE_CONTROL);
-		pRobot->pLF->pM2->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pLF->pM3->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
+		pRobot->pLF->pM1->SetMode(Aris::DynKer::MOTION_BASE::FCE_CONTROL);
+		pRobot->pLF->pM2->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pLF->pM3->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
 
-		pRobot->pLM->pM1->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pLM->pM2->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pLM->pM3->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
+		pRobot->pLM->pM1->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pLM->pM2->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pLM->pM3->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
 
-		pRobot->pLR->pM1->SetMode(Aris::DynKer::MOTION::FCE_CONTROL);
-		pRobot->pLR->pM2->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pLR->pM3->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
+		pRobot->pLR->pM1->SetMode(Aris::DynKer::MOTION_BASE::FCE_CONTROL);
+		pRobot->pLR->pM2->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pLR->pM3->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
 
-		pRobot->pRF->pM1->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pRF->pM2->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pRF->pM3->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
+		pRobot->pRF->pM1->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pRF->pM2->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pRF->pM3->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
 
-		pRobot->pRM->pM1->SetMode(Aris::DynKer::MOTION::FCE_CONTROL);
-		pRobot->pRM->pM2->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pRM->pM3->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
+		pRobot->pRM->pM1->SetMode(Aris::DynKer::MOTION_BASE::FCE_CONTROL);
+		pRobot->pRM->pM2->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pRM->pM3->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
 
-		pRobot->pRR->pM1->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pRR->pM2->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
-		pRobot->pRR->pM3->SetMode(Aris::DynKer::MOTION::POS_CONTROL);
+		pRobot->pRR->pM1->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pRR->pM2->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
+		pRobot->pRR->pM3->SetMode(Aris::DynKer::MOTION_BASE::POS_CONTROL);
 	}
 
 }

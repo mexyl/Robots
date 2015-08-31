@@ -107,8 +107,168 @@ int main()
 	double fIn[18];
 
 	rbt.SetFixedFeet("024", "1278de");
-	rbt.FastDyn();
+
+	
+	/*
+	{
+		rbt.pLF->pSf->Activate();
+		rbt.pLF->pM1->Activate();
+		rbt.pLF->pM2->Activate();
+		rbt.pLF->pM3->Activate();
+		rbt.pLF->pF1->Deactivate();
+		rbt.pLF->pF2->Deactivate();
+		rbt.pLF->pF3->Deactivate();
+		rbt.pLF->pM1->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pLF->pM2->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pLF->pM3->SetMode(MOTION_BASE::POS_CONTROL);
+
+		rbt.pLR->pSf->Activate();
+		rbt.pLR->pM1->Activate();
+		rbt.pLR->pM2->Activate();
+		rbt.pLR->pM3->Activate();
+		rbt.pLR->pF1->Deactivate();
+		rbt.pLR->pF2->Deactivate();
+		rbt.pLR->pF3->Deactivate();
+		rbt.pLR->pM1->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pLR->pM2->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pLR->pM3->SetMode(MOTION_BASE::POS_CONTROL);
+
+		rbt.pRM->pSf->Activate();
+		rbt.pRM->pM1->Activate();
+		rbt.pRM->pM2->Activate();
+		rbt.pRM->pM3->Activate();
+		rbt.pRM->pF1->Deactivate();
+		rbt.pRM->pF2->Deactivate();
+		rbt.pRM->pF3->Deactivate();
+		rbt.pRM->pM1->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pRM->pM2->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pRM->pM3->SetMode(MOTION_BASE::POS_CONTROL);
+
+		rbt.pLM->pSf->Deactivate();
+		rbt.pLM->pM1->Deactivate();
+		rbt.pLM->pM2->Deactivate();
+		rbt.pLM->pM3->Deactivate();
+		rbt.pLM->pF1->Activate();
+		rbt.pLM->pF2->Activate();
+		rbt.pLM->pF3->Activate();
+		rbt.pLM->pM1->SetMode(MOTION_BASE::FCE_CONTROL);
+		rbt.pLM->pM2->SetMode(MOTION_BASE::FCE_CONTROL);
+		rbt.pLM->pM3->SetMode(MOTION_BASE::FCE_CONTROL);
+
+		rbt.pRF->pSf->Deactivate();
+		rbt.pRF->pM1->Deactivate();
+		rbt.pRF->pM2->Deactivate();
+		rbt.pRF->pM3->Deactivate();
+		rbt.pRF->pF1->Activate();
+		rbt.pRF->pF2->Activate();
+		rbt.pRF->pF3->Activate();
+		rbt.pRF->pM1->SetMode(MOTION_BASE::FCE_CONTROL);
+		rbt.pRF->pM2->SetMode(MOTION_BASE::FCE_CONTROL);
+		rbt.pRF->pM3->SetMode(MOTION_BASE::FCE_CONTROL);
+
+		rbt.pRR->pSf->Deactivate();
+		rbt.pRR->pM1->Deactivate();
+		rbt.pRR->pM2->Deactivate();
+		rbt.pRR->pM3->Deactivate();
+		rbt.pRR->pF1->Activate();
+		rbt.pRR->pF2->Activate();
+		rbt.pRR->pF3->Activate();
+		rbt.pRR->pM1->SetMode(MOTION_BASE::FCE_CONTROL);
+		rbt.pRR->pM2->SetMode(MOTION_BASE::FCE_CONTROL);
+		rbt.pRR->pM3->SetMode(MOTION_BASE::FCE_CONTROL);
+	}
+	*/
+	{
+		rbt.pLF->pSf->Activate();
+		rbt.pLF->pM1->Deactivate();
+		rbt.pLF->pM2->Activate();
+		rbt.pLF->pM3->Activate();
+		rbt.pLF->pF1->Activate();
+		rbt.pLF->pF2->Deactivate();
+		rbt.pLF->pF3->Deactivate();
+		rbt.pLF->pM1->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pLF->pM2->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pLF->pM3->SetMode(MOTION_BASE::POS_CONTROL);
+
+		rbt.pLR->pSf->Activate();
+		rbt.pLR->pM1->Deactivate();
+		rbt.pLR->pM2->Activate();
+		rbt.pLR->pM3->Activate();
+		rbt.pLR->pF1->Activate();
+		rbt.pLR->pF2->Deactivate();
+		rbt.pLR->pF3->Deactivate();
+		rbt.pLR->pM1->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pLR->pM2->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pLR->pM3->SetMode(MOTION_BASE::POS_CONTROL);
+
+		rbt.pRM->pSf->Activate();
+		rbt.pRM->pM1->Deactivate();
+		rbt.pRM->pM2->Activate();
+		rbt.pRM->pM3->Activate();
+		rbt.pRM->pF1->Activate();
+		rbt.pRM->pF2->Deactivate();
+		rbt.pRM->pF3->Deactivate();
+		rbt.pRM->pM1->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pRM->pM2->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pRM->pM3->SetMode(MOTION_BASE::POS_CONTROL);
+
+		rbt.pLM->pSf->Deactivate();
+		rbt.pLM->pM1->Activate();
+		rbt.pLM->pM2->Activate();
+		rbt.pLM->pM3->Activate();
+		rbt.pLM->pF1->Deactivate();
+		rbt.pLM->pF2->Deactivate();
+		rbt.pLM->pF3->Deactivate();
+		rbt.pLM->pM1->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pLM->pM2->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pLM->pM3->SetMode(MOTION_BASE::POS_CONTROL);
+
+		rbt.pRF->pSf->Deactivate();
+		rbt.pRF->pM1->Activate();
+		rbt.pRF->pM2->Activate();
+		rbt.pRF->pM3->Activate();
+		rbt.pRF->pF1->Deactivate();
+		rbt.pRF->pF2->Deactivate();
+		rbt.pRF->pF3->Deactivate();
+		rbt.pRF->pM1->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pRF->pM2->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pRF->pM3->SetMode(MOTION_BASE::POS_CONTROL);
+
+		rbt.pRR->pSf->Deactivate();
+		rbt.pRR->pM1->Activate();
+		rbt.pRR->pM2->Activate();
+		rbt.pRR->pM3->Activate();
+		rbt.pRR->pF1->Deactivate();
+		rbt.pRR->pF2->Deactivate();
+		rbt.pRR->pF3->Deactivate();
+		rbt.pRR->pM1->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pRR->pM2->SetMode(MOTION_BASE::POS_CONTROL);
+		rbt.pRR->pM3->SetMode(MOTION_BASE::POS_CONTROL);
+	}
+
+
+
+
+
+
+
+
+
+	try
+	{
+		rbt.FastDyn();
+	}
+	catch (std::exception &e)
+	{
+		cout << e.what();
+	}
+	catch (...)
+	{
+
+	}
+	
 	rbt.GetFin(fIn);
+	rbt.SetFin(fIn);
 	dsp(fIn, 18, 1);
 
 
@@ -180,10 +340,10 @@ int main()
 
 	double inv_vel[6];
 	s_inv_v2v(pm,vel,nullptr,inv_vel);
-	dsp(inv_vel,6,1);
+	//dsp(inv_vel,6,1);
 
 
-
+	/*
 	Aris::DynKer::SIMULATE_SCRIPT script;
 	Robots::Activate024(0, &rbt, &script);
 	Robots::Activate135(3000, &rbt, &script);
@@ -192,8 +352,8 @@ int main()
 	Robots::WALK_PARAM wp;
 	std::copy(pEE_G, pEE_G + 18, wp.beginPee);
 
-	//rbt.SimulateForwardByAdams("adams", walk, &wp, &script);
-
+	rbt.SimulateForwardByAdams("adams", walk, &wp, &script);
+	*/
 
 	/*
 	double pIni = rbt.pLF->pM1->GetP_mPtr()[0];

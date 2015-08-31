@@ -891,7 +891,7 @@
         <Joint>
             <LF_P1>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>LF_Thigh</iPart>
                 <jPart>LF_P1a</jPart>
                 <iMarker>P1i</iMarker>
@@ -899,7 +899,7 @@
             </LF_P1>
             <LF_P2>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>LF_P2b</iPart>
                 <jPart>LF_P2a</jPart>
                 <iMarker>P2i</iMarker>
@@ -907,7 +907,7 @@
             </LF_P2>
             <LF_P3>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>LF_P3b</iPart>
                 <jPart>LF_P3a</jPart>
                 <iMarker>P3i</iMarker>
@@ -915,7 +915,7 @@
             </LF_P3>
             <LF_S2>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>LF_Thigh</iPart>
                 <jPart>LF_P2b</jPart>
                 <iMarker>S2i</iMarker>
@@ -923,7 +923,7 @@
             </LF_S2>
             <LF_S3>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>LF_Thigh</iPart>
                 <jPart>LF_P3b</jPart>
                 <iMarker>S3i</iMarker>
@@ -931,7 +931,7 @@
             </LF_S3>
             <LF_Sf>
                 <Active>False</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>LF_Thigh</iPart>
                 <jPart>Ground</jPart>
                 <iMarker>Sfi</iMarker>
@@ -939,7 +939,7 @@
             </LF_Sf>
             <LF_U1>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>LF_P1a</jPart>
                 <iMarker>LF_U1i</iMarker>
@@ -947,7 +947,7 @@
             </LF_U1>
             <LF_U2>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>LF_P2a</jPart>
                 <iMarker>LF_U2i</iMarker>
@@ -955,7 +955,7 @@
             </LF_U2>
             <LF_U3>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>LF_P3a</jPart>
                 <iMarker>LF_U3i</iMarker>
@@ -963,7 +963,7 @@
             </LF_U3>
             <LM_P1>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>LM_Thigh</iPart>
                 <jPart>LM_P1a</jPart>
                 <iMarker>P1i</iMarker>
@@ -971,7 +971,7 @@
             </LM_P1>
             <LM_P2>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>LM_P2b</iPart>
                 <jPart>LM_P2a</jPart>
                 <iMarker>P2i</iMarker>
@@ -979,7 +979,7 @@
             </LM_P2>
             <LM_P3>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>LM_P3b</iPart>
                 <jPart>LM_P3a</jPart>
                 <iMarker>P3i</iMarker>
@@ -987,7 +987,7 @@
             </LM_P3>
             <LM_S2>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>LM_Thigh</iPart>
                 <jPart>LM_P2b</jPart>
                 <iMarker>S2i</iMarker>
@@ -995,7 +995,7 @@
             </LM_S2>
             <LM_S3>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>LM_Thigh</iPart>
                 <jPart>LM_P3b</jPart>
                 <iMarker>S3i</iMarker>
@@ -1003,7 +1003,7 @@
             </LM_S3>
             <LM_Sf>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>LM_Thigh</iPart>
                 <jPart>Ground</jPart>
                 <iMarker>Sfi</iMarker>
@@ -1011,7 +1011,7 @@
             </LM_Sf>
             <LM_U1>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>LM_P1a</jPart>
                 <iMarker>LM_U1i</iMarker>
@@ -1019,7 +1019,7 @@
             </LM_U1>
             <LM_U2>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>LM_P2a</jPart>
                 <iMarker>LM_U2i</iMarker>
@@ -1027,7 +1027,7 @@
             </LM_U2>
             <LM_U3>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>LM_P3a</jPart>
                 <iMarker>LM_U3i</iMarker>
@@ -1035,7 +1035,7 @@
             </LM_U3>
             <LR_P1>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>LR_Thigh</iPart>
                 <jPart>LR_P1a</jPart>
                 <iMarker>P1i</iMarker>
@@ -1043,7 +1043,7 @@
             </LR_P1>
             <LR_P2>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>LR_P2b</iPart>
                 <jPart>LR_P2a</jPart>
                 <iMarker>P2i</iMarker>
@@ -1051,7 +1051,7 @@
             </LR_P2>
             <LR_P3>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>LR_P3b</iPart>
                 <jPart>LR_P3a</jPart>
                 <iMarker>P3i</iMarker>
@@ -1059,7 +1059,7 @@
             </LR_P3>
             <LR_S2>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>LR_Thigh</iPart>
                 <jPart>LR_P2b</jPart>
                 <iMarker>S2i</iMarker>
@@ -1067,7 +1067,7 @@
             </LR_S2>
             <LR_S3>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>LR_Thigh</iPart>
                 <jPart>LR_P3b</jPart>
                 <iMarker>S3i</iMarker>
@@ -1075,7 +1075,7 @@
             </LR_S3>
             <LR_Sf>
                 <Active>False</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>LR_Thigh</iPart>
                 <jPart>Ground</jPart>
                 <iMarker>Sfi</iMarker>
@@ -1083,7 +1083,7 @@
             </LR_Sf>
             <LR_U1>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>LR_P1a</jPart>
                 <iMarker>LR_U1i</iMarker>
@@ -1091,7 +1091,7 @@
             </LR_U1>
             <LR_U2>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>LR_P2a</jPart>
                 <iMarker>LR_U2i</iMarker>
@@ -1099,7 +1099,7 @@
             </LR_U2>
             <LR_U3>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>LR_P3a</jPart>
                 <iMarker>LR_U3i</iMarker>
@@ -1107,7 +1107,7 @@
             </LR_U3>
             <RF_P1>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>RF_Thigh</iPart>
                 <jPart>RF_P1a</jPart>
                 <iMarker>P1i</iMarker>
@@ -1115,7 +1115,7 @@
             </RF_P1>
             <RF_P2>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>RF_P2b</iPart>
                 <jPart>RF_P2a</jPart>
                 <iMarker>P2i</iMarker>
@@ -1123,7 +1123,7 @@
             </RF_P2>
             <RF_P3>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>RF_P3b</iPart>
                 <jPart>RF_P3a</jPart>
                 <iMarker>P3i</iMarker>
@@ -1131,7 +1131,7 @@
             </RF_P3>
             <RF_S2>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>RF_Thigh</iPart>
                 <jPart>RF_P2b</jPart>
                 <iMarker>S2i</iMarker>
@@ -1139,7 +1139,7 @@
             </RF_S2>
             <RF_S3>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>RF_Thigh</iPart>
                 <jPart>RF_P3b</jPart>
                 <iMarker>S3i</iMarker>
@@ -1147,7 +1147,7 @@
             </RF_S3>
             <RF_Sf>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>RF_Thigh</iPart>
                 <jPart>Ground</jPart>
                 <iMarker>Sfi</iMarker>
@@ -1155,7 +1155,7 @@
             </RF_Sf>
             <RF_U1>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>RF_P1a</jPart>
                 <iMarker>RF_U1i</iMarker>
@@ -1163,7 +1163,7 @@
             </RF_U1>
             <RF_U2>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>RF_P2a</jPart>
                 <iMarker>RF_U2i</iMarker>
@@ -1171,7 +1171,7 @@
             </RF_U2>
             <RF_U3>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>RF_P3a</jPart>
                 <iMarker>RF_U3i</iMarker>
@@ -1179,7 +1179,7 @@
             </RF_U3>
             <RM_P1>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>RM_Thigh</iPart>
                 <jPart>RM_P1a</jPart>
                 <iMarker>P1i</iMarker>
@@ -1187,7 +1187,7 @@
             </RM_P1>
             <RM_P2>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>RM_P2b</iPart>
                 <jPart>RM_P2a</jPart>
                 <iMarker>P2i</iMarker>
@@ -1195,7 +1195,7 @@
             </RM_P2>
             <RM_P3>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>RM_P3b</iPart>
                 <jPart>RM_P3a</jPart>
                 <iMarker>P3i</iMarker>
@@ -1203,7 +1203,7 @@
             </RM_P3>
             <RM_S2>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>RM_Thigh</iPart>
                 <jPart>RM_P2b</jPart>
                 <iMarker>S2i</iMarker>
@@ -1211,7 +1211,7 @@
             </RM_S2>
             <RM_S3>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>RM_Thigh</iPart>
                 <jPart>RM_P3b</jPart>
                 <iMarker>S3i</iMarker>
@@ -1219,7 +1219,7 @@
             </RM_S3>
             <RM_Sf>
                 <Active>False</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>RM_Thigh</iPart>
                 <jPart>Ground</jPart>
                 <iMarker>Sfi</iMarker>
@@ -1227,7 +1227,7 @@
             </RM_Sf>
             <RM_U1>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>RM_P1a</jPart>
                 <iMarker>RM_U1i</iMarker>
@@ -1235,7 +1235,7 @@
             </RM_U1>
             <RM_U2>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>RM_P2a</jPart>
                 <iMarker>RM_U2i</iMarker>
@@ -1243,7 +1243,7 @@
             </RM_U2>
             <RM_U3>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>RM_P3a</jPart>
                 <iMarker>RM_U3i</iMarker>
@@ -1251,7 +1251,7 @@
             </RM_U3>
             <RR_P1>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>RR_Thigh</iPart>
                 <jPart>RR_P1a</jPart>
                 <iMarker>P1i</iMarker>
@@ -1259,7 +1259,7 @@
             </RR_P1>
             <RR_P2>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>RR_P2b</iPart>
                 <jPart>RR_P2a</jPart>
                 <iMarker>P2i</iMarker>
@@ -1267,7 +1267,7 @@
             </RR_P2>
             <RR_P3>
                 <Active>True</Active>
-                <Type>Prismatic</Type>
+                <Type>translational</Type>
                 <iPart>RR_P3b</iPart>
                 <jPart>RR_P3a</jPart>
                 <iMarker>P3i</iMarker>
@@ -1275,7 +1275,7 @@
             </RR_P3>
             <RR_S2>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>RR_Thigh</iPart>
                 <jPart>RR_P2b</jPart>
                 <iMarker>S2i</iMarker>
@@ -1283,7 +1283,7 @@
             </RR_S2>
             <RR_S3>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>RR_Thigh</iPart>
                 <jPart>RR_P3b</jPart>
                 <iMarker>S3i</iMarker>
@@ -1291,7 +1291,7 @@
             </RR_S3>
             <RR_Sf>
                 <Active>True</Active>
-                <Type>Spherical</Type>
+                <Type>spherical</Type>
                 <iPart>RR_Thigh</iPart>
                 <jPart>Ground</jPart>
                 <iMarker>Sfi</iMarker>
@@ -1299,7 +1299,7 @@
             </RR_Sf>
             <RR_U1>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>RR_P1a</jPart>
                 <iMarker>RR_U1i</iMarker>
@@ -1307,7 +1307,7 @@
             </RR_U1>
             <RR_U2>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>RR_P2a</jPart>
                 <iMarker>RR_U2i</iMarker>
@@ -1315,7 +1315,7 @@
             </RR_U2>
             <RR_U3>
                 <Active>True</Active>
-                <Type>Universal</Type>
+                <Type>universal</Type>
                 <iPart>MainBody</iPart>
                 <jPart>RR_P3a</jPart>
                 <iMarker>RR_U3i</iMarker>
@@ -1325,7 +1325,7 @@
         <Motion>
             <LF_M1>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>LF_Thigh</iPart>
                 <jPart>LF_P1a</jPart>
                 <iMarker>P1i</iMarker>
@@ -1335,7 +1335,7 @@
             </LF_M1>
             <LF_M2>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>LF_P2b</iPart>
                 <jPart>LF_P2a</jPart>
                 <iMarker>P2i</iMarker>
@@ -1345,7 +1345,7 @@
             </LF_M2>
             <LF_M3>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>LF_P3b</iPart>
                 <jPart>LF_P3a</jPart>
                 <iMarker>P3i</iMarker>
@@ -1355,7 +1355,7 @@
             </LF_M3>
             <LM_M1>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>LM_Thigh</iPart>
                 <jPart>LM_P1a</jPart>
                 <iMarker>P1i</iMarker>
@@ -1365,7 +1365,7 @@
             </LM_M1>
             <LM_M2>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>LM_P2b</iPart>
                 <jPart>LM_P2a</jPart>
                 <iMarker>P2i</iMarker>
@@ -1375,7 +1375,7 @@
             </LM_M2>
             <LM_M3>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>LM_P3b</iPart>
                 <jPart>LM_P3a</jPart>
                 <iMarker>P3i</iMarker>
@@ -1385,7 +1385,7 @@
             </LM_M3>
             <LR_M1>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>LR_Thigh</iPart>
                 <jPart>LR_P1a</jPart>
                 <iMarker>P1i</iMarker>
@@ -1395,7 +1395,7 @@
             </LR_M1>
             <LR_M2>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>LR_P2b</iPart>
                 <jPart>LR_P2a</jPart>
                 <iMarker>P2i</iMarker>
@@ -1405,7 +1405,7 @@
             </LR_M2>
             <LR_M3>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>LR_P3b</iPart>
                 <jPart>LR_P3a</jPart>
                 <iMarker>P3i</iMarker>
@@ -1415,7 +1415,7 @@
             </LR_M3>
             <RF_M1>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>RF_Thigh</iPart>
                 <jPart>RF_P1a</jPart>
                 <iMarker>P1i</iMarker>
@@ -1425,7 +1425,7 @@
             </RF_M1>
             <RF_M2>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>RF_P2b</iPart>
                 <jPart>RF_P2a</jPart>
                 <iMarker>P2i</iMarker>
@@ -1435,7 +1435,7 @@
             </RF_M2>
             <RF_M3>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>RF_P3b</iPart>
                 <jPart>RF_P3a</jPart>
                 <iMarker>P3i</iMarker>
@@ -1445,7 +1445,7 @@
             </RF_M3>
             <RM_M1>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>RM_Thigh</iPart>
                 <jPart>RM_P1a</jPart>
                 <iMarker>P1i</iMarker>
@@ -1455,7 +1455,7 @@
             </RM_M1>
             <RM_M2>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>RM_P2b</iPart>
                 <jPart>RM_P2a</jPart>
                 <iMarker>P2i</iMarker>
@@ -1465,7 +1465,7 @@
             </RM_M2>
             <RM_M3>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>RM_P3b</iPart>
                 <jPart>RM_P3a</jPart>
                 <iMarker>P3i</iMarker>
@@ -1475,7 +1475,7 @@
             </RM_M3>
             <RR_M1>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>RR_Thigh</iPart>
                 <jPart>RR_P1a</jPart>
                 <iMarker>P1i</iMarker>
@@ -1485,7 +1485,7 @@
             </RR_M1>
             <RR_M2>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>RR_P2b</iPart>
                 <jPart>RR_P2a</jPart>
                 <iMarker>P2i</iMarker>
@@ -1495,7 +1495,7 @@
             </RR_M2>
             <RR_M3>
                 <Active>True</Active>
-                <Type>Linear</Type>
+                <Type>linear</Type>
                 <iPart>RR_P3b</iPart>
                 <jPart>RR_P3a</jPart>
                 <iMarker>P3i</iMarker>
@@ -1504,7 +1504,26 @@
                 <Friction_Coefficients>Mot_friction</Friction_Coefficients>
             </RR_M3>
         </Motion>
-        <Force/>
+        <Force>
+          <LF_F1 Active="true" Type="single_component_force" PrtM="LF_Thigh" PrtN="LF_P1a" MakI="P1i" Component="2"/>
+          <LF_F2 Active="true" Type="single_component_force" PrtM="LF_P2b" PrtN="LF_P2a" MakI="P2i" Component="2"/>
+          <LF_F3 Active="true" Type="single_component_force" PrtM="LF_P3b" PrtN="LF_P3a" MakI="P3i" Component="2"/>
+          <LM_F1 Active="true" Type="single_component_force" PrtM="LM_Thigh" PrtN="LM_P1a" MakI="P1i" Component="2"/>
+          <LM_F2 Active="true" Type="single_component_force" PrtM="LM_P2b" PrtN="LM_P2a" MakI="P2i" Component="2"/>
+          <LM_F3 Active="true" Type="single_component_force" PrtM="LM_P3b" PrtN="LM_P3a" MakI="P3i" Component="2"/>
+          <LR_F1 Active="true" Type="single_component_force" PrtM="LR_Thigh" PrtN="LR_P1a" MakI="P1i" Component="2"/>
+          <LR_F2 Active="true" Type="single_component_force" PrtM="LR_P2b" PrtN="LR_P2a" MakI="P2i" Component="2"/>
+          <LR_F3 Active="true" Type="single_component_force" PrtM="LR_P3b" PrtN="LR_P3a" MakI="P3i" Component="2"/>
+          <RF_F1 Active="true" Type="single_component_force" PrtM="RF_Thigh" PrtN="RF_P1a" MakI="P1i" Component="2"/>
+          <RF_F2 Active="true" Type="single_component_force" PrtM="RF_P2b" PrtN="RF_P2a" MakI="P2i" Component="2"/>
+          <RF_F3 Active="true" Type="single_component_force" PrtM="RF_P3b" PrtN="RF_P3a" MakI="P3i" Component="2"/>
+          <RM_F1 Active="true" Type="single_component_force" PrtM="RM_Thigh" PrtN="RM_P1a" MakI="P1i" Component="2"/>
+          <RM_F2 Active="true" Type="single_component_force" PrtM="RM_P2b" PrtN="RM_P2a" MakI="P2i" Component="2"/>
+          <RM_F3 Active="true" Type="single_component_force" PrtM="RM_P3b" PrtN="RM_P3a" MakI="P3i" Component="2"/>
+          <RR_F1 Active="true" Type="single_component_force" PrtM="RR_Thigh" PrtN="RR_P1a" MakI="P1i" Component="2"/>
+          <RR_F2 Active="true" Type="single_component_force" PrtM="RR_P2b" PrtN="RR_P2a" MakI="P2i" Component="2"/>
+          <RR_F3 Active="true" Type="single_component_force" PrtM="RR_P3b" PrtN="RR_P3a" MakI="P3i" Component="2"/>
+        </Force>
     </Model>
     <Server>
         <Commands>
