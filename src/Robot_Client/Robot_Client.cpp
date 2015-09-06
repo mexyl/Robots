@@ -388,7 +388,7 @@ namespace Robots
 		Aris::Core::DOCUMENT doc;
 
 		if (doc.LoadFile(xmlFileName) != 0)
-			throw std::logic_error("failed to read client.xml");
+			throw std::logic_error("failed to read configuration xml file");
 
 		/*get param tree of this cmd*/
 

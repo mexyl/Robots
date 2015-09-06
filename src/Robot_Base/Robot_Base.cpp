@@ -204,7 +204,7 @@ namespace Robots
 		case 'L':
 			if (jac != nullptr)
 			{
-				memcpy(jac, *_jac_vel_dir, sizeof(_jac_vel_dir));
+				std::copy_n(&_jac_vel_dir[0][0], 9, jac);
 			}
 			if (c != nullptr)
 			{
@@ -246,7 +246,7 @@ namespace Robots
 		case 'L':
 			if (jac != nullptr)
 			{
-				memcpy(jac, *_jac_vel_inv, sizeof(_jac_vel_inv));
+				std::copy_n(&_jac_vel_inv[0][0], 9, jac);
 			}
 			if (c != nullptr)
 			{
@@ -287,7 +287,8 @@ namespace Robots
 		case 'L':
 			if (jac != nullptr)
 			{
-				memcpy(jac, *_jac_vel_dir, sizeof(_jac_vel_dir));
+				//memcpy(jac, *_jac_vel_dir, sizeof(_jac_vel_dir));
+				std::copy_n(&_jac_vel_dir[0][0], 9, jac);
 			}
 			if (c != 0)
 			{
@@ -329,7 +330,8 @@ namespace Robots
 		case 'L':
 			if (jac != nullptr)
 			{
-				memcpy(jac, *_jac_vel_inv, sizeof(_jac_vel_inv));
+				//memcpy(jac, *_jac_vel_inv, sizeof(_jac_vel_inv));
+				std::copy_n(&_jac_vel_inv[0][0], 9, jac);
 			}
 			if (c != nullptr)
 			{

@@ -38,6 +38,210 @@ namespace Robots
 	{
 	}
 
+	void LEG_III::GetdJacOverPee(double *dJi_x, double *dJi_y, double *dJi_z, const char *relativeCoordinate) const
+	{
+		double dk21_a1 = -U2x*(S2x + l1)*ca1*cb1 + U2x*S2y*ca1*sb1 + U2x*S2z*(-sa1) - U2z*(S2x + l1)*(-sa1)*cb1 + U2z*S2y*(-sa1)*sb1 - U2z*S2z*ca1;
+		double dk22_a1 = -U2x*(S2x + l1)*(-sa1)*sb1 - U2x*S2y*(-sa1)*cb1 + U2z*(S2x + l1)*ca1*sb1 + U2z*S2y*ca1*cb1;
+		double dk23_a1 = U2x*(-sa1)*cb1 - U2z*ca1*cb1;
+
+		double dk31_a1 = -U3x*(S3x + l1)*ca1*cb1 + U3x*S3y*ca1*sb1 + U3x*S3z*(-sa1) - U3z*(S3x + l1)*(-sa1)*cb1 + U3z*S3y*(-sa1)*sb1 - U3z*S3z*ca1;
+		double dk32_a1 = -U3x*(S3x + l1)*(-sa1)*sb1 - U3x*S3y*(-sa1)*cb1 + U3z*(S3x + l1)*ca1*sb1 + U3z*S3y*ca1*cb1;
+		double dk33_a1 = U3x*(-sa1)*cb1 - U3z*ca1*cb1;
+
+		double dk21_b1 = -U2x*(S2x + l1)*sa1*(-sb1) + U2x*S2y*sa1*cb1 - U2z*(S2x + l1)*ca1*(-sb1) + U2z*S2y*ca1*cb1;
+		double dk22_b1 = -U2x*(S2x + l1)*ca1*cb1 - U2x*S2y*ca1*(-sb1) + U2y*(S2x + l1)*(-sb1) - U2y*S2y*cb1 + U2z*(S2x + l1)*sa1*cb1 + U2z*S2y*sa1*(-sb1);
+		double dk23_b1 = U2x*ca1*(-sb1) + U2y*cb1 - U2z*sa1*(-sb1);
+
+		double dk31_b1 = -U3x*(S3x + l1)*sa1*(-sb1) + U3x*S3y*sa1*cb1 - U3z*(S3x + l1)*ca1*(-sb1) + U3z*S3y*ca1*cb1;
+		double dk32_b1 = -U3x*(S3x + l1)*ca1*cb1 - U3x*S3y*ca1*(-sb1) + U3y*(S3x + l1)*(-sb1) - U3y*S3y*cb1 + U3z*(S3x + l1)*sa1*cb1 + U3z*S3y*sa1*(-sb1);
+		double dk33_b1 = U3x*ca1*(-sb1) + U3y*cb1 - U3z*sa1*(-sb1);
+
+		double dk21_l1 = -U2x*sa1*cb1 - U2z*ca1*cb1;
+		double dk22_l1 = -U2x*ca1*sb1 + U2y*cb1 + U2z*sa1*sb1;
+		double dk23_l1 = -1;
+
+		double dk31_l1 = -U3x*sa1*cb1 - U3z*ca1*cb1;
+		double dk32_l1 = -U3x*ca1*sb1 + U3y*cb1 + U3z*sa1*sb1;
+		double dk33_l1 = -1;
+
+		double dJ2_a1[3][3]{ 0 }, dJ2_b1[3][3]{ 0 }, dJ2_l1[3][3]{ 0 };
+
+		dJ2_a1[1][0] = -dk21_a1 / l2 + k21 / l2 / l2*J2[1][0];
+		dJ2_a1[1][1] = -dk22_a1 / l2 + k22 / l2 / l2*J2[1][0];
+		dJ2_a1[1][2] = -dk23_a1 / l2 + k23 / l2 / l2*J2[1][0];
+		dJ2_a1[2][0] = -dk31_a1 / l3 + k31 / l3 / l3*J2[2][0];
+		dJ2_a1[2][1] = -dk32_a1 / l3 + k32 / l3 / l3*J2[2][0];
+		dJ2_a1[2][2] = -dk33_a1 / l3 + k33 / l3 / l3*J2[2][0];
+
+		dJ2_b1[1][0] = -dk21_b1 / l2 + k21 / l2 / l2*J2[1][1];
+		dJ2_b1[1][1] = -dk22_b1 / l2 + k22 / l2 / l2*J2[1][1];
+		dJ2_b1[1][2] = -dk23_b1 / l2 + k23 / l2 / l2*J2[1][1];
+		dJ2_b1[2][0] = -dk31_b1 / l3 + k31 / l3 / l3*J2[2][1];
+		dJ2_b1[2][1] = -dk32_b1 / l3 + k32 / l3 / l3*J2[2][1];
+		dJ2_b1[2][2] = -dk33_b1 / l3 + k33 / l3 / l3*J2[2][1];
+
+		dJ2_l1[1][0] = -dk21_l1 / l2 + k21 / l2 / l2*J2[1][2];
+		dJ2_l1[1][1] = -dk22_l1 / l2 + k22 / l2 / l2*J2[1][2];
+		dJ2_l1[1][2] = -dk23_l1 / l2 + k23 / l2 / l2*J2[1][2];
+		dJ2_l1[2][0] = -dk31_l1 / l3 + k31 / l3 / l3*J2[2][2];
+		dJ2_l1[2][1] = -dk32_l1 / l3 + k32 / l3 / l3*J2[2][2];
+		dJ2_l1[2][2] = -dk33_l1 / l3 + k33 / l3 / l3*J2[2][2];
+
+		double dJ2_x[3][3], dJ2_y[3][3], dJ2_z[3][3];
+
+		double inv_J1[3][3];
+		int ipiv[3];
+		std::copy_n(&J1[0][0], 9, &inv_J1[0][0]);
+		s_dgeinv(3, *inv_J1, 3, ipiv);
+
+
+		for (int i = 0; i < 3; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				dJ2_x[i][j] = dJ2_a1[i][j] * inv_J1[0][0] + dJ2_b1[i][j] * inv_J1[1][0] + dJ2_l1[i][j] * inv_J1[2][0];
+				dJ2_y[i][j] = dJ2_a1[i][j] * inv_J1[0][1] + dJ2_b1[i][j] * inv_J1[1][1] + dJ2_l1[i][j] * inv_J1[2][1];
+				dJ2_z[i][j] = dJ2_a1[i][j] * inv_J1[0][2] + dJ2_b1[i][j] * inv_J1[1][2] + dJ2_l1[i][j] * inv_J1[2][2];
+			}
+		}
+
+		
+		double dJ1_x[3][3]{ 0 }, dJ1_y[3][3]{ 0 }, dJ1_z[3][3]{0};
+
+		dJ1_x[0][0] = 0;
+		dJ1_x[0][1] = y*sa1*inv_J1[0][0];
+		dJ1_x[0][2] = -sa1*cb1*inv_J1[0][0] - ca1*sb1*inv_J1[1][0];
+		dJ1_x[1][0] = 0;
+		dJ1_x[1][1] = ca1 + (-x*sa1 - z*ca1)*inv_J1[0][0];
+		dJ1_x[1][2] = cb1*inv_J1[1][0];
+		dJ1_x[2][0] = -1;
+		dJ1_x[2][1] = y*ca1*inv_J1[0][0];
+		dJ1_x[2][2] = -ca1*cb1*inv_J1[0][0]+sa1*sb1*inv_J1[1][0];
+
+		dJ1_y[0][0] = 0;
+		dJ1_y[0][1] = -ca1 + y*sa1*inv_J1[0][1];
+		dJ1_y[0][2] = -sa1*cb1*inv_J1[0][1] - ca1*sb1*inv_J1[1][1];
+		dJ1_y[1][0] = 0;
+		dJ1_y[1][1] = (-x*sa1 - z*ca1)*inv_J1[0][1];
+		dJ1_y[1][2] = cb1*inv_J1[1][1];
+		dJ1_y[2][0] = 0;
+		dJ1_y[2][1] = y*ca1*inv_J1[0][1];
+		dJ1_y[2][2] = -ca1*cb1*inv_J1[0][1] + sa1*sb1*inv_J1[1][1];
+
+		dJ1_z[0][0] = 1;
+		dJ1_z[0][1] = y*sa1*inv_J1[0][2];
+		dJ1_z[0][2] = -sa1*cb1*inv_J1[0][2] - ca1*sb1*inv_J1[1][2];
+		dJ1_z[1][0] = 0;
+		dJ1_z[1][1] = -sa1 + (-x*sa1 - z*ca1)*inv_J1[0][2];
+		dJ1_z[1][2] = cb1*inv_J1[1][2];
+		dJ1_z[2][0] = 0;
+		dJ1_z[2][1] = y*ca1*inv_J1[0][2];
+		dJ1_z[2][2] = -ca1*cb1*inv_J1[0][2] + sa1*sb1*inv_J1[1][2];
+
+		/*以下计算*/
+		double dJi_x_L[9], dJi_y_L[9], dJi_z_L[9];
+		double tem1[3][3], tem2[3][3];
+
+
+		s_dgemm(3, 3, 3, 1, *dJ2_x, 3, *inv_J1, 3, 0, dJi_x_L, 3);
+		s_dgemm(3, 3, 3, 1, *J2, 3, *inv_J1, 3, 0, *tem1, 3);
+		s_dgemm(3, 3, 3, 1, *tem1, 3, *dJ1_x, 3, 0, *tem2, 3);
+		s_dgemm(3, 3, 3, -1, *tem2, 3, *inv_J1, 3, 1, dJi_x_L, 3);
+
+		s_dgemm(3, 3, 3, 1, *dJ2_y, 3, *inv_J1, 3, 0, dJi_y_L, 3);
+		s_dgemm(3, 3, 3, 1, *J2, 3, *inv_J1, 3, 0, *tem1, 3);
+		s_dgemm(3, 3, 3, 1, *tem1, 3, *dJ1_y, 3, 0, *tem2, 3);
+		s_dgemm(3, 3, 3, -1, *tem2, 3, *inv_J1, 3, 1, dJi_y_L, 3);
+
+		s_dgemm(3, 3, 3, 1, *dJ2_z, 3, *inv_J1, 3, 0, dJi_z_L, 3);
+		s_dgemm(3, 3, 3, 1, *J2, 3, *inv_J1, 3, 0, *tem1, 3);
+		s_dgemm(3, 3, 3, 1, *tem1, 3, *dJ1_z, 3, 0, *tem2, 3);
+		s_dgemm(3, 3, 3, -1, *tem2, 3, *inv_J1, 3, 1, dJi_z_L, 3);
+
+
+		switch (*relativeCoordinate)
+		{
+		case 'L':
+			std::copy_n(dJi_x_L, 9, dJi_x);
+			std::copy_n(dJi_y_L, 9, dJi_y);
+			std::copy_n(dJi_z_L, 9, dJi_z);
+			break;
+		case 'M':
+		case 'B':
+			std::fill_n(dJi_x, 9, 0);
+			std::fill_n(dJi_y, 9, 0);
+			std::fill_n(dJi_z, 9, 0);
+
+			s_daxpy(9, pBasePrtPm[0], dJi_x_L, 1, dJi_x, 1);
+			s_daxpy(9, pBasePrtPm[1], dJi_y_L, 1, dJi_x, 1);
+			s_daxpy(9, pBasePrtPm[2], dJi_z_L, 1, dJi_x, 1);
+
+			s_daxpy(9, pBasePrtPm[4], dJi_x_L, 1, dJi_y, 1);
+			s_daxpy(9, pBasePrtPm[5], dJi_y_L, 1, dJi_y, 1);
+			s_daxpy(9, pBasePrtPm[6], dJi_z_L, 1, dJi_y, 1);
+
+			s_daxpy(9, pBasePrtPm[7], dJi_x_L, 1, dJi_z, 1);
+			s_daxpy(9, pBasePrtPm[8], dJi_y_L, 1, dJi_z, 1);
+			s_daxpy(9, pBasePrtPm[9], dJi_z_L, 1, dJi_z, 1);
+
+			break;
+		case 'G':
+		case 'O':
+		default:
+			std::fill_n(dJi_x, 9, 0);
+			std::fill_n(dJi_y, 9, 0);
+			std::fill_n(dJi_z, 9, 0);
+
+			dsp(pBasePm, 4, 4);
+
+			s_daxpy(9, pBasePm[0], dJi_x_L, 1, dJi_x, 1);
+			s_daxpy(9, pBasePm[1], dJi_y_L, 1, dJi_x, 1);
+			s_daxpy(9, pBasePm[2], dJi_z_L, 1, dJi_x, 1);
+
+			s_daxpy(9, pBasePm[4], dJi_x_L, 1, dJi_y, 1);
+			s_daxpy(9, pBasePm[5], dJi_y_L, 1, dJi_y, 1);
+			s_daxpy(9, pBasePm[6], dJi_z_L, 1, dJi_y, 1);
+
+			s_daxpy(9, pBasePm[8], dJi_x_L, 1, dJi_z, 1);
+			s_daxpy(9, pBasePm[9], dJi_y_L, 1, dJi_z, 1);
+			s_daxpy(9, pBasePm[10], dJi_z_L, 1, dJi_z, 1);
+
+			//s_daxpy(9, pBasePm[0], dJi_x_L, 1, dJi_x, 1);
+			//s_daxpy(9, pBasePm[4], dJi_y_L, 1, dJi_x, 1);
+			//s_daxpy(9, pBasePm[8], dJi_z_L, 1, dJi_x, 1);
+
+			//s_daxpy(9, pBasePm[1], dJi_x_L, 1, dJi_y, 1);
+			//s_daxpy(9, pBasePm[5], dJi_y_L, 1, dJi_y, 1);
+			//s_daxpy(9, pBasePm[9], dJi_z_L, 1, dJi_y, 1);
+
+			//s_daxpy(9, pBasePm[2], dJi_x_L, 1, dJi_z, 1);
+			//s_daxpy(9, pBasePm[6], dJi_y_L, 1, dJi_z, 1);
+			//s_daxpy(9, pBasePm[10], dJi_z_L, 1, dJi_z, 1);
+
+			break;
+		}
+
+		double dJi[9]{0};
+		double vEE[3],vEE_L[3];
+
+		this->GetVee(vEE, "L");
+		//s_pm_dot_v3(pBasePm, vEE_L, vEE);
+
+		s_daxpy(9, vEE[0], dJi_x, 1, dJi, 1);
+		s_daxpy(9, vEE[1], dJi_y, 1, dJi, 1);
+		s_daxpy(9, vEE[2], dJi_z, 1, dJi, 1);
+
+		double jac_c[3]{0};
+		s_dgemm(3, 1, 3, 1, dJi, 3, vEE, 1, 0, jac_c, 1);
+
+		dsp(jac_c, 3, 1);
+		dsp(_c_acc_inv, 3, 1);
+
+		//double c[3];
+		//this->GetAccJacInv(nullptr,c,"G");
+		//dsp(c,3,1);
+	}
+
 	void LEG_III::GetFin(double *fIn) const
 	{
 		for (int i = 0; i < 3; ++i)
@@ -50,7 +254,10 @@ namespace Robots
 		pM1->Update();
 		pM2->Update();
 		pM3->Update();
-		
+
+		pM1->SetMotDynFce(fIn[0] - pM1->GetMotFrcFce());
+		pM2->SetMotDynFce(fIn[1] - pM2->GetMotFrcFce());
+		pM3->SetMotDynFce(fIn[2] - pM3->GetMotFrcFce());
 		
 		pF1->SetFce(fIn[0] - pM1->GetMotFrcFce());
 		pF2->SetFce(fIn[1] - pM2->GetMotFrcFce());
@@ -99,13 +306,15 @@ namespace Robots
 		double tem[3][3];
 
 		/*direct*/
-		memcpy(*_jac_vel_dir, *this->J1, sizeof(this->J1));
-		memcpy(*tem, *this->J2, sizeof(this->J2));
+
+		std::copy_n(static_cast<const double*>(*this->J1), 9, static_cast<double*>(*_jac_vel_dir));
+		std::copy_n(static_cast<const double*>(*this->J2), 9, static_cast<double*>(*tem));
 		s_dgesvT(3, 3, *tem, 3, ipiv, *_jac_vel_dir, 3);
 
 		/*inverse*/
-		memcpy(*_jac_vel_inv, *this->J2, sizeof(this->J2));
-		memcpy(*tem, *this->J1, sizeof(this->J1));
+
+		std::copy_n(static_cast<const double*>(*this->J2), 9, static_cast<double*>(*_jac_vel_inv));
+		std::copy_n(static_cast<const double*>(*this->J1), 9, static_cast<double*>(*tem));
 		s_dgesvT(3, 3, *tem, 3, ipiv, *_jac_vel_inv, 3);
 	}
 	void LEG_III::calculate_jac_c()
@@ -132,12 +341,12 @@ namespace Robots
 	}
 	void LEG_III::_CalCdByPlen()
 	{
-		static std::complex<double>  M, N;
-		static std::complex<double>  K1, K2, K3;
-		static std::complex<double>  p1, p2, p3, p4, p5, p6, p7, p8, p9, p10;
-		static std::complex<double>  A, B, C;
+		std::complex<double>  M, N;
+		std::complex<double>  K1, K2, K3;
+		std::complex<double>  p1, p2, p3, p4, p5, p6, p7, p8, p9, p10;
+		std::complex<double>  A, B, C;
 
-		static double  X;
+		double  X;
 
 		M = (2 * (l1*l1 + H1*H1 + D1*D1 + H2*H2 + D2*D2) - l2*l2 - l3*l3) / 4;
 		N = (l2*l2 - l3*l3) / 4;
@@ -178,8 +387,8 @@ namespace Robots
 	}
 	void LEG_III::_CalCdByPlen2()
 	{
-		static double T1, T2, F1, F2, dq1, dq2, Ja, Jb, Jc, Jd;
-		static int i;
+		double T1, T2, F1, F2, dq1, dq2, Ja, Jb, Jc, Jd;
+		int i;
 
 		a1 = 0; b1 = 0;
 
@@ -332,7 +541,7 @@ namespace Robots
 	}
 	void LEG_III::_CalVcdByVplen()
 	{
-		static double K1, K2;
+		double K1, K2;
 
 		K1 = -l2*vl2 - k23*vl1;
 		K2 = -l3*vl3 - k33*vl1;
@@ -421,7 +630,7 @@ namespace Robots
 	}
 	void LEG_III::_CalVpartByVvar()
 	{
-		static double v_G[6], v_L[6];
+		double v_G[6], v_L[6];
 
 		/*p1a*/
 		v_L[0] = 0;
@@ -479,15 +688,10 @@ namespace Robots
 
 		s_v2v(pBase->GetPmPtr(), pBase->GetVelPtr(), v_L, v_G);
 		pP3b->SetVel(v_G);
-
-
-		//pM1->SetMotVel(vl1);
-		//pM2->SetMotVel(vl2);
-		//pM3->SetMotVel(vl3);
 	}
 	void LEG_III::_CalAcdByApos()
 	{
-		static double xd, yd, zd;
+		double xd, yd, zd;
 
 		xd = ax - vJ1[0][0] * va1 - vJ1[0][1] * vb1 - vJ1[0][2] * vl1;
 		yd = ay - vJ1[1][0] * va1 - vJ1[1][1] * vb1 - vJ1[1][2] * vl1;
@@ -499,7 +703,7 @@ namespace Robots
 	}
 	void LEG_III::_CalAcdByAplen()
 	{
-		static double vK1, vK2, M1, M2;
+		double vK1, vK2, M1, M2;
 
 		vK1 = -vl2*vl2 - l2*al2 - vk23*vl1 - k23*al1;
 		vK2 = -vl3*vl3 - l3*al3 - vk33*vl1 - k33*al1;
@@ -650,16 +854,8 @@ namespace Robots
 
 
 		/*初始化*/
-		memset(*_C, 0, 36 * 36 * sizeof(double));
-		memset(*_I, 0, 36 * 36 * sizeof(double));
-		memset(_f, 0, 36 * sizeof(double));
-		memset(_v, 0, 36 * sizeof(double));
-		memset(_a_c, 0, 36 * sizeof(double));
-
-		memset(_a, 0, 36 * sizeof(double));
-		memset(_epsilon, 0, 36 * sizeof(double));
-
-		memset(_c_M, 0, 36 * 4 * sizeof(double));
+		std::fill_n(&_C[0][0], 36 * 36, 0);
+		std::fill_n(&_c_M[0][0], 36 * 4, 0);
 
 		/*计算C*/
 		/*
@@ -672,15 +868,13 @@ namespace Robots
 		P3b                                         30*22          -30*30                   30*35
 		*/
 
-		/*更新每个部件*/
+		/*更新每个元素*/
 		pRobot->pBody->Update();
 
 		for (auto &i : pPrts)
 		{
 			i->Update();
 		}
-
-		/*更新每个关节和驱动*/
 		for (auto &i : pJnts)
 		{
 			i->Update();
@@ -688,12 +882,7 @@ namespace Robots
 		for (auto &i : pMots)
 		{
 			i->Update();
-			//cout << "actual:" << i->GetMotAcc()<<endl;
-			
 		}
-		//double theoPin[3];
-		//this->GetAin(theoPin);
-		//dsp(theoPin, 3, 1);
 
 		/*复制约束矩阵*/
 		s_block_cpy(6, 4, pU1->GetPrtCstMtxJPtr(), 0, 0, 4, *_C, 0, 0, 36);
@@ -717,58 +906,52 @@ namespace Robots
 			s_block_cpy(6, 3, pSf->GetPrtCstMtxIPtr(), 0, 0, 3, *_C, 18, 33, 36);
 
 			/*更新驱动矩阵M*/
-			s_block_cpy(6, 1, pM1->GetPrtCstMtxIPtr(), 0, 0, 6, *_c_M, 18, 1, 4);
-			s_block_cpy(6, 1, pM1->GetPrtCstMtxJPtr(), 0, 0, 6, *_c_M, 0, 1, 4);
-			s_block_cpy(6, 1, pM2->GetPrtCstMtxIPtr(), 0, 0, 6, *_c_M, 24, 2, 4);
-			s_block_cpy(6, 1, pM2->GetPrtCstMtxJPtr(), 0, 0, 6, *_c_M, 6, 2, 4);
-			s_block_cpy(6, 1, pM3->GetPrtCstMtxIPtr(), 0, 0, 6, *_c_M, 30, 3, 4);
-			s_block_cpy(6, 1, pM3->GetPrtCstMtxJPtr(), 0, 0, 6, *_c_M, 12, 3, 4);
+			s_block_cpy(6, 1, pM1->GetPrtCstMtxIPtr(), 0, 0, 1, *_c_M, 18, 1, 4);
+			s_block_cpy(6, 1, pM1->GetPrtCstMtxJPtr(), 0, 0, 1, *_c_M, 0, 1, 4);
+			s_block_cpy(6, 1, pM2->GetPrtCstMtxIPtr(), 0, 0, 1, *_c_M, 24, 2, 4);
+			s_block_cpy(6, 1, pM2->GetPrtCstMtxJPtr(), 0, 0, 1, *_c_M, 6, 2, 4);
+			s_block_cpy(6, 1, pM3->GetPrtCstMtxIPtr(), 0, 0, 1, *_c_M, 30, 3, 4);
+			s_block_cpy(6, 1, pM3->GetPrtCstMtxJPtr(), 0, 0, 1, *_c_M, 12, 3, 4);
 		}
 		else
 		{
 			/*否则，更新驱动的约束矩阵*/
-			s_block_cpy(6, 1, pM1->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 18, 33, 36);
-			s_block_cpy(6, 1, pM1->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 0, 33, 36);
-			s_block_cpy(6, 1, pM2->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 24, 34, 36);
-			s_block_cpy(6, 1, pM2->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 6, 34, 36);
-			s_block_cpy(6, 1, pM3->GetPrtCstMtxIPtr(), 0, 0, 6, *_C, 30, 35, 36);
-			s_block_cpy(6, 1, pM3->GetPrtCstMtxJPtr(), 0, 0, 6, *_C, 12, 35, 36);
+			s_block_cpy(6, 1, pM1->GetPrtCstMtxIPtr(), 0, 0, 1, *_C, 18, 33, 36);
+			s_block_cpy(6, 1, pM1->GetPrtCstMtxJPtr(), 0, 0, 1, *_C, 0, 33, 36);
+			s_block_cpy(6, 1, pM2->GetPrtCstMtxIPtr(), 0, 0, 1, *_C, 24, 34, 36);
+			s_block_cpy(6, 1, pM2->GetPrtCstMtxJPtr(), 0, 0, 1, *_C, 6, 34, 36);
+			s_block_cpy(6, 1, pM3->GetPrtCstMtxIPtr(), 0, 0, 1, *_C, 30, 35, 36);
+			s_block_cpy(6, 1, pM3->GetPrtCstMtxJPtr(), 0, 0, 1, *_C, 12, 35, 36);
 		}
 
 		/*更新右侧的c_M矩阵*/
 		s_daxpy(6, -1, pP1a->GetPrtFgPtr(), 1, &_c_M[0][0], 4);
 		s_daxpy(6, 1, pP1a->GetPrtFvPtr(), 1, &_c_M[0][0], 4);
-		//s_m6_dot_v6(pP1a->GetPrtTmvPtr(), pP1a->GetAccPtr(), pP1a->GetPrtAccPtr());
 		s_tv(pP1a->GetPrtPmPtr(), pP1a->GetAccPtr(), pP1a->GetPrtAccPtr());
 		s_dgemm(6, 1, 6, 1, pP1a->GetPrtImPtr(), 6, pP1a->GetPrtAccPtr(), 1, 1, &_c_M[0][0], 4);
 
 		s_daxpy(6, -1, pP2a->GetPrtFgPtr(), 1, &_c_M[6][0], 4);
 		s_daxpy(6, 1, pP2a->GetPrtFvPtr(), 1, &_c_M[6][0], 4);
-		//s_m6_dot_v6(pP2a->GetPrtTmvPtr(), pP2a->GetAccPtr(), pP2a->GetPrtAccPtr());
 		s_tv(pP2a->GetPrtPmPtr(), pP2a->GetAccPtr(), pP2a->GetPrtAccPtr());
 		s_dgemm(6, 1, 6, 1, pP2a->GetPrtImPtr(), 6, pP2a->GetPrtAccPtr(), 1, 1, &_c_M[6][0], 4);
 
 		s_daxpy(6, -1, pP3a->GetPrtFgPtr(), 1, &_c_M[12][0], 4);
 		s_daxpy(6, 1, pP3a->GetPrtFvPtr(), 1, &_c_M[12][0], 4);
-		//s_m6_dot_v6(pP3a->GetPrtTmvPtr(), pP3a->GetAccPtr(), pP3a->GetPrtAccPtr());
 		s_tv(pP3a->GetPrtPmPtr(), pP3a->GetAccPtr(), pP3a->GetPrtAccPtr());
 		s_dgemm(6, 1, 6, 1, pP3a->GetPrtImPtr(), 6, pP3a->GetPrtAccPtr(), 1, 1, &_c_M[12][0], 4);
 
 		s_daxpy(6, -1, pThigh->GetPrtFgPtr(), 1, &_c_M[18][0], 4);
 		s_daxpy(6, 1, pThigh->GetPrtFvPtr(), 1, &_c_M[18][0], 4);
-		//s_m6_dot_v6(pThigh->GetPrtTmvPtr(), pThigh->GetAccPtr(), pThigh->GetPrtAccPtr());
 		s_tv(pThigh->GetPrtPmPtr(), pThigh->GetAccPtr(), pThigh->GetPrtAccPtr());
 		s_dgemm(6, 1, 6, 1, pThigh->GetPrtImPtr(), 6, pThigh->GetPrtAccPtr(), 1, 1, &_c_M[18][0], 4);
 
 		s_daxpy(6, -1, pP2b->GetPrtFgPtr(), 1, &_c_M[24][0], 4);
 		s_daxpy(6, 1, pP2b->GetPrtFvPtr(), 1, &_c_M[24][0], 4);
-		//s_m6_dot_v6(pP2b->GetPrtTmvPtr(), pP2b->GetAccPtr(), pP2b->GetPrtAccPtr());
 		s_tv(pP2b->GetPrtPmPtr(), pP2b->GetAccPtr(), pP2b->GetPrtAccPtr());
 		s_dgemm(6, 1, 6, 1, pP2b->GetPrtImPtr(), 6, pP2b->GetPrtAccPtr(), 1, 1, &_c_M[24][0], 4);
 
 		s_daxpy(6, -1, pP3b->GetPrtFgPtr(), 1, &_c_M[30][0], 4);
 		s_daxpy(6, 1, pP3b->GetPrtFvPtr(), 1, &_c_M[30][0], 4);
-		//s_m6_dot_v6(pP3b->GetPrtTmvPtr(), pP3b->GetAccPtr(), pP3b->GetPrtAccPtr());
 		s_tv(pP3b->GetPrtPmPtr(), pP3b->GetAccPtr(), pP3b->GetPrtAccPtr());
 		s_dgemm(6, 1, 6, 1, pP3b->GetPrtImPtr(), 6, pP3b->GetPrtAccPtr(), 1, 1, &_c_M[30][0], 4);
 	}
@@ -822,18 +1005,16 @@ namespace Robots
 
 			if (ActiveMotion == 0)
 			{
-				
-				
 				for (auto &i : _motions)
 				{
-					i->SetMode(MOTION_BASE::POS_CONTROL);
+					i->Activate();
 				}
 			}
 			else
 			{
 				for (auto &i : _motions)
 				{
-					i->SetMode(MOTION_BASE::FCE_CONTROL);
+					i->Deactivate();
 				}
 
 				int j = 0;
@@ -851,7 +1032,7 @@ namespace Robots
 					{
 						continue;
 					}
-					(*mots[Mot])->SetMode(MOTION_BASE::POS_CONTROL);
+					(*mots[Mot])->Activate();
 					j++;
 				}
 			}
@@ -882,23 +1063,23 @@ namespace Robots
 			{
 				for (auto &i : _motions)
 				{
-					i->SetMode(MOTION_BASE::POS_CONTROL);
+					i->Activate();
 				}
 			}
 			else
 			{
 				for (auto &i : _motions)
 				{
-					i->SetMode(MOTION_BASE::FCE_CONTROL);
+					i->Deactivate();
 				}
 
 				for (int i = 0; i < 6; ++i)
 				{
 					if (!pLegs[i]->pSf->Active())
 					{
-						pLegs[i]->pM1->SetMode(MOTION_BASE::POS_CONTROL);
-						pLegs[i]->pM2->SetMode(MOTION_BASE::POS_CONTROL);
-						pLegs[i]->pM3->SetMode(MOTION_BASE::POS_CONTROL);
+						pLegs[i]->pM1->Activate();
+						pLegs[i]->pM2->Activate();
+						pLegs[i]->pM3->Activate();
 					}
 				}
 				int j = 0;
@@ -916,7 +1097,7 @@ namespace Robots
 					{
 						continue;
 					}
-					(*mots[Mot])->SetMode(MOTION_BASE::POS_CONTROL);
+					(*mots[Mot])->Activate();
 					j++;
 				}
 			}
@@ -924,7 +1105,8 @@ namespace Robots
 	}
 	void ROBOT_III::FastDyn()
 	{
-		double Cb[6][6][36], Loc_C[36][36], k_L[6][36][4], H[6][18], h[18];
+		double Cb[6][6][36];
+		double H[6][18], h[18];
 
 		int supported_Leg_Num, supported_id[6];
 
@@ -933,13 +1115,13 @@ namespace Robots
 		double rcond = 0.0000000001;
 		int rank;
 
-		memset(**Cb, 0, 6 * 6 * 36 * sizeof(double));
-		memset(**k_L, 0, 6 * 36 * 4 * sizeof(double));
-		memset(*H, 0, 6 * 18 * sizeof(double));
-		memset(h, 0, 18 * sizeof(double));
+
+		std::fill_n(&Cb[0][0][0], 6 * 6 * 36, 0);
+		std::fill_n(&H[0][0], 6 * 18, 0);
+		std::fill_n(h, 18, 0);
 
 		supported_Leg_Num = 0;
-		memset(supported_id, 0, 6 * sizeof(int));
+		std::fill_n(supported_id, 6, 0);
 
 
 		pBody->Update();
@@ -961,8 +1143,8 @@ namespace Robots
 			s_block_cpy(6, 4, pLegs[i]->pU3->GetPrtCstMtxIPtr(), 0, 0, 4, *(Cb[i]), 0, 8, 36);
 
 			/*复制C与c_M*/
-			memcpy(Loc_C, pLegs[i]->_C, 36 * 36 * sizeof(double));
-			memcpy(*(k_L[i]), pLegs[i]->_c_M, 36 * 4 * sizeof(double));
+			//memcpy(Loc_C, pLegs[i]->_C, 36 * 36 * sizeof(double));
+			//memcpy(*(k_L[i]), pLegs[i]->_c_M, 36 * 4 * sizeof(double));
 
 			if (pLegs[i]->pSf->Active())
 			{
@@ -971,20 +1153,19 @@ namespace Robots
 				supported_Leg_Num += 1;
 
 				/*计算k_L*/
-
-				s_dgesv(36, 4, *Loc_C, 36, ipiv, *(k_L[i]), 4);
+				s_dgesv(36, 4, *pLegs[i]->_C, 36, ipiv, *(pLegs[i]->_c_M), 4);
 
 				/*更新H，对于机身，只有U副跟腿连接，所以4*3=12列相乘即可*/
-				s_dgemm(6, 3, 12, -1, *(Cb[i]), 36, &k_L[i][0][1], 4, 1, &H[0][supported_Leg_Num * 3 - 3], 18);
+				s_dgemm(6, 3, 12, -1, *(Cb[i]), 36, &pLegs[i]->_c_M[0][1], 4, 1, &H[0][supported_Leg_Num * 3 - 3], 18);
 			}
 			else
 			{
-				/*计算k，使用最小二乘法计算所有支撑腿的驱动输入力*/
-				s_dgesv(36, 4, *Loc_C, 36, ipiv, *(k_L[i]), 4);
+				/*计算k，计算所有支撑腿的驱动输入力*/
+				s_dgesv(36, 4, *pLegs[i]->_C, 36, ipiv, *(pLegs[i]->_c_M), 4);
 			}
 
 			/*更新h，对于机身，只有U副跟腿连接，所以4*3=12列相乘即可*/
-			s_dgemm(6, 1, 12, -1, *(Cb[i]), 36, *(k_L[i]), 4, 1, h, 1);
+			s_dgemm(6, 1, 12, -1, *(Cb[i]), 36, *(pLegs[i]->_c_M), 4, 1, h, 1);
 		}
 
 		/*求解支撑腿的驱动力*/
@@ -1000,7 +1181,7 @@ namespace Robots
 				for (int j = 0; j < 3; ++j)
 				{
 					fce = h[supported_id[i] * 3 + j];
-					pLegs[i]->pMots[j]->SetMotFce(fce);
+					pLegs[i]->pMots[j]->SetMotDynFce(fce);
 				}
 			}
 			else
@@ -1009,8 +1190,8 @@ namespace Robots
 				double fce;
 				for (int j = 0; j < 3; ++j)
 				{
-					fce = k_L[i][33 + j][0];
-					pLegs[i]->pMots[j]->SetMotFce(fce);
+					fce = pLegs[i]->_c_M[33 + j][0];
+					pLegs[i]->pMots[j]->SetMotDynFce(fce);
 				}
 			}
 		}
@@ -1019,37 +1200,17 @@ namespace Robots
 	{
 		MODEL::LoadXml(filename);
 
-		char temName[40];
-		std::string name;
-
 		/*Update Parts*/
 		pBody = GetPart("MainBody");
 
 		for (int j = 0; j < 6; ++j)
 		{
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_P1a");
-			pLegs[j]->pP1a = GetPart(temName);
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_P2a");
-			pLegs[j]->pP2a = GetPart(temName);
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_P3a");
-			pLegs[j]->pP3a = GetPart(temName);
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_Thigh");
-			pLegs[j]->pThigh = GetPart(temName);
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_P2b");
-			pLegs[j]->pP2b = GetPart(temName);
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_P3b");
-			pLegs[j]->pP3b = GetPart(temName);
+			pLegs[j]->pP1a = GetPart(pLegs[j]->Name() + "_P1a");
+			pLegs[j]->pP2a = GetPart(pLegs[j]->Name() + "_P2a");
+			pLegs[j]->pP3a = GetPart(pLegs[j]->Name() + "_P3a");
+			pLegs[j]->pThigh = GetPart(pLegs[j]->Name() + "_Thigh");
+			pLegs[j]->pP2b = GetPart(pLegs[j]->Name() + "_P2b");
+			pLegs[j]->pP3b = GetPart(pLegs[j]->Name() + "_P3b");
 		}
 
 		/*Update Markers*/
@@ -1087,39 +1248,15 @@ namespace Robots
 		/*Update Joints*/
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->pU1 = GetJoint(pLegs[j]->Name()+"_U1");
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_U2");
-			pLegs[j]->pU2 = GetJoint(temName);
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_U3");
-			pLegs[j]->pU3 = GetJoint(temName);
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_P1");
-			pLegs[j]->pP1 = GetJoint(temName);
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_P2");
-			pLegs[j]->pP2 = GetJoint(temName);
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_P3");
-			pLegs[j]->pP3 = GetJoint(temName);
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_Sf");
-			pLegs[j]->pSf = GetJoint(temName);
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_S2");
-			pLegs[j]->pS2 = GetJoint(temName);
-
-			strcpy(temName, pLegs[j]->Name().data());
-			strcat(temName, "_S3");
-			pLegs[j]->pS3 = GetJoint(temName);
+			pLegs[j]->pU1 = GetJoint(pLegs[j]->Name() + "_U1");
+			pLegs[j]->pU2 = GetJoint(pLegs[j]->Name() + "_U2");
+			pLegs[j]->pU3 = GetJoint(pLegs[j]->Name() + "_U3");
+			pLegs[j]->pP1 = GetJoint(pLegs[j]->Name() + "_P1");
+			pLegs[j]->pP2 = GetJoint(pLegs[j]->Name() + "_P2");
+			pLegs[j]->pP3 = GetJoint(pLegs[j]->Name() + "_P3");
+			pLegs[j]->pSf = GetJoint(pLegs[j]->Name() + "_Sf");
+			pLegs[j]->pS2 = GetJoint(pLegs[j]->Name() + "_S2");
+			pLegs[j]->pS3 = GetJoint(pLegs[j]->Name() + "_S3");
 		}
 
 		/*Update Motions*/
@@ -1203,7 +1340,9 @@ namespace Robots
 		pRobot->SetPee(param->beginPee, param->beginBodyPE, "G");
 		for (int j = 0; j < 18; ++j)
 		{
-			motionPos.at(j).at(0) = pRobot->GetMotion(j)->GetMotPos();
+			double pIn[18];
+			pRobot->GetPin(pIn);
+			motionPos.at(j).at(0) = pIn[j];
 		}
 
 		/*设置其他时间节点上机器人驱动的位置*/
@@ -1212,9 +1351,12 @@ namespace Robots
 			param->count = i * 10 - 1;
 			fun(pRobot, param);
 
+			double pIn[18];
+			pRobot->GetPin(pIn);
+
 			for (int j = 0; j < 18; ++j)
 			{
-				motionPos.at(j).at(i) = pRobot->GetMotion(j)->GetMotPos();
+				motionPos.at(j).at(i) = pIn[j];
 			}
 		}
 
@@ -1247,22 +1389,35 @@ namespace Robots
 		/*设置仿真脚本*/
 		if (pScript)
 		{
-			for (auto &i : pScript->script)
+			for (auto &nodePair : pScript->script)
 			{
-				for (auto &j : i.second.joints)
+				for (auto &elePair : nodePair.second.elements)
 				{
-					if (i.first == 0)
+					auto jnt = dynamic_cast<JOINT_BASE *>(elePair.first);
+					if (jnt)
 					{
-						this->SetPee(param->beginPee, param->beginBodyPE, "G");
-						s_pm2pe(j.first->GetMakJ()->GetPrtPmPtr(), j.second.peMakJ);
-						j.second.isModifyMakJ = true;
-					}
-					else
-					{
-						param->count = i.first;
-						fun(this, param);
-						s_pm2pe(j.first->GetMakJ()->GetPrtPmPtr(), j.second.peMakJ);
-						j.second.isModifyMakJ = true;
+						if (elePair.second)
+						{
+							if (nodePair.first == 0)
+							{
+								double peMakJ[6];
+
+								this->SetPee(param->beginPee, param->beginBodyPE, "G");
+								s_pm2pe(jnt->GetMakJ()->GetPrtPmPtr(), peMakJ);
+								pScript->ScriptMoveMarker(nodePair.first, jnt->GetMakJ(), peMakJ);
+							}
+							else
+							{
+								double peMakJ[6];
+								
+								param->count = nodePair.first;
+
+								fun(this, param);
+								s_pm2pe(jnt->GetMakJ()->GetPrtPmPtr(), peMakJ);
+								pScript->ScriptMoveMarker(nodePair.first, jnt->GetMakJ(), peMakJ);
+							}
+
+						}
 					}
 				}
 			}

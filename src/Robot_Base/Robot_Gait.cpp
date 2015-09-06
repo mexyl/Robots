@@ -513,7 +513,7 @@ namespace Robots
 			s_inv_pm_dot_v3(directionPm, originPee_B + i, originPee + i);
 		}
 
-		double dPee[18],dPee_R[18];
+		double dPee[18];
 		/*设置移动腿，以下在以身体为起点的地面坐标系中规划,之规划相对移动方向和位置*/
 		for (int i = 3; i < 18; i += 6)
 		{
@@ -846,7 +846,7 @@ namespace Robots
 	{
 		auto pAP = static_cast<const ADJUST_PARAM*>(pParam);
 
-		int pos, periodBeginCount{ 0 }, periodEndCount{ 0 };
+		int pos{0}, periodBeginCount{0}, periodEndCount{0};
 		double realTargetPee[ADJUST_PARAM::MAX_PERIOD_NUM][18];
 		double realTargetPbody[ADJUST_PARAM::MAX_PERIOD_NUM][6];
 
@@ -943,31 +943,31 @@ namespace Robots
 	
 	int move(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
-		const Robots::MOVE_PARAM *param = static_cast<const Robots::MOVE_PARAM *>(pParam);
+		//const Robots::MOVE_PARAM *param = static_cast<const Robots::MOVE_PARAM *>(pParam);
 
-		double beginPq[7], beginVq[7], endPq[7], endVq[7];
-		
-		/*计算末端位置和速度在初始位置下的相对值*/
-		double relativeBeginPm[16], relativeBeginPq[7]{0,0,0,0,0,0,1};
-		double relativeBeginVel[6], relativeBeginVq[6];
-		double relativeEndPm[16], relativeEndPq[7];
-		double relativeEndVel[6], relativeEndVq[6];
+		//double beginPq[7], beginVq[7], endPq[7], endVq[7];
+		//
+		///*计算末端位置和速度在初始位置下的相对值*/
+		//double relativeBeginPm[16], relativeBeginPq[7]{0,0,0,0,0,0,1};
+		//double relativeBeginVel[6], relativeBeginVq[6];
+		//double relativeEndPm[16], relativeEndPq[7];
+		//double relativeEndVel[6], relativeEndVq[6];
 
-		/*begin pm and pq*/
-		s_pq2pm(relativeBeginPq, relativeBeginPm);
+		///*begin pm and pq*/
+		//s_pq2pm(relativeBeginPq, relativeBeginPm);
 
-		/*begin vq*/
-		double pm1[16], pm2[16];
-		s_pe2pm(param->beginBodyPE, pm1);
-		s_inv_v2v(pm1, nullptr, param->beginBodyVel, relativeBeginVel);
-		s_v2vq(relativeBeginPm, relativeBeginVel, relativeBeginVq);
+		///*begin vq*/
+		//double pm1[16], pm2[16];
+		//s_pe2pm(param->beginBodyPE, pm1);
+		//s_inv_v2v(pm1, nullptr, param->beginBodyVel, relativeBeginVel);
+		//s_v2vq(relativeBeginPm, relativeBeginVel, relativeBeginVq);
 
-		/*end pq*/
-		s_pe2pm(param->targetBodyPE, pm2);
-		s_inv_pm_dot_pm(pm1, pm2, relativeEndPm);
+		///*end pq*/
+		//s_pe2pm(param->targetBodyPE, pm2);
+		//s_inv_pm_dot_pm(pm1, pm2, relativeEndPm);
 
-		/*end vq*/
-		s_inv_v2v(pm1, nullptr, param->beginBodyVel, relativeEndVel);
+		///*end vq*/
+		//s_inv_v2v(pm1, nullptr, param->beginBodyVel, relativeEndVel);
 		
 
 
@@ -982,7 +982,7 @@ namespace Robots
 
 
 
-		param->beginBodyVel;
+		//param->beginBodyVel;
 
 
 

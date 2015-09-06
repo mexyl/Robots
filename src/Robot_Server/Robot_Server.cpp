@@ -626,6 +626,7 @@ namespace Robots
 			break;
 		default:
 			rt_printf("unknown cmd type\n");
+			ret = 0;
 			break;
 
 		}
