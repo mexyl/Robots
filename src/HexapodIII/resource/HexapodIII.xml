@@ -27,11 +27,11 @@
       <RFpe>{ 0.0679295 , 0 , -0.3552145, PI/2,  PI* 1/6,   -PI/2-PI*7/18}</RFpe>
       <RMpe>{ 0.1234141 , 0 ,  0,         PI/2,  PI* 0/6,   -PI/2-PI*7/18}</RMpe>
       <RRpe>{ 0.0679295 , 0 ,  0.3532904, PI/2,  PI*11/6,   -PI/2-PI*7/18}</RRpe>
-      <BodyGamma>{140,0,0,0,0,0,0,0,0,0}</BodyGamma>
+      <BodyGamma>{0,0,0,0,0,0,0,0,0,0}</BodyGamma>
       <P1aGamma>{0,0,0,0,0,0,0,0,0,0}</P1aGamma>
       <P2aGamma>{0,0,0,0,0,0,0,0,0,0}</P2aGamma>
       <P3aGamma>{0,0,0,0,0,0,0,0,0,0}</P3aGamma>
-      <ThighGamma>{10,1.1,0.5,0,0,0,0,0,0,0}</ThighGamma>
+      <ThighGamma>{10 , 1.1 , 0.5 , 0 , 1 , 1.1 , 1.2 , 0.11 , 0.12 , 0.13}</ThighGamma>
       <P2bGamma>{0,0,0,0,0,0,0,0,0,0}</P2bGamma>
       <P3bGamma>{0,0,0,0,0,0,0,0,0,0}</P3bGamma>
       <Mot_friction>{20, 30, 560}</Mot_friction>
@@ -444,7 +444,7 @@
       <RR_F1 Active="true" Type="single_component_force" PrtM="RR_Thigh" PrtN="RR_P1a" MakI="P1i" MakJ="P1j" Component="2"/>
       <RR_F2 Active="true" Type="single_component_force" PrtM="RR_P2b" PrtN="RR_P2a" MakI="P2i" MakJ="P2j" Component="2"/>
       <RR_F3 Active="true" Type="single_component_force" PrtM="RR_P3b" PrtN="RR_P3a" MakI="P3i" MakJ="P3j" Component="2"/>
-    </Force>    
+    </Force>
   </Model>
   <Server>
     <Commands>
@@ -487,8 +487,7 @@
     <Connection IP="127.0.0.1" Port="5866"/>
     <Control>
       <MapPhy2Abs>
-        { 15 , 17 , 16, 12 , 14 , 13 , 9 , 11 , 10 , 2 , 0
-        , 1 , 3 , 5 , 4 , 7 , 8 , 6 }
+        { 15 , 17 , 16, 12 , 14 , 13 , 9 , 11 , 10 , 2 , 0, 1 , 3 , 5 , 4 , 7 , 8 , 6 }
       </MapPhy2Abs>
       <HomeEE>
         {
@@ -501,5 +500,5 @@
         }
       </HomeEE>
     </Control>
-  </Server>  
+  </Server>
 </HexapodIII>

@@ -11,6 +11,9 @@
 #include <ctime>
 #include <iostream>
 
+#include "Eigen/Eigen"	
+#include "Eigen/Sparse"	
+
 using namespace Aris::DynKer;
 using namespace std;
 
@@ -224,7 +227,7 @@ namespace Robots
 		double dJi[9]{0};
 		double vEE[3],vEE_L[3];
 
-		this->GetVee(vEE, "L");
+		this->GetVee(vEE_L, "L");
 		//s_pm_dot_v3(pBasePm, vEE_L, vEE);
 
 		s_daxpy(9, vEE[0], dJi_x, 1, dJi, 1);
@@ -234,8 +237,8 @@ namespace Robots
 		double jac_c[3]{0};
 		s_dgemm(3, 1, 3, 1, dJi, 3, vEE, 1, 0, jac_c, 1);
 
-		dsp(jac_c, 3, 1);
-		dsp(_c_acc_inv, 3, 1);
+		//dsp(jac_c, 3, 1);
+		//dsp(_c_acc_inv, 3, 1);
 
 		//double c[3];
 		//this->GetAccJacInv(nullptr,c,"G");
@@ -244,24 +247,21 @@ namespace Robots
 
 	void LEG_III::GetFin(double *fIn) const
 	{
-		for (int i = 0; i < 3; ++i)
-		{
-			fIn[i] = pMots[i]->GetMotFce();
-		}
+		fIn[0] = f1_dyn + f1_frc;
+		fIn[1] = f2_dyn + f2_frc;
+		fIn[2] = f3_dyn + f3_frc;
 	}
-	void LEG_III::SetFin(const double *fIn)
+	void LEG_III::GetFinDyn(double *fIn) const
 	{
-		pM1->Update();
-		pM2->Update();
-		pM3->Update();
-
-		pM1->SetMotDynFce(fIn[0] - pM1->GetMotFrcFce());
-		pM2->SetMotDynFce(fIn[1] - pM2->GetMotFrcFce());
-		pM3->SetMotDynFce(fIn[2] - pM3->GetMotFrcFce());
-		
-		pF1->SetFce(fIn[0] - pM1->GetMotFrcFce());
-		pF2->SetFce(fIn[1] - pM2->GetMotFrcFce());
-		pF3->SetFce(fIn[2] - pM3->GetMotFrcFce());
+		fIn[0] = f1_dyn;
+		fIn[1] = f2_dyn;
+		fIn[2] = f3_dyn;
+	}
+	void LEG_III::GetFinFrc(double *fIn) const
+	{
+		fIn[0] = f1_frc;
+		fIn[1] = f2_frc;
+		fIn[2] = f3_frc;
 	}
 
 	void LEG_III::calculate_from_pEE()
@@ -302,35 +302,35 @@ namespace Robots
 	}
 	void LEG_III::calculate_jac()
 	{
-		int ipiv[3];
-		double tem[3][3];
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > J1_m(*J1);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > J2_m(*J2);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > inv_J1_m(*inv_J1);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > inv_J2_m(*inv_J2);
+		inv_J1_m = J1_m.inverse();
+		inv_J2_m = J2_m.inverse();
 
-		/*direct*/
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > Jvd_m(*Jvd);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > Jvi_m(*Jvi);
 
-		std::copy_n(static_cast<const double*>(*this->J1), 9, static_cast<double*>(*_jac_vel_dir));
-		std::copy_n(static_cast<const double*>(*this->J2), 9, static_cast<double*>(*tem));
-		s_dgesvT(3, 3, *tem, 3, ipiv, *_jac_vel_dir, 3);
-
-		/*inverse*/
-
-		std::copy_n(static_cast<const double*>(*this->J2), 9, static_cast<double*>(*_jac_vel_inv));
-		std::copy_n(static_cast<const double*>(*this->J1), 9, static_cast<double*>(*tem));
-		s_dgesvT(3, 3, *tem, 3, ipiv, *_jac_vel_inv, 3);
+		Jvd_m = J1_m*inv_J2_m;
+		Jvi_m = J2_m*inv_J1_m;
 	}
-	void LEG_III::calculate_jac_c()
+	void LEG_III::calculate_diff_jac()
 	{
-		double tem[3];
-		double vCD[3]{va1, vb1, vl1};
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > J1_m(*J1), J2_m(*J2), vJ1_m(*vJ1), vJ2_m(*vJ2);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > inv_J1_m(*inv_J1), inv_J2_m(*inv_J2);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > Jvd_m(*Jvd), Jvi_m(*Jvi);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > vJvd_m(*vJvd), vJvi_m(*vJvi);
 
-		/*direct*/
-		s_dgemm(3, 1, 3, 1, *vJ2, 3, vCD, 1, 0, tem, 1);
-		s_dgemm(3, 1, 3, -1, *_jac_vel_dir, 3, tem, 1, 0, _c_acc_dir, 1);
-		s_dgemm(3, 1, 3, 1, *vJ1, 3, vCD, 1, 1, _c_acc_dir, 1);
+		vJvd_m = vJ1_m * inv_J2_m - Jvd_m * vJ2_m * inv_J2_m;
+		vJvi_m = vJ2_m * inv_J1_m - Jvi_m * vJ1_m * inv_J1_m;
+		
+		Eigen::Map<Eigen::Matrix<double, 3, 1> > cd_m(_c_acc_dir), ci_m(_c_acc_inv);
+		Eigen::Map<Eigen::Matrix<double, 3, 1> > vEE_m(this->vEE), vIn_m(this->vIn);
 
-		/*inverse*/
-		s_dgemm(3, 1, 3, 1, *vJ1, 3, vCD, 1, 0, tem, 1);
-		s_dgemm(3, 1, 3, -1, *_jac_vel_inv, 3, tem, 1, 0, _c_acc_inv, 1);
-		s_dgemm(3, 1, 3, 1, *vJ2, 3, vCD, 1, 1, _c_acc_inv, 1);
+		cd_m = vJvd_m*vIn_m;
+		ci_m = vJvi_m*vEE_m;
+
 	}
 
 	void LEG_III::_CalCdByPos()
@@ -524,14 +524,9 @@ namespace Robots
 		s_pm_dot_pm(pP3a->GetPmPtr(), *pm, *pm1);
 		pP3b->SetPm(*pm1);
 
-		/*更新驱动位置*/
-		//pM1->SetP_m(&l1);
-		//pM2->SetP_m(&l2);
-		//pM3->SetP_m(&l3);
-
 		/*地面球铰的位置*/
 		pSfi->Update();
-		memcpy(const_cast<double *>(pSfj->GetPrtPmPtr()), pSfi->GetPmPtr(), 16 * sizeof(double));
+		std::copy_n(pSfi->GetPmPtr(), 16, const_cast<double *>(pSfj->GetPrtPmPtr()));
 	}
 	void LEG_III::_CalVcdByVpos()
 	{
@@ -782,6 +777,10 @@ namespace Robots
 		a_L[1] = cb1*vb1*vl1 + sb1*al1;
 		a_L[2] = -H12*vl1 - sa1*cb1*al1;
 
+		//a_L[0] = (-sa1*va1*cb1-ca1*sb1*vb1)*vl1 + ca1*cb1*al1;
+		//a_L[1] = cb1*vb1*vl1 + sb1*al1;
+		//a_L[2] = -(ca1*va1*cb1-sa1*sb1*vb1)*vl1 - sa1*cb1*al1;
+
 		s_a2a(pBase->GetPmPtr(), pBase->GetVelPtr(), pBase->GetAccPtr(), v_L, a_L, a_G, v_G);
 
 		pThigh->SetAcc(a_G);
@@ -843,9 +842,9 @@ namespace Robots
 		s_a2a(pBase->GetPmPtr(), pBase->GetVelPtr(), pBase->GetAccPtr(), v_L, a_L, a_G, v_G);
 		pP3b->SetAcc(a_G);
 
-		//pM1->SetMotAcc(al1);
-		//pM2->SetMotAcc(al2);
-		//pM3->SetMotAcc(al3);
+		pM1->SetMotAcc(al1);
+		pM2->SetMotAcc(al2);
+		pM3->SetMotAcc(al3);
 	}
 
 	void LEG_III::FastDyn()
@@ -976,153 +975,106 @@ namespace Robots
 			pLegs[i]->GetFin(&fIn[i*3]);
 		}
 	}
-	void ROBOT_III::SetFin(const double *fIn)
+	void ROBOT_III::GetFinDyn(double *fIn) const
 	{
 		for (int i = 0; i < 6; ++i)
 		{
-			pLegs[i]->SetFin(fIn + i*3);
+			pLegs[i]->GetFinDyn(&fIn[i * 3]);
+		}
+	}
+	void ROBOT_III::GetFinFrc(double *fIn) const
+	{
+		for (int i = 0; i < 6; ++i)
+		{
+			pLegs[i]->GetFinFrc(&fIn[i * 3]);
 		}
 	}
 
-	void ROBOT_III::SetFixedFeet(const char *fixedLeg, const char *ActiveMotion)
+	void ROBOT_III::SetFixFeet(const char* fixFeet)
 	{
-		MOTION_BASE** const mots[18] =
-		{ &(pLF->pM1), &(pLF->pM2), &(pLF->pM3),
-		&(pLM->pM1), &(pLM->pM2), &(pLM->pM3),
-		&(pLR->pM1), &(pLR->pM2), &(pLR->pM3),
-		&(pRF->pM1), &(pRF->pM2), &(pRF->pM3),
-		&(pRM->pM1), &(pRM->pM2), &(pRM->pM3),
-		&(pRR->pM1), &(pRR->pM2), &(pRR->pM3), };
-
-		int leg, Mot;
-
-		if (fixedLeg == 0)
+		for (int i = 0; i < 6; ++i)
 		{
-			for (int i = 0; i < 6; ++i)
-			{
-				pLegs[i]->pSf->Activate();
-			}
-
-			if (ActiveMotion == 0)
-			{
-				for (auto &i : _motions)
-				{
-					i->Activate();
-				}
-			}
-			else
-			{
-				for (auto &i : _motions)
-				{
-					i->Deactivate();
-				}
-
-				int j = 0;
-				while (ActiveMotion[j] != '\0')
-				{
-					if ((ActiveMotion[j] <= '9') && (ActiveMotion[j] >= '0'))
-					{
-						Mot = ActiveMotion[j] - '0';
-					}
-					else if ((ActiveMotion[j] <= 'h') && (ActiveMotion[j] >= 'a'))
-					{
-						Mot = ActiveMotion[j] - 'a' + 10;
-					}
-					else
-					{
-						continue;
-					}
-					(*mots[Mot])->Activate();
-					j++;
-				}
-			}
-		}
-		else
-		{
-			for (int i = 0; i < 6; ++i)
+			if (fixFeet[i] == '0')
 			{
 				pLegs[i]->pSf->Deactivate();
 			}
-
-			int i = 0;
-			while (fixedLeg[i] != '\0')
-			{
-				if ((fixedLeg[i] <= '5') && (fixedLeg[i] >= '0'))
-				{
-					leg = fixedLeg[i] - '0';
-				}
-				else
-				{
-					continue;
-				}
-				pLegs[leg]->pSf->Activate();
-				i++;
-			}
-
-			if (ActiveMotion == 0)
-			{
-				for (auto &i : _motions)
-				{
-					i->Activate();
-				}
-			}
 			else
 			{
-				for (auto &i : _motions)
-				{
-					i->Deactivate();
-				}
-
-				for (int i = 0; i < 6; ++i)
-				{
-					if (!pLegs[i]->pSf->Active())
-					{
-						pLegs[i]->pM1->Activate();
-						pLegs[i]->pM2->Activate();
-						pLegs[i]->pM3->Activate();
-					}
-				}
-				int j = 0;
-				while (ActiveMotion[j] != '\0')
-				{
-					if ((ActiveMotion[j] <= '9') && (ActiveMotion[j] >= '0'))
-					{
-						Mot = ActiveMotion[j] - '0';
-					}
-					else if ((ActiveMotion[j] <= 'h') && (ActiveMotion[j] >= 'a'))
-					{
-						Mot = ActiveMotion[j] - 'a' + 10;
-					}
-					else
-					{
-						continue;
-					}
-					(*mots[Mot])->Activate();
-					j++;
-				}
+				pLegs[i]->pSf->Activate();
 			}
 		}
 	}
+	const char* ROBOT_III::GetFixFeet() const
+	{
+		thread_local static char fixFeet[7]{ "000000" };
+
+		for (int i = 0; i < 6; ++i)
+		{
+			if (pLegs[i]->pSf->Active())
+			{
+				fixFeet[i] = '1';
+			}
+			else
+			{
+				fixFeet[i] = '0';
+			}
+		}
+
+		return fixFeet;
+	}
+	void ROBOT_III::SetActiveMotion(const char* activeMotion)
+	{
+		for (int i = 0; i < 6; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				if (activeMotion[i * 3 + j] == '0')
+				{
+					pLegs[i]->pMots[j]->Deactivate();
+					pLegs[i]->pFces[j]->Activate();
+				}
+				else
+				{
+					pLegs[i]->pMots[j]->Activate();
+					pLegs[i]->pFces[j]->Deactivate();
+				}
+			}
+		}
+
+	}
+	const char* ROBOT_III::GetActiveMotion() const
+	{
+		thread_local static char activeMotion[19]{ "000000000000000000" };
+
+		for (int i = 0; i < 6; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				if (pLegs[i]->pMots[j]->Active())
+				{
+					activeMotion[i * 3 + j] = '1';
+				}
+				else
+				{
+					activeMotion[i * 3 + j] = '0';
+				}
+			}
+		}
+
+		return activeMotion;
+	}
+	
 	void ROBOT_III::FastDyn()
 	{
-		double Cb[6][6][36];
-		double H[6][18], h[18];
+		double Cb[6][6][36]{0};
+		double H[6][18]{ 0 }, h[18]{ 0 };
 
-		int supported_Leg_Num, supported_id[6];
+		int supported_Leg_Num{ 0 }, supported_id[6]{0};
 
 		int ipiv[36];
 		double s[36];
 		double rcond = 0.0000000001;
 		int rank;
-
-
-		std::fill_n(&Cb[0][0][0], 6 * 6 * 36, 0);
-		std::fill_n(&H[0][0], 6 * 18, 0);
-		std::fill_n(h, 18, 0);
-
-		supported_Leg_Num = 0;
-		std::fill_n(supported_id, 6, 0);
-
 
 		pBody->Update();
 		s_tv(pBody->GetPrtPmPtr(), pBody->GetAccPtr(), pBody->GetPrtAccPtr());
@@ -1143,8 +1095,6 @@ namespace Robots
 			s_block_cpy(6, 4, pLegs[i]->pU3->GetPrtCstMtxIPtr(), 0, 0, 4, *(Cb[i]), 0, 8, 36);
 
 			/*复制C与c_M*/
-			//memcpy(Loc_C, pLegs[i]->_C, 36 * 36 * sizeof(double));
-			//memcpy(*(k_L[i]), pLegs[i]->_c_M, 36 * 4 * sizeof(double));
 
 			if (pLegs[i]->pSf->Active())
 			{
@@ -1154,6 +1104,10 @@ namespace Robots
 
 				/*计算k_L*/
 				s_dgesv(36, 4, *pLegs[i]->_C, 36, ipiv, *(pLegs[i]->_c_M), 4);
+				//Eigen::Map<Eigen::Matrix<double, 36, 36, Eigen::RowMajor> > A(*pLegs[i]->_C);
+				//Eigen::Map<Eigen::Matrix<double, 36, 4, Eigen::RowMajor> > b(*(pLegs[i]->_c_M));
+				//auto x = A.partialPivLu().solve(b);
+				//b = x;
 
 				/*更新H，对于机身，只有U副跟腿连接，所以4*3=12列相乘即可*/
 				s_dgemm(6, 3, 12, -1, *(Cb[i]), 36, &pLegs[i]->_c_M[0][1], 4, 1, &H[0][supported_Leg_Num * 3 - 3], 18);
@@ -1169,29 +1123,32 @@ namespace Robots
 		}
 
 		/*求解支撑腿的驱动力*/
-		if (supported_Leg_Num>0)
+		if (supported_Leg_Num > 0)
+		{
 			s_dgelsd(6, supported_Leg_Num * 3, 1, *H, 18, h, 1, s, rcond, &rank);
+		}
+			
 
 		for (int i = 0; i < 6; ++i)
 		{
 			if (pLegs[i]->pSf->Active())
 			{
 				/*以下输入动力学计算，并补偿摩擦力*/
-				double fce;
 				for (int j = 0; j < 3; ++j)
 				{
-					fce = h[supported_id[i] * 3 + j];
-					pLegs[i]->pMots[j]->SetMotDynFce(fce);
+					pLegs[i]->fIn_dyn[j] = h[supported_id[i] * 3 + j];
+					pLegs[i]->fIn_frc[j] = pLegs[i]->pMots[j]->GetMotFceFrc();
+					pLegs[i]->pFces[j]->SetFce(h[supported_id[i] * 3 + j]);
 				}
 			}
 			else
 			{
 				/*以下输入动力学计算，并补偿摩擦力*/
-				double fce;
 				for (int j = 0; j < 3; ++j)
 				{
-					fce = pLegs[i]->_c_M[33 + j][0];
-					pLegs[i]->pMots[j]->SetMotDynFce(fce);
+					pLegs[i]->fIn_dyn[j] = pLegs[i]->_c_M[33 + j][0];
+					pLegs[i]->fIn_frc[j] = pLegs[i]->pMots[j]->GetMotFceFrc();
+					pLegs[i]->pFces[j]->SetFce(pLegs[i]->_c_M[33 + j][0]);
 				}
 			}
 		}
@@ -1316,25 +1273,59 @@ namespace Robots
 
 	}
 
-	void SetAkima(ROBOT_III *pRobot, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param)
+	void SetAkimaAndScript(ROBOT_III *pRobot, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const SIMULATE_SCRIPT *pScript)
 	{
-		param->count = 0;
-		
-		int totalCount = fun(pRobot, param) + 1;
-		int akimaSize = totalCount / 10 + 1;//需加上0点
+		int dt{1};
+		SIMULATE_SCRIPT realScript;
 
-		std::vector<double> time(akimaSize);
-		for (int i = 0; i < akimaSize; ++i)
+		/*设置脚本*/
+		if (pScript)
 		{
-			time.at(i) = i*0.01;
+			dt = pScript->GetDt();
+
+			realScript.SetDt(pScript->GetDt());
+			realScript.SetEndTime(pScript->GetEndTime());
+
+
 		}
 
 		std::vector<std::vector<double> > motionPos(18);
 		std::vector<std::vector<double> > motionFce(18);
-		for (auto &mot : motionPos)
+
+		/*设置motion pos的Akima函数*/
+		param->count = 0;
+		for (int isFinished = 1; isFinished != 0;)
 		{
-			mot.resize(akimaSize);
+			isFinished = fun(pRobot, param);
+
+			if ((param->count % dt) == 0)
+			{
+				double pIn[18];
+				pRobot->GetPin(pIn);
+
+				for (int i = 0; i < 18; ++i)
+				{
+					motionPos[param->count / dt].push_back(pIn[i]);
+				}
+			}
+			param->count++;
 		}
+
+		int totalCount = param->count;
+		int akimaSize = totalCount / dt + 1;//需加上0点
+
+		/*设置时间*/
+		std::vector<double> time(akimaSize);
+		for (int i = 0; i < akimaSize; ++i)
+		{
+			time.at(i) = i*dt / 1000.0;
+		}
+
+		
+		//for (auto &mot : motionPos)
+		//{
+		//	mot.resize(akimaSize);
+		//}
 
 		/*设置起始点机器人驱动的位置*/
 		pRobot->SetPee(param->beginPee, param->beginBodyPE, "G");
@@ -1367,24 +1358,10 @@ namespace Robots
 		}
 	}
 
-	void ROBOT_III::SimulateInverse(GAIT_FUNC fun, GAIT_PARAM_BASE *param)
-	{
-		param->count = 0;
-		int totalCount = fun(this, param) + 1;
-
-		ForEachElement([totalCount](Aris::DynKer::ELEMENT *e)
-		{
-			e->SetResultSize(totalCount);
-		});
-	}
-	void ROBOT_III::SimulateForward(GAIT_FUNC fun, GAIT_PARAM_BASE *param, Aris::DynKer::SIMULATE_SCRIPT *script)
-	{
-		SetAkima(this, fun, param);
-	};
-	void ROBOT_III::SimulateForwardByAdams(const char *adamsFile, GAIT_FUNC fun, GAIT_PARAM_BASE *param, SIMULATE_SCRIPT *pScript)
+	void ROBOT_III::SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const SIMULATE_SCRIPT *pScript)
 	{
 		/*设置驱动的Akima函数*/
-		SetAkima(this, fun, param);
+		SetAkimaAndScript(this, fun, param, pScript);
 		
 		/*设置仿真脚本*/
 		if (pScript)
@@ -1404,7 +1381,7 @@ namespace Robots
 
 								this->SetPee(param->beginPee, param->beginBodyPE, "G");
 								s_pm2pe(jnt->GetMakJ()->GetPrtPmPtr(), peMakJ);
-								pScript->ScriptMoveMarker(nodePair.first, jnt->GetMakJ(), peMakJ);
+								//pScript->ScriptMoveMarker(nodePair.first, jnt->GetMakJ(), peMakJ);
 							}
 							else
 							{
@@ -1414,7 +1391,7 @@ namespace Robots
 
 								fun(this, param);
 								s_pm2pe(jnt->GetMakJ()->GetPrtPmPtr(), peMakJ);
-								pScript->ScriptMoveMarker(nodePair.first, jnt->GetMakJ(), peMakJ);
+								//pScript->ScriptMoveMarker(nodePair.first, jnt->GetMakJ(), peMakJ);
 							}
 
 						}
@@ -1424,11 +1401,134 @@ namespace Robots
 
 			param->count = 0;
 			int totalCount = fun(this, param) + 1;
-			pScript->ScriptEndTime(totalCount);
+			//pScript->ScriptEndTime(totalCount);
 		}
 
 		/*将机器人当前位置设置到初始位置处*/
 		this->SetPee(param->beginPee, param->beginBodyPE, "G");
 		MODEL::SaveAdams(adamsFile, pScript);
+	}
+	void ROBOT_III::SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, int dt)
+	{
+		std::vector<std::vector<double> > motionPos(18);
+		std::vector<std::vector<double> > motionFce(18);
+		std::vector<double> time;
+
+		/*设置motion pos的Akima函数*/
+		/*起始位置*/
+		this->GetPee(param->beginPee);
+		this->GetBodyPe(param->beginBodyPE);
+		time.push_back(0);
+		double pIn[18];
+		this->GetPin(pIn);
+		for (int i = 0; i < 18; ++i)
+		{
+			motionPos[i].push_back(pIn[i]);
+		}
+
+		/*其他位置*/
+		param->count = 0;
+		for (int isFinished = 1; isFinished != 0;)
+		{
+			isFinished = fun(this, param);
+
+			if ((((param->count + 1) % dt) == 0) || (isFinished == 0))
+			{
+				time.push_back((param->count + 1) / 1000.0);
+
+				double pIn[18];
+				this->GetPin(pIn);
+				for (int i = 0; i < 18; ++i)
+				{
+					motionPos[i].push_back(pIn[i]);
+				}
+			}
+			param->count++;
+		}
+		const int endCount = param->count;
+
+		/*设置驱动的位置akima函数*/
+		for (int i = 0; i < 18; ++i)
+		{
+			this->GetMotion(i)->SetPosAkimaCurve(time.size(), time.data(), motionPos[i].data());
+		}
+
+		/*使用FastDyn计算驱动力的大小*/
+		for (std::size_t i = 0; i < time.size(); ++i)
+		{
+			double pIn[18], vIn[18], aIn[18];
+
+			for (int j = 0; j < 18; ++j)
+			{
+				pIn[j] = this->GetMotion(j)->PosAkima(time[i], '0');
+				vIn[j] = this->GetMotion(j)->PosAkima(time[i], '1');
+				aIn[j] = this->GetMotion(j)->PosAkima(time[i], '2');
+			}
+
+			double pe[6];
+			this->GetBodyPe(pe);
+			this->SetPinFixFeet(pIn, this->GetFixFeet(), this->GetActiveMotion(), pe);
+			this->SetVinFixFeet(vIn, this->GetFixFeet(), this->GetActiveMotion());
+			this->SetAinFixFeet(aIn, this->GetFixFeet(), this->GetActiveMotion());
+
+			this->FastDyn();
+
+			double fin[18];
+			this->GetFinDyn(fin);
+			for (int j = 0; j < 18; ++j)
+			{
+				motionFce[j].push_back(fin[j]);
+			}
+		}
+
+		/*设置力矩*/
+		for (int i = 0; i < 18; ++i)
+		{
+			dynamic_cast<SINGLE_COMPONENT_FORCE *>(this->GetForce(i))->SetFceAkimaCurve(time.size(), time.data(), motionFce[i].data());
+		}
+
+		/*把机器人设置到开始的位置，并输出模型*/
+		this->SetPee(param->beginPee, param->beginBodyPE);
+		this->SaveAdams(adamsFile);
+
+		/*把机器人设置到结束的位置*/
+		SimByAdamsResultAt(endCount);
+	}
+	void ROBOT_III::SimByAdamsResultAt(int momentTime)
+	{
+		double pIn[18], vIn[18], aIn[18];
+
+		for (int j = 0; j < 18; ++j)
+		{
+			pIn[j] = this->GetMotion(j)->PosAkima(momentTime / 1000.0, '0');
+			vIn[j] = this->GetMotion(j)->PosAkima(momentTime / 1000.0, '1');
+			aIn[j] = this->GetMotion(j)->PosAkima(momentTime / 1000.0, '2');
+			double f = this->GetForce(j)->FceAkima(momentTime / 1000.0, '0');
+
+			static_cast<Aris::DynKer::SINGLE_COMPONENT_FORCE*>(this->GetForce(j))->SetFce(f);
+		}
+		double pe[6];
+		this->GetBodyPe(pe);
+		this->SetPinFixFeet(pIn, this->GetFixFeet(), this->GetActiveMotion(), pe);
+		this->SetVinFixFeet(vIn, this->GetFixFeet(), this->GetActiveMotion());
+		this->SetAinFixFeet(aIn, this->GetFixFeet(), this->GetActiveMotion());
+
+		this->Dyn();
+
+		/*更新出力*/
+		for (int i = 0; i < 6; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				if (this->pLegs[i]->pMots[j]->Active())
+				{
+					this->pLegs[i]->fIn_dyn[j] = this->pLegs[i]->pMots[j]->GetMotFceDyn();
+				}	
+				else
+				{
+					this->pLegs[i]->fIn_dyn[j] = this->pLegs[i]->pFces[j]->GetFce();
+				}
+			}
+		}
 	}
 }

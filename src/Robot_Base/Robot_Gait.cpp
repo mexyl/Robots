@@ -878,7 +878,7 @@ namespace Robots
 		case 'G':
 		case 'O':
 		default:
-			std::copy_n(*pAP->targetBodyPE, ADJUST_PARAM::MAX_PERIOD_NUM*6, *realTargetPbody);
+			std::copy_n(&pAP->targetBodyPE[0][0], ADJUST_PARAM::MAX_PERIOD_NUM*6, &realTargetPbody[0][0]);
 			break;
 		}
 

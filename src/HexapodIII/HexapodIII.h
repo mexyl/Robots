@@ -106,7 +106,8 @@ namespace Robots
 		void FastDyn();
 		
 		void GetFin(double *fIn) const;
-		void SetFin(const double *fIn);
+		void GetFinDyn(double *fIn) const;
+		void GetFinFrc(double *fIn) const;
 
 		virtual void calculate_from_pEE();
 		virtual void calculate_from_pIn();
@@ -116,7 +117,7 @@ namespace Robots
 		virtual void calculate_from_aIn();
 
 		virtual void calculate_jac();
-		virtual void calculate_jac_c();
+		virtual void calculate_diff_jac();
 
 		void _CalCdByPos();
 		void _CalCdByPlen();
@@ -134,6 +135,27 @@ namespace Robots
 		void _CalAvarByAcd();
 		void _CalApartByAvar();
 
+	private:
+		union
+		{
+			double fIn_dyn[3];
+			struct
+			{
+				double f1_dyn;
+				double f2_dyn;
+				double f3_dyn;
+			};
+		};
+		union
+		{
+			double fIn_frc[3];
+			struct
+			{
+				double f1_frc;
+				double f2_frc;
+				double f3_frc;
+			};
+		};
 
 	private:
 		ROBOT_III *pRobot;
@@ -160,6 +182,7 @@ namespace Robots
 		double k21, k22, k23, k31, k32, k33;
 		double vk21, vk22, vk23, vk31, vk32, vk33;
 		double J1[3][3], J2[3][3], vJ1[3][3], vJ2[3][3];
+		double inv_J1[3][3], inv_J2[3][3];
 
 		double _C[36][36];
 		double _c_M[36][4];
@@ -169,20 +192,35 @@ namespace Robots
 	class ROBOT_III :public Aris::DynKer::MODEL, public Robots::ROBOT_BASE
 	{
 	public:
+		struct STATE
+		{
+			double pEE[18], vEE[18], aEE[18], fIn[18];
+			double bodyPE[6], bodyVel[6], bodyAcc[6];
+			bool isMotorActive[18];
+			bool isSfActive[6];
+		};
+
 		ROBOT_III();
 		~ROBOT_III() = default;
-
-		void GetFin(double *fIn) const;
-		void SetFin(const double *fIn);
-
-		void SetFixedFeet(const char *fixedLeg = 0, const char *ActiveMotion = 0);
-		void FastDyn();
 		virtual void LoadXml(const char *filename);
 
-		void SimulateInverse(GAIT_FUNC fun, GAIT_PARAM_BASE *param);
-		void SimulateForward(GAIT_FUNC fun, GAIT_PARAM_BASE *param, Aris::DynKer::SIMULATE_SCRIPT *script = nullptr);
-		void SimulateForwardByAdams(const char *adamsFile, GAIT_FUNC fun, GAIT_PARAM_BASE *param, Aris::DynKer::SIMULATE_SCRIPT *script = nullptr);
 
+		void GetFin(double *fIn) const;
+		void GetFinDyn(double *fIn) const;
+		void GetFinFrc(double *fIn) const;
+
+		void GetState(ROBOT_III::STATE &state) const;
+		void SetState(const ROBOT_III::STATE &state);
+
+		void SetFixFeet(const char* fixFeet);
+		const char* GetFixFeet() const;
+		void SetActiveMotion(const char* activeMotion);
+		const char* GetActiveMotion() const;
+		void FastDyn();
+		
+		void SimByAdamsResultAt(int momentTime);
+		void SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const Aris::DynKer::SIMULATE_SCRIPT *script = nullptr);
+		void SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, int dt);
 	public:
 		union
 		{
@@ -200,6 +238,9 @@ namespace Robots
 
 		Aris::DynKer::PART* pBody;
 		Aris::DynKer::MARKER* pBodyCenter;
+
+	public:
+		
 
 	private:
 		LEG_III LF_Leg{ "LF", this };

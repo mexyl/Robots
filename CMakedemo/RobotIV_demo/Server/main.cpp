@@ -10,15 +10,12 @@ using namespace std;
 
 #include <stdlib.h>
 
+#include <Platform.h>
 #include <Aris_Core.h>
 #include <Aris_Message.h>
-#include <Aris_Control.h>
 #include <Robot_Server.h>
 
 using namespace Aris::Core;
-
-#include "trajectory_generator.h"
-
 
 Aris::Core::MSG parseWalk(const std::string &cmd, const map<std::string, std::string> &params)
 {
@@ -68,7 +65,6 @@ Aris::Core::MSG parseWalk(const std::string &cmd, const map<std::string, std::st
 
 	return msg;
 }
-
 Aris::Core::MSG parseAdjust(const std::string &cmd, const map<std::string, std::string> &params)
 {
 	double firstEE[18] =
@@ -151,12 +147,18 @@ Aris::Core::MSG parseAdjust(const std::string &cmd, const map<std::string, std::
 	return msg;
 }
 
-
 int main()
 {
 	auto rs = Robots::ROBOT_SERVER::GetInstance();
 	rs->CreateRobot<Robots::ROBOT_III>();
+
+#ifdef PLATFORM_IS_LINUX
 	rs->LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
+#endif
+#ifdef PLATFORM_IS_WINDOWS
+	rs->LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
+#endif
+
 	rs->AddGait("wk",Robots::walk,parseWalk);
 	rs->AddGait("ad",Robots::adjust,parseAdjust);
 	rs->Start();

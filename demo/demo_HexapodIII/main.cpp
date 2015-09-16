@@ -44,26 +44,16 @@ int main()
 #endif
 
 	/*Compute inverse position kinematics in Ground coordinates*/
-	double pIn[18];
+	double pIn[18], vIn[18], aIn[18], fIn[18];
 	double pEE_G[18] =
 	{
 		-0.4, -0.75, -0.7,
 		-0.5, -0.75, 0,
 		-0.4, -0.75, 0.7,
-		0.4, -0.75, -0.7,
-		0.5, -0.75, 0,
-		0.4, -0.75, 0.7
+		 0.4, -0.75, -0.7,
+		 0.5, -0.75, 0,
+		 0.4, -0.75, 0.7
 	};
-
-	double bodyPE[6] = { 0.1,0,0,0,0,0 };
-
-	rbt.SetPee(pEE_G, bodyPE, "G");
-	rbt.GetPin(pIn);
-
-	dsp(pIn, 18, 1);
-
-	/*Compute inverse velocity kinematics in Body coordinates*/
-	double vIn[18];
 	double vEE_G[18] =
 	{
 		0, 0, 0,
@@ -73,14 +63,6 @@ int main()
 		0, 0, 0,
 		0, 0, 0
 	};
-	double bodyVel[6] = { 0, 0, 0, 0, 0, 0 };
-
-	rbt.SetVee(vEE_G, bodyVel, "G");
-	rbt.GetVin(vIn);
-
-	dsp(vIn, 18, 1);
-
-	/*Compute forward acceleration kinematics in Leg coordinates*/
 	double aEE_G[18] =
 	{
 		0, 0, 0,
@@ -90,148 +72,26 @@ int main()
 		0, 0, 0,
 		0, 0, 0
 	};
-	double aIn[18];
 
-	double bodyAcc[6] = { 0, 0, 0, 0, 0, 0 };
+	double bodyPE[6]{ 0.01,0.02,0.03,0.04,0.05,0.06 };
+	//double bodyPE[6]{ 0 };
 
+	double bodyVel[6]{ 0,0,0,0,0,0 };
+	//double bodyVel[6]{ 0.9,0.8,0.7,0.6,0.5,0.4 };
+	//double bodyVel[6]{ 0 };
+
+	double bodyAcc[6]{ 0,0,0,0,0,0};
+	//double bodyAcc[6]{ 0 };
+
+	rbt.SetFixFeet("101010");
+	rbt.SetActiveMotion("011111011111011111");
+
+	rbt.SetPee(pEE_G, bodyPE, "G");
+	rbt.SetVee(vEE_G, bodyVel, "G");
 	rbt.SetAee(aEE_G, bodyAcc, "G");
+	rbt.GetPin(pIn);
+	rbt.GetVin(vIn);
 	rbt.GetAin(aIn);
-	dsp(aIn, 18, 1);
-
-
-	rbt.SetPin(pIn);
-	rbt.SetVin(vIn);
-	rbt.SetAin(aIn);
-
-	/*compute dynamics*/
-	double fIn[18];
-
-	rbt.SetFixedFeet("024", "1278de");
-
-	
-	/*
-	{
-		rbt.pLF->pSf->Activate();
-		rbt.pLF->pM1->Activate();
-		rbt.pLF->pM2->Activate();
-		rbt.pLF->pM3->Activate();
-		rbt.pLF->pF1->Deactivate();
-		rbt.pLF->pF2->Deactivate();
-		rbt.pLF->pF3->Deactivate();
-		rbt.pLF->pM1->SetMode(MOTION_BASE::POS_CONTROL);
-		rbt.pLF->pM2->SetMode(MOTION_BASE::POS_CONTROL);
-		rbt.pLF->pM3->SetMode(MOTION_BASE::POS_CONTROL);
-
-		rbt.pLR->pSf->Activate();
-		rbt.pLR->pM1->Activate();
-		rbt.pLR->pM2->Activate();
-		rbt.pLR->pM3->Activate();
-		rbt.pLR->pF1->Deactivate();
-		rbt.pLR->pF2->Deactivate();
-		rbt.pLR->pF3->Deactivate();
-		rbt.pLR->pM1->SetMode(MOTION_BASE::POS_CONTROL);
-		rbt.pLR->pM2->SetMode(MOTION_BASE::POS_CONTROL);
-		rbt.pLR->pM3->SetMode(MOTION_BASE::POS_CONTROL);
-
-		rbt.pRM->pSf->Activate();
-		rbt.pRM->pM1->Activate();
-		rbt.pRM->pM2->Activate();
-		rbt.pRM->pM3->Activate();
-		rbt.pRM->pF1->Deactivate();
-		rbt.pRM->pF2->Deactivate();
-		rbt.pRM->pF3->Deactivate();
-		rbt.pRM->pM1->SetMode(MOTION_BASE::POS_CONTROL);
-		rbt.pRM->pM2->SetMode(MOTION_BASE::POS_CONTROL);
-		rbt.pRM->pM3->SetMode(MOTION_BASE::POS_CONTROL);
-
-		rbt.pLM->pSf->Deactivate();
-		rbt.pLM->pM1->Deactivate();
-		rbt.pLM->pM2->Deactivate();
-		rbt.pLM->pM3->Deactivate();
-		rbt.pLM->pF1->Activate();
-		rbt.pLM->pF2->Activate();
-		rbt.pLM->pF3->Activate();
-		rbt.pLM->pM1->SetMode(MOTION_BASE::FCE_CONTROL);
-		rbt.pLM->pM2->SetMode(MOTION_BASE::FCE_CONTROL);
-		rbt.pLM->pM3->SetMode(MOTION_BASE::FCE_CONTROL);
-
-		rbt.pRF->pSf->Deactivate();
-		rbt.pRF->pM1->Deactivate();
-		rbt.pRF->pM2->Deactivate();
-		rbt.pRF->pM3->Deactivate();
-		rbt.pRF->pF1->Activate();
-		rbt.pRF->pF2->Activate();
-		rbt.pRF->pF3->Activate();
-		rbt.pRF->pM1->SetMode(MOTION_BASE::FCE_CONTROL);
-		rbt.pRF->pM2->SetMode(MOTION_BASE::FCE_CONTROL);
-		rbt.pRF->pM3->SetMode(MOTION_BASE::FCE_CONTROL);
-
-		rbt.pRR->pSf->Deactivate();
-		rbt.pRR->pM1->Deactivate();
-		rbt.pRR->pM2->Deactivate();
-		rbt.pRR->pM3->Deactivate();
-		rbt.pRR->pF1->Activate();
-		rbt.pRR->pF2->Activate();
-		rbt.pRR->pF3->Activate();
-		rbt.pRR->pM1->SetMode(MOTION_BASE::FCE_CONTROL);
-		rbt.pRR->pM2->SetMode(MOTION_BASE::FCE_CONTROL);
-		rbt.pRR->pM3->SetMode(MOTION_BASE::FCE_CONTROL);
-	}
-	*/
-	Activate135(&rbt);
-
-
-
-
-
-
-
-
-
-	try
-	{
-		rbt.FastDyn();
-	}
-	catch (std::exception &e)
-	{
-		cout << e.what();
-	}
-	catch (...)
-	{
-
-	}
-	
-	rbt.GetFin(fIn);
-	rbt.SetFin(fIn);
-	dsp(fIn, 18, 1);
-
-
-
-	
-
-
-
-
-
-	double homeIn[18]
-	{
-		0.675784824916295,0.697784816196987,0.697784816196987,
-		0.675784824916295,0.697784816196987,0.697784816196987,
-		0.675784824916295,0.697784816196987,0.697784816196987,
-		0.675784824916295,0.697784816196987,0.697784816196987,
-		0.675784824916295,0.697784816196987,0.697784816196987,
-		0.675784824916295,0.697784816196987,0.697784816196987,
-	};
-
-	double homeBody[6]{ 0 };
-
-	rbt.SetPin(homeIn, homeBody);
-
-	rbt.GetPee(homeIn,"G");
-
-	dlmwrite("homeIn.txt",homeIn, 6, 3);
-
-
 
 	clock_t  clockBegin, clockEnd;
 	clockBegin = clock();
@@ -249,25 +109,51 @@ int main()
 
 	clockEnd = clock();
 	std::cout << "consumed time is:" << double(clockEnd - clockBegin)/ CLOCKS_PER_SEC << std::endl;
-	
-
-	double dJi_x[9], dJi_y[9], dJi_z[9];
-	rbt.pLM->GetdJacOverPee(dJi_x, dJi_y, dJi_z,"L");
-
-
-
-	cout << "finished" << endl;
-
-
-	
-	rbt.DynPre();
-	rbt.Dyn();
 	rbt.GetFin(fIn);
 	dsp(fIn, 18, 1);
-
-	cout << "finished" << endl;
-
 	
+	rbt.Dyn();
+
+	rbt.ForEachMotion([](Aris::DynKer::MOTION_BASE *mot)
+	{
+		cout << mot->GetMotFce() << endl;
+	});
+
+
+	Robots::ADJUST_PARAM param;
+	std::copy_n(pEE_G, 18, &param.targetPee[0][0]);
+	std::copy_n(bodyPE, 6, &param.targetBodyPE[0][0]);
+
+	param.targetBodyPE[0][3] += 0.1;
+	param.targetPee[0][16] += 0.1;
+	
+	rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test", Robots::adjust, &param, 10);
+	
+	rbt.ForEachMotion([](Aris::DynKer::MOTION_BASE *mot)
+	{
+		cout << mot->GetMotFce() << endl;
+	});
+
+	double data[3];
+	rbt.pRR->GetPee(data, "G");
+	dsp(data, 3,1);
+	
+	double bodyPe[] = { 0,0,0,0,-0.871,0 };
+	rbt.SetPee(pEE_G, bodyPe);
+	rbt.GetBodyPe(bodyPe);
+	double bodyPe2[] = { 0,0,0,0,-2 * 0.871,0 };
+	rbt.SetPee(pEE_G, bodyPe2);
+	rbt.GetBodyPe(bodyPe2);
+	dsp(bodyPe,1,6);
+	
+
+
+
+//rbt.SimByAdamsResultAt(155);
+
+	//rbt.GetFinDyn(fIn);
+	//dsp(fIn, 18, 1);
+
 	/*
 	rbt.ForEachForce([](Aris::DynKer::FORCE_BASE *fce) 
 	{
@@ -275,7 +161,7 @@ int main()
 	});
 
 	int clb_dim_m, clb_dim_n, gamma_dim, frc_coe_dim;
-	rbt.ClbDim(clb_dim_m, clb_dim_n, gamma_dim, frc_coe_dim);
+	rbt.ClbPre(clb_dim_m, clb_dim_n, gamma_dim, frc_coe_dim);
 
 	Aris::DynKer::MATRIX clb_d, clb_b, clb_gamma;
 	clb_d.Resize(clb_dim_m, clb_dim_n);
@@ -284,31 +170,30 @@ int main()
 
 
 	rbt.ClbMtx(clb_d.Data(),clb_b.Data());
-	rbt.ClbGammaAndFrcCoe(clb_gamma.Data());
+	rbt.ClbUnk(clb_gamma.Data());
 
 	clb_b.dsp();
 
 	clb_b = clb_d*clb_gamma;
 
 	clb_b.dsp();
-	
 	*/
+	
 
 	//rbt.SaveAdams("test");
 	
-	Aris::DynKer::SIMULATE_SCRIPT script;
-	Robots::Activate024(0, &rbt, &script);
-	Robots::Activate135(3000, &rbt, &script);
-	script.ScriptDt(10);
+	//Aris::DynKer::SIMULATE_SCRIPT script;
+	//Robots::Activate024(0, &rbt, &script);
+	//Robots::Activate135(3000, &rbt, &script);
+	//script.SetDt(10);
 
-	Robots::WALK_PARAM wp;
-	std::copy(pEE_G, pEE_G + 18, wp.beginPee);
+	//Robots::WALK_PARAM wp;
+	//std::copy(pEE_G, pEE_G + 18, wp.beginPee);
 
-	rbt.SimulateForwardByAdams("test", walk, &wp, &script);
+	//rbt.SimByAdams("test", walk, &wp, &script);
 	
 
-
-	
+		
 	/*
 	double pIni = rbt.pLF->pM1->GetP_mPtr()[0];
 
