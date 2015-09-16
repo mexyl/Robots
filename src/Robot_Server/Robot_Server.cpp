@@ -421,10 +421,12 @@ namespace Robots
 		Aris::DynKer::CALCULATOR c;
 		auto mat = c.CalculateExpression(pContEle->FirstChildElement("HomeEE")->GetText());
 		std::copy_n(mat.Data(), 18, homeEE);
+		std::string homeCurStr(pContEle->Attribute("homeCur"));
+		homeCur = std::stoi(homeCurStr);
 
+		/*construct mapPhy2Abs and mapAbs2Phy*/
 		std::string mapPhy2AbsText{ pContEle->FirstChildElement("MapPhy2Abs")->GetText() };
 		std::stringstream stream(mapPhy2AbsText);
-
 		for (int i = 0; i < 18; ++i)
 		{
 			std::string word;
@@ -436,11 +438,12 @@ namespace Robots
 					break;
 			}
 		}
-
 		for (int i = 0; i < 18; ++i)
 		{
 			mapAbs2Phy[i] = std::find(mapPhy2Abs, mapPhy2Abs + 18, i) - mapPhy2Abs;
 		}
+
+		
 
 
 
@@ -898,8 +901,7 @@ namespace Robots
 
 				if (param->count % 1000 == 0)
 				{
-					rt_printf("motor %d not homed, physical id is:\n", id[i]);
-					rt_printf("motor %d not homed, absolute id is:\n", param->motorID[i]);
+					rt_printf("motor not homed, physical id: %d, absolute id: %d\n", id[i], param->motorID[i]);
 				}
 			}
 		}
@@ -1132,7 +1134,7 @@ namespace Robots
 
 			if (count % 1000 == 0)
 			{
-				rt_printf("the cmd is:%d in count:%d\n", cmdData.motorsCommands[0], count);
+				rt_printf("the server is in count: %d\n", cmdData.motorsCommands[0], count);
 			}
 		}
 		else
