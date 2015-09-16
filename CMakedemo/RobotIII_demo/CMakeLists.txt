@@ -101,7 +101,6 @@ if(UNIX)
 endif(UNIX)
 
 install(TARGETS Server Client RUNTIME DESTINATION bin)
-install(DIRECTORY resource/ DESTINATION resource)
 
 
 
