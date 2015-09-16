@@ -1,4 +1,4 @@
-#include <Platform.h>
+ï»¿#include <Platform.h>
 
 #include <iostream>
 #include <list>
@@ -21,9 +21,9 @@ namespace Robots
 	int SendRequest(int argc, char *argv[], const char *xmlFileName)
 	{
 		Aris::Core::MSG msg;
-		/*¹¹Ôìmsg£¬ÕâÀïĞèÒªÏÈcopyÃüÁîÃû³Æ£¬È»ºóÒÀ´Îcopy¸÷¸ö²ÎÊı*/
+		/*æ„é€ msgï¼Œè¿™é‡Œéœ€è¦å…ˆcopyå‘½ä»¤åç§°ï¼Œç„¶åä¾æ¬¡copyå„ä¸ªå‚æ•°*/
 
-		/*copyÃüÁîÃû³Æ£¬ĞèÒªÈ¥³ıÂ·¾¶ÃûºÍÀ©Õ¹Ãû*/
+		/*copyå‘½ä»¤åç§°ï¼Œéœ€è¦å»é™¤è·¯å¾„åå’Œæ‰©å±•å*/
 		std::string cmdName(argv[0]);
 		
 #ifdef PLATFORM_IS_WINDOWS
@@ -45,17 +45,17 @@ namespace Robots
 		}
 		msg.CopyMore(cmdName.c_str(), cmdName.length()+1);
 		
-		/*copyÆäÓà²ÎÊı*/
+		/*copyå…¶ä½™å‚æ•°*/
 		for (int i = 1; i < argc; ++i)
 		{
 			msg.CopyMore(argv[i], std::strlen(argv[i])+1);
 		}
 
-		/*Î²²¿Ìí¼ÓÒ»¸ö½ØÖÁ·û*/
+		/*å°¾éƒ¨æ·»åŠ ä¸€ä¸ªæˆªè‡³ç¬¦*/
 		char endChar = '\0';
 		msg.CopyMore(&endChar, 1);
 
-		/*Á¬½Ó²¢·¢ËÍmsg*/
+		/*è¿æ¥å¹¶å‘é€msg*/
 		Aris::Core::DOCUMENT doc;
 
 		if (doc.LoadFile(xmlFileName) != 0)
@@ -69,15 +69,15 @@ namespace Robots
 		conn.Connect(ip.c_str(), port.c_str());
 		Aris::Core::MSG ret = conn.SendRequest(msg);
 
-		/*´íÎó´¦Àí*/
+		/*é”™è¯¯å¤„ç†*/
 		if (ret.GetLength() > 0)
 		{
 			cout << "cmd has fault, please regard to following information:" << endl;
-			cout << "    " << ret.GetDataAddress();
+			cout << "    " << ret.GetDataAddress() << std::endl;
 		}
 		else
 		{
-			cout << "send command successful";
+			cout << "send command successful" << std::endl;
 		}
 
 		return 0;
