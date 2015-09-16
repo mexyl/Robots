@@ -342,7 +342,10 @@ namespace Robots
 		{
 			if (dynamic_cast<ROOT_NODE*>(pNode))
 			{
-				if ((pNode->children.empty()) || (dynamic_cast<ROOT_NODE*>(pNode)->pDefault))
+				if (pNode->children.empty())
+				{
+				}
+				else if ((dynamic_cast<ROOT_NODE*>(pNode)->pDefault))
 				{
 					addAllDefault(dynamic_cast<ROOT_NODE*>(pNode)->pDefault, params);
 				}
@@ -356,7 +359,11 @@ namespace Robots
 
 			if (dynamic_cast<UNIQUE_NODE*>(pNode))
 			{
-				if ((pNode->children.empty()) || (dynamic_cast<UNIQUE_NODE*>(pNode)->pDefault))
+				if (pNode->children.empty())
+				{
+					
+				}
+				else if (dynamic_cast<UNIQUE_NODE*>(pNode)->pDefault)
 				{
 					addAllDefault(dynamic_cast<UNIQUE_NODE*>(pNode)->pDefault, params);
 				}
