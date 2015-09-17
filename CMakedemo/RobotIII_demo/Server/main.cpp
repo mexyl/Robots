@@ -61,8 +61,6 @@ Aris::Core::MSG parseWalk(const std::string &cmd, const map<std::string, std::st
 
 	msg.CopyStruct(param);
 
-	std::cout<<"finished parse"<<std::endl;
-
 	return msg;
 }
 Aris::Core::MSG parseAdjust(const std::string &cmd, const map<std::string, std::string> &params)

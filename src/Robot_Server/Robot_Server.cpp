@@ -342,16 +342,16 @@ namespace Robots
 		{
 			if (dynamic_cast<ROOT_NODE*>(pNode))
 			{
-				if (pNode->children.empty())
+				if (!pNode->children.empty())
 				{
-				}
-				else if ((dynamic_cast<ROOT_NODE*>(pNode)->pDefault))
-				{
-					addAllDefault(dynamic_cast<ROOT_NODE*>(pNode)->pDefault, params);
-				}
-				else
-				{
-					throw std::logic_error(std::string("cmd \"") + pNode->name + "\" has no default param");
+					if ((dynamic_cast<ROOT_NODE*>(pNode)->pDefault))
+					{
+						addAllDefault(dynamic_cast<ROOT_NODE*>(pNode)->pDefault, params);
+					}
+					else
+					{
+						throw std::logic_error(std::string("cmd \"") + pNode->name + "\" has no default param");
+					}
 				}
 
 				pNode->isTaken = true;
@@ -359,17 +359,16 @@ namespace Robots
 
 			if (dynamic_cast<UNIQUE_NODE*>(pNode))
 			{
-				if (pNode->children.empty())
+				if (!pNode->children.empty())
 				{
-					
-				}
-				else if (dynamic_cast<UNIQUE_NODE*>(pNode)->pDefault)
-				{
-					addAllDefault(dynamic_cast<UNIQUE_NODE*>(pNode)->pDefault, params);
-				}
-				else
-				{
-					throw std::logic_error(std::string("param \"") + pNode->name + "\" has no default sub-param");
+					if (dynamic_cast<UNIQUE_NODE*>(pNode)->pDefault)
+					{
+						addAllDefault(dynamic_cast<UNIQUE_NODE*>(pNode)->pDefault, params);
+					}
+					else
+					{
+						throw std::logic_error(std::string("param \"") + pNode->name + "\" has no default sub-param");
+					}
 				}
 
 				pNode->isTaken = true;
@@ -378,7 +377,10 @@ namespace Robots
 			if (dynamic_cast<GROUP_NODE*>(pNode))
 			{
 				for (auto &i : pNode->children)
+				{
 					addAllDefault(i.get(), params);
+				}
+					
 
 				pNode->isTaken = true;
 			}
@@ -416,13 +418,11 @@ namespace Robots
 			throw std::logic_error((std::string("could not open file:") + std::string(fileName)));
 		}
 
-
 		/*load connection param*/
 		auto pConnEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Connection");
 		ip = pConnEle->Attribute("IP");
 		port = pConnEle->Attribute("Port");
 
-		
 		/*load home parameters and map*/
 		auto pContEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control");
 		Aris::DynKer::CALCULATOR c;
@@ -546,15 +546,11 @@ namespace Robots
 
 		server.SetOnReceivedConnection([](Aris::Core::CONN *pConn, const char *pRemoteIP, int remotePort)
 		{
-			std::cout << "control client received:" << std::endl;
-			std::cout << "    remote ip is:" << pRemoteIP << std::endl;
-			std::cout << std::endl;
+			Aris::Core::log(std::string("received connection, the ip is: ") + pRemoteIP +"\n");
 			return 0;
 		});
 		server.SetOnReceiveRequest([this](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
 		{
-			std::cout << "received request" << std::endl;
-
 			Aris::Core::MSG ret;
 			this->ExecuteMsg(msg,ret);
 
@@ -562,8 +558,7 @@ namespace Robots
 		});
 		server.SetOnLoseConnection([this](Aris::Core::CONN *pConn)
 		{
-			std::cout << "control interface lost" << std::endl;
-
+			Aris::Core::log("lost connection\n");
 			while (true)
 			{
 				try
@@ -627,31 +622,46 @@ namespace Robots
 	}
 	void ROBOT_SERVER::DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string, std::string> &params)
 	{
-		std::vector<const char *> argv;
+		std::vector<std::string> paramVector;
+		int paramNum{0};
 
-		char *param = msg.GetDataAddress();
-		cmd = std::string(param);
-		param += std::strlen(param) + 1;
-
-		int paramNum = 0;
-		while (*param != '\0')
+		/*将msg转换成cmd和一系列参数，不过这里的参数为原生字符串，既包括名称也包含值，例如“-heigt=0.5”*/
+		if (msg.GetDataAddress()[msg.GetLength() - 1] == '\0')
 		{
-			int currentPos = param - msg.GetDataAddress();
-			if (currentPos + static_cast<int>(std::strlen(param)) > msg.GetLength())
+			std::string input{ msg.GetDataAddress() };
+			std::stringstream inputStream{ input };
+			std::string word;
+
+			if (!(inputStream >> cmd))
 			{
-				throw std::runtime_error("invalid message from client, please be sure that the command message end with char \'0\'");
+				throw std::logic_error(Aris::Core::log("invalid message from client, please at least contain a word\n"));
+			};
+			Aris::Core::log(std::string("received command string:")+msg.GetDataAddress()+"\n");
+
+			while (inputStream >> word)
+			{
+				paramVector.push_back(word);
+				++paramNum;
 			}
-			
-			argv.push_back(param);
-			param += std::strlen(param) + 1;
-			paramNum++;
+		}
+		else
+		{
+			throw std::logic_error(Aris::Core::log("invalid message from client, please be sure that the command message end with char \'\\0\'\n"));
 		}
 
-		mapCmd.at(cmd)->root->Reset();
+		if (mapCmd.find(cmd) != mapCmd.end())
+		{
+			mapCmd.at(cmd)->root->Reset();
+		}
+		else
+		{
+			throw std::logic_error(Aris::Core::log(std::string("invalid command name, server does not have command \"") + cmd + "\"\n"));
+		}
+		
 
 		for (int i = 0; i<paramNum; ++i)
 		{
-			string str{ argv[i] };
+			string str{ paramVector[i] };
 			string paramName, paramValue;
 			if (str.find("=") == string::npos)
 			{
@@ -672,14 +682,20 @@ namespace Robots
 			{
 				if (paramValue != "")
 				{
-					throw logic_error("invalid param: only param start with - or -- can be assigned a value");
+					throw logic_error("invalid param: only param start with - or -- can be assigned a value\n");
 				}
-
 
 				for (auto c : paramName)
 				{
-					params.insert(make_pair(mapCmd.at(cmd)->shortNames.at(c), string("")));
-					mapCmd.at(cmd)->allParams.at(mapCmd.at(cmd)->shortNames.at(c))->Take();
+					if (mapCmd.at(cmd)->shortNames.find(c) != mapCmd.at(cmd)->shortNames.end())
+					{
+						params.insert(make_pair(mapCmd.at(cmd)->shortNames.at(c), paramValue));
+						mapCmd.at(cmd)->allParams.at(mapCmd.at(cmd)->shortNames.at(c))->Take();
+					}
+					else
+					{
+						throw logic_error(std::string("invalid param: param \"") + c + "\" is not a abbreviation of any valid param" );
+					}
 				}
 
 				continue;
@@ -701,8 +717,15 @@ namespace Robots
 
 				char c = paramName.data()[1];
 
-				params.insert(make_pair(mapCmd.at(cmd)->shortNames.at(c), paramValue));
-				mapCmd.at(cmd)->allParams.at(mapCmd.at(cmd)->shortNames.at(c))->Take();
+				if (mapCmd.at(cmd)->shortNames.find(c) != mapCmd.at(cmd)->shortNames.end())
+				{
+					params.insert(make_pair(mapCmd.at(cmd)->shortNames.at(c), paramValue));
+					mapCmd.at(cmd)->allParams.at(mapCmd.at(cmd)->shortNames.at(c))->Take();
+				}
+				else
+				{
+					throw logic_error(std::string("invalid param: param \"") + c + "\" is not a abbreviation of any valid param");
+				}
 
 				continue;
 			}
@@ -717,8 +740,17 @@ namespace Robots
 				string str = paramName;
 				paramName.assign(str, 2, str.size() - 2);
 
-				params.insert(make_pair(paramName, paramValue));
-				mapCmd.at(cmd)->allParams.at(paramName)->Take();
+				if (mapCmd.at(cmd)->allParams.find(paramName) != mapCmd.at(cmd)->allParams.end())
+				{
+					params.insert(make_pair(paramName, paramValue));
+					mapCmd.at(cmd)->allParams.at(paramName)->Take();
+				}
+				else
+				{
+					throw logic_error(std::string("invalid param: param \"") + paramName + "\" is not a valid param");
+				}
+
+				
 
 				continue;
 			}
@@ -727,9 +759,24 @@ namespace Robots
 		addAllDefault(mapCmd.at(cmd)->root.get(), params);
 
 		cout << cmd << endl;
+
+		int paramPrintLength;
+		if (params.empty())
+		{
+			paramPrintLength = 2;
+		}
+		else
+		{
+			paramPrintLength = std::max_element(params.begin(), params.end(), [](decltype(*params.begin()) a, decltype(*params.begin()) b)
+			{
+				return a.first.length() < b.first.length();
+			})->first.length() + 2;
+		}
+
+		int maxParamNameLength{ 0 };
 		for (auto &i : params)
 		{
-			cout << i.first << ":" << i.second << endl;
+			cout << std::string(paramPrintLength-i.first.length(),' ') << i.first << " : " << i.second << endl;
 		}
 	}
 	void ROBOT_SERVER::GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::MSG &msg)
@@ -874,12 +921,18 @@ namespace Robots
 		if (cmdPair != this->mapName2ID.end())
 		{
 			msg = this->allParsers.at(cmdPair->second).operator()(cmd, params);
+
+			if (msg.GetLength() < sizeof(GAIT_PARAM_BASE))
+			{
+				throw std::logic_error(std::string("parse function of command \"") + cmdPair->first + "\" failed: because it returned invalid msg\n");
+			}
+
 			reinterpret_cast<GAIT_PARAM_BASE *>(msg.GetDataAddress())->cmdType=RUN_GAIT;
 			reinterpret_cast<GAIT_PARAM_BASE *>(msg.GetDataAddress())->cmdID=cmdPair->second;
 		}
 		else
 		{
-			cout << "cmd not found" << endl;
+			throw std::logic_error(std::string("command \"") + cmdPair->first + "\" does not have gait function, please AddGait() first\n");
 		}
 	}
 	
@@ -889,9 +942,6 @@ namespace Robots
 
 		int id[18];
 		a2p(param->motorID, id, param->motorNum);
-
-		if(param->count%1000==0)
-			rt_printf("motor %d is homing",id[0]);
 
 		for (int i = 0; i< param->motorNum; ++i)
 		{
@@ -1141,7 +1191,7 @@ namespace Robots
 
 			if (count % 1000 == 0)
 			{
-				rt_printf("the server is in count: %d\n", cmdData.motorsCommands[0], count);
+				rt_printf("the server is in count: %d\n", count);
 			}
 		}
 		else
@@ -1210,8 +1260,6 @@ namespace Robots
 
 		return 0;
 	}
-
-
 }
 
 

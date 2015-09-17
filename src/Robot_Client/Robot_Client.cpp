@@ -20,10 +20,7 @@ namespace Robots
 {
 	int SendRequest(int argc, char *argv[], const char *xmlFileName)
 	{
-		Aris::Core::MSG msg;
-		/*构造msg，这里需要先copy命令名称，然后依次copy各个参数*/
-
-		/*copy命令名称，需要去除路径名和扩展名*/
+		/*需要去除命令名的路径和扩展名*/
 		std::string cmdName(argv[0]);
 		
 #ifdef PLATFORM_IS_WINDOWS
@@ -43,17 +40,20 @@ namespace Robots
 		{
 			cmdName = cmdName.substr(0, cmdName.rfind('.'));
 		}
-		msg.CopyMore(cmdName.c_str(), cmdName.length()+1);
-		
-		/*copy其余参数*/
+
+		/*添加命令的所有参数*/
 		for (int i = 1; i < argc; ++i)
 		{
-			msg.CopyMore(argv[i], std::strlen(argv[i])+1);
+			cmdName = cmdName + " " + argv[i];
 		}
 
-		/*尾部添加一个截至符*/
-		char endChar = '\0';
-		msg.CopyMore(&endChar, 1);
+
+
+		/*构造msg，这里需要先copy命令名称，然后依次copy各个参数*/
+		Aris::Core::MSG msg;
+		msg.Copy(cmdName.c_str());
+		
+
 
 		/*连接并发送msg*/
 		Aris::Core::DOCUMENT doc;
