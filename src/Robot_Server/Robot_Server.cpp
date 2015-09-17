@@ -406,8 +406,6 @@ namespace Robots
 	};
 	std::map<std::string, std::unique_ptr<COMMAND_STRUCT> > mapCmd;
 
-	const double meter2count = 1 / 0.01*3.5 * 65536;
-
 	void ROBOT_SERVER::LoadXml(const char *fileName)
 	{
 		/*open xml file*/
@@ -430,6 +428,7 @@ namespace Robots
 		std::copy_n(mat.Data(), 18, homeEE);
 		std::string homeCurStr(pContEle->Attribute("homeCur"));
 		homeCur = std::stoi(homeCurStr);
+		meter2count = c.CalculateExpression(pContEle->Attribute("meter2count")).ToDouble();
 
 		/*construct mapPhy2Abs and mapAbs2Phy*/
 		std::string mapPhy2AbsText{ pContEle->FirstChildElement("MapPhy2Abs")->GetText() };
@@ -973,10 +972,9 @@ namespace Robots
 
 			for (int i = 0; i < param->legNum; ++i)
 			{
-				rt_printf("leg:%d\n", param->legID[i]);
+				rt_printf("leg %d is homed\n", param->legID[i]);
 				pRobot->pLegs[param->legID[i]]->SetPee(&homeEE[param->legID[i] * 3], "B");
 			}
-			//pRobot->SetPin(homeIn,pBody);
 			pRobot->SetVee(vEE, vBody);
 
 			return 0;

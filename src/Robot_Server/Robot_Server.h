@@ -97,7 +97,7 @@ namespace Robots
 
 		double homeEE[18], homeIn[18];
 		int homeCount[18];
-		int homeCur{0};
+		int homeCur{0},meter2count;
 
 		int mapPhy2Abs[18];
 		int mapAbs2Phy[18];
