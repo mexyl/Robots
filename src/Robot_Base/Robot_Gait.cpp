@@ -953,12 +953,26 @@ namespace Robots
 			for (int i = 0; i < 18; ++i)
 			{
 				pEE[i] = pAP->beginPee[i] * (cos(s) + 1) / 2 + realTargetPee[pos][i] * (1 - cos(s)) / 2;
-				
 			}
-			for (int i = 0; i < 6; ++i)
+			
+			/*以下用四元数进行插值*/
+			double pq_first[7], pq_second[7], pq[7];
+			s_pe2pq(pAP->beginBodyPE, pq_first);
+			s_pe2pq(realTargetPbody[pos], pq_second);
+
+			if (s_vn_dot_vn(4, &pq_first[3], &pq_second[3]) < 0)
 			{
-				pBody[i] = pAP->beginBodyPE[i] * (cos(s) + 1) / 2 + realTargetPbody[pos][i] * (1 - cos(s)) / 2;
+				for (int i = 3; i < 7; ++i)
+				{
+					pq_second[i] = -pq_second[i];
+				}
 			}
+
+			for (int i = 0; i < 7; ++i)
+			{
+				pq[i] = pq_first[i] * (cos(s) + 1) / 2 + pq_second[i] * (1 - cos(s)) / 2;
+			}
+			s_pq2pe(pq, pBody);
 		}
 		else
 		{
@@ -967,10 +981,28 @@ namespace Robots
 				pEE[i] = realTargetPee[pos-1][i] * (cos(s) + 1) / 2 + realTargetPee[pos][i] * (1 - cos(s)) / 2;
 				
 			}
-			for (int i = 0; i < 6; ++i)
+			/*for (int i = 0; i < 6; ++i)
 			{
 				pBody[i] = realTargetPbody[pos - 1][i] * (cos(s) + 1) / 2 + realTargetPbody[pos][i] * (1 - cos(s)) / 2;
+			}*/
+			/*以下用四元数进行插值*/
+			double pq_first[7], pq_second[7], pq[7];
+			s_pe2pq(realTargetPbody[pos - 1], pq_first);
+			s_pe2pq(realTargetPbody[pos], pq_second);
+
+			if (s_vn_dot_vn(4, &pq_first[3], &pq_second[3]) < 0)
+			{
+				for (int i = 3; i < 7; ++i)
+				{
+					pq_second[i] = -pq_second[i];
+				}
 			}
+
+			for (int i = 0; i < 7; ++i)
+			{
+				pq[i] = pq_first[i] * (cos(s) + 1) / 2 + pq_second[i] * (1 - cos(s)) / 2;
+			}
+			s_pq2pe(pq, pBody);
 		}
 
 		pRobot->SetPee(pEE, pBody);

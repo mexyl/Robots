@@ -819,7 +819,7 @@ namespace Robots
 		double error = s_dnrm2(dim,vIn,1);
 
 		/*迭代计算身体的位姿*/
-		while(error>1e-13)
+		while(error>1e-11)
 		{
 			GetJvi(jac, supportMotor);
 			if (dim == 6)

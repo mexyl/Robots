@@ -466,12 +466,6 @@ namespace Robots
 			homeCount[i] = -static_cast<int>(homeIn[mapPhy2Abs[i]] * meter2count);
 		}
 
-		std::cout<<"abs to phy:"<<std::endl;
-		for(int i=0;i<18;++i)cout<<mapAbs2Phy[i]<<std::endl;
-
-		std::cout<<"home count:"<<std::endl;
-		for(int i=0;i<18;++i)cout<<homeCount[i]<<std::endl;
-
 		/*begin to copy client and insert cmd nodes*/
 		const int TASK_NAME_LEN = 1024;
 		char path_char[TASK_NAME_LEN] = { 0 };

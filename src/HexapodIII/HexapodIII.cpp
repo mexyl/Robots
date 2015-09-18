@@ -1412,6 +1412,7 @@ namespace Robots
 	{
 		std::vector<std::vector<double> > motionPos(18);
 		std::vector<std::vector<double> > motionFce(18);
+		std::vector<std::array<double, 6> > bodyPeList;
 		std::vector<double> time;
 
 		/*设置motion pos的Akima函数*/
@@ -1419,6 +1420,9 @@ namespace Robots
 		this->GetPee(param->beginPee);
 		this->GetBodyPe(param->beginBodyPE);
 		time.push_back(0);
+		std::array<double, 6> bodyPe;
+		this->GetBodyPe(bodyPe.data());
+		bodyPeList.push_back(bodyPe);
 		double pIn[18];
 		this->GetPin(pIn);
 		for (int i = 0; i < 18; ++i)
@@ -1442,6 +1446,10 @@ namespace Robots
 				{
 					motionPos[i].push_back(pIn[i]);
 				}
+
+				std::array<double, 6> bodyPe;
+				this->GetBodyPe(bodyPe.data());
+				bodyPeList.push_back(bodyPe);
 			}
 			param->count++;
 		}
@@ -1453,6 +1461,7 @@ namespace Robots
 			this->GetMotion(i)->SetPosAkimaCurve(time.size(), time.data(), motionPos[i].data());
 		}
 
+		this->SetPee(param->beginPee, param->beginBodyPE, "G");
 		/*使用FastDyn计算驱动力的大小*/
 		for (std::size_t i = 0; i < time.size(); ++i)
 		{
@@ -1465,9 +1474,10 @@ namespace Robots
 				aIn[j] = this->GetMotion(j)->PosAkima(time[i], '2');
 			}
 
-			double pe[6];
-			this->GetBodyPe(pe);
-			this->SetPinFixFeet(pIn, this->GetFixFeet(), this->GetActiveMotion(), pe);
+			//double pe[6];
+			//this->GetBodyPe(pe);
+			//this->SetPinFixFeet(pIn, this->GetFixFeet(), this->GetActiveMotion(), pe);
+			this->SetPin(pIn, bodyPeList[i].data());
 			this->SetVinFixFeet(vIn, this->GetFixFeet(), this->GetActiveMotion());
 			this->SetAinFixFeet(aIn, this->GetFixFeet(), this->GetActiveMotion());
 
