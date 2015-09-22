@@ -1,3 +1,6 @@
+#ifndef ROBOT_CLIENT_H
+#define ROBOT_CLIENT_H
+
 
 namespace Robots
 {
@@ -5,3 +8,4 @@ namespace Robots
 }
 
 
+#endif

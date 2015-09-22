@@ -14,6 +14,13 @@
 #include <Aris_XML.h>
 #include <Aris_Core.h>
 
+#ifdef PLATFORM_IS_WINDOWS
+#include<Windows.h>
+#endif
+#ifdef PLATFORM_IS_LINUX
+#include<unistd.h>
+#endif
+
 using namespace std;
 
 namespace Robots
@@ -66,7 +73,26 @@ namespace Robots
 
 		Aris::Core::CONN conn;
 
-		conn.Connect(ip.c_str(), port.c_str());
+		while (true)
+		{
+			try 
+			{
+				conn.Connect(ip.c_str(), port.c_str());
+				break;
+			}
+			catch (std::exception &e)
+			{
+				cout << "failed to connect server, will retry in 1 second" << endl;
+#ifdef PLATFORM_IS_LINUX
+				usleep(1000000);
+#endif
+#ifdef PLATFORM_IS_WINDOWS
+				Sleep(1000);
+#endif
+			}
+			
+		}
+		
 		Aris::Core::MSG ret = conn.SendRequest(msg);
 
 		/*错误处理*/

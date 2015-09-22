@@ -1,4 +1,7 @@
-﻿#include <Platform.h>
+﻿#ifndef ROBOT_SERVER_H
+#define ROBOT_SERVER_H
+
+#include <Platform.h>
 
 #ifdef PLATFORM_IS_LINUX
 #include <Aris_Control.h>
@@ -109,5 +112,5 @@ namespace Robots
 
 }
 
-
+#endif
 
