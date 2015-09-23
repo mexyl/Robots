@@ -22,7 +22,7 @@ using namespace Aris::Core;
 
 Aris::Sensor::IMU imu;
 
-int fast(Robots::ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE * pParam)
+int test(Robots::ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE * pParam)
 {
 	auto data = imu.GetSensorData();
 	
@@ -46,7 +46,7 @@ int main()
 	rs->LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
 #endif
 
-	rs->AddGait("wk", Robots::walk, fast);
+	rs->AddGait("wk", Robots::walk, test);
 	rs->AddGait("ad", Robots::adjust, Robots::parseAdjust);
 	rs->Start();
 
