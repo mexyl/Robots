@@ -11,24 +11,31 @@ using namespace std;
 #include <stdlib.h>
 
 #include <Platform.h>
+#include <Aris_Control.h>
 #include <Aris_Core.h>
 #include <Aris_Message.h>
+#include <Aris_IMU.h>
 #include <Robot_Server.h>
 #include <HexapodIII.h>
 
 using namespace Aris::Core;
 
-//int fast(Robots::ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE * pParam)
-//{
-//	auto pRealRobot = dynamic_cast<Robots::ROBOT_III *>(pRobot);
-//	pRealRobot->FastDyn();
-//	pRealRobot->pLF->pSf->Activate();
-//
-//
-//}
+Aris::Sensor::IMU imu;
+
+int fast(Robots::ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE * pParam)
+{
+	auto data = imu.GetSensorData();
+	
+	rt_printf("%d  %d  %d\n", data.Get().a, data.Get().b, data.Get().c);
+
+}
 
 int main()
 {
+	Aris::Sensor::IMU imu;
+	imu.Start();
+	
+	
 	auto rs = Robots::ROBOT_SERVER::GetInstance();
 	rs->CreateRobot<Robots::ROBOT_III>();
 
@@ -39,7 +46,7 @@ int main()
 	rs->LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
 #endif
 
-	rs->AddGait("wk", Robots::walk, Robots::parseWalk);
+	rs->AddGait("wk", Robots::walk, fast);
 	rs->AddGait("ad", Robots::adjust, Robots::parseAdjust);
 	rs->Start();
 
