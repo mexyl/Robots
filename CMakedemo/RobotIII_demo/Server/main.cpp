@@ -18,14 +18,14 @@ using namespace std;
 
 using namespace Aris::Core;
 
-int fast(Robots::ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE * pParam)
-{
-	auto pRealRobot = dynamic_cast<Robots::ROBOT_III *>(pRobot);
-	pRealRobot->FastDyn();
-	pRealRobot->pLF->pSf->Activate();
-
-
-}
+//int fast(Robots::ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE * pParam)
+//{
+//	auto pRealRobot = dynamic_cast<Robots::ROBOT_III *>(pRobot);
+//	pRealRobot->FastDyn();
+//	pRealRobot->pLF->pSf->Activate();
+//
+//
+//}
 
 int main()
 {

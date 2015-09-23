@@ -15,8 +15,7 @@
 #include <Aris_Plan.h>
 #include <Robot_Base.h>
 
-
-using namespace std;
+//using namespace std;
 
 namespace Robots
 {
@@ -28,11 +27,9 @@ namespace Robots
 		NODE* AddChildParam(const char *Name);
 		NODE* FindChild(const char *Name)
 		{
-			auto result = find_if(children.begin(), children.end(), [Name](std::unique_ptr<NODE> &node)
+			auto result = std::find_if(children.begin(), children.end(), [Name](std::unique_ptr<NODE> &node)
 			{
-				bool is = !strcmp(node->name.c_str(), Name);
-
-				return is;
+				return (!std::strcmp(node->name.c_str(), Name));
 			});
 
 			if (result != children.end())
@@ -61,14 +58,14 @@ namespace Robots
 		virtual ~NODE() {};
 
 	private:
-		string name;
+		std::string name;
 		NODE* father;
 		std::vector<std::unique_ptr<NODE> > children;
 
 		bool isTaken{ false };
 
-		friend void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, map<string, NODE *> &allParams, map<char, string>& shortNames);
-		friend void addAllDefault(NODE *pNode, map<string, string> &params);
+		friend void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
+		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
 	};
 	class ROOT_NODE :public NODE
 	{
@@ -78,8 +75,8 @@ namespace Robots
 	private:
 		NODE *pDefault;
 
-		friend void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, map<string, NODE *> &allParams, map<char, string>& shortNames);
-		friend void addAllDefault(NODE *pNode, map<string, string> &params);
+		friend void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
+		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
 	};
 	class GROUP_NODE :public NODE
 	{
@@ -94,8 +91,8 @@ namespace Robots
 	private:
 		NODE *pDefault;
 
-		friend void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, map<string, NODE *> &allParams, map<char, string>& shortNames);
-		friend void addAllDefault(NODE *pNode, map<string, string> &params);
+		friend void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
+		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
 	};
 	class PARAM_NODE :public NODE
 	{
@@ -106,8 +103,8 @@ namespace Robots
 		std::string defaultValue;
 		std::string minValue, maxValue;
 
-		friend void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, map<string, NODE *> &allParams, map<char, string>& shortNames);
-		friend void addAllDefault(NODE *pNode, map<string, string> &params);
+		friend void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
+		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
 	};
 
 	NODE* NODE::AddChildGroup(const char *Name)
@@ -165,7 +162,7 @@ namespace Robots
 		}
 	}
 
-	void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, map<string, NODE *> &allParams, map<char, string>& shortNames)
+	void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames)
 	{
 		/*add all children*/
 		for (auto pChild = pEle->FirstChildElement();pChild != nullptr;	pChild = pChild->NextSiblingElement())
@@ -173,7 +170,7 @@ namespace Robots
 			/*check if children already has this value*/
 			if (pNode->FindChild(pChild->Name()))
 			{
-				throw logic_error(std::string("XML file has error: node \"") + pChild->Name() + "\" already exist");
+				throw std::logic_error(std::string("XML file has error: node \"") + pChild->Name() + "\" already exist");
 			}
 
 			/*set all children*/
@@ -190,14 +187,14 @@ namespace Robots
 				/*now the pChild is a param_node*/
 				NODE * insertNode;
 
-				if (allParams.find(string(pChild->Name())) != allParams.end())
+				if (allParams.find(std::string(pChild->Name())) != allParams.end())
 				{
 					throw std::logic_error(std::string("XML file has error: node \"") + pChild->Name() + "\" already exist");
 				}
 				else
 				{
 					insertNode = pNode->AddChildParam(pChild->Name());
-					allParams.insert(pair<string, NODE *>(string(pChild->Name()), insertNode));
+					allParams.insert(std::pair<std::string, NODE *>(std::string(pChild->Name()), insertNode));
 				}
 
 				/*set abbreviation*/
@@ -210,14 +207,14 @@ namespace Robots
 					else
 					{
 						char abbr = *pChild->Attribute("abbreviation");
-						shortNames.insert(pair<char, string>(abbr, string(pChild->Name())));
+						shortNames.insert(std::pair<char, std::string>(abbr, std::string(pChild->Name())));
 					}
 				}
 
 				/*set values*/
 				if (pChild->Attribute("type"))
 				{
-					dynamic_cast<PARAM_NODE*>(insertNode)->type = string(pChild->Attribute("type"));
+					dynamic_cast<PARAM_NODE*>(insertNode)->type = std::string(pChild->Attribute("type"));
 				}
 				else
 				{
@@ -226,7 +223,7 @@ namespace Robots
 
 				if (pChild->Attribute("default"))
 				{
-					dynamic_cast<PARAM_NODE*>(insertNode)->defaultValue = string(pChild->Attribute("default"));
+					dynamic_cast<PARAM_NODE*>(insertNode)->defaultValue = std::string(pChild->Attribute("default"));
 				}
 				else
 				{
@@ -235,7 +232,7 @@ namespace Robots
 
 				if (pChild->Attribute("maxValue"))
 				{
-					dynamic_cast<PARAM_NODE*>(insertNode)->maxValue = string(pChild->Attribute("maxValue"));
+					dynamic_cast<PARAM_NODE*>(insertNode)->maxValue = std::string(pChild->Attribute("maxValue"));
 				}
 				else
 				{
@@ -244,7 +241,7 @@ namespace Robots
 
 				if (pChild->Attribute("minValue"))
 				{
-					dynamic_cast<PARAM_NODE*>(insertNode)->minValue = string(pChild->Attribute("minValue"));
+					dynamic_cast<PARAM_NODE*>(insertNode)->minValue = std::string(pChild->Attribute("minValue"));
 				}
 				else
 				{
@@ -264,7 +261,7 @@ namespace Robots
 				}
 				else
 				{
-					throw logic_error(std::string("XML file has error: \"") + pNode->name + "\" can't find default param");
+					throw std::logic_error(std::string("XML file has error: \"") + pNode->name + "\" can't find default param");
 				}
 			}
 			else
@@ -283,14 +280,14 @@ namespace Robots
 				}
 				else
 				{
-					throw logic_error(std::string("XML file has error: \"") + pNode->name + "\" can't find default param");
+					throw std::logic_error(std::string("XML file has error: \"") + pNode->name + "\" can't find default param");
 				}
 			}
 			else
 			{
 				if (pNode->children.empty())
 				{
-					throw logic_error(std::string("XML file has error: unique node \"") + pNode->name + "\" must have more than 1 child");
+					throw std::logic_error(std::string("XML file has error: unique node \"") + pNode->name + "\" must have more than 1 child");
 				}
 				else
 				{
@@ -299,13 +296,13 @@ namespace Robots
 			}
 		}
 	}
-	void addAllDefault(NODE *pNode, map<string, string> &params)
+	void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params)
 	{
 		if (pNode->isTaken)
 		{
 			if (dynamic_cast<ROOT_NODE*>(pNode))
 			{
-				auto found = find_if(pNode->children.begin(), pNode->children.end(), [](unique_ptr<NODE> &a)
+				auto found = find_if(pNode->children.begin(), pNode->children.end(), [](std::unique_ptr<NODE> &a)
 				{
 					return a->isTaken;
 				});
@@ -315,7 +312,7 @@ namespace Robots
 
 			if (dynamic_cast<UNIQUE_NODE*>(pNode))
 			{
-				auto found = find_if(pNode->children.begin(), pNode->children.end(), [](unique_ptr<NODE> &a)
+				auto found = find_if(pNode->children.begin(), pNode->children.end(), [](std::unique_ptr<NODE> &a)
 				{
 					return a->isTaken;
 				});
@@ -396,17 +393,78 @@ namespace Robots
 	struct COMMAND_STRUCT
 	{
 		std::unique_ptr<ROOT_NODE> root;
-		map<string, NODE *> allParams{};
-		map<char, string> shortNames{};
+		std::map<std::string, NODE *> allParams{};
+		std::map<char, std::string> shortNames{};
 
 		COMMAND_STRUCT(const std::string &name) 
 			:root(new ROOT_NODE(name.c_str()))
 		{
 		}
 	};
-	std::map<std::string, std::unique_ptr<COMMAND_STRUCT> > mapCmd;
+	
+	class ROBOT_SERVER::ROBOT_SERVER_IMP
+	{
+	public:
+		void LoadXml(const char *fileName);
+		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc);
+		void Start();
 
-	void ROBOT_SERVER::LoadXml(const char *fileName)
+		ROBOT_SERVER_IMP(ROBOT_SERVER *pServer) { this->pServer = pServer; };
+	private:
+		ROBOT_SERVER_IMP(const ROBOT_SERVER_IMP&) = delete;
+
+		void DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string, std::string> &params);
+		void GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::MSG &msg);
+		void OnReceiveMsg(const Aris::Core::MSG &m, Aris::Core::MSG &retError);
+
+		void inline p2a(const int *phy, int *abs, int num = 18)
+		{
+			for (int i = 0; i<num; ++i)
+			{
+				abs[i] = mapPhy2Abs[phy[i]];
+			}
+		}
+		void inline a2p(const int *abs, int *phy, int num = 18)
+		{
+			for (int i = 0; i<num; ++i)
+			{
+				phy[i] = mapAbs2Phy[abs[i]];
+			}
+		}
+
+		int home(const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data);
+		int enable(const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data);
+		int disable(const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data);
+		int resetOrigin(const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data);
+		int runGait(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data);
+
+		int execute_cmd(int count, char *cmd, Aris::RT_CONTROL::CMachineData &data);
+		static int tg(Aris::RT_CONTROL::CMachineData &data, Aris::Core::RT_MSG &recvMsg, Aris::Core::RT_MSG &sendMsg);
+
+	private:
+		ROBOT_SERVER *pServer;
+		std::map<std::string, int> mapName2ID;//store gait id in follow vector
+		std::vector<GAIT_FUNC> allGaits;
+		std::vector<PARSE_FUNC> allParsers;
+
+		std::map<std::string, std::unique_ptr<COMMAND_STRUCT> > mapCmd;//store NODE of command
+
+		Aris::Core::CONN server;
+		std::string ip, port;
+
+		double homeEE[18], homeIn[18];
+		int homeCount[18];
+		int homeCur{ 0 };
+		double meter2count{ 0 };
+
+		int mapPhy2Abs[18];
+		int mapAbs2Phy[18];
+#ifdef PLATFORM_IS_LINUX
+		Aris::RT_CONTROL::ACTUATION cs;
+#endif
+	};
+
+	void ROBOT_SERVER::ROBOT_SERVER_IMP::LoadXml(const char *fileName)
 	{
 		/*open xml file*/
 		Aris::Core::DOCUMENT doc;
@@ -455,11 +513,11 @@ namespace Robots
 
 		std::string docName{ doc.RootElement()->Name() };
 
-		pRobot->LoadXml(fileName);
+		pServer->pRobot->LoadXml(fileName);
 
 		double pe[6]{ 0 };
-		pRobot->SetPee(homeEE, pe, "B");
-		pRobot->GetPin(homeIn);
+		pServer->pRobot->SetPee(homeEE, pe, "B");
+		pServer->pRobot->GetPin(homeIn);
 
 		for (int i = 0; i < 18; ++i)
 		{
@@ -506,7 +564,7 @@ namespace Robots
 			addAllParams(pChild, mapCmd.at(pChild->Name())->root.get(), mapCmd.at(pChild->Name())->allParams, mapCmd.at(pChild->Name())->shortNames);
 		}
 	}
-	void ROBOT_SERVER::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
+	void ROBOT_SERVER::ROBOT_SERVER_IMP::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 	{
 		if (mapName2ID.find(cmdName) == mapName2ID.end())
 		{
@@ -519,7 +577,7 @@ namespace Robots
 
 		}
 	};
-	void ROBOT_SERVER::Start()
+	void ROBOT_SERVER::ROBOT_SERVER_IMP::Start()
 	{
 #ifdef PLATFORM_IS_LINUX
 		Aris::RT_CONTROL::CSysInitParameters initParam;
@@ -545,7 +603,7 @@ namespace Robots
 		server.SetOnReceiveRequest([this](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
 		{
 			Aris::Core::MSG ret;
-			this->ExecuteMsg(msg,ret);
+			this->OnReceiveMsg(msg,ret);
 
 			return ret;
 		});
@@ -588,24 +646,23 @@ namespace Robots
 		}
 	}
 
-	void ROBOT_SERVER::ExecuteMsg(const Aris::Core::MSG &msg, Aris::Core::MSG &retError)
+	void ROBOT_SERVER::ROBOT_SERVER_IMP::OnReceiveMsg(const Aris::Core::MSG &msg, Aris::Core::MSG &retError)
 	{
-		std::string cmd;
-		std::map<std::string, std::string> params;
+		Aris::Core::MSG cmdMsg;
 		try
 		{
+			std::string cmd;
+			std::map<std::string, std::string> params;
+
 			DecodeMsg(msg, cmd, params);
+			GenerateCmdMsg(cmd, params, cmdMsg);
 		}
 		catch (std::exception &e)
 		{
+			cmdMsg.SetLength(0);
 			retError.Copy(e.what());
 			return;
 		}
-
-
-
-		Aris::Core::MSG cmdMsg;
-		GenerateCmdMsg(cmd, params, cmdMsg);
 
 		cmdMsg.SetMsgID(0);
 
@@ -613,7 +670,7 @@ namespace Robots
 		cs.NRT_PostMsg(cmdMsg);
 #endif
 	}
-	void ROBOT_SERVER::DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string, std::string> &params)
+	void ROBOT_SERVER::ROBOT_SERVER_IMP::DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string, std::string> &params)
 	{
 		std::vector<std::string> paramVector;
 		int paramNum{0};
@@ -650,13 +707,12 @@ namespace Robots
 		{
 			throw std::logic_error(Aris::Core::log(std::string("invalid command name, server does not have command \"") + cmd + "\"\n"));
 		}
-		
 
 		for (int i = 0; i<paramNum; ++i)
 		{
-			string str{ paramVector[i] };
-			string paramName, paramValue;
-			if (str.find("=") == string::npos)
+			std::string str{ paramVector[i] };
+			std::string paramName, paramValue;
+			if (str.find("=") == std::string::npos)
 			{
 				paramName = str;
 				paramValue = "";
@@ -668,14 +724,14 @@ namespace Robots
 			}
 
 			if (paramName.size() == 0)
-				throw logic_error("invalid param: what the hell, param should not start with '='");
+				throw std::logic_error("invalid param: what the hell, param should not start with '='");
 
 			/*not start with '-'*/
 			if (paramName.data()[0] != '-')
 			{
 				if (paramValue != "")
 				{
-					throw logic_error("invalid param: only param start with - or -- can be assigned a value\n");
+					throw std::logic_error("invalid param: only param start with - or -- can be assigned a value\n");
 				}
 
 				for (auto c : paramName)
@@ -687,7 +743,7 @@ namespace Robots
 					}
 					else
 					{
-						throw logic_error(std::string("invalid param: param \"") + c + "\" is not a abbreviation of any valid param" );
+						throw std::logic_error(std::string("invalid param: param \"") + c + "\" is not a abbreviation of any valid param" );
 					}
 				}
 
@@ -697,7 +753,7 @@ namespace Robots
 			/*all following part start with at least one '-'*/
 			if (paramName.size() == 1)
 			{
-				throw logic_error("invalid param: symbol \"-\" must be followed by an abbreviation of param");
+				throw std::logic_error("invalid param: symbol \"-\" must be followed by an abbreviation of param");
 			}
 
 			/*start with '-', but only one '-'*/
@@ -717,7 +773,7 @@ namespace Robots
 				}
 				else
 				{
-					throw logic_error(std::string("invalid param: param \"") + c + "\" is not a abbreviation of any valid param");
+					throw std::logic_error(std::string("invalid param: param \"") + c + "\" is not a abbreviation of any valid param");
 				}
 
 				continue;
@@ -730,7 +786,7 @@ namespace Robots
 					throw std::logic_error("invalid param: symbol \"--\" must be followed by a full name of param");
 				}
 
-				string str = paramName;
+				std::string str = paramName;
 				paramName.assign(str, 2, str.size() - 2);
 
 				if (mapCmd.at(cmd)->allParams.find(paramName) != mapCmd.at(cmd)->allParams.end())
@@ -740,7 +796,7 @@ namespace Robots
 				}
 				else
 				{
-					throw logic_error(std::string("invalid param: param \"") + paramName + "\" is not a valid param");
+					throw std::logic_error(std::string("invalid param: param \"") + paramName + "\" is not a valid param");
 				}
 
 				
@@ -751,7 +807,7 @@ namespace Robots
 
 		addAllDefault(mapCmd.at(cmd)->root.get(), params);
 
-		cout << cmd << endl;
+		std::cout << cmd << std::endl;
 
 		int paramPrintLength;
 		if (params.empty())
@@ -769,10 +825,10 @@ namespace Robots
 		int maxParamNameLength{ 0 };
 		for (auto &i : params)
 		{
-			cout << std::string(paramPrintLength-i.first.length(),' ') << i.first << " : " << i.second << endl;
+			std::cout << std::string(paramPrintLength-i.first.length(),' ') << i.first << " : " << i.second << std::endl;
 		}
 	}
-	void ROBOT_SERVER::GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::MSG &msg)
+	void ROBOT_SERVER::ROBOT_SERVER_IMP::GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::MSG &msg)
 	{
 		if (cmd == "en")
 		{
@@ -929,14 +985,14 @@ namespace Robots
 		}
 	}
 	
-	int ROBOT_SERVER::home(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::ROBOT_SERVER_IMP::home(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
 	{
 		bool isAllHomed = true;
 
 		int id[18];
-		a2p(param->motorID, id, param->motorNum);
+		a2p(pParam->motorID, id, pParam->motorNum);
 
-		for (int i = 0; i< param->motorNum; ++i)
+		for (int i = 0; i< pParam->motorNum; ++i)
 		{
 			if (data.isMotorHomed[id[i]])
 			{
@@ -949,9 +1005,9 @@ namespace Robots
 				data.commandData[id[i]].Position = -homeCount[id[i]];
 				isAllHomed = false;
 
-				if (param->count % 1000 == 0)
+				if (pParam->count % 1000 == 0)
 				{
-					rt_printf("motor not homed, physical id: %d, absolute id: %d\n", id[i], param->motorID[i]);
+					rt_printf("motor not homed, physical id: %d, absolute id: %d\n", id[i], pParam->motorID[i]);
 				}
 			}
 		}
@@ -962,14 +1018,14 @@ namespace Robots
 			double pBody[6]{ 0,0,0,0,0,0 }, vBody[6]{ 0 };
 			double vEE[18]{ 0 };
 
-			pRobot->SetPin(nullptr, pBody);
+			pServer->pRobot->SetPin(nullptr, pBody);
 
-			for (int i = 0; i < param->legNum; ++i)
+			for (int i = 0; i < pParam->legNum; ++i)
 			{
-				rt_printf("leg %d is homed\n", param->legID[i]);
-				pRobot->pLegs[param->legID[i]]->SetPee(&homeEE[param->legID[i] * 3], "B");
+				rt_printf("leg %d is homed\n", pParam->legID[i]);
+				pServer->pRobot->pLegs[pParam->legID[i]]->SetPee(&homeEE[pParam->legID[i] * 3], "B");
 			}
-			pRobot->SetVee(vEE, vBody);
+			pServer->pRobot->SetVee(vEE, vBody);
 
 			return 0;
 		}
@@ -978,16 +1034,16 @@ namespace Robots
 			return -1;
 		}
 	};
-	int ROBOT_SERVER::enable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::ROBOT_SERVER_IMP::enable(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
 	{
 		static Aris::RT_CONTROL::CMachineData lastCmdData;
 
 		bool isAllRunning = true;
 
 		int id[18];
-		a2p(param->motorID, id, param->motorNum);
+		a2p(pParam->motorID, id, pParam->motorNum);
 
-		for (int i = 0; i< param->motorNum; ++i)
+		for (int i = 0; i< pParam->motorNum; ++i)
 		{
 			if (data.motorsStates[id[i]] == Aris::RT_CONTROL::EMSTAT_RUNNING)
 			{
@@ -1017,14 +1073,14 @@ namespace Robots
 			return -1;
 		}
 	};
-	int ROBOT_SERVER::disable(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::ROBOT_SERVER_IMP::disable(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
 	{
 		int id[18];
-		a2p(param->motorID, id, param->motorNum);
+		a2p(pParam->motorID, id, pParam->motorNum);
 
 
 		bool isAllDisabled = true;
-		for (int i = 0; i< param->motorNum; ++i)
+		for (int i = 0; i< pParam->motorNum; ++i)
 		{
 			if (data.motorsStates[id[i]] != Aris::RT_CONTROL::EMSTAT_STOPPED)
 			{
@@ -1042,30 +1098,30 @@ namespace Robots
 			return -1;
 		}
 	}
-	int ROBOT_SERVER::resetOrigin(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::ROBOT_SERVER_IMP::resetOrigin(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
 	{
 		double pEE[18], pBody[6]{ 0 }, vEE[18], vBody[6]{ 0 };
-		pRobot->GetPee(pEE, "B");
-		pRobot->GetVee(vEE, "B");
+		pServer->pRobot->GetPee(pEE, "B");
+		pServer->pRobot->GetVee(vEE, "B");
 
-		pRobot->SetPee(pEE, pBody, "G");
-		pRobot->SetVee(vEE, vBody, "G");
+		pServer->pRobot->SetPee(pEE, pBody, "G");
+		pServer->pRobot->SetVee(vEE, vBody, "G");
 
 		return 0;
 	}
-	int ROBOT_SERVER::runGait(Robots::ROBOT_BASE *pRobot, const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::ROBOT_SERVER_IMP::runGait(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
 	{
-		int ret = 0;
+		/*保存各个腿在机身坐标系下的起始位置信息，当某些腿不运动时，可以还原这些腿再机身坐标系下的位置*/
 		double pIn[18], pEE_B[18];
-		pRobot->TransformCoordinatePee(pParam->beginBodyPE, "G", pParam->beginPee, "B", pEE_B);
+		pServer->pRobot->TransformCoordinatePee(pParam->beginBodyPE, "G", pParam->beginPee, "B", pEE_B);
 
-		ret = this->allGaits.at(pParam->cmdID).operator()(pRobot,pParam);
-		pRobot->GetPin(pIn);
-
-		int id[18];
-		a2p(pParam->motorID, id, pParam->motorNum);
+		/*执行gait函数*/
+		int ret = this->allGaits.at(pParam->cmdID).operator()(pServer->pRobot.get(),pParam);
+		pServer->pRobot->GetPin(pIn);
 
 		/*向下写入输入位置*/
+		int id[18];
+		a2p(pParam->motorID, id, pParam->motorNum);
 		for (int i = 0; i<pParam->motorNum; ++i)
 		{
 			data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_RUNNING;
@@ -1077,14 +1133,14 @@ namespace Robots
 		{
 			if ((std::find(pParam->legID, pParam->legID + pParam->legNum, i)) == (pParam->legID + pParam->legNum))
 			{
-				pRobot->pLegs[i]->SetPee(pEE_B + i * 3, "B");
+				pServer->pRobot->pLegs[i]->SetPee(pEE_B + i * 3, "B");
 			}
 		}
 
 		return ret;
 	}
 
-	int ROBOT_SERVER::execute_cmd(int count, char *cmd, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::ROBOT_SERVER_IMP::execute_cmd(int count, char *cmd, Aris::RT_CONTROL::CMachineData &data)
 	{
 		static double pBody[6]{ 0 }, vBody[6]{ 0 }, pEE[18]{ 0 }, vEE[18]{ 0 };
 
@@ -1094,27 +1150,27 @@ namespace Robots
 		pParam->count = count;
 		pParam->pActuationData = &data;
 
-		memcpy(pParam->beginPee, pEE, sizeof(pEE));
-		memcpy(pParam->beginVee, vEE, sizeof(vEE));
-		memcpy(pParam->beginBodyPE, pBody, sizeof(pBody));
-		memcpy(pParam->beginBodyVel, pBody, sizeof(vBody));
+		std::copy_n(pEE, 18, pParam->beginPee);
+		std::copy_n(vEE, 18, pParam->beginVee);
+		std::copy_n(pBody, 6, pParam->beginBodyPE);
+		std::copy_n(vBody, 6, pParam->beginBodyVel);
 
 		switch (pParam->cmdType)
 		{
 		case ENABLE:
-			ret = enable(pRobot.get(), pParam, data);
+			ret = enable(pParam, data);
 			break;
 		case DISABLE:
-			ret = disable(pRobot.get(), pParam, data);
+			ret = disable(pParam, data);
 			break;
 		case HOME:
-			ret = home(pRobot.get(), pParam, data);
+			ret = home(pParam, data);
 			break;
 		case RESET_ORIGIN:
-			ret = resetOrigin(pRobot.get(), pParam, data);
+			ret = resetOrigin(pParam, data);
 			break;
 		case RUN_GAIT:
-			ret = runGait(pRobot.get(), pParam, data);
+			ret = runGait(pParam, data);
 			break;
 		default:
 			rt_printf("unknown cmd type\n");
@@ -1124,10 +1180,10 @@ namespace Robots
 
 		if (ret == 0)
 		{
-			pRobot->GetBodyPe(pBody);
-			pRobot->GetPee(pEE);
-			pRobot->GetBodyVel(vBody);
-			pRobot->GetVee(vEE);
+			pServer->pRobot->GetBodyPe(pBody);
+			pServer->pRobot->GetPee(pEE);
+			pServer->pRobot->GetBodyVel(vBody);
+			pServer->pRobot->GetVee(vEE);
 
 
 			rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
@@ -1141,7 +1197,7 @@ namespace Robots
 		return ret;
 	}
 
-	int ROBOT_SERVER::tg(Aris::RT_CONTROL::CMachineData &data, Aris::Core::RT_MSG &recvMsg, Aris::Core::RT_MSG &sendMsg)
+	int ROBOT_SERVER::ROBOT_SERVER_IMP::tg(Aris::RT_CONTROL::CMachineData &data, Aris::Core::RT_MSG &recvMsg, Aris::Core::RT_MSG &sendMsg)
 	{
 		static const int cmdSize{ 8192 };
 		static char cmdQueue[50][cmdSize];
@@ -1155,7 +1211,8 @@ namespace Robots
 
 		stateData = data;
 		cmdData = data;
-
+		
+		/*根据msg来看是否有cmd*/
 		switch (recvMsg.GetMsgID())
 		{
 		case 0:
@@ -1166,10 +1223,10 @@ namespace Robots
 			break;
 		}
 
-
+		/*执行cmd queue中的cmd*/
 		if (cmdNum>0)
 		{
-			if (Robots::ROBOT_SERVER::GetInstance()->execute_cmd(count, cmdQueue[currentCmd], cmdData) == 0)
+			if (Robots::ROBOT_SERVER::GetInstance()->pImp->execute_cmd(count, cmdQueue[currentCmd], cmdData) == 0)
 			{
 				count = 0;
 				currentCmd = (currentCmd + 1) % 10;
@@ -1191,66 +1248,76 @@ namespace Robots
 			cmdData = lastCmdData;
 		}
 
-		static bool firstError=true;
-
+		/*检查连续*/
 		for (int i = 0; i<18; ++i)
 		{
-			if (lastCmdData.motorsCommands[i] == Aris::RT_CONTROL::EMCMD_RUNNING)
+			if ((lastCmdData.motorsCommands[i] == Aris::RT_CONTROL::EMCMD_RUNNING)
+				&& (cmdData.motorsCommands[i] == Aris::RT_CONTROL::EMCMD_RUNNING)
+				&& (std::abs(lastCmdData.commandData[i].Position - cmdData.commandData[i].Position)>20000))
 			{
-				if (cmdData.motorsCommands[i] == Aris::RT_CONTROL::EMCMD_RUNNING)
+				rt_printf("Data not continuous in count:%d\n", count);
+
+				auto pR = ROBOT_SERVER::GetInstance()->pRobot.get();
+				double pEE[18];
+				double pBody[6];
+				pR->GetPee(pEE);
+				pR->GetBodyPe(pBody);
+
+				rt_printf("The coming pee and body pe are:\n");
+				rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
+					, pEE[0], pEE[1], pEE[2], pEE[3], pEE[4], pEE[5], pEE[6], pEE[7], pEE[8]
+					, pEE[9], pEE[10], pEE[11], pEE[12], pEE[13], pEE[14], pEE[15], pEE[16], pEE[17]);
+				rt_printf("%f %f %f %f %f %f\n"
+					, pBody[0], pBody[1], pBody[2], pBody[3], pBody[4], pBody[5]);
+
+				rt_printf("The input of last and this count are:\n");
+				for (int i = 0; i<18; ++i)
 				{
-					if (std::abs(lastCmdData.commandData[i].Position - cmdData.commandData[i].Position)>20000)
-					{
-						if(firstError)
-						{
-							rt_printf("data %d not continuous\n",i);
-							rt_printf("last:%d, now:%d\n",lastCmdData.commandData[i].Position
-									, cmdData.commandData[i].Position);
-
-							rt_printf("data not continuous in count:%d\n",count);
-
-							auto pR=GetInstance()->pRobot.get();
-							double pEE[18];
-							double pBody[6];
-							pR->GetPee(pEE);
-							pR->GetBodyPe(pBody);
-							rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
-											, pEE[0], pEE[1], pEE[2], pEE[3], pEE[4], pEE[5], pEE[6], pEE[7], pEE[8]
-											, pEE[9], pEE[10], pEE[11], pEE[12], pEE[13], pEE[14], pEE[15], pEE[16], pEE[17]);
-										rt_printf("%f %f %f %f %f %f\n"
-											, pBody[0], pBody[1], pBody[2], pBody[3], pBody[4], pBody[5]);
-
-
-							for(int i=0;i<18;++i)
-							{
-								rt_printf("%d %d\n",lastCmdData.commandData[i].Position,cmdData.commandData[i].Position);
-							}
-							firstError=false;
-						}
-
-
-						data = lastCmdData;
-						return 0;
-					}
+					rt_printf("%d   %d\n", lastCmdData.commandData[i].Position, cmdData.commandData[i].Position);
 				}
+
+				rt_printf("All commands in command queue are discarded\n");
+				cmdNum = 0;
+
+				data = lastCmdData;
+				return 0;
 			}
 		}
 
-		if(!firstError)
-		{
-			data = lastCmdData;
-		}
-		else
-		{
-			data = cmdData;
-			lastStateData = stateData;
-			lastCmdData = cmdData;
-		}
-
-
-		
+		/*最终向下刷数据*/
+		data = cmdData;
+		lastStateData = stateData;
+		lastCmdData = cmdData;
 
 		return 0;
+	}
+
+	ROBOT_SERVER::ROBOT_SERVER()
+	{
+		pImp = new ROBOT_SERVER_IMP(this);
+	}
+	ROBOT_SERVER::~ROBOT_SERVER()
+	{
+		delete pImp;
+	}
+
+	ROBOT_SERVER * ROBOT_SERVER::GetInstance()
+	{
+		static ROBOT_SERVER instance;
+		return &instance;
+	}
+
+	void ROBOT_SERVER::LoadXml(const char *fileName)
+	{
+		pImp->LoadXml(fileName);
+	}
+	void ROBOT_SERVER::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
+	{
+		pImp->AddGait(cmdName, gaitFunc, parseFunc);
+	}
+	void ROBOT_SERVER::Start()
+	{
+		pImp->Start();
 	}
 }
 
