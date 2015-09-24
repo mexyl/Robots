@@ -15,8 +15,6 @@
 #include <Aris_Plan.h>
 #include <Robot_Base.h>
 
-//using namespace std;
-
 namespace Robots
 {
 	class NODE

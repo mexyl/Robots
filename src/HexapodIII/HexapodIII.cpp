@@ -851,7 +851,6 @@ namespace Robots
 	{
 		double rcond = 0.0000001;
 
-
 		/*初始化*/
 		std::fill_n(&_C[0][0], 36 * 36, 0);
 		std::fill_n(&_c_M[0][0], 36 * 4, 0);
