@@ -9,6 +9,7 @@
 
 #include <Aris_ControlData.h>
 #include <Aris_Socket.h>
+#include <Aris_IMU.h>
 #include <Robot_Gait.h>
 #include <HexapodIII.h>
 #include <string>
@@ -20,17 +21,6 @@
 namespace Robots
 {
 	typedef std::function<Aris::Core::MSG(const std::string &cmd, const std::map<std::string, std::string> &params)> PARSE_FUNC;
-	
-	enum ROBOT_CMD_ID
-	{
-	ENABLE,
-	DISABLE,
-	HOME,
-	RESET_ORIGIN,
-	RUN_GAIT,
-
-	ROBOT_CMD_COUNT
-	};
 
 	class ROBOT_SERVER
 	{
@@ -52,6 +42,7 @@ namespace Robots
 		void LoadXml(const char *fileName);
 		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc);
 		void Start();
+		Aris::Sensor::IMU* Imu();
 
 	private:
 		ROBOT_SERVER();
@@ -66,9 +57,6 @@ namespace Robots
 		class ROBOT_SERVER_IMP;
 		ROBOT_SERVER_IMP *pImp;
 	};
-
-	
-
 }
 
 #endif

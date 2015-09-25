@@ -33,6 +33,8 @@ ROBOT_III rbt;
 
 #include<ctime>
 
+#include <Aris_Core.h>
+
 int main()
 {
 
@@ -42,6 +44,8 @@ int main()
 #ifdef PLATFORM_IS_LINUX
 	rbt.LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
 #endif
+
+	Aris::Core::MSG m;
 
 	//double pEE_G[18] =
 	//{

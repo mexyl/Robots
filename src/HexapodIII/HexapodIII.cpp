@@ -92,12 +92,6 @@ namespace Robots
 
 		double dJ2_x[3][3], dJ2_y[3][3], dJ2_z[3][3];
 
-		double inv_J1[3][3];
-		int ipiv[3];
-		std::copy_n(&J1[0][0], 9, &inv_J1[0][0]);
-		s_dgeinv(3, *inv_J1, 3, ipiv);
-
-
 		for (int i = 0; i < 3; ++i)
 		{
 			for (int j = 0; j < 3; ++j)
@@ -108,7 +102,6 @@ namespace Robots
 			}
 		}
 
-		
 		double dJ1_x[3][3]{ 0 }, dJ1_y[3][3]{ 0 }, dJ1_z[3][3]{0};
 
 		dJ1_x[0][0] = 0;

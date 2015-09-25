@@ -400,6 +400,9 @@ namespace Robots
 		}
 	};
 	
+
+	
+
 	class ROBOT_SERVER::ROBOT_SERVER_IMP
 	{
 	public:
@@ -440,6 +443,18 @@ namespace Robots
 		static int tg(Aris::RT_CONTROL::CMachineData &data, Aris::Core::RT_MSG &recvMsg, Aris::Core::RT_MSG &sendMsg);
 
 	private:
+		enum ROBOT_CMD_ID
+		{
+			ENABLE,
+			DISABLE,
+			HOME,
+			RESET_ORIGIN,
+			RUN_GAIT,
+
+			ROBOT_CMD_COUNT
+		};
+
+	private:
 		ROBOT_SERVER *pServer;
 		std::map<std::string, int> mapName2ID;//store gait id in follow vector
 		std::vector<GAIT_FUNC> allGaits;
@@ -460,6 +475,9 @@ namespace Robots
 #ifdef PLATFORM_IS_LINUX
 		Aris::RT_CONTROL::ACTUATION cs;
 #endif
+
+		std::unique_ptr<Aris::Sensor::IMU> pImu;
+		friend class ROBOT_SERVER;
 	};
 
 	void ROBOT_SERVER::ROBOT_SERVER_IMP::LoadXml(const char *fileName)
@@ -561,6 +579,13 @@ namespace Robots
 			mapCmd.insert(std::make_pair(std::string(pChild->Name()), std::unique_ptr<COMMAND_STRUCT>(new COMMAND_STRUCT(pChild->Name()))));
 			addAllParams(pChild, mapCmd.at(pChild->Name())->root.get(), mapCmd.at(pChild->Name())->allParams, mapCmd.at(pChild->Name())->shortNames);
 		}
+
+
+		/*begin to create imu*/
+		if (doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")->Attribute("Active", "true"))
+		{
+			pImu = std::unique_ptr<Aris::Sensor::IMU>(new Aris::Sensor::IMU(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")));
+		}
 	}
 	void ROBOT_SERVER::ROBOT_SERVER_IMP::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 	{
@@ -577,6 +602,13 @@ namespace Robots
 	};
 	void ROBOT_SERVER::ROBOT_SERVER_IMP::Start()
 	{
+		/*start sensors*/
+		if (pImu)
+		{
+			pImu->Start();
+		}
+
+
 #ifdef PLATFORM_IS_LINUX
 		Aris::RT_CONTROL::CSysInitParameters initParam;
 
@@ -1316,6 +1348,10 @@ namespace Robots
 	void ROBOT_SERVER::Start()
 	{
 		pImp->Start();
+	}
+	Aris::Sensor::IMU* ROBOT_SERVER::Imu()
+	{
+		return pImp->pImu.get();
 	}
 }
 
