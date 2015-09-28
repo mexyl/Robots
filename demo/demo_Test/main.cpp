@@ -15,7 +15,7 @@ using namespace Aris::Core;
 using namespace Aris::DynKer;
 using namespace Aris::Plan;
 
-Robots::ROBOT_III robot;
+Robots::ROBOT_TYPE_I robot;
 
 double eePosIni[6][3] =
 { { -0.3, -0.85, -0.65 }

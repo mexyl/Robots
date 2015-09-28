@@ -48,7 +48,7 @@ double beginEE[18]
 };
 
 //Robots::ROBOT_IV rbt;
-Robots::ROBOT_III rbt;
+Robots::ROBOT_TYPE_I rbt;
 
 
 

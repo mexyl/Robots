@@ -7,8 +7,8 @@
 
 namespace Robots
 {
-	class ROBOT_III;
-	class LEG_III :public Aris::DynKer::OBJECT, public Robots::LEG_BASE
+	class ROBOT_TYPE_I;
+	class LEG_I :public Aris::DynKer::OBJECT, public Robots::LEG_BASE
 	{
 	public:
 		union
@@ -93,8 +93,8 @@ namespace Robots
 		void GetdJacOverPee(double *dJi_x, double *dJi_y, double *dJi_z, const char *relativeCoordinate="G")const;
 
 	private:
-		LEG_III(const char *Name, ROBOT_III* pRobot);
-		virtual ~LEG_III() = default;
+		LEG_I(const char *Name, ROBOT_TYPE_I* pRobot);
+		virtual ~LEG_I() = default;
 
 		void FastDyn();
 		
@@ -151,7 +151,7 @@ namespace Robots
 		};
 
 	private:
-		ROBOT_III *pRobot;
+		ROBOT_TYPE_I *pRobot;
 
 		const double U2x{ 0 }, U2y{ 0 }, U2z{ 0 }, U3x{ 0 }, U3y{ 0 }, U3z{ 0 };
 		const double S2x{ 0 }, S2y{ 0 }, S2z{ 0 }, S3x{ 0 }, S3y{ 0 }, S3z{ 0 };
@@ -180,9 +180,9 @@ namespace Robots
 		alignas(16) double _C[36][36];
 		alignas(16) double _c_M[36][4];
 
-		friend class ROBOT_III;
+		friend class ROBOT_TYPE_I;
 	};
-	class ROBOT_III :public Aris::DynKer::MODEL, public Robots::ROBOT_BASE
+	class ROBOT_TYPE_I :public Aris::DynKer::MODEL, public Robots::ROBOT_BASE
 	{
 	public:
 		struct STATE
@@ -193,8 +193,8 @@ namespace Robots
 			bool isSfActive[6];
 		};
 
-		ROBOT_III();
-		~ROBOT_III() = default;
+		ROBOT_TYPE_I();
+		~ROBOT_TYPE_I() = default;
 		virtual void LoadXml(const char *filename);
 		virtual void LoadXml(const Aris::Core::DOCUMENT &doc);
 
@@ -202,8 +202,8 @@ namespace Robots
 		void GetFinDyn(double *fIn) const;
 		void GetFinFrc(double *fIn) const;
 
-		void GetState(ROBOT_III::STATE &state) const;
-		void SetState(const ROBOT_III::STATE &state);
+		void GetState(ROBOT_TYPE_I::STATE &state) const;
+		void SetState(const ROBOT_TYPE_I::STATE &state);
 
 		void SetFixFeet(const char* fixFeet);
 		const char* GetFixFeet() const;
@@ -221,14 +221,14 @@ namespace Robots
 		{
 			struct
 			{
-				LEG_III *const pLF;
-				LEG_III *const pLM;
-				LEG_III *const pLR;
-				LEG_III *const pRF;
-				LEG_III *const pRM;
-				LEG_III *const pRR;
+				LEG_I *const pLF;
+				LEG_I *const pLM;
+				LEG_I *const pLR;
+				LEG_I *const pRF;
+				LEG_I *const pRM;
+				LEG_I *const pRR;
 			};
-			LEG_III *const pLegs[6];
+			LEG_I *const pLegs[6];
 		};
 
 		Aris::DynKer::PART* pBody;
@@ -238,15 +238,15 @@ namespace Robots
 		
 
 	private:
-		LEG_III LF_Leg{ "LF", this };
-		LEG_III LM_Leg{ "LM", this };
-		LEG_III LR_Leg{ "LR", this };
-		LEG_III RF_Leg{ "RF", this };
-		LEG_III RM_Leg{ "RM", this };
-		LEG_III RR_Leg{ "RR", this };
+		LEG_I LF_Leg{ "LF", this };
+		LEG_I LM_Leg{ "LM", this };
+		LEG_I LR_Leg{ "LR", this };
+		LEG_I RF_Leg{ "RF", this };
+		LEG_I RM_Leg{ "RM", this };
+		LEG_I RR_Leg{ "RR", this };
 	};
 
-	inline void Activate024(int time, ROBOT_III *pRobot, Aris::DynKer::SIMULATE_SCRIPT *script)
+	inline void Activate024(int time, ROBOT_TYPE_I *pRobot, Aris::DynKer::SIMULATE_SCRIPT *script)
 	{
 		script->ScriptDeactivate(time, pRobot->pLF->pSf);
 		script->ScriptActivate(time, pRobot->pLM->pSf);
@@ -299,7 +299,7 @@ namespace Robots
 
 		
 	}
-	inline void Activate135(int time, ROBOT_III *pRobot, Aris::DynKer::SIMULATE_SCRIPT *script)
+	inline void Activate135(int time, ROBOT_TYPE_I *pRobot, Aris::DynKer::SIMULATE_SCRIPT *script)
 	{
 		script->ScriptActivate(time, pRobot->pLF->pSf);
 		script->ScriptDeactivate(time, pRobot->pLM->pSf);
@@ -350,7 +350,7 @@ namespace Robots
 		script->ScriptDeactivate(time, pRobot->pRR->pF2);
 		script->ScriptDeactivate(time, pRobot->pRR->pF3);
 	}
-	inline void Activate024(ROBOT_III *pRobot)
+	inline void Activate024(ROBOT_TYPE_I *pRobot)
 	{
 		pRobot->pLF->pSf->Deactivate();
 		pRobot->pLF->pM1->Activate();
@@ -400,7 +400,7 @@ namespace Robots
 		pRobot->pRR->pF2->Deactivate();
 		pRobot->pRR->pF3->Deactivate();
 	}
-	inline void Activate135(ROBOT_III *pRobot)
+	inline void Activate135(ROBOT_TYPE_I *pRobot)
 	{
 		pRobot->pLF->pSf->Activate();
 		pRobot->pLF->pM1->Deactivate();

@@ -11,10 +11,10 @@ using namespace Aris::DynKer;
 int main()
 {
 
-	ROBOT_III rbt;
+	ROBOT_TYPE_I rbt;
 
 #ifdef PLATFORM_IS_WINDOWS
-	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII.xml");
+	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III.xml");
 #endif
 #ifdef PLATFORM_IS_LINUX
 	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III.xml");

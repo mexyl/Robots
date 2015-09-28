@@ -46,10 +46,8 @@ set(CMAKE_BUILD_TYPE "Release")
 
 # set compile options
 if(UNIX)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -msse2")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif(UNIX)
-
-
 
 # set include and lib folders
 if(UNIX)

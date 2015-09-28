@@ -5,7 +5,7 @@ int main()
 {
 	auto rs = Robots::ROBOT_SERVER::GetInstance();
 
-	//rs->CreateRobot<ROBOT_III>();
+	//rs->CreateRobot<ROBOT_TYPE_I>();
 
 #ifdef PLATFORM_IS_LINUX
 	rs->LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");

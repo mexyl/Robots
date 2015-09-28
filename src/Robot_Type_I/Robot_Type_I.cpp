@@ -31,14 +31,14 @@ namespace Robots
 		return 1.0 / n*i;
 	}
 	
-	LEG_III::LEG_III(const char *Name, ROBOT_III* pRobot)
+	LEG_I::LEG_I(const char *Name, ROBOT_TYPE_I* pRobot)
 		: OBJECT(static_cast<Aris::DynKer::MODEL *>(pRobot), Name)
 		, pRobot(pRobot)
 		, LEG_BASE(pRobot)
 	{
 	}
 
-	void LEG_III::GetdJacOverPee(double *dJi_x, double *dJi_y, double *dJi_z, const char *relativeCoordinate) const
+	void LEG_I::GetdJacOverPee(double *dJi_x, double *dJi_y, double *dJi_z, const char *relativeCoordinate) const
 	{
 		double dk21_a1 = -U2x*(S2x + l1)*ca1*cb1 + U2x*S2y*ca1*sb1 + U2x*S2z*(-sa1) - U2z*(S2x + l1)*(-sa1)*cb1 + U2z*S2y*(-sa1)*sb1 - U2z*S2z*ca1;
 		double dk22_a1 = -U2x*(S2x + l1)*(-sa1)*sb1 - U2x*S2y*(-sa1)*cb1 + U2z*(S2x + l1)*ca1*sb1 + U2z*S2y*ca1*cb1;
@@ -235,62 +235,62 @@ namespace Robots
 		//dsp(c,3,1);
 	}
 
-	void LEG_III::GetFin(double *fIn) const
+	void LEG_I::GetFin(double *fIn) const
 	{
 		fIn[0] = f1_dyn + f1_frc;
 		fIn[1] = f2_dyn + f2_frc;
 		fIn[2] = f3_dyn + f3_frc;
 	}
-	void LEG_III::GetFinDyn(double *fIn) const
+	void LEG_I::GetFinDyn(double *fIn) const
 	{
 		fIn[0] = f1_dyn;
 		fIn[1] = f2_dyn;
 		fIn[2] = f3_dyn;
 	}
-	void LEG_III::GetFinFrc(double *fIn) const
+	void LEG_I::GetFinFrc(double *fIn) const
 	{
 		fIn[0] = f1_frc;
 		fIn[1] = f2_frc;
 		fIn[2] = f3_frc;
 	}
 
-	void LEG_III::calculate_from_pEE()
+	void LEG_I::calculate_from_pEE()
 	{
 		_CalCdByPos();
 		_CalVarByCd();
 		_CalPartByVar();
 	}
-	void LEG_III::calculate_from_pIn()
+	void LEG_I::calculate_from_pIn()
 	{
 		_CalCdByPlen();
 		_CalVarByCd();
 		_CalPartByVar();
 	}
-	void LEG_III::calculate_from_vEE()
+	void LEG_I::calculate_from_vEE()
 	{
 		_CalVcdByVpos();
 		_CalVvarByVcd();
 		_CalVpartByVvar();
 	}
-	void LEG_III::calculate_from_vIn()
+	void LEG_I::calculate_from_vIn()
 	{
 		_CalVcdByVplen();
 		_CalVvarByVcd();
 		_CalVpartByVvar();
 	}
-	void LEG_III::calculate_from_aEE()
+	void LEG_I::calculate_from_aEE()
 	{
 		_CalAcdByApos();
 		_CalAvarByAcd();
 		_CalApartByAvar();
 	}
-	void LEG_III::calculate_from_aIn()
+	void LEG_I::calculate_from_aIn()
 	{
 		_CalAcdByAplen();
 		_CalAvarByAcd();
 		_CalApartByAvar();
 	}
-	void LEG_III::calculate_jac()
+	void LEG_I::calculate_jac()
 	{
 		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> J1_m(*J1);
 		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> J2_m(*J2);
@@ -306,7 +306,7 @@ namespace Robots
 		Jvd_m = J1_m*inv_J2_m;
 		Jvi_m = J2_m*inv_J1_m;
 	}
-	void LEG_III::calculate_diff_jac()
+	void LEG_I::calculate_diff_jac()
 	{
 		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> J1_m(*J1), J2_m(*J2), vJ1_m(*vJ1), vJ2_m(*vJ2);
 		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> inv_J1_m(*inv_J1), inv_J2_m(*inv_J2);
@@ -324,13 +324,13 @@ namespace Robots
 
 	}
 
-	void LEG_III::_CalCdByPos()
+	void LEG_I::_CalCdByPos()
 	{
 		l1 = sqrt(x*x + y*y + z*z - Sfy*Sfy - Sfz*Sfz) - Sfx;
 		b1 = asin(y / sqrt((l1 + Sfx)*(l1 + Sfx) + Sfy*Sfy)) - asin(Sfy / sqrt((l1 + Sfx)*(l1 + Sfx) + Sfy*Sfy));
 		a1 = atan2(Sfz*x - ((l1 + Sfx)*cos(b1) - Sfy*sin(b1))*z, ((l1 + Sfx)*cos(b1) - Sfy*sin(b1))*x + Sfz*z);
 	}
-	void LEG_III::_CalCdByPlen()
+	void LEG_I::_CalCdByPlen()
 	{
 		std::complex<double>  M, N;
 		std::complex<double>  K1, K2, K3;
@@ -376,7 +376,7 @@ namespace Robots
 		b1 = asin(X) - atan(H2 / l1);
 		a1 = asin(N.real() / (D1*(l1*cos(b1) - H2*sin(b1))));
 	}
-	void LEG_III::_CalCdByPlen2()
+	void LEG_I::_CalCdByPlen2()
 	{
 		double T1, T2, F1, F2, dq1, dq2, Ja, Jb, Jc, Jd;
 		int i;
@@ -415,7 +415,7 @@ namespace Robots
 		this->l1 = l1;
 
 	}
-	void LEG_III::_CalVarByCd()
+	void LEG_I::_CalVarByCd()
 	{
 		sa1 = sin(a1);
 		ca1 = cos(a1);
@@ -479,7 +479,7 @@ namespace Robots
 		J2[2][1] = -k32 / l3;
 		J2[2][2] = -k33 / l3;
 	}
-	void LEG_III::_CalPartByVar()
+	void LEG_I::_CalPartByVar()
 	{
 		double pm[4][4], pm1[4][4];
 
@@ -519,13 +519,13 @@ namespace Robots
 		pSfi->Update();
 		std::copy_n(pSfi->GetPmPtr(), 16, const_cast<double *>(pSfj->GetPrtPmPtr()));
 	}
-	void LEG_III::_CalVcdByVpos()
+	void LEG_I::_CalVcdByVpos()
 	{
 		vl1 = (x*vx + y*vy + z*vz) / (l1 + Sfx);
 		vb1 = (vy - vl1*sb1) / (x*ca1 - z*sa1);
 		va1 = (vx*sa1 + vz*ca1) / (-x*ca1 + z*sa1);
 	}
-	void LEG_III::_CalVcdByVplen()
+	void LEG_I::_CalVcdByVplen()
 	{
 		double K1, K2;
 
@@ -536,7 +536,7 @@ namespace Robots
 		vb1 = (-k31*K1 + k21*K2) / (k21*k32 - k22*k31);
 		this->vl1 = vl1;
 	}
-	void LEG_III::_CalVvarByVcd()
+	void LEG_I::_CalVvarByVcd()
 	{
 		vx = z*va1 - y*ca1*vb1 + ca1*cb1*vl1;
 		vy = 0 + (x*ca1 - z*sa1)*vb1 + sb1*vl1;
@@ -614,7 +614,7 @@ namespace Robots
 		vJ2[2][2] = -(vk33*l3 - k33*vl3) / (l3*l3);
 
 	}
-	void LEG_III::_CalVpartByVvar()
+	void LEG_I::_CalVpartByVvar()
 	{
 		double v_G[6], v_L[6];
 
@@ -675,7 +675,7 @@ namespace Robots
 		s_v2v(pBase->GetPmPtr(), pBase->GetVelPtr(), v_L, v_G);
 		pP3b->SetVel(v_G);
 	}
-	void LEG_III::_CalAcdByApos()
+	void LEG_I::_CalAcdByApos()
 	{
 		double xd, yd, zd;
 
@@ -687,7 +687,7 @@ namespace Robots
 		ab1 = (yd - al1*sb1) / (x*ca1 - z*sa1);
 		aa1 = (xd*sa1 + zd*ca1) / (-x*ca1 + z*sa1);
 	}
-	void LEG_III::_CalAcdByAplen()
+	void LEG_I::_CalAcdByAplen()
 	{
 		double vK1, vK2, M1, M2;
 
@@ -700,7 +700,7 @@ namespace Robots
 		aa1 = (k32*M1 - k22*M2) / (k21*k32 - k22*k31);
 		ab1 = (-k31*M1 + k21*M2) / (k21*k32 - k22*k31);
 	}
-	void LEG_III::_CalAvarByAcd()
+	void LEG_I::_CalAvarByAcd()
 	{
 		ax = z*aa1 - y*ca1*ab1 + ca1*cb1*al1
 			+ vz*va1 + (-vy*ca1 - y*qa1)*vb1 + H22*vl1;
@@ -737,7 +737,7 @@ namespace Robots
 		aa3 = (pa3*vx3 + sa3*ax3 + ca3*az3 + qa3*vz3 - (-vx3*ca3 - x3*qa3 + vz3*sa3 + z3*pa3)*va3)
 			/ (-x3*ca3 + z3*sa3);
 	}
-	void LEG_III::_CalApartByAvar()
+	void LEG_I::_CalApartByAvar()
 	{
 		double a_L[6], a_G[6], v_G[6], v_L[6];
 
@@ -838,7 +838,7 @@ namespace Robots
 		pM3->SetMotAcc(al3);
 	}
 
-	void LEG_III::FastDyn()
+	void LEG_I::FastDyn()
 	{
 		double rcond = 0.0000001;
 
@@ -945,7 +945,7 @@ namespace Robots
 		s_dgemm(6, 1, 6, 1, pP3b->GetPrtImPtr(), 6, pP3b->GetPrtAccPtr(), 1, 1, &_c_M[30][0], 4);
 	}
 
-	ROBOT_III::ROBOT_III()
+	ROBOT_TYPE_I::ROBOT_TYPE_I()
 		: pLF{ &LF_Leg }
 		, pLM{ &LM_Leg }
 		, pLR{ &LR_Leg }
@@ -958,21 +958,21 @@ namespace Robots
 			Robots::ROBOT_BASE::pLegs[i] = static_cast<Robots::LEG_BASE *>(pLegs[i]);
 		}
 	}
-	void ROBOT_III::GetFin(double *fIn) const
+	void ROBOT_TYPE_I::GetFin(double *fIn) const
 	{
 		for (int i = 0; i < 6; ++i)
 		{
 			pLegs[i]->GetFin(&fIn[i*3]);
 		}
 	}
-	void ROBOT_III::GetFinDyn(double *fIn) const
+	void ROBOT_TYPE_I::GetFinDyn(double *fIn) const
 	{
 		for (int i = 0; i < 6; ++i)
 		{
 			pLegs[i]->GetFinDyn(&fIn[i * 3]);
 		}
 	}
-	void ROBOT_III::GetFinFrc(double *fIn) const
+	void ROBOT_TYPE_I::GetFinFrc(double *fIn) const
 	{
 		for (int i = 0; i < 6; ++i)
 		{
@@ -980,7 +980,7 @@ namespace Robots
 		}
 	}
 
-	void ROBOT_III::SetFixFeet(const char* fixFeet)
+	void ROBOT_TYPE_I::SetFixFeet(const char* fixFeet)
 	{
 		for (int i = 0; i < 6; ++i)
 		{
@@ -994,7 +994,7 @@ namespace Robots
 			}
 		}
 	}
-	const char* ROBOT_III::GetFixFeet() const
+	const char* ROBOT_TYPE_I::GetFixFeet() const
 	{
 		thread_local static char fixFeet[7]{ "000000" };
 
@@ -1012,7 +1012,7 @@ namespace Robots
 
 		return fixFeet;
 	}
-	void ROBOT_III::SetActiveMotion(const char* activeMotion)
+	void ROBOT_TYPE_I::SetActiveMotion(const char* activeMotion)
 	{
 		for (int i = 0; i < 6; ++i)
 		{
@@ -1032,7 +1032,7 @@ namespace Robots
 		}
 
 	}
-	const char* ROBOT_III::GetActiveMotion() const
+	const char* ROBOT_TYPE_I::GetActiveMotion() const
 	{
 		thread_local static char activeMotion[19]{ "000000000000000000" };
 
@@ -1053,7 +1053,7 @@ namespace Robots
 
 		return activeMotion;
 	}
-	void ROBOT_III::FastDyn()
+	void ROBOT_TYPE_I::FastDyn()
 	{
 		alignas(16) double Cb[6][12]{ 0 };
 		alignas(16) double H[6][18]{ 0 };
@@ -1166,7 +1166,7 @@ namespace Robots
 		}
 	}
 
-	void ROBOT_III::Dyn()
+	void ROBOT_TYPE_I::Dyn()
 	{
 		this->Aris::DynKer::MODEL::Dyn([](int n, const double *D, const double *b, double *x)
 		{
@@ -1178,7 +1178,7 @@ namespace Robots
 		});
 	}
 
-	void ROBOT_III::LoadXml(const char *fileName)
+	void ROBOT_TYPE_I::LoadXml(const char *fileName)
 	{
 		Aris::Core::DOCUMENT doc;
 
@@ -1189,7 +1189,7 @@ namespace Robots
 
 		this->LoadXml(doc);
 	}
-	void ROBOT_III::LoadXml(const Aris::Core::DOCUMENT &doc)
+	void ROBOT_TYPE_I::LoadXml(const Aris::Core::DOCUMENT &doc)
 	{
 		MODEL::LoadXml(doc);
 
@@ -1308,7 +1308,7 @@ namespace Robots
 		}
 	}
 
-	void SetAkimaAndScript(ROBOT_III *pRobot, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const SIMULATE_SCRIPT *pScript)
+	void SetAkimaAndScript(ROBOT_TYPE_I *pRobot, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const SIMULATE_SCRIPT *pScript)
 	{
 		int dt{1};
 		SIMULATE_SCRIPT realScript;
@@ -1393,7 +1393,7 @@ namespace Robots
 		}
 	}
 
-	void ROBOT_III::SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const SIMULATE_SCRIPT *pScript)
+	void ROBOT_TYPE_I::SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const SIMULATE_SCRIPT *pScript)
 	{
 		/*设置驱动的Akima函数*/
 		SetAkimaAndScript(this, fun, param, pScript);
@@ -1443,7 +1443,7 @@ namespace Robots
 		this->SetPee(param->beginPee, param->beginBodyPE, "G");
 		MODEL::SaveAdams(adamsFile, pScript);
 	}
-	void ROBOT_III::SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, int dt)
+	void ROBOT_TYPE_I::SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, int dt)
 	{
 		std::vector<std::vector<double> > motionPos(18);
 		std::vector<std::vector<double> > motionFce(18);
@@ -1539,7 +1539,7 @@ namespace Robots
 		/*把机器人设置到结束的位置*/
 		SimByAdamsResultAt(endCount);
 	}
-	void ROBOT_III::SimByAdamsResultAt(int momentTime)
+	void ROBOT_TYPE_I::SimByAdamsResultAt(int momentTime)
 	{
 		double pIn[18], vIn[18], aIn[18];
 
