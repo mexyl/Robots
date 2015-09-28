@@ -357,14 +357,14 @@ namespace Robots
 	}
 	void LEG_BASE::GetCvd(double *c, const char *RelativeCoodinate) const
 	{
+		std::fill_n(c, 3, 0);
+		
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
-			std::fill_n(c, 3, 0);
 			break;
 		case 'M':
 		case 'B':
-			std::fill_n(c, 3, 0);
 			break;
 		case 'G':
 		case 'O':
@@ -375,14 +375,14 @@ namespace Robots
 	}
 	void LEG_BASE::GetCvi(double *c, const char *RelativeCoodinate) const
 	{
+		std::fill_n(c, 3, 0);
+		
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
-			std::fill_n(c, 3, 0);
 			break;
 		case 'M':
 		case 'B':
-			std::fill_n(c, 3, 0);
 			break;
 		case 'G':
 		case 'O':
@@ -400,6 +400,8 @@ namespace Robots
 	}
 	void LEG_BASE::GetCad(double *c, const char *RelativeCoodinate) const
 	{
+		std::fill_n(c, 3, 0);
+		
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
@@ -422,7 +424,7 @@ namespace Robots
 			//      = Jvd_G * Vin + Vb + Wb x Pee_G
 			//Aee_G = Jvd_G * Ain + dJvd_G * Vin + Ab + Xb x Pee_G + Vb x Vee_G
 			//      = Jvi_G * Ain + dJvd_G * Vin + pa
-			//c = dJvd_G * Vin + pa
+			//c = pa
 
 			//Ain = Jvi_G * Aee_G + dJvi_G * Vee_G - Jvi_G * (Vb + Wb x Pee_G) - dJvi_G * (Ab + Xb x Pee_G + Wb x Vee_G)
 
@@ -433,31 +435,21 @@ namespace Robots
 			s_pv(pEE_G, this->pRobot->pBodyAcc, c);
 			s_cro3(1, this->pRobot->pBodyVel + 3, vEE_G, 1, c);
 
-			double dJac[3][3];
-			this->GetDifJvd(*dJac, "G");
-
-			s_dgemm(3, 1, 3, 1, *dJac, 3, this->vIn, 1, 1, c, 1);
 			break;
 		}
 		}
 	}
 	void LEG_BASE::GetCai(double *c, const char *RelativeCoodinate) const
 	{
+		std::fill_n(c, 3, 0);
+		
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
-			s_dgemm(3, 1, 3, 1, *vJvi, 3, vEE, 1, 0, c, 1);
 			break;
 		case 'M':
 		case 'B':
-		{
-			double dJac[3][3], vEE_M[3];
-			this->GetDifJvi(*dJac, "M");
-			this->GetVee(vEE_M, "M");
-
-			s_dgemm(3, 1, 3, 1, *dJac, 3, vEE_M, 1, 0, c, 1);
 			break;
-		}
 		case 'G':
 		case 'O':
 		default:
@@ -490,8 +482,7 @@ namespace Robots
 			this->GetDifJvi(*dJac, "G");
 			this->GetJvi(*Jac, "G");
 
-			s_dgemm(3, 1, 3, 1, *dJac, 3, vEE_G, 1, 0, c, 1);
-			s_dgemm(3, 1, 3, -1, *Jac, 3, pa, 1, 1, c, 1);
+			s_dgemm(3, 1, 3, -1, *Jac, 3, pa, 1, 0, c, 1);
 			s_dgemm(3, 1, 3, -1, *dJac, 3, pv, 1, 1, c, 1);
 			break;
 		}

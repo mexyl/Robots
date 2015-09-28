@@ -3,38 +3,39 @@
   <Model>
     <Variable>
       <PI>3.14159265358979</PI>
-      <U1ipe>{ 0, 0,      0,     PI / 2, PI / 2, 0 }</U1ipe>
-      <U1jpe>{ 0, 0,      0,     PI / 2, PI / 2, 0 }</U1jpe>
-      <U2ipe>{ 0, 0.234,  0.135, PI / 2, PI / 2, 0 }</U2ipe>
-      <U2jpe>{ 0, 0,      0,     PI / 2, PI / 2, 0 }</U2jpe>
-      <U3ipe>{ 0, 0.234, -0.135, PI / 2, PI / 2, 0 }</U3ipe>
-      <U3jpe>{ 0, 0,      0,     PI / 2, PI / 2, 0 }</U3jpe>
-      <P1ipe>{ 0, 0, 0, PI / 2, PI / 2, -PI / 2 }</P1ipe>
-      <P1jpe>{ 0, 0, 0, PI / 2, PI / 2, -PI / 2 }</P1jpe>
-      <P2ipe>{ 0, 0, 0, PI / 2, PI / 2, -PI / 2 }</P2ipe>
-      <P2jpe>{ 0, 0, 0, PI / 2, PI / 2, -PI / 2 }</P2jpe>
-      <P3ipe>{ 0, 0, 0, PI / 2, PI / 2, -PI / 2 }</P3ipe>
-      <P3jpe>{ 0, 0, 0, PI / 2, PI / 2, -PI / 2 }</P3jpe>
-      <S2ipe>{ 0, 0.059,  0.034, 0, -PI / 2, 0 }</S2ipe>
-      <S2jpe>{ 0, 0,      0,     0, -PI / 2, 0 }</S2jpe>
-      <S3ipe>{ 0, 0.059, -0.034, 0, -PI / 2, 0 }</S3ipe>
-      <S3jpe>{ 0, 0,      0,     0, -PI / 2, 0 }</S3jpe>
-      <Sfipe>{ 0.1, 0, 0, 0, 0, 0 }</Sfipe>
-      <Sfjpe>{ 0,   0, 0, 0, 0, 0 }</Sfjpe>
-      <LFpe>{-0.0679295 , 0 , -0.3552145, PI/2,  PI* 5/6,   -PI/2-PI*7/18}</LFpe>
-      <LMpe>{-0.1234141 , 0 ,  0,         PI/2,  PI* 6/6,   -PI/2-PI*7/18}</LMpe>
-      <LRpe>{-0.0679295 , 0 ,  0.3532904, PI/2,  PI* 7/6,   -PI/2-PI*7/18}</LRpe>
-      <RFpe>{ 0.0679295 , 0 , -0.3552145, PI/2,  PI* 1/6,   -PI/2-PI*7/18}</RFpe>
-      <RMpe>{ 0.1234141 , 0 ,  0,         PI/2,  PI* 0/6,   -PI/2-PI*7/18}</RMpe>
-      <RRpe>{ 0.0679295 , 0 ,  0.3532904, PI/2,  PI*11/6,   -PI/2-PI*7/18}</RRpe>
+      <U1iep>{ PI / 2, PI / 2, 0, 0, 0, 0 }</U1iep>
+      <U1jep>{ PI / 2, PI / 2, 0, 0, 0, 0 }</U1jep>
+      <U2iep>{ PI / 2, PI / 2, 0, 0, 0.228, 0.132 }</U2iep>
+      <U2jep>{ PI / 2, PI / 2, 0, 0, 0, 0 }</U2jep>
+      <U3iep>{ PI / 2, PI / 2, 0, 0, 0.228, -0.132 }</U3iep>
+      <U3jep>{ PI / 2, PI / 2, 0, 0, 0, 0 }</U3jep>
+      <P1iep>{ PI / 2, PI / 2, -PI / 2, 0, 0, 0 }</P1iep>
+      <P1jep>{ PI / 2, PI / 2, -PI / 2, 0, 0, 0 }</P1jep>
+      <P2iep>{ PI / 2, PI / 2, -PI / 2, 0, 0, 0 }</P2iep>
+      <P2jep>{ PI / 2, PI / 2, -PI / 2, 0, 0, 0 }</P2jep>
+      <P3iep>{ PI / 2, PI / 2, -PI / 2, 0, 0, 0 }</P3iep>
+      <P3jep>{ PI / 2, PI / 2, -PI / 2, 0, 0, 0 }</P3jep>
+      <S2iep>{ 0, -PI / 2, 0, 0, 0.059, 0.034 }</S2iep>
+      <S2jep>{ 0, -PI / 2, 0, 0, 0, 0 }</S2jep>
+      <S3iep>{ 0, -PI / 2, 0, 0, 0.059, -0.034 }</S3iep>
+      <S3jep>{ 0, -PI / 2, 0, 0, 0, 0 }</S3jep>
+      <Sfiep>{ 0, 0, 0, 0.042, 0, 0 }</Sfiep>
+      <Sfjep>{ 0, 0, 0, 0, 0, 0 }</Sfjep>
+      <a>0.416</a>
+      <LFep>{PI/2,  PI*2/3, -PI*3/4, -a/4 , 0 , -a/4*sqrt(3)}</LFep>
+      <LMep>{PI/2,  PI*2/3, -PI*3/4, -a/2 , 0 ,  0}</LMep>
+      <LRep>{PI/2,  PI*2/3, -PI*3/4, -a/4 , 0 ,  a/4*sqrt(3)}</LRep>
+      <RFep>{PI/2,  PI*2/3, -PI*3/4,  a/4 , 0 , -a/4*sqrt(3)}</RFep>
+      <RMep>{PI/2,  PI*2/3, -PI*3/4,  a/2 , 0 ,  0}</RMep>
+      <RRep>{PI/2,  PI*2/3, -PI*3/4,  a/4 , 0 ,  a/4*sqrt(3)}</RRep>
       <BodyGamma>{140,0,0,0,0,0,0,0,0,0}</BodyGamma>
-      <P1aGamma>{0,0,0,0,0,0,0,0,0,0}</P1aGamma>
-      <P2aGamma>{0,0,0,0,0,0,0,0,0,0}</P2aGamma>
-      <P3aGamma>{0,0,0,0,0,0,0,0,0,0}</P3aGamma>
-      <ThighGamma>{10 , 1.1 , 0.5 , 0 , 1 , 1 , 1 , 0 , 0 , 0}</ThighGamma>
-      <P2bGamma>{0,0,0,0,0,0,0,0,0,0}</P2bGamma>
-      <P3bGamma>{0,0,0,0,0,0,0,0,0,0}</P3bGamma>
-      <Mot_friction>{20, 30, 560}</Mot_friction>
+      <P1aGamma>{1,0,0,0,0,0,0,0,0,0}</P1aGamma>
+      <P2aGamma>{2,0,0,0,0,0,0,0,0,0}</P2aGamma>
+      <P3aGamma>{3,0,0,0,0,0,0,0,0,0}</P3aGamma>
+      <ThighGamma>{4,0,0,0,0,0,0,0,0,0}</ThighGamma>
+      <P2bGamma>{5,0,0,0,0,0,0,0,0,0}</P2bGamma>
+      <P3bGamma>{6,0,0,0,0,0,0,0,0,0}</P3bGamma>
+      <Mot_friction>{0,0,0}</Mot_friction>
     </Variable>
     <Environment>
       <Gravity>{0 , -9.8 , 0 , 0 , 0 , 0}</Gravity>

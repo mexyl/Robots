@@ -112,7 +112,15 @@ namespace Robots
 		void GetDifJvi(double *jac, const char *RelativeCoodinate = "G") const;
 		void GetCvd(double *c, const char *RelativeCoodinate = "G") const;
 		void GetCvi(double *c, const char *RelativeCoodinate = "G") const;
+		/*!
+		* \brief follow equation: Aee = Jvd * Ain + dJvd * Vin + Cad
+		* \param c Cad
+		*/
 		void GetCad(double *c, const char *RelativeCoodinate = "G") const;
+		/*!
+		* \brief follow equation: Ain = Jvi * Aee + dJvi * Vee + Cai
+		* \param c Cai
+		*/
 		void GetCai(double *c, const char *RelativeCoodinate = "G") const;
 
 		void TransformCoordinatePee(const double *bodyPe, const char *fromMak, const double *fromPee
