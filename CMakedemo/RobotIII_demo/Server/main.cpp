@@ -30,46 +30,30 @@ using namespace std;
 
 using namespace Aris::Core;
 
-Aris::Sensor::IMU imu;
-
-int test(Robots::ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE * pParam)
-{
-	auto data = imu.GetSensorData();
-	rt_printf("%d : %f  %f  %f\n", data.Get().time, data.Get().ax, data.Get().ay, data.Get().az);
-	
-	auto *p = static_cast<const Robots::WALK_PARAM *>(pParam);
-	return p->totalCount - p->count;
-}
+//int test(Robots::ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE * pParam)
+//{
+//	auto data = imu.GetSensorData();
+//	rt_printf("%d : %f  %f  %f\n", data.Get().time, data.Get().ax, data.Get().ay, data.Get().az);
+//	
+//	auto *p = static_cast<const Robots::WALK_PARAM *>(pParam);
+//	return p->totalCount - p->count;
+//}
 
 int main()
 {
-//	imu.Start();
-//
-//for(int i=0;i<50;++i)
-//{
-//
-//auto data = imu.GetSensorData();
-//std::cout<<data.Get().a<<"  "<<data.Get().b<<"  "<<data.Get().c<<std::endl;
-//usleep(100000);
-//}	
-	
-
-
 	auto rs = Robots::ROBOT_SERVER::GetInstance();
 	rs->CreateRobot<Robots::ROBOT_TYPE_I>();
 
 #ifdef PLATFORM_IS_LINUX
-	rs->LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
+	rs->LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_VIII.xml");
 #endif
 #ifdef PLATFORM_IS_WINDOWS
-	rs->LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
+	rs->LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII.xml");
 #endif
 
 	rs->AddGait("wk", Robots::walk, Robots::parseWalk);
 	rs->AddGait("ad", Robots::adjust, Robots::parseAdjust);
 	rs->Start();
-
-
 
 	Aris::Core::RunMsgLoop();
 
