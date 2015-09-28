@@ -972,6 +972,10 @@ namespace Robots
 			{
 				pq[i] = pq_first[i] * (cos(s) + 1) / 2 + pq_second[i] * (1 - cos(s)) / 2;
 			}
+
+			double nrm = Aris::DynKer::s_dnrm2(4, &pq[3], 1);
+			for (int i = 3; i < 7; ++i)pq[i] /= nrm;
+
 			s_pq2pe(pq, pBody);
 		}
 		else
@@ -981,10 +985,7 @@ namespace Robots
 				pEE[i] = realTargetPee[pos-1][i] * (cos(s) + 1) / 2 + realTargetPee[pos][i] * (1 - cos(s)) / 2;
 				
 			}
-			/*for (int i = 0; i < 6; ++i)
-			{
-				pBody[i] = realTargetPbody[pos - 1][i] * (cos(s) + 1) / 2 + realTargetPbody[pos][i] * (1 - cos(s)) / 2;
-			}*/
+
 			/*以下用四元数进行插值*/
 			double pq_first[7], pq_second[7], pq[7];
 			s_pe2pq(realTargetPbody[pos - 1], pq_first);
@@ -1002,6 +1003,10 @@ namespace Robots
 			{
 				pq[i] = pq_first[i] * (cos(s) + 1) / 2 + pq_second[i] * (1 - cos(s)) / 2;
 			}
+			
+			double nrm = Aris::DynKer::s_dnrm2(4, &pq[3], 1);
+			for (int i = 3; i < 7; ++i)pq[i] /= nrm;
+
 			s_pq2pe(pq, pBody);
 		}
 
@@ -1047,19 +1052,15 @@ namespace Robots
 		std::fill_n(param.targetBodyPE[1], 6, 0);
 
 		param.periodNum = 2;
-		param.periodCount[0] = 2000;
-		param.periodCount[1] = 2000;
+		param.periodCount[0] = 3000;
+		param.periodCount[1] = 3000;
 
 		std::strcpy(param.relativeCoordinate, "B");
 		std::strcpy(param.relativeBodyCoordinate, "B");
 
 		for (auto &i : params)
 		{
-			if (i.first == "all")
-			{
-
-			}
-			else if (i.first == "first")
+			if (i.first == "first")
 			{
 				param.legNum = 3;
 				param.motorNum = 9;

@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <vector>
 
+#include <Aris_XML.h>
+
 namespace Robots
 {
 	class ROBOT_BASE;
@@ -135,9 +137,9 @@ namespace Robots
 		const double * const pBasePrtPm{ *_BasePrtPm };
 		double * const pBasePm{ *_BasePm };
 
-		union
+		union alignas(16)
 		{
-			double pEE[3];
+			double pEE[3]{ 0 };
 			struct
 			{
 				double x;
@@ -145,9 +147,9 @@ namespace Robots
 				double z;
 			};
 		};
-		union
+		union alignas(16)
 		{
-			double vEE[3];
+			double vEE[3]{ 0 };
 			struct
 			{
 				double vx;
@@ -155,9 +157,9 @@ namespace Robots
 				double vz;
 			};
 		};
-		union
+		union alignas(16)
 		{
-			double aEE[3];
+			double aEE[3]{ 0 };
 			struct
 			{
 				double ax;
@@ -165,9 +167,9 @@ namespace Robots
 				double az;
 			};
 		};
-		union
+		union alignas(16)
 		{
-			double fEE_sta[3];
+			double fEE_sta[3]{ 0 };
 			struct
 			{
 				double fx_sta;
@@ -175,9 +177,9 @@ namespace Robots
 				double fz_sta;
 			};
 		};
-		union
+		union alignas(16)
 		{
-			double pIn[3];
+			double pIn[3]{ 0 };
 			struct
 			{
 				double l1;
@@ -185,9 +187,9 @@ namespace Robots
 				double l3;
 			};
 		};
-		union
+		union alignas(16)
 		{
-			double vIn[3];
+			double vIn[3]{ 0 };
 			struct
 			{
 				double vl1;
@@ -195,9 +197,9 @@ namespace Robots
 				double vl3;
 			};
 		};
-		union
+		union alignas(16)
 		{
-			double aIn[3];
+			double aIn[3]{ 0 };
 			struct
 			{
 				double al1;
@@ -205,9 +207,9 @@ namespace Robots
 				double al3;
 			};
 		};
-		union
+		union alignas(16)
 		{
-			double fIn_sta[3];
+			double fIn_sta[3]{ 0 };
 			struct
 			{
 				double f1_sta;
@@ -216,18 +218,18 @@ namespace Robots
 			};
 		};
 
-		double _c_acc_dir[3];
-		double _c_acc_inv[3];
+		alignas(16) double _c_acc_dir[3]{ 0 };
+		alignas(16) double _c_acc_inv[3]{ 0 };
 
-		double Jvd[3][3];
-		double Jvi[3][3];
+		alignas(16) double Jvd[3][3]{ { 0 } };
+		alignas(16) double Jvi[3][3]{ { 0 } };
 
-		double vJvd[3][3];
-		double vJvi[3][3];
+		alignas(16) double vJvd[3][3]{ { 0 } };
+		alignas(16) double vJvi[3][3]{ { 0 } };
 
 	private:
-		double _BasePrtPm[4][4];
-		double _BasePm[4][4];
+		double _BasePrtPm[4][4]{ { 0 } };
+		double _BasePm[4][4]{ { 0 } };
 
 		friend class ROBOT_BASE;
 };
@@ -293,6 +295,7 @@ namespace Robots
 			, const char *toMak, double *toPee) const;
 
 		virtual void LoadXml(const char *) {};
+		virtual void LoadXml(const Aris::Core::DOCUMENT &doc) {};
 
 		LEG_BASE *pLegs[6];
 
@@ -302,9 +305,9 @@ namespace Robots
 		double *const pBodyAcc{ _BodyAcc };
 
 	private:
-		double _BodyPm[4][4], _BodyVel[6], _BodyAcc[6];
-		double Jvi[18][6];
-		double vJvi[18][6];
+		double _BodyPm[4][4]{ {0} }, _BodyVel[6]{ 0 }, _BodyAcc[6]{ 0 };
+		alignas(16) double Jvi[18][6]{ {0} };
+		alignas(16) double vJvi[18][6]{ {0} };
 		void calculate_jac();
 		void calculate_jac_c();
 

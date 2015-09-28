@@ -14,15 +14,6 @@
 #include <Aris_XML.h>
 #include <Aris_Core.h>
 
-#ifdef PLATFORM_IS_WINDOWS
-#include<Windows.h>
-#endif
-#ifdef PLATFORM_IS_LINUX
-#include<unistd.h>
-#endif
-
-using namespace std;
-
 namespace Robots
 {
 	int SendRequest(int argc, char *argv[], const char *xmlFileName)
@@ -82,13 +73,8 @@ namespace Robots
 			}
 			catch (std::exception &e)
 			{
-				cout << "failed to connect server, will retry in 1 second" << endl;
-#ifdef PLATFORM_IS_LINUX
-				usleep(1000000);
-#endif
-#ifdef PLATFORM_IS_WINDOWS
-				Sleep(1000);
-#endif
+				std::cout << "failed to connect server, will retry in 1 second" << std::endl;
+				Aris::Core::Sleep(1000);
 			}
 			
 		}
@@ -98,12 +84,12 @@ namespace Robots
 		/*错误处理*/
 		if (ret.GetLength() > 0)
 		{
-			cout << "cmd has fault, please regard to following information:" << endl;
-			cout << "    " << ret.GetDataAddress() << std::endl;
+			std::cout << "cmd has fault, please regard to following information:" << std::endl;
+			std::cout << "    " << ret.GetDataAddress() << std::endl;
 		}
 		else
 		{
-			cout << "send command successful" << std::endl;
+			std::cout << "send command successful" << std::endl;
 		}
 
 		return 0;

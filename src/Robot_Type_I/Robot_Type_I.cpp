@@ -1,16 +1,13 @@
 ﻿#include "Platform.h"
 
-#ifdef PLATFORM_IS_WINDOWS
-#define _CRT_SECURE_NO_WARNINGS
-#define _SCL_SECURE_NO_WARNINGS
-#endif
-
-#include "HexapodIII.h"
 #include <complex>
 #include <cmath>
 #include <ctime>
 #include <iostream>
 
+#include "Robot_Type_I.h"
+
+//#define EIGEN_NO_MALLOC
 #include "Eigen/Eigen"	
 #include "Eigen/Sparse"	
 
@@ -295,31 +292,32 @@ namespace Robots
 	}
 	void LEG_III::calculate_jac()
 	{
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > J1_m(*J1);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > J2_m(*J2);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > inv_J1_m(*inv_J1);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > inv_J2_m(*inv_J2);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> J1_m(*J1);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> J2_m(*J2);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> inv_J1_m(*inv_J1);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> inv_J2_m(*inv_J2);
+		
 		inv_J1_m = J1_m.inverse();
 		inv_J2_m = J2_m.inverse();
 
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > Jvd_m(*Jvd);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > Jvi_m(*Jvi);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> Jvd_m(*Jvd);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> Jvi_m(*Jvi);
 
 		Jvd_m = J1_m*inv_J2_m;
 		Jvi_m = J2_m*inv_J1_m;
 	}
 	void LEG_III::calculate_diff_jac()
 	{
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > J1_m(*J1), J2_m(*J2), vJ1_m(*vJ1), vJ2_m(*vJ2);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > inv_J1_m(*inv_J1), inv_J2_m(*inv_J2);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > Jvd_m(*Jvd), Jvi_m(*Jvi);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > vJvd_m(*vJvd), vJvi_m(*vJvi);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> J1_m(*J1), J2_m(*J2), vJ1_m(*vJ1), vJ2_m(*vJ2);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> inv_J1_m(*inv_J1), inv_J2_m(*inv_J2);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> Jvd_m(*Jvd), Jvi_m(*Jvi);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> vJvd_m(*vJvd), vJvi_m(*vJvi);
 
 		vJvd_m = vJ1_m * inv_J2_m - Jvd_m * vJ2_m * inv_J2_m;
 		vJvi_m = vJ2_m * inv_J1_m - Jvi_m * vJ1_m * inv_J1_m;
 		
-		Eigen::Map<Eigen::Matrix<double, 3, 1> > cd_m(_c_acc_dir), ci_m(_c_acc_inv);
-		Eigen::Map<Eigen::Matrix<double, 3, 1> > vEE_m(this->vEE), vIn_m(this->vIn);
+		Eigen::Map<Eigen::Matrix<double, 3, 1>, Eigen::Aligned> cd_m(_c_acc_dir), ci_m(_c_acc_inv);
+		Eigen::Map<Eigen::Matrix<double, 3, 1>, Eigen::Aligned> vEE_m(this->vEE), vIn_m(this->vIn);
 
 		cd_m = vJvd_m*vIn_m;
 		ci_m = vJvi_m*vEE_m;
@@ -1055,26 +1053,21 @@ namespace Robots
 
 		return activeMotion;
 	}
-	
 	void ROBOT_III::FastDyn()
 	{
-		double Cb[6][6][36]{0};
-		double H[6][18]{ 0 }, h[18]{ 0 };
+		alignas(16) double Cb[6][12]{ 0 };
+		alignas(16) double H[6][18]{ 0 };
+		alignas(16) double h[18]{ 0 };
 
-		int supported_Leg_Num{ 0 }, supported_id[6]{0};
-
-		int ipiv[36];
-		double s[36];
-		double rcond = 0.0000000001;
-		int rank;
+		int supported_Leg_Num{ 0 }, supported_id[6]{ 0 };
 
 		pBody->Update();
 		s_tv(pBody->GetPrtPmPtr(), pBody->GetAccPtr(), pBody->GetPrtAccPtr());
-		/*更新cb并写入到h中，机身只有重力和惯性力*/
+		
+		/*更新h，机身只有重力和惯性力*/
 		s_daxpy(6, -1, pBody->GetPrtFgPtr(), 1, h, 1);
 		s_daxpy(6, 1, pBody->GetPrtFvPtr(), 1, h, 1);
 		s_dgemm(6, 1, 6, 1, pBody->GetPrtImPtr(), 6, pBody->GetPrtAccPtr(), 1, 1, h, 1);
-
 
 		/*对每条腿操作*/
 		for (int i = 0; i < 6; ++i)
@@ -1082,42 +1075,69 @@ namespace Robots
 			pLegs[i]->FastDyn();
 
 			/*更新Cb*/
-			s_block_cpy(6, 4, pLegs[i]->pU1->GetPrtCstMtxIPtr(), 0, 0, 4, *(Cb[i]), 0, 0, 36);
-			s_block_cpy(6, 4, pLegs[i]->pU2->GetPrtCstMtxIPtr(), 0, 0, 4, *(Cb[i]), 0, 4, 36);
-			s_block_cpy(6, 4, pLegs[i]->pU3->GetPrtCstMtxIPtr(), 0, 0, 4, *(Cb[i]), 0, 8, 36);
+			s_block_cpy(6, 4, pLegs[i]->pU1->GetPrtCstMtxIPtr(), 0, 0, 4, *Cb, 0, 0, 12);
+			s_block_cpy(6, 4, pLegs[i]->pU2->GetPrtCstMtxIPtr(), 0, 0, 4, *Cb, 0, 4, 12);
+			s_block_cpy(6, 4, pLegs[i]->pU3->GetPrtCstMtxIPtr(), 0, 0, 4, *Cb, 0, 8, 12);
 
 			/*复制C与c_M*/
-
 			if (pLegs[i]->pSf->Active())
 			{
 				/*更新支撑腿数量与id*/
 				supported_id[i] = supported_Leg_Num;
-				supported_Leg_Num += 1;
+				supported_Leg_Num++;
 
 				/*计算k_L*/
-				s_dgesv(36, 4, *pLegs[i]->_C, 36, ipiv, *(pLegs[i]->_c_M), 4);
-				//Eigen::Map<Eigen::Matrix<double, 36, 36, Eigen::RowMajor> > A(*pLegs[i]->_C);
-				//Eigen::Map<Eigen::Matrix<double, 36, 4, Eigen::RowMajor> > b(*(pLegs[i]->_c_M));
-				//auto x = A.partialPivLu().solve(b);
-				//b = x;
+				Eigen::Map<Eigen::Matrix<double, 36, 36, Eigen::RowMajor>, Eigen::Aligned > A(*pLegs[i]->_C);
+				Eigen::Map<Eigen::Matrix<double, 36, 4, Eigen::RowMajor>, Eigen::Aligned > b(*(pLegs[i]->_c_M));
+				auto x = A.partialPivLu().solve(b);
+				b = x;
 
 				/*更新H，对于机身，只有U副跟腿连接，所以4*3=12列相乘即可*/
-				s_dgemm(6, 3, 12, -1, *(Cb[i]), 36, &pLegs[i]->_c_M[0][1], 4, 1, &H[0][supported_Leg_Num * 3 - 3], 18);
+				s_dgemm(6, 3, 12, -1, *Cb, 12, &pLegs[i]->_c_M[0][1], 4, 1, &H[0][supported_Leg_Num * 3 - 3], 18);
 			}
 			else
 			{
 				/*计算k，计算所有支撑腿的驱动输入力*/
-				s_dgesv(36, 4, *pLegs[i]->_C, 36, ipiv, *(pLegs[i]->_c_M), 4);
+				Eigen::Map<Eigen::Matrix<double, 36, 36, Eigen::RowMajor>, Eigen::Aligned  > A(*pLegs[i]->_C);
+				Eigen::Map<Eigen::Matrix<double, 36, 1, Eigen::ColMajor>, Eigen::Aligned, Eigen::Stride<4*36, 4>  > b(*(pLegs[i]->_c_M));
+				auto x = A.partialPivLu().solve(b);
+				b = x;
 			}
 
 			/*更新h，对于机身，只有U副跟腿连接，所以4*3=12列相乘即可*/
-			s_dgemm(6, 1, 12, -1, *(Cb[i]), 36, *(pLegs[i]->_c_M), 4, 1, h, 1);
+			s_dgemm(6, 1, 12, -1, *Cb, 12, *(pLegs[i]->_c_M), 4, 1, h, 1);
 		}
 
 		/*求解支撑腿的驱动力*/
 		if (supported_Leg_Num > 0)
 		{
-			s_dgelsd(6, supported_Leg_Num * 3, 1, *H, 18, h, 1, s, rcond, &rank);
+			alignas(16) double loc_h[18];
+			std::copy_n(h, 18, loc_h);
+
+			Eigen::Map<Eigen::Matrix<double, 6, Eigen::Dynamic, Eigen::RowMajor, 6, 18>, Eigen::Aligned, Eigen::Stride<18, 1>> A(*H, 6, supported_Leg_Num * 3);
+			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, 18, 1>, Eigen::Aligned > b(loc_h, 6);
+			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, 18, 1>, Eigen::Aligned > x(h, supported_Leg_Num * 3);
+
+			auto svd = A.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV);
+
+			//以下计算参考网址
+		    //http://eigen.tuxfamily.org/index.php?title=FAQ
+			//中关于moore_penrose_pseudo_inverse的介绍
+
+			double pinvtoler = 0.0000000001;
+			auto singularValues_inv = svd.singularValues();
+			for (long i = 0; i < A.diagonalSize(); ++i)
+			{
+				if (singularValues_inv(i) > pinvtoler)
+					singularValues_inv(i) = 1.0 / singularValues_inv(i);
+				else
+					singularValues_inv(i) = 0;
+			}
+
+			x = svd.matrixV()*(singularValues_inv.asDiagonal()*(svd.matrixU().transpose() * b));
+			
+			//auto moore_penrose_pseudo_inverse = (svd.matrixV()*singularValues_inv.asDiagonal()*svd.matrixU().transpose());
+			//x = moore_penrose_pseudo_inverse * b;
 		}
 			
 
@@ -1145,9 +1165,33 @@ namespace Robots
 			}
 		}
 	}
-	void ROBOT_III::LoadXml(const char *filename)
+
+	void ROBOT_III::Dyn()
 	{
-		MODEL::LoadXml(filename);
+		this->Aris::DynKer::MODEL::Dyn([](int n, const double *D, const double *b, double *x)
+		{
+			Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >Dm(D, n, n);
+			Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, 1> >bm(b, n);
+			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1> >xm(x, n);
+
+			xm = Dm.lu().solve(bm);
+		});
+	}
+
+	void ROBOT_III::LoadXml(const char *fileName)
+	{
+		Aris::Core::DOCUMENT doc;
+
+		if (doc.LoadFile(fileName) != 0)
+		{
+			throw std::logic_error((std::string("could not open file:") + std::string(fileName)));
+		}
+
+		this->LoadXml(doc);
+	}
+	void ROBOT_III::LoadXml(const Aris::Core::DOCUMENT &doc)
+	{
+		MODEL::LoadXml(doc);
 
 		/*Update Parts*/
 		pBody = GetPart("MainBody");
@@ -1256,13 +1300,12 @@ namespace Robots
 		const_cast<double *&>(pBodyPm) = pBody->GetPmPtr();
 		const_cast<double *&>(pBodyVel) = pBody->GetVelPtr();
 		const_cast<double *&>(pBodyAcc) = pBody->GetAccPtr();
-		
-		for (auto *pLeg:this->pLegs)
+
+		for (auto *pLeg : this->pLegs)
 		{
 			const_cast<double *&>(pLeg->pBasePm) = const_cast<double *>(pLeg->pBase->GetPmPtr());
 			const_cast<const double *&>(pLeg->pBasePrtPm) = pLeg->pBase->GetPrtPmPtr();
 		}
-
 	}
 
 	void SetAkimaAndScript(ROBOT_III *pRobot, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const SIMULATE_SCRIPT *pScript)

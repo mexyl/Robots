@@ -1,51 +1,24 @@
 ﻿#include <Platform.h>
 
-#ifdef PLATFORM_IS_WINDOWS
-#define _CRT_SECURE_NO_WARNINGS
-#define _SCL_SECURE_NO_WARNINGS
-#endif
-
 #include <iostream>
-#include <iomanip>
-#include <cmath>
-
-#include <Aris_Core.h>
-#include <Aris_Socket.h>
-#include <Aris_DynKer.h>
-#include <Aris_DynModel.h>
-#include <Aris_ExpCal.h>
-
-#include "Robot_Server.h"
-
-#include <map>
-
-#include "Robot_Gait.h"
-#include "HexapodIII.h"
-#include "HexapodIV.h"
+#include "Robot_Type_I.h"
 
 using namespace std;
 using namespace Robots;
-
-//using namespace Aris::Core;
 using namespace Aris::DynKer;
 
-ROBOT_III rbt;
-
-#include<ctime>
-
-#include <Aris_Core.h>
 
 int main()
 {
 
+	ROBOT_III rbt;
+
 #ifdef PLATFORM_IS_WINDOWS
-	rbt.LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
+	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III.xml");
 #endif
 #ifdef PLATFORM_IS_LINUX
-	rbt.LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
+	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III.xml");
 #endif
-
-	Aris::Core::MSG m;
 
 	//double pEE_G[18] =
 	//{

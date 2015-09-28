@@ -1,17 +1,10 @@
 ﻿#ifndef ROBOT_III_H
 #define ROBOT_III_H
 
-#include <Aris_DynKer.h>
 #include <Aris_DynModel.h>
-#include <fstream>
+#include <Robot_Base.h>
+#include <Robot_Gait.h>
 
-#include "Robot_Base.h"
-#include "Robot_Gait.h"
-
-/** \brief 命名空间：六足机器人
-*
-* 用来计算机器人的运动学和动力学等。
-*/
 namespace Robots
 {
 	class ROBOT_III;
@@ -181,11 +174,11 @@ namespace Robots
 		double H11, H12, H21, H22;
 		double k21, k22, k23, k31, k32, k33;
 		double vk21, vk22, vk23, vk31, vk32, vk33;
-		double J1[3][3], J2[3][3], vJ1[3][3], vJ2[3][3];
-		double inv_J1[3][3], inv_J2[3][3];
+		alignas(16) double J1[3][3], J2[3][3], vJ1[3][3], vJ2[3][3];
+		alignas(16) double inv_J1[3][3], inv_J2[3][3];
 
-		double _C[36][36];
-		double _c_M[36][4];
+		alignas(16) double _C[36][36];
+		alignas(16) double _c_M[36][4];
 
 		friend class ROBOT_III;
 	};
@@ -203,7 +196,7 @@ namespace Robots
 		ROBOT_III();
 		~ROBOT_III() = default;
 		virtual void LoadXml(const char *filename);
-
+		virtual void LoadXml(const Aris::Core::DOCUMENT &doc);
 
 		void GetFin(double *fIn) const;
 		void GetFinDyn(double *fIn) const;
@@ -217,6 +210,8 @@ namespace Robots
 		void SetActiveMotion(const char* activeMotion);
 		const char* GetActiveMotion() const;
 		void FastDyn();
+
+		void Dyn();
 		
 		void SimByAdamsResultAt(int momentTime);
 		void SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const Aris::DynKer::SIMULATE_SCRIPT *script = nullptr);

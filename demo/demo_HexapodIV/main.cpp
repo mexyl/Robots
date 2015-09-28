@@ -5,8 +5,8 @@
 #define _SCL_SECURE_NO_WARNINGS
 #endif
 
-#include "HexapodIV.h"
-#include "HexapodIII.h"
+#include "Robot_Type_II.h"
+#include "Robot_Type_I.h"
 #include "Robot_Gait.h"
 #include <Aris_Plan.h>
 

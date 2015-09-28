@@ -1,19 +1,22 @@
 ﻿#include <Platform.h>
 #ifdef PLATFORM_IS_WINDOWS
 #define rt_printf printf
-#define _SCL_SECURE_NO_WARNINGS
 #include <windows.h>
 #undef CM_NONE
 #endif
+
+#include <cstring>
+
 #ifdef PLATFORM_IS_LINUX
 #include <Aris_Control.h>
 #endif
-
-#include "Robot_Server.h"
-#include <cstring>
+#include <Aris_ControlData.h>
 #include <Aris_Core.h>
+#include <Aris_Socket.h>
+#include <Aris_ExpCal.h>
 #include <Aris_Plan.h>
-#include <Robot_Base.h>
+#include "Robot_Base.h"
+#include "Robot_Server.h"
 
 namespace Robots
 {
@@ -62,7 +65,7 @@ namespace Robots
 
 		bool isTaken{ false };
 
-		friend void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
+		friend void addAllParams(const Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
 		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
 	};
 	class ROOT_NODE :public NODE
@@ -73,7 +76,7 @@ namespace Robots
 	private:
 		NODE *pDefault;
 
-		friend void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
+		friend void addAllParams(const Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
 		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
 	};
 	class GROUP_NODE :public NODE
@@ -89,7 +92,7 @@ namespace Robots
 	private:
 		NODE *pDefault;
 
-		friend void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
+		friend void addAllParams(const Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
 		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
 	};
 	class PARAM_NODE :public NODE
@@ -101,7 +104,7 @@ namespace Robots
 		std::string defaultValue;
 		std::string minValue, maxValue;
 
-		friend void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
+		friend void addAllParams(const Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
 		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
 	};
 
@@ -160,7 +163,7 @@ namespace Robots
 		}
 	}
 
-	void addAllParams(Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames)
+	void addAllParams(const Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames)
 	{
 		/*add all children*/
 		for (auto pChild = pEle->FirstChildElement();pChild != nullptr;	pChild = pChild->NextSiblingElement())
@@ -406,7 +409,7 @@ namespace Robots
 	class ROBOT_SERVER::ROBOT_SERVER_IMP
 	{
 	public:
-		void LoadXml(const char *fileName);
+		void LoadXml(const Aris::Core::DOCUMENT &doc);
 		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc);
 		void Start();
 
@@ -480,16 +483,8 @@ namespace Robots
 		friend class ROBOT_SERVER;
 	};
 
-	void ROBOT_SERVER::ROBOT_SERVER_IMP::LoadXml(const char *fileName)
+	void ROBOT_SERVER::ROBOT_SERVER_IMP::LoadXml(const Aris::Core::DOCUMENT &doc)
 	{
-		/*open xml file*/
-		Aris::Core::DOCUMENT doc;
-
-		if (doc.LoadFile(fileName) != 0)
-		{
-			throw std::logic_error((std::string("could not open file:") + std::string(fileName)));
-		}
-
 		/*load connection param*/
 		auto pConnEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Connection");
 		ip = pConnEle->Attribute("IP");
@@ -529,7 +524,7 @@ namespace Robots
 
 		std::string docName{ doc.RootElement()->Name() };
 
-		pServer->pRobot->LoadXml(fileName);
+		pServer->pRobot->LoadXml(doc);
 
 		double pe[6]{ 0 };
 		pServer->pRobot->SetPee(homeEE, pe, "B");
@@ -1339,7 +1334,18 @@ namespace Robots
 
 	void ROBOT_SERVER::LoadXml(const char *fileName)
 	{
-		pImp->LoadXml(fileName);
+		Aris::Core::DOCUMENT doc;
+
+		if (doc.LoadFile(fileName) != 0)
+		{
+			throw std::logic_error((std::string("could not open file:") + std::string(fileName)));
+		}
+		
+		pImp->LoadXml(doc);
+	}
+	void ROBOT_SERVER::LoadXml(const Aris::Core::DOCUMENT &xmlDoc)
+	{
+		pImp->LoadXml(xmlDoc);
 	}
 	void ROBOT_SERVER::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 	{

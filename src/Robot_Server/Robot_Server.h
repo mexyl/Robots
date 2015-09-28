@@ -1,22 +1,14 @@
 ﻿#ifndef ROBOT_SERVER_H
 #define ROBOT_SERVER_H
 
-#include <Platform.h>
-
-#ifdef PLATFORM_IS_LINUX
-#include <Aris_Control.h>
-#endif
-
-#include <Aris_ControlData.h>
-#include <Aris_Socket.h>
-#include <Aris_IMU.h>
-#include <Robot_Gait.h>
-#include <HexapodIII.h>
 #include <string>
 #include <sstream>
 #include <map>
-
 #include <memory>
+
+#include <Aris_IMU.h>
+#include <Aris_Message.h>
+#include <Robot_Gait.h>
 
 namespace Robots
 {
@@ -40,6 +32,7 @@ namespace Robots
 			}
 		};
 		void LoadXml(const char *fileName);
+		void LoadXml(const Aris::Core::DOCUMENT &xmlDoc);
 		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc);
 		void Start();
 		Aris::Sensor::IMU* Imu();

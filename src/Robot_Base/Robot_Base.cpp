@@ -15,6 +15,9 @@
 
 #include "Robot_Base.h"
 
+#define EIGEN_NO_MALLOC
+#include <Eigen/Eigen>
+
 using namespace Aris::DynKer;
 using namespace std;
 
@@ -76,7 +79,6 @@ namespace Robots
 		case 'B':
 		case 'M':
 			s_pm_dot_v3(pBasePrtPm, this->vEE, vEE);
-			//s_dgemm(3, 1, 3, 1, pBasePrtPm, 4, this->vEE, 1, 0, vEE, 1);
 			break;
 		case 'G':
 		case 'O':
@@ -87,8 +89,6 @@ namespace Robots
 	}
 	void LEG_BASE::SetVee(const double *vEE, const char *RelativeCoodinate)
 	{
-		double pnt[3];
-
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
@@ -101,9 +101,13 @@ namespace Robots
 		case 'G':
 		case 'O':
 		default:
+		{
+			double pnt[3];
 			GetPee(pnt, "G");
 			s_inv_pv2pv(pBasePm, pRobot->pBodyVel, pnt, vEE, this->vEE);
 			break;
+		}
+			
 		}
 
 		calculate_from_vEE();
@@ -129,8 +133,6 @@ namespace Robots
 	}
 	void LEG_BASE::SetAee(const double *aEE, const char *RelativeCoodinate)
 	{
-		double pv[3], pnt[3];
-
 		switch (*RelativeCoodinate)
 		{
 		case 'L':
@@ -143,10 +145,14 @@ namespace Robots
 		case 'G':
 		case 'O':
 		default:
+		{
+			double pv[3], pnt[3];
 			GetPee(pnt, "G");
 			GetVee(pv, "G");
 			s_inv_pa2pa(pBasePm, pRobot->pBodyVel, pRobot->pBodyAcc, pnt, pv, aEE, this->aEE);
 			break;
+		}
+			
 		}
 
 		calculate_from_aEE();
@@ -799,11 +805,11 @@ namespace Robots
 		findSupportMotion(fixFeet, activeMotor, supportMotor, supportID, dim);
 
 		/*给出身体的位姿初值*/
-		double pm[16], pq[7], pe[6];
-		double jac[18 * 6];
-		double vb[6], vq[7];
-		double pIn[18],vIn[18];
-		double pEE_G[18];
+		alignas(16) double pm[16], pq[7], pe[6];
+		alignas(16) double jac[18 * 6];
+		alignas(16) double vb[6], vq[7];
+		alignas(16) double pIn[18],vIn[18];
+		alignas(16) double pEE_G[18];
 
 		this->GetPee(pEE_G, "G");
 		Aris::DynKer::s_pe2pq(initBodyPE, pq, "313");
@@ -824,17 +830,27 @@ namespace Robots
 			GetJvi(jac, supportMotor);
 			if (dim == 6)
 			{
-				int ipiv[6];
-				s_dgesv(6, 1, jac, 6, ipiv, vIn, 1);
+				//int ipiv[6];
+				//s_dgesv(6, 1, jac, 6, ipiv, vIn, 1);
+
+				Eigen::Map<Eigen::Matrix<double, 6, 6, Eigen::RowMajor> > jac_m(jac);
+				Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > vIn_m(vIn);
+				Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > vb_m(vb);
+				vb_m = jac_m.partialPivLu().solve(vIn_m);
 			}
 			else
 			{
-				int rank;
-				double s[6];
-				s_dgelsd(dim, 6, 1, jac, 6, vIn, 1, s, 0.000000001, &rank);
+				//int rank;
+				//double s[6];
+				//s_dgelsd(dim, 6, 1, jac, 6, vIn, 1, s, 0.000000001, &rank);
+
+				Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 6, Eigen::RowMajor, 18, 6> > jac_m(jac, dim, 6);
+				Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, 18, 1> > vIn_m(vIn, dim);
+				Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > vb_m(vb);
+				vb_m = jac_m.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV).solve(vIn_m);
 			}
 
-			std::copy_n(vIn, dim, vb);
+			//std::copy_n(vIn, dim, vb);
 
 			s_pq2pm(pq, pm);
 			s_v2vq(pm, vb, vq);
@@ -889,22 +905,33 @@ namespace Robots
 
 		/*计算身体雅可比，只根据支撑的电机来计算，之后求解雅可比方程*/
 		double jac[18*6];
+		double vb[6];
 		GetJvi(jac, supportMotor);
 		if (dim == 6)
 		{
-			int ipiv[6];
-			s_dgesv(6, 1, jac, 6, ipiv, vIn_loc, 1);
+			//int ipiv[6];
+			//s_dgesv(6, 1, jac, 6, ipiv, vIn_loc, 1);
+
+			Eigen::Map<Eigen::Matrix<double, 6, 6, Eigen::RowMajor> > jac_m(jac);
+			Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > vIn_m(vIn_loc);
+			Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > vb_m(vb);
+			vb_m = jac_m.partialPivLu().solve(vIn_m);
 		}
 		else
 		{
-			int rank;
-			double s[6];
-			s_dgelsd(dim, 6, 1, jac, 6, vIn_loc, 1, s, 0.000000001, &rank);
+			//int rank;
+			//double s[6];
+			//s_dgelsd(dim, 6, 1, jac, 6, vIn_loc, 1, s, 0.000000001, &rank);
+
+			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 6, Eigen::RowMajor, 18, 6> > jac_m(jac, dim, 6);
+			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, 18, 1> > vIn_m(vIn_loc, dim);
+			Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > vb_m(vb);
+			vb_m = jac_m.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(vIn_m);
 		}
 
 		/*先设置支撑腿的末端速度为0，之后设置其他腿的输入*/
 		double vEE[18]{ 0 };
-		this->SetVee(vEE, vIn_loc);
+		this->SetVee(vEE, vb);
 		for (int i = 0; i < 6; ++i)
 		{
 			/*判断是否为支撑腿*/
@@ -924,6 +951,8 @@ namespace Robots
 
 		/*计算所有支撑电机的速度*/
 		double aIn_loc[18];
+		double ab[6];
+
 		for (int j = 0; j < dim; ++j)
 		{
 			aIn_loc[j] = aIn[supportID[j]];
@@ -938,19 +967,29 @@ namespace Robots
 
 		if (dim == 6)
 		{
-			int ipiv[6];
-			s_dgesv(6, 1, jac, 6, ipiv, aIn_loc, 1);
+			/*int ipiv[6];
+			s_dgesv(6, 1, jac, 6, ipiv, aIn_loc, 1);*/
+
+			Eigen::Map<Eigen::Matrix<double, 6, 6, Eigen::RowMajor> > jac_m(jac);
+			Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > aIn_m(aIn_loc);
+			Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > ab_m(ab);
+			ab_m = jac_m.partialPivLu().solve(aIn_m);
 		}
 		else
 		{
-			int rank;
-			double s[6];
-			s_dgelsd(dim, 6, 1, jac, 6, aIn_loc, 1, s, 0.000000001, &rank);
+			//int rank;
+			//double s[6];
+			//s_dgelsd(dim, 6, 1, jac, 6, aIn_loc, 1, s, 0.000000001, &rank);
+
+			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 6, Eigen::RowMajor, 18, 6> > jac_m(jac, dim, 6);
+			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, 18, 1> > aIn_m(aIn_loc, dim);
+			Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > ab_m(ab);
+			ab_m = jac_m.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(aIn_m);
 		}
 
 		/*先设置支撑腿的末端速度为0，之后设置其他腿的输入*/
 		double aEE[18]{ 0 };
-		this->SetAee(aEE, aIn_loc);
+		this->SetAee(aEE, ab);
 		for (int i = 0; i < 6; ++i)
 		{
 			/*判断是否为支撑腿*/
@@ -1033,16 +1072,16 @@ namespace Robots
 	
 	void ROBOT_BASE::calculate_jac()
 	{
-		double jac[9], cm3[9], pEE[3];
+		double jac[9]{ 0 }, cm3[9]{ 0 }, pEE[3]{0};
 		
 		for (int i = 0; i < 6; ++i)
 		{
 			pLegs[i]->GetJvi(jac, "G");
-			s_block_cpy(3, 3, -1, jac, 0, 0, 3, 0, *Jvi, i * 3, 0, 6);
+			s_block_cpy(3, 3, -1, jac, 0, 0, 3, 0, &this->Jvi[0][0], i * 3, 0, 6);
 
 			pLegs[i]->GetPee(pEE, "G");
 			s_cm3(pEE, cm3);
-			s_dgemm(3, 3, 3, 1, jac, 3, cm3, 3, 0, &Jvi[i * 3][3], 6);
+			s_dgemm(3, 3, 3, 1, jac, 3, cm3, 3, 0, &this->Jvi[i * 3][3], 6);
 		}
 	}
 	void ROBOT_BASE::calculate_jac_c()
@@ -1066,8 +1105,6 @@ namespace Robots
 		}
 	}
 	
-	
-
 	void ROBOT_BASE::TransformCoordinatePee(const double *bodyPe, const char *fromMak, const double *fromPee
 		, const char *toMak, double *toPee) const
 	{

@@ -25,10 +25,7 @@ FUNCTION(PREPEND_H var prefix)
    SET(${var} "${listVar}" PARENT_SCOPE)
 ENDFUNCTION(PREPEND_H)
 
-
-
 project(ROBOTS)
-
 
 if(UNIX)
 	set(CMAKE_C_COMPILER "/usr/bin/gcc")
@@ -37,95 +34,61 @@ if(UNIX)
 #	set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
 endif(UNIX)
 
-
-# set compile options
-if(UNIX)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O2")
-endif(UNIX)
-
 # set binary and library folders
 set(EXECUTABLE_OUTPUT_PATH bin)
 set(LIBRARY_OUTPUT_PATH lib)
 
+# set debug and release options
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
+set(CMAKE_BUILD_TYPE "Release")
+#set(CMAKE_CONFIGURATION_TYPES Debug Release)
+
+# set compile options
+if(UNIX)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -msse2")
+endif(UNIX)
+
+
+
 # set include and lib folders
 if(UNIX)
-set(ARIS_COMMOM_HEADERS ${PROJECT_BINARY_DIR}/common_headers)
+set(GENERAL_INCLUDE_DIR "/usr/Aris_Dependent")
+set(SYSTEM_LINK_LIBS pthread gfortran)
+set(ROBOTS_INCLUDE_DIR "src/Robot_Type_I" "src/Robot_Type_II" "src/Robot_Base" "src/Robot_Server" "src/Robot_Client")
+set(ROBOTS_LINK_LIBS Robot_Type_I Robot_Type_II Robot_Base Robot_Server Robot_Client)
 set(ARIS_INCLUDE_DIR "/usr/Aris/include")
+set(ARIS_LINK_DIR "/usr/Aris/lib")
+set(ARIS_LINK_LIBS Aris_Control Aris_Plan Aris_Sensor Aris_DynKer Aris_ExpCal Aris_Core)
 set(XENOMAI_INCLUDE_DIR "/usr/xenomai/include")
 set(ETHERLAB_INCLUDE_DIR "/opt/etherlab/include")
-set(LAPACK_LINK_DIR "/usr/lapack/lib")
-set(ARIS_LINK_DIR "/usr/Aris/lib")
-set(XSENS_LINK_DIR "/usr/xsens/lib")
-set(SYSTEM_LINK_LIBS pthread gfortran)
-set(LAPACK_LINK_LIBS lapacke lapack cblas refblas)
+set(XSENS_INCLUDE_DIR "/usr/Aris_Dependent/xsens/include")
 set(XSENS_LINK_LIBS xdeviceclass xcommunication xstypes)
-set(ARIS_LINK_LIBS Aris_Control Aris_Plan Aris_Sensor Aris_DynKer Aris_ExpCal Aris_Core)
-set(ROBOTS_LINK_LIBS HexapodIV HexapodIII Robot_Client Robot_Server Robot_Base)
+set(XSENS_LINK_DIR "/usr/Aris_Dependent/xsens/lib")
 
-set(ALL_INCLUDE_DIR ${ARIS_COMMOM_HEADERS} ${ETHERLAB_INCLUDE_DIR} ${XENOMAI_INCLUDE_DIR} ${ARIS_INCLUDE_DIR})
-set(ALL_LINK_DIR ${ARIS_LINK_DIR} ${LAPACK_LINK_DIR} ${XSENS_LINK_DIR} )
+set(ALL_INCLUDE_DIR ${ROBOTS_INCLUDE_DIR} ${GENERAL_INCLUDE_DIR} ${ARIS_INCLUDE_DIR} ${LAPACK_INCLUDE_DIR} ${XSENS_INCLUDE_DIR} ${ETHERLAB_INCLUDE_DIR} ${XENOMAI_INCLUDE_DIR})
+set(ALL_LINK_DIR ${ARIS_LINK_DIR} ${XSENS_LINK_DIR} ${LAPACK_LINK_DIR})
 set(ALL_LINK_LIBS ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${XSENS_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 endif(UNIX)
 if(WIN32)
-set(ARIS_COMMOM_HEADERS ${PROJECT_BINARY_DIR}/common_headers)
+set(GENERAL_INCLUDE_DIR "C:/Aris_Dependent")
+set(SYSTEM_LINK_LIBS ws2_32 setupapi)
+set(ROBOTS_INCLUDE_DIR "src/Robot_Type_I" "src/Robot_Type_II" "src/Robot_Base" "src/Robot_Server" "src/Robot_Client")
+set(ROBOTS_LINK_LIBS Robot_Type_I Robot_Type_II Robot_Base Robot_Server Robot_Client)
 set(ARIS_INCLUDE_DIR "C:/Aris/include")
-set(LAPACK_INCLUDE_DIR "C:/lapack/include/")
-set(XSENS_INCLUDE_DIR "C:/xsens/include")
-set(LAPACK_LINK_DIR "C:/lapack/lib")
 set(ARIS_LINK_DIR "C:/Aris/lib")
-set(XSENS_LINK_DIR "C:/xsens/lib")
-set(SYSTEM_LINK_LIBS ws2_32)
-set(LAPACK_LINK_LIBS liblapacke liblapack cblas libblas)
-set(XSENS_LINK_LIBS xdeviceclass setupapi)
 set(ARIS_LINK_LIBS Aris_Plan Aris_Sensor Aris_DynKer Aris_ExpCal Aris_Core)
-set(ROBOTS_LINK_LIBS HexapodIV HexapodIII Robot_Client Robot_Server Robot_Base)
+set(XSENS_INCLUDE_DIR "C:/Aris_Dependent/xsens/include")
+set(XSENS_LINK_DIR "C:/Aris_Dependent/xsens/lib")
+set(XSENS_LINK_LIBS xdeviceclass)
 
-set(ALL_INCLUDE_DIR ${ARIS_COMMOM_HEADERS} ${ETHERLAB_INCLUDE_DIR} ${XENOMAI_INCLUDE_DIR} ${ARIS_INCLUDE_DIR})
-set(ALL_LINK_DIR ${ARIS_LINK_DIR} ${LAPACK_LINK_DIR} ${XSENS_LINK_DIR} )
-set(ALL_LINK_LIBS ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${XSENS_LINK_LIBS} ${SYSTEM_LINK_LIBS} )
+set(ALL_INCLUDE_DIR ${ROBOTS_INCLUDE_DIR} ${GENERAL_INCLUDE_DIR} ${ARIS_INCLUDE_DIR} ${ETHERLAB_INCLUDE_DIR} ${XENOMAI_INCLUDE_DIR} ${LAPACK_INCLUDE_DIR} ${XSENS_INCLUDE_DIR})
+set(ALL_LINK_DIR ${ARIS_LINK_DIR} ${XSENS_LINK_DIR} ${LAPACK_LINK_DIR})
+set(ALL_LINK_LIBS ${ROBOTS_LINK_LIBS} ${ARIS_LINK_LIBS} ${LAPACK_LINK_LIBS} ${XSENS_LINK_LIBS} ${SYSTEM_LINK_LIBS})
 endif(WIN32)
 
-include_directories("src/HexapodIII")
-include_directories("src/HexapodIV")
-include_directories("src/Robot_Base")
-include_directories("src/Robot_Server")
-include_directories("src/Robot_Client")
 include_directories(${ALL_INCLUDE_DIR})
 link_directories(${ALL_LINK_DIR})
-
-
-
-#if(UNIX)
-#include_directories("/usr/xenomai/include")
-#include_directories("/opt/etherlab/include")
-#include_directories("/usr/lapack/include")
-#include_directories("/usr/Aris/include")
-#link_directories(/usr/lapack/lib)
-#link_directories(/usr/Aris/lib)
-#endif(UNIX)
-#if(WIN32)
-#include_directories("C:/lapack/include")
-#include_directories("C:/Aris/include")
-#link_directories(C:/lapack/lib)
-#link_directories(C:/Aris/lib)
-#endif(WIN32)
-
-
-
-# set link files
-if(WIN32)
-set(SYSTEM_LINK_LIBS ws2_32)
-set(LAPACK_LINK_LIBS liblapacke liblapack cblas libblas)
-set(ARIS_LINK_LIBS Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
-endif(WIN32)
-if(UNIX)
-set(SYSTEM_LINK_LIBS pthread gfortran)
-set(LAPACK_LINK_LIBS lapacke lapack cblas refblas)
-set(ARIS_LINK_LIBS Aris_Control Aris_Plan Aris_DynKer Aris_ExpCal Aris_Core)
-endif(UNIX)
-set(ROBOTS_LINK_LIBS HexapodIV HexapodIII Robot_Server Robot_Base)
-
-
 
 # build Robot_Base lib
 set(SOURCE Robot_Base Robot_Gait)
@@ -148,18 +111,18 @@ PREPEND_H(FULL_H src/Robot_Client ${SOURCE})
 add_library(Robot_Client STATIC ${FULL_SRC} ${FULL_H})
 set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
 
-# build HexapodIII lib
-set(SOURCE HexapodIII)
-PREPEND_CPP(FULL_SRC src/HexapodIII ${SOURCE})
-PREPEND_H(FULL_H src/HexapodIII ${SOURCE})
-add_library(HexapodIII STATIC ${FULL_SRC} ${FULL_H})
+# build Robot_Type_I lib
+set(SOURCE Robot_Type_I)
+PREPEND_CPP(FULL_SRC src/Robot_Type_I ${SOURCE})
+PREPEND_H(FULL_H src/Robot_Type_I ${SOURCE})
+add_library(Robot_Type_I STATIC ${FULL_SRC} ${FULL_H})
 set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
 
-# build HexapodIV lib
-set(SOURCE HexapodIV)
-PREPEND_CPP(FULL_SRC src/HexapodIV ${SOURCE})
-PREPEND_H(FULL_H src/HexapodIV ${SOURCE})
-add_library(HexapodIV STATIC ${FULL_SRC} ${FULL_H})
+# build Robot_Type_II lib
+set(SOURCE Robot_Type_II)
+PREPEND_CPP(FULL_SRC src/Robot_Type_II ${SOURCE})
+PREPEND_H(FULL_H src/Robot_Type_II ${SOURCE})
+add_library(Robot_Type_II STATIC ${FULL_SRC} ${FULL_H})
 set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
 
 
@@ -205,9 +168,9 @@ if(WIN32)
 	set(CMAKE_INSTALL_PREFIX "C:/Robots")
 endif(WIN32)
 
-install(TARGETS HexapodIV HexapodIII Robot_Client Robot_Base Robot_Server ARCHIVE DESTINATION lib)
+install(TARGETS Robot_Type_I Robot_Type_II Robot_Client Robot_Base Robot_Server ARCHIVE DESTINATION lib)
 install(FILES ${INCLUDE_HEADER_FILES} DESTINATION include)
-install(DIRECTORY src/HexapodIII/resource/ DESTINATION resource/HexapodIII)
+install(DIRECTORY src/Robot_Type_I/resource/ DESTINATION resource/Robot_Type_I)
 
 ############################################ uninstall ############################################
 if(UNIX)

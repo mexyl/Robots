@@ -1,33 +1,5 @@
 ﻿#include <Platform.h>
-
-#ifdef PLATFORM_IS_WINDOWS
-#define _CRT_SECURE_NO_WARNINGS
-#define _SCL_SECURE_NO_WARNINGS
-#endif
-
-#include <iostream>
-#include <cstring>
-#include <iomanip> 
-#include <bitset>
-#include <cstring>
-#include <map>
-#include <string>
-
-using namespace std;
-
-#include <stdlib.h>
-
-#include <Aris_Core.h>
-#include <Aris_Message.h>
-
-
-
-
 #include <Robot_Server.h>
-
-#ifdef PLATFORM_IS_LINUX
-#include <Aris_Control.h>
-#endif
 
 int main()
 {
@@ -42,7 +14,7 @@ int main()
 #endif
 #ifdef PLATFORM_IS_WINDOWS
 	rs->LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
-	//rs->AddGait("wk", Robots::walk, parse);
+	rs->AddGait("wk", Robots::walk, Robots::parseWalk);
 #endif
 
 	
