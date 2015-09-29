@@ -54,7 +54,7 @@ namespace Robots
 		double targetBodyPE[MAX_PERIOD_NUM][6];
 		std::int32_t periodCount[MAX_PERIOD_NUM]{1000};
 		std::int32_t periodNum{1};
-		char relativeCoordinate[8]{'G',0};
+		char relativeCoordinate[8]{ 'G',0 };
 		char relativeBodyCoordinate[8]{ 'G',0 };
 	};
 	int adjust(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);

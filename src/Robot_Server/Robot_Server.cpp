@@ -518,6 +518,19 @@ namespace Robots
 			mapAbs2Phy[i] = std::find(mapPhy2Abs, mapPhy2Abs + 18, i) - mapPhy2Abs;
 		}
 
+
+		std::cout << "map abs 2 phy:" << std::endl;
+		for (auto i:mapAbs2Phy)
+		{
+			std::cout << i << "  ";
+		}
+		std::cout << std::endl;
+		std::cout << "map abs 2 phy:" << std::endl;
+		for (auto i : mapAbs2Phy)
+		{
+			std::cout << i << "  ";
+		}
+		std::cout << std::endl;
 		
 
 
@@ -1068,6 +1081,14 @@ namespace Robots
 		int id[18];
 		a2p(pParam->motorID, id, pParam->motorNum);
 
+//////////////////////////////debug
+		for (int i = 0; i < pParam->motorNum; ++i)
+		{
+			rt_printf("%d  ", id[i]);
+		}
+		rt_printf("/n");
+//////////////////////////////debug
+
 		for (int i = 0; i< pParam->motorNum; ++i)
 		{
 			if (data.motorsStates[id[i]] == Aris::RT_CONTROL::EMSTAT_RUNNING)
@@ -1103,6 +1124,13 @@ namespace Robots
 		int id[18];
 		a2p(pParam->motorID, id, pParam->motorNum);
 
+//////////////////////////////debug
+		for (int i = 0; i < pParam->motorNum; ++i)
+		{
+			rt_printf("%d  ", id[i]);
+		}
+		rt_printf("/n");
+//////////////////////////////debug
 
 		bool isAllDisabled = true;
 		for (int i = 0; i< pParam->motorNum; ++i)

@@ -145,7 +145,7 @@ namespace Robots
 		const double * const pBasePrtPm{ *_BasePrtPm };
 		double * const pBasePm{ *_BasePm };
 
-		union alignas(16)
+		union 
 		{
 			double pEE[3]{ 0 };
 			struct
@@ -155,7 +155,7 @@ namespace Robots
 				double z;
 			};
 		};
-		union alignas(16)
+		union 
 		{
 			double vEE[3]{ 0 };
 			struct
@@ -165,7 +165,7 @@ namespace Robots
 				double vz;
 			};
 		};
-		union alignas(16)
+		union 
 		{
 			double aEE[3]{ 0 };
 			struct
@@ -175,7 +175,7 @@ namespace Robots
 				double az;
 			};
 		};
-		union alignas(16)
+		union 
 		{
 			double fEE_sta[3]{ 0 };
 			struct
@@ -185,7 +185,7 @@ namespace Robots
 				double fz_sta;
 			};
 		};
-		union alignas(16)
+		union 
 		{
 			double pIn[3]{ 0 };
 			struct
@@ -195,7 +195,7 @@ namespace Robots
 				double l3;
 			};
 		};
-		union alignas(16)
+		union 
 		{
 			double vIn[3]{ 0 };
 			struct
@@ -205,7 +205,7 @@ namespace Robots
 				double vl3;
 			};
 		};
-		union alignas(16)
+		union 
 		{
 			double aIn[3]{ 0 };
 			struct
@@ -215,7 +215,7 @@ namespace Robots
 				double al3;
 			};
 		};
-		union alignas(16)
+		union 
 		{
 			double fIn_sta[3]{ 0 };
 			struct
@@ -226,14 +226,14 @@ namespace Robots
 			};
 		};
 
-		alignas(16) double _c_acc_dir[3]{ 0 };
-		alignas(16) double _c_acc_inv[3]{ 0 };
+		 double _c_acc_dir[3]{ 0 };
+		 double _c_acc_inv[3]{ 0 };
 
-		alignas(16) double Jvd[3][3]{ { 0 } };
-		alignas(16) double Jvi[3][3]{ { 0 } };
+		 double Jvd[3][3]{ { 0 } };
+		 double Jvi[3][3]{ { 0 } };
 
-		alignas(16) double vJvd[3][3]{ { 0 } };
-		alignas(16) double vJvi[3][3]{ { 0 } };
+		 double vJvd[3][3]{ { 0 } };
+		 double vJvi[3][3]{ { 0 } };
 
 	private:
 		double _BasePrtPm[4][4]{ { 0 } };
@@ -314,8 +314,8 @@ namespace Robots
 
 	private:
 		double _BodyPm[4][4]{ {0} }, _BodyVel[6]{ 0 }, _BodyAcc[6]{ 0 };
-		alignas(16) double Jvi[18][6]{ {0} };
-		alignas(16) double vJvi[18][6]{ {0} };
+		 double Jvi[18][6]{ {0} };
+		 double vJvi[18][6]{ {0} };
 		void calculate_jac();
 		void calculate_jac_c();
 

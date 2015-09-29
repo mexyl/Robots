@@ -7,9 +7,8 @@
 
 #include "Robot_Type_I.h"
 
-//#define EIGEN_NO_MALLOC
+#define EIGEN_NO_MALLOC
 #include "Eigen/Eigen"	
-#include "Eigen/Sparse"	
 
 using namespace Aris::DynKer;
 using namespace std;
@@ -292,32 +291,32 @@ namespace Robots
 	}
 	void LEG_I::calculate_jac()
 	{
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> J1_m(*J1);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> J2_m(*J2);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> inv_J1_m(*inv_J1);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> inv_J2_m(*inv_J2);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > J1_m(*J1);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > J2_m(*J2);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > inv_J1_m(*inv_J1);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > inv_J2_m(*inv_J2);
 		
 		inv_J1_m = J1_m.inverse();
 		inv_J2_m = J2_m.inverse();
 
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> Jvd_m(*Jvd);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> Jvi_m(*Jvi);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > Jvd_m(*Jvd);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > Jvi_m(*Jvi);
 
 		Jvd_m = J1_m*inv_J2_m;
 		Jvi_m = J2_m*inv_J1_m;
 	}
 	void LEG_I::calculate_diff_jac()
 	{
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> J1_m(*J1), J2_m(*J2), vJ1_m(*vJ1), vJ2_m(*vJ2);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> inv_J1_m(*inv_J1), inv_J2_m(*inv_J2);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> Jvd_m(*Jvd), Jvi_m(*Jvi);
-		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor>, Eigen::Aligned> vJvd_m(*vJvd), vJvi_m(*vJvi);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > J1_m(*J1), J2_m(*J2), vJ1_m(*vJ1), vJ2_m(*vJ2);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > inv_J1_m(*inv_J1), inv_J2_m(*inv_J2);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > Jvd_m(*Jvd), Jvi_m(*Jvi);
+		Eigen::Map<Eigen::Matrix<double, 3, 3, Eigen::RowMajor> > vJvd_m(*vJvd), vJvi_m(*vJvi);
 
 		vJvd_m = vJ1_m * inv_J2_m - Jvd_m * vJ2_m * inv_J2_m;
 		vJvi_m = vJ2_m * inv_J1_m - Jvi_m * vJ1_m * inv_J1_m;
 		
-		Eigen::Map<Eigen::Matrix<double, 3, 1>, Eigen::Aligned> cd_m(_c_acc_dir), ci_m(_c_acc_inv);
-		Eigen::Map<Eigen::Matrix<double, 3, 1>, Eigen::Aligned> vEE_m(this->vEE), vIn_m(this->vIn);
+		Eigen::Map<Eigen::Matrix<double, 3, 1> > cd_m(_c_acc_dir), ci_m(_c_acc_inv);
+		Eigen::Map<Eigen::Matrix<double, 3, 1> > vEE_m(this->vEE), vIn_m(this->vIn);
 
 		cd_m = vJvd_m*vIn_m;
 		ci_m = vJvi_m*vEE_m;
@@ -1087,8 +1086,8 @@ namespace Robots
 				supported_Leg_Num++;
 
 				/*计算k_L*/
-				Eigen::Map<Eigen::Matrix<double, 36, 36, Eigen::RowMajor>, Eigen::Aligned > A(*pLegs[i]->_C);
-				Eigen::Map<Eigen::Matrix<double, 36, 4, Eigen::RowMajor>, Eigen::Aligned > b(*(pLegs[i]->_c_M));
+				Eigen::Map<Eigen::Matrix<double, 36, 36, Eigen::RowMajor>  > A(*pLegs[i]->_C);
+				Eigen::Map<Eigen::Matrix<double, 36, 4, Eigen::RowMajor>  > b(*(pLegs[i]->_c_M));
 				auto x = A.partialPivLu().solve(b);
 				b = x;
 
@@ -1098,8 +1097,8 @@ namespace Robots
 			else
 			{
 				/*计算k，计算所有支撑腿的驱动输入力*/
-				Eigen::Map<Eigen::Matrix<double, 36, 36, Eigen::RowMajor>, Eigen::Aligned  > A(*pLegs[i]->_C);
-				Eigen::Map<Eigen::Matrix<double, 36, 1, Eigen::ColMajor>, Eigen::Aligned, Eigen::Stride<4*36, 4>  > b(*(pLegs[i]->_c_M));
+				Eigen::Map<Eigen::Matrix<double, 36, 36, Eigen::RowMajor>   > A(*pLegs[i]->_C);
+				Eigen::Map<Eigen::Matrix<double, 36, 1, Eigen::ColMajor>, Eigen::AutoAlign, Eigen::Stride<4*36, 4>  > b(*(pLegs[i]->_c_M));
 				auto x = A.partialPivLu().solve(b);
 				b = x;
 			}
@@ -1114,9 +1113,9 @@ namespace Robots
 			alignas(16) double loc_h[18];
 			std::copy_n(h, 18, loc_h);
 
-			Eigen::Map<Eigen::Matrix<double, 6, Eigen::Dynamic, Eigen::RowMajor, 6, 18>, Eigen::Aligned, Eigen::Stride<18, 1>> A(*H, 6, supported_Leg_Num * 3);
-			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, 18, 1>, Eigen::Aligned > b(loc_h, 6);
-			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, 18, 1>, Eigen::Aligned > x(h, supported_Leg_Num * 3);
+			Eigen::Map<Eigen::Matrix<double, 6, Eigen::Dynamic, Eigen::RowMajor, 6, 18>, Eigen::AutoAlign, Eigen::Stride<18, 1>> A(*H, 6, supported_Leg_Num * 3);
+			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, 18, 1>  > b(loc_h, 6);
+			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, 18, 1>  > x(h, supported_Leg_Num * 3);
 
 			auto svd = A.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV);
 

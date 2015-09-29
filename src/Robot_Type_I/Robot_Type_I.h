@@ -174,11 +174,11 @@ namespace Robots
 		double H11, H12, H21, H22;
 		double k21, k22, k23, k31, k32, k33;
 		double vk21, vk22, vk23, vk31, vk32, vk33;
-		alignas(16) double J1[3][3], J2[3][3], vJ1[3][3], vJ2[3][3];
-		alignas(16) double inv_J1[3][3], inv_J2[3][3];
+		double J1[3][3], J2[3][3], vJ1[3][3], vJ2[3][3];
+		double inv_J1[3][3], inv_J2[3][3];
 
-		alignas(16) double _C[36][36];
-		alignas(16) double _c_M[36][4];
+		double _C[36][36];
+		double _c_M[36][4];
 
 		friend class ROBOT_TYPE_I;
 	};
