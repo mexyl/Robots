@@ -623,8 +623,8 @@ namespace Robots
 		initParam.motorNum = 18;
 		initParam.homeMode = -1;
 		initParam.homeTorqueLimit = homeCur;
-		initParam.homeHighSpeed = 280000;
-		initParam.homeLowSpeed = 160000;
+		initParam.homeHighSpeed = 140000;
+		initParam.homeLowSpeed = 80000;
 		initParam.homeOffsets = homeCount;
 
 		cs.SetTrajectoryGenerator(tg);
@@ -1081,14 +1081,6 @@ namespace Robots
 		int id[18];
 		a2p(pParam->motorID, id, pParam->motorNum);
 
-//////////////////////////////debug
-		for (int i = 0; i < pParam->motorNum; ++i)
-		{
-			rt_printf("%d  ", id[i]);
-		}
-		rt_printf("/n");
-//////////////////////////////debug
-
 		for (int i = 0; i< pParam->motorNum; ++i)
 		{
 			if (data.motorsStates[id[i]] == Aris::RT_CONTROL::EMSTAT_RUNNING)
@@ -1123,14 +1115,6 @@ namespace Robots
 	{
 		int id[18];
 		a2p(pParam->motorID, id, pParam->motorNum);
-
-//////////////////////////////debug
-		for (int i = 0; i < pParam->motorNum; ++i)
-		{
-			rt_printf("%d  ", id[i]);
-		}
-		rt_printf("/n");
-//////////////////////////////debug
 
 		bool isAllDisabled = true;
 		for (int i = 0; i< pParam->motorNum; ++i)
