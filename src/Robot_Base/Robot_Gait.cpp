@@ -700,11 +700,12 @@ namespace Robots
 				std::string constFile = i.second + "_const.txt";
 				std::string decFile = i.second + "_dec.txt";
 
-				int accNum{ 0 }, decNum{ 0 }, constNum{ 0 };
+				int accNum{ -1 }, decNum{ -1 }, constNum{ -1 };
 
 				file.open(accFile);
 				if (!file) throw std::logic_error("acc file not exist");
 				for (double tem; !file.eof(); file >> tem) ++accNum;
+				//std::cout<<"acc num:"<<accNum<<std::endl;
 				if (accNum % 18 != 0) throw std::logic_error("acc file invalid, because the num of numbers is not valid");
 				accNum /= 18;
 				file.close();
@@ -725,6 +726,8 @@ namespace Robots
 
 				if (accNum != decNum)throw std::logic_error("acc number is not equal to dec number");
 				if (accNum*2 != constNum)throw std::logic_error("acc number is not equal to 2 x constNum");
+
+				param.totalCount = accNum;
 
 				std::unique_ptr<double> p(new double[accNum * 18 * 4]);
 				
@@ -751,8 +754,15 @@ namespace Robots
 			{
 				throw std::logic_error("internal error happened, because invalid params in parseFastWalk");
 			}
+			param.n=2;
 		}
 		
+
+		Aris::Core::MSG msg;
+
+		msg.CopyStruct(param);
+
+		return msg;
 		
 	}
 
