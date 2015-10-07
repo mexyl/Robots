@@ -53,6 +53,7 @@ int main()
 
 	rs->AddGait("wk", Robots::walk, Robots::parseWalk);
 	rs->AddGait("ad", Robots::adjust, Robots::parseAdjust);
+	rs->AddGait("fw", Robots::fastWalk, Robots::parseFastWalk);
 	rs->Start();
 
 	Aris::Core::RunMsgLoop();

@@ -7,6 +7,7 @@
 #include <cstring>
 #include <cmath>
 #include <algorithm>
+#include <memory>
 #include <Aris_DynKer.h>
 #include <Aris_Plan.h>
 
@@ -291,299 +292,6 @@ namespace Robots
 		pRobot->SetPee(pEE, pBodyPE, "G");
 		return totalCount - count - 1;
 	}
-
-	
-
-	int walkAcc2(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam, int count, const double *beginPee, const double *beginBodyPe, const double *directionPm)
-	{
-		/*以下规划以-z方向为前进方向，正y方向为垂直向上的方向*/
-		const WALK_PARAM *pRealParam = static_cast<const WALK_PARAM *>(pParam);
-
-		double h = pRealParam->h;
-		double d = pRealParam->d;
-		double a = pRealParam->alpha;
-		double b = pRealParam->beta;
-		int totalCount = pRealParam->totalCount;
-
-		/*s的取值为0到PI，跟count值相关，因此q的取值为0到1，跟s相关*/
-		double s = -(PI / 2)*cos(PI * (count + 1) / totalCount) + PI / 2;
-		double q = (1 - cos(s)) / 2;
-
-		double originPee_B[18];
-		pRobot->TransformCoordinatePee(pParam->beginBodyPE, "G", pParam->beginPee, "B", originPee_B);
-		double originPee[18];
-		for (int i = 0; i < 18; i += 3)
-		{
-			s_inv_pm_dot_v3(directionPm, originPee_B + i, originPee + i);
-		}
-
-		double dPee[18];
-		/*设置移动腿，以下在以身体为起点的地面坐标系中规划,之规划相对移动方向和位置*/
-		for (int i = 0; i < 18; i += 6)
-		{
-			/*以下为移动*/
-			dPee[i] = -0.5*d / cos(b / 2)*sin(a + b * 3 / 4)*q;
-			dPee[i + 1] = h*sin(s);
-			dPee[i + 2] = -0.5*d / cos(b / 2)*cos(a + b * 3 / 4)*q;
-
-			/*以下为转动*/
-			dPee[i] += (originPee[i] * cos(b / 2) + originPee[i + 2] * sin(b / 2) - originPee[i])*q;
-			dPee[i+2] += (originPee[i] * -sin(b / 2) + originPee[i + 2] * cos(b / 2) - originPee[i+2])*q;
-		}
-		/*设置支撑腿*/
-		for (int i = 3; i < 18; i += 6)
-		{
-			dPee[i] = 0;
-			dPee[i + 1] = 0;
-			dPee[i + 2] = 0;
-		}
-
-		/*规划身体*/
-		double dPe[6];
-
-		dPe[0] = -0.25*d / cos(b / 2)*sin(a + b * 3 / 4)*(acc_even(totalCount, count + 1));
-		dPe[1] = 0;
-		dPe[2] = -0.25*d / cos(b / 2)*cos(a + b * 3 / 4)*(acc_even(totalCount, count + 1));
-		dPe[3] = PI / 2;
-		dPe[4] = b / 4 * acc_even(totalCount, count + 1);
-		dPe[5] = -PI / 2;
-
-		/*以下将规划出的相对位置转到以用户定义的前进和竖直移动方向中*/
-		double bodyPm[16], transformPm[16];
-		s_pe2pm(beginBodyPe, bodyPm);
-		s_pm_dot_pm(bodyPm, directionPm, transformPm);
-
-		double dPee_G[18];
-		for (int i = 0; i < 18; i += 3)
-		{
-			s_pm_dot_v3(transformPm, dPee + i, dPee_G + i);
-		}
-
-		double Pee_G[18];
-		s_vn_add_vn(18, beginPee, dPee_G, Pee_G);
-
-		/*以上将位置移动好，以下移动身体*/
-		double dPm[16];
-		s_pe2pm(dPe, dPm);
-
-		double pm_G[16];
-		s_pm_dot_pm(transformPm, dPm, pm_G);
-
-		double pe_G[6];
-		s_pm2pe(pm_G, pe_G);
-
-		/*已经全部移动好*/
-		pRobot->SetPee(Pee_G, pe_G, "G");
-
-		return 0;
-	}
-	int walkConst2(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam, int count, const double *beginPee, const double *beginBodyPe, const double *directionPm)
-	{
-		/*以下规划以-z方向为前进方向，正y方向为垂直向上的方向*/
-		const WALK_PARAM *pRealParam = static_cast<const WALK_PARAM *>(pParam);
-
-		double h = pRealParam->h;
-		double d = pRealParam->d;
-		double a = pRealParam->alpha;
-		double b = pRealParam->beta;
-		int totalCount = pRealParam->totalCount;
-
-		double beginPee_B[18];
-		pRobot->TransformCoordinatePee(beginBodyPe, "G", beginPee, "B", beginPee_B);
-		double originPee[18];
-		for (int i = 0; i < 18; i += 3)
-		{
-			s_inv_pm_dot_v3(directionPm, beginPee_B + i, originPee + i);
-		}
-
-		double dPee[18];
-		if (count < pRealParam->totalCount)
-		{
-			double s = -(PI / 2)*cos(PI * (count + 1) / totalCount) + PI / 2;
-			double q = (1 - cos(s)) / 2;
-			/*设置移动腿*/
-			for (int i = 3; i < 18; i += 6)
-			{
-				/*以下为移动*/
-				dPee[i] = -d *sin(a + b)*q;
-				dPee[i + 1] = h*sin(s);
-				dPee[i + 2] = -d *cos(a + b)*q;
-
-				/*以下为转动*/
-				dPee[i] += (originPee[i] * cos(b) + originPee[i + 2] * sin(b) - originPee[i])*q;
-				dPee[i + 2] += (originPee[i] * -sin(b) + originPee[i + 2] * cos(b) - originPee[i + 2])*q;
-			}
-			/*设置支撑腿*/
-			for (int i = 0; i < 18; i += 6)
-			{
-				dPee[i] = 0;
-				dPee[i + 1] = 0;
-				dPee[i + 2] = 0;
-			}
-		}
-		else
-		{
-			double s = -(PI / 2)*cos(PI * (count - pRealParam->totalCount + 1) / totalCount) + PI / 2;
-			double q = (1 - cos(s)) / 2;
-			/*设置移动腿*/
-			for (int i = 0; i < 18; i += 6)
-			{
-				/*以下为移动*/
-				dPee[i] = -d *sin(a + b)*q;
-				dPee[i + 1] = h*sin(s);
-				dPee[i + 2] = -d *cos(a + b)*q;
-
-				/*以下为转动*/
-				dPee[i] += (originPee[i] * cos(b) + originPee[i + 2] * sin(b) - originPee[i])*q;
-				dPee[i + 2] += (originPee[i] * -sin(b) + originPee[i + 2] * cos(b) - originPee[i + 2])*q;
-			}
-			/*设置支撑腿*/
-			for (int i = 3; i < 18; i += 6)
-			{
-				/*以下为移动*/
-				dPee[i] = -d *sin(a + b);
-				dPee[i + 1] = 0;
-				dPee[i + 2] = -d *cos(a + b);
-
-				/*以下为转动*/
-				dPee[i] += originPee[i] * cos(b) + originPee[i + 2] * sin(b) - originPee[i];
-				dPee[i + 2] += originPee[i] * -sin(b) + originPee[i + 2] * cos(b) - originPee[i + 2];
-			}
-		}
-		
-		/*规划身体*/
-		double dPe[6];
-
-		double s = even(totalCount * 2, count + 1);
-		dPe[0] = -(d *s*sin(a + b) - tan(b / 2) * d  * cos(a + b) * (s - s*s));
-		dPe[1] = 0;
-		dPe[2] = -(d *s*cos(a + b) + tan(b / 2) * d  * sin(a + b) * (s - s*s));
-		dPe[3] = PI / 2;
-		dPe[4] = b * s;
-		dPe[5] = -PI / 2;
-
-		/*以下将规划出的相对位置转到以用户定义的前进和竖直移动方向中*/
-		double bodyPm[16], transformPm[16];
-		s_pe2pm(beginBodyPe, bodyPm);
-		s_pm_dot_pm(bodyPm, directionPm, transformPm);
-
-		double dPee_G[18];
-		for (int i = 0; i < 18; i += 3)
-		{
-			s_pm_dot_v3(transformPm, dPee + i, dPee_G + i);
-		}
-
-		double Pee_G[18];
-		s_vn_add_vn(18, beginPee, dPee_G, Pee_G);
-
-		/*以上将位置移动好，以下移动身体*/
-		double dPm[16];
-		s_pe2pm(dPe, dPm);
-
-		double pm_G[16];
-		s_pm_dot_pm(transformPm, dPm, pm_G);
-
-		double pe_G[6];
-		s_pm2pe(pm_G, pe_G);
-
-		pRobot->SetPee(Pee_G, pe_G, "G");
-
-		return 0;
-	}
-	int walkDec2(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam, int count, const double *beginPee, const double *beginBodyPe, const double *directionPm)
-	{
-		/*以下规划以-z方向为前进方向，正y方向为垂直向上的方向*/
-		const WALK_PARAM *pRealParam = static_cast<const WALK_PARAM *>(pParam);
-
-		double h = pRealParam->h;
-		double d = pRealParam->d;
-		double a = pRealParam->alpha;
-		double b = pRealParam->beta;
-		int totalCount = pRealParam->totalCount;
-
-		/*s的取值为0到PI，跟count值相关，因此q的取值为0到1，跟s相关*/
-		double s = -(PI / 2)*cos(PI * (count + 1) / totalCount) + PI / 2;
-		double q = (1 - cos(s)) / 2;
-
-		double originPee_B[18];
-		pRobot->TransformCoordinatePee(pParam->beginBodyPE, "G", pParam->beginPee, "B", originPee_B);
-		double originPee[18];
-		for (int i = 0; i < 18; i += 3)
-		{
-			s_inv_pm_dot_v3(directionPm, originPee_B + i, originPee + i);
-		}
-
-		double dPee[18];
-		/*设置移动腿，以下在以身体为起点的地面坐标系中规划,之规划相对移动方向和位置*/
-		for (int i = 3; i < 18; i += 6)
-		{
-			/*以下为移动*/
-			dPee[i] = -0.5*d / cos(b / 2)*sin(a + b / 2)*q;
-			dPee[i + 1] = h*sin(s);
-			dPee[i + 2] = -0.5*d / cos(b / 2)*cos(a + b / 2)*q;
-
-			/*以下为转动*/
-			dPee[i] += (originPee[i] * cos(b / 2) + originPee[i + 2] * sin(b / 2) - originPee[i])*q;
-			dPee[i + 1] += 0;
-			dPee[i + 2] += (-originPee[i] * sin(b / 2) + originPee[i + 2] * cos(b / 2) - originPee[i + 2])*q;
-		}
-		/*设置支撑腿*/
-		for (int i = 0; i < 18; i += 6)
-		{
-			dPee[i] = 0;
-			dPee[i + 1] = 0;
-			dPee[i + 2] = 0;
-		}
-
-		/*规划身体*/
-		double dPe[6];
-
-		dPe[0] = -0.25*d / cos(b / 2)*sin(a + b / 2)*(dec_even(totalCount, count + 1));
-		dPe[1] = 0;
-		dPe[2] = -0.25*d / cos(b / 2)*cos(a + b / 2)*(dec_even(totalCount, count + 1));
-		dPe[3] = PI / 2;
-		dPe[4] = b / 4 * dec_even(totalCount, count + 1);
-		dPe[5] = -PI / 2;
-
-		/*以下将规划出的相对位置转到以用户定义的前进和竖直移动方向中*/
-		double bodyPm[16], transformPm[16];
-		s_pe2pm(beginBodyPe, bodyPm);
-		s_pm_dot_pm(bodyPm, directionPm, transformPm);
-
-
-		if (pRealParam->count == 499)
-		{
-			int i{ 0 };
-			i++;
-		}
-
-
-		double dPee_G[18];
-		for (int i = 0; i < 18; i += 3)
-		{
-			s_pm_dot_v3(transformPm, dPee + i, dPee_G + i);
-		}
-
-		double Pee_G[18];
-		s_vn_add_vn(18, beginPee, dPee_G, Pee_G);
-
-		/*以上将位置移动好，以下移动身体*/
-		double dPm[16];
-		s_pe2pm(dPe, dPm);
-
-		double pm_G[16];
-		s_pm_dot_pm(transformPm, dPm, pm_G);
-
-		double pe_G[6];
-		s_pm2pe(pm_G, pe_G);
-
-		pRobot->SetPee(Pee_G, pe_G, "G");
-
-		return 0;
-	}
-
-
-
 	int walk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		const Robots::WALK_PARAM *pWP = static_cast<const Robots::WALK_PARAM *>(pParam);
@@ -698,146 +406,6 @@ namespace Robots
 		{
 			pRobot->GetPee(lastPee);
 			pRobot->GetBodyPe(lastPbody);
-		}*/
-
-		return 2 * pWP->n * pWP->totalCount - pWP->count - 1;
-	}
-	int walk2(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
-	{
-		const Robots::WALK_PARAM *pWP = static_cast<const Robots::WALK_PARAM *>(pParam);
-
-		/*以下设置各个阶段的身体的真实初始位置*/
-		double beginPm[16];
-		s_pe2pm(pWP->beginBodyPE, beginPm);
-
-		int wAxis = std::abs(pWP->walkDirection) - 1;
-		int uAxis = std::abs(pWP->upDirection) - 1;
-		int lAxis = 3 - wAxis - uAxis;
-		int wSign = pWP->walkDirection / std::abs(pWP->walkDirection);
-		int uSign = pWP->upDirection / std::abs(pWP->upDirection);
-		int lSign = ((3 + wAxis - uAxis) % 3 == 1) ? wSign* uSign : -wSign* uSign;
-
-		const double a = pWP->alpha;
-		const double b = pWP->beta;
-
-		double directionPm[16], directionPe[6]{ 0,0,0,0,0,0 };
-		s_pe2pm(directionPe, directionPm);
-
-		double peFirstStep[6]
-		{
-			-pWP->d / cos(b / 2) / 4 * sin(b * 3 / 4 + a),
-			0,
-			-pWP->d / cos(b / 2) / 4 * cos(b * 3 / 4 + a),
-			PI / 2,
-			b / 4,
-			-PI / 2
-		};
-		double loc_pm[16], pmFirst[16];
-		s_pe2pm(peFirstStep, loc_pm);
-		s_pm_dot_pm(directionPm, loc_pm, pmFirst);
-
-		int stepCount = (pParam->count - pWP->totalCount) / (2 * pWP->totalCount);
-		double theta = stepCount*b;
-		double peConstStep[6]{ 0,0,0,PI/2,theta,-PI/2 };
-		if (std::abs(b) > 1e-6)
-		{
-			double r = pWP->d / sin(b / 2) / 2;
-			peConstStep[0] = -(r*cos(b / 2 + a) - r * cos(theta + b / 2 + a));
-			peConstStep[2] = -(-r*sin(b / 2 + a) + r * sin(theta + b / 2 + a));
-			
-		}
-		else
-		{
-			peConstStep[2] = -pWP->d * stepCount * cos(a);
-			peConstStep[0] = -pWP->d * stepCount * sin(a);
-		}
-		double pmConst[16];
-		s_pe2pm(peConstStep, loc_pm);
-		s_pm_dot_pm(directionPm, loc_pm, pmConst);
-
-		double pm1[16], bodyRealBeginPm[16];
-		s_pm_dot_pm(beginPm, pmFirst, pm1);
-		s_pm_dot_pm(pm1, pmConst, bodyRealBeginPm);
-
-		/*将身体初始位置写入参数*/
-		int count;
-		if (pWP->count < pWP->totalCount)
-		{
-			count = pWP->count;
-		}
-		else
-		{
-			count = (pWP->count - pWP->totalCount) % (2 * pWP->totalCount);
-		}
-		
-		Robots::WALK_PARAM realParam = *pWP;
-		s_pm2pe(bodyRealBeginPm, realParam.beginBodyPE);
-
-		/*以下计算每个腿的初始位置*/
-		double pee_G[18]{ 0 };
-		double pee_B[18]{ 0 };
-
-		double pm[4][4], pe[6];
-		s_pe2pm(pParam->beginBodyPE, *pm, "313");
-
-		char order[4];
-		order[0] = '1' + uAxis;
-		order[1] = '1' + (1 + uAxis) % 3;
-		order[2] = '1' + (2 + uAxis) % 3;
-		s_pm2pe(*pm, pe, order);
-
-		for (int i = 0; i < 18; i += 3)
-		{
-			if ((i / 3) % 2 == 0)
-			{
-				pee_G[i + wAxis] = wSign*(0.5* pWP->d / cos(b / 2)*cos(a + uSign*pe[3] + b * 3 / 4)
-					+ wSign*(pWP->beginPee[i + wAxis] - pWP->beginBodyPE[wAxis]) * cos(b / 2)
-					- lSign*(pWP->beginPee[i + lAxis] - pWP->beginBodyPE[lAxis]) * sin(b / 2))
-					+ pWP->beginBodyPE[wAxis];
-				pee_G[i + uAxis] = pWP->beginPee[i + uAxis];
-				pee_G[i + lAxis] = lSign*(0.5*pWP->d / cos(b / 2)*sin(a + uSign*pe[3] + b * 3 / 4)
-					+ wSign*(pWP->beginPee[i + wAxis] - pWP->beginBodyPE[wAxis]) * sin(b / 2)
-					+ lSign*(pWP->beginPee[i + lAxis] - pWP->beginBodyPE[lAxis]) * cos(b / 2))
-					+ pWP->beginBodyPE[lAxis];
-			}
-			else
-			{
-				std::copy_n(pWP->beginPee + i, 3, pee_G + i);
-			}
-
-			s_inv_pm_dot_pnt(pm1, pee_G + i, pee_B + i);
-			s_pm_dot_pnt(bodyRealBeginPm, pee_B + i, realParam.beginPee + i);
-		}
-
-		//static double lastPee[18], lastPbody[6];
-		//std::copy_n(lastPee, 18, realParam.beginPee);
-		//std::copy_n(lastPbody, 6, realParam.beginBodyPE);
-
-		
-
-
-
-		
-
-		if (pParam->count < pWP->totalCount)
-		{
-			walkAcc2(pRobot, pParam, count, pParam->beginPee, pParam->beginBodyPE, directionPm);
-		}
-		else if (pParam->count < (pWP->n * 2 - 1) * pWP->totalCount)
-		{
-			//walkConst(pRobot, &realParam);
-			walkConst2(pRobot, pParam, count, realParam.beginPee, realParam.beginBodyPE, directionPm);
-		}
-		else
-		{
-			//walkDec(pRobot, &realParam);
-			walkDec2(pRobot, pParam, count, realParam.beginPee, realParam.beginBodyPE, directionPm);
-		}
-
-		/*if ((pParam->count + pWP->totalCount + 1) %(2*pWP->totalCount)==0 )
-		{
-		pRobot->GetPee(lastPee);
-		pRobot->GetBodyPe(lastPbody);
 		}*/
 
 		return 2 * pWP->n * pWP->totalCount - pWP->count - 1;
@@ -1094,6 +662,101 @@ namespace Robots
 	}
 	
 	
+	int fastWalk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
+	{
+		auto pFP = static_cast<const FAST_WALK_PARAM*>(pParam);
+		
+		if (pFP->count < pFP->totalCount)
+		{
+			pRobot->SetPin(&pFP->pInAcc[pFP->count * 18]);
+		}
+		else if (pFP->count < (pFP->n * 2 - 1) * pFP->totalCount)
+		{
+			int count = (pFP->count - pFP->totalCount) % (2 * pFP->totalCount);
+			pRobot->SetPin(&pFP->pInConst[count * 18]);
+		}
+		else
+		{
+			int count = (pFP->count - pFP->totalCount) % (2 * pFP->totalCount);
+			pRobot->SetPin(&pFP->pInDec[count * 18]);
+		}
+
+		auto ret = 2 * pFP->n * pFP->totalCount - pFP->count - 1;
+		if (ret == 0)
+		{
+			delete [] pFP->pInAcc;
+		}
+		return ret;
+	}
+	Aris::Core::MSG parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params)
+	{
+		FAST_WALK_PARAM param;
+		for (auto &i : params)
+		{
+			if (i.first == "file")
+			{
+				std::ifstream file;
+				std::string accFile = i.second + "_acc.txt";
+				std::string constFile = i.second + "_const.txt";
+				std::string decFile = i.second + "_dec.txt";
+
+				int accNum{ 0 }, decNum{ 0 }, constNum{ 0 };
+
+				file.open(accFile);
+				if (!file) throw std::logic_error("acc file not exist");
+				for (double tem; !file.eof(); file >> tem) ++accNum;
+				if (accNum % 18 != 0) throw std::logic_error("acc file invalid, because the num of numbers is not valid");
+				accNum /= 18;
+				file.close();
+
+				file.open(constFile);
+				if (!file) throw std::logic_error("const file not exist");
+				for (double tem; !file.eof(); file >> tem) ++constNum;
+				if (constNum % 18 != 0) throw std::logic_error("const file invalid, because the num of numbers is not valid");
+				constNum = constNum / 18;
+				file.close();
+
+				file.open(decFile);
+				if (!file) throw std::logic_error("dec file not exist");
+				for (double tem; !file.eof(); file >> tem) ++decNum;
+				if (decNum % 18 != 0) throw std::logic_error("dec file invalid, because the num of numbers is not valid");
+				decNum = decNum / 18;
+				file.close();
+
+				if (accNum != decNum)throw std::logic_error("acc number is not equal to dec number");
+				if (accNum*2 != constNum)throw std::logic_error("acc number is not equal to 2 x constNum");
+
+				std::unique_ptr<double> p(new double[accNum * 18 * 4]);
+				
+				param.pInAcc = p.get();
+				param.pInConst = p.get() + accNum * 18;
+				param.pInDec = p.get() + accNum * 18 * 3;
+
+
+				file.open(accFile);
+				for (int i = 0; !file.eof(); file >> param.pInAcc[i++]);
+				file.close();
+
+				file.open(constFile);
+				for (int i = 0; !file.eof(); file >> param.pInConst[i++]);
+				file.close();
+
+				file.open(decFile);
+				for (int i = 0; !file.eof(); file >> param.pInDec[i++]);
+				file.close();
+
+				p.release();
+			}
+			else
+			{
+				throw std::logic_error("internal error happened, because invalid params in parseFastWalk");
+			}
+		}
+		
+		
+	}
+
+
 	int move(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		//const Robots::MOVE_PARAM *param = static_cast<const Robots::MOVE_PARAM *>(pParam);

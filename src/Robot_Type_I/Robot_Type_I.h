@@ -216,6 +216,8 @@ namespace Robots
 		void SimByAdamsResultAt(int momentTime);
 		void SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const Aris::DynKer::SIMULATE_SCRIPT *script = nullptr);
 		void SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, int dt);
+		void SimByMatlab(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param);
+	
 	public:
 		union
 		{
@@ -233,9 +235,6 @@ namespace Robots
 
 		Aris::DynKer::PART* pBody;
 		Aris::DynKer::MARKER* pBodyCenter;
-
-	public:
-		
 
 	private:
 		LEG_I LF_Leg{ "LF", this };

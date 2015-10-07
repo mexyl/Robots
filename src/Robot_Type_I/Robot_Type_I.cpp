@@ -4,6 +4,9 @@
 #include <cmath>
 #include <ctime>
 #include <iostream>
+#include <fstream>
+
+#include <Aris_DynKer.h>
 
 #include "Robot_Type_I.h"
 
@@ -1054,9 +1057,9 @@ namespace Robots
 	}
 	void ROBOT_TYPE_I::FastDyn()
 	{
-		alignas(16) double Cb[6][12]{ 0 };
-		alignas(16) double H[6][18]{ 0 };
-		alignas(16) double h[18]{ 0 };
+		double Cb[6][12]{ 0 };
+		double H[6][18]{ 0 };
+		double h[18]{ 0 };
 
 		int supported_Leg_Num{ 0 }, supported_id[6]{ 0 };
 
@@ -1110,7 +1113,7 @@ namespace Robots
 		/*求解支撑腿的驱动力*/
 		if (supported_Leg_Num > 0)
 		{
-			alignas(16) double loc_h[18];
+			double loc_h[18];
 			std::copy_n(h, 18, loc_h);
 
 			Eigen::Map<Eigen::Matrix<double, 6, Eigen::Dynamic, Eigen::RowMajor, 6, 18>, Eigen::AutoAlign, Eigen::Stride<18, 1>> A(*H, 6, supported_Leg_Num * 3);
@@ -1574,5 +1577,41 @@ namespace Robots
 				}
 			}
 		}
+	}
+	void ROBOT_TYPE_I::SimByMatlab(const char *fileName, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param)
+	{
+		std::list<std::array<double, 18> > motionPosList, motionFceList;
+		std::list<std::array<double, 6> > bodyPeList;
+		
+		std::array<double, 18> motionPos, motionFce;
+		std::array<double, 6> bodyPe;
+
+		/*起始位置*/
+		this->GetPee(param->beginPee);
+		this->GetBodyPe(param->beginBodyPE);
+
+		this->GetBodyPe(bodyPe.data());
+		bodyPeList.push_back(bodyPe);
+		this->GetPin(motionPos.data());
+		motionPosList.push_back(motionPos);
+
+		/*其他位置*/
+		param->count = 0;
+		for (int isFinished = 1; isFinished != 0;)
+		{
+			isFinished = fun(this, param);
+
+			this->GetBodyPe(bodyPe.data());
+			bodyPeList.push_back(bodyPe);
+			this->GetPin(motionPos.data());
+			motionPosList.push_back(motionPos);
+
+			param->count++;
+		}
+		
+		/*输出数据*/
+		Aris::DynKer::dlmwrite(fileName, motionPosList);
+
+
 	}
 }

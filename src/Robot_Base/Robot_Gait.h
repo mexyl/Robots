@@ -41,11 +41,8 @@ namespace Robots
 		double beta{0};
 	};
 	int walk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
-	int walk2(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
 	Aris::Core::MSG parseWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
 	
-
-
 	struct ADJUST_PARAM :public GAIT_PARAM_BASE
 	{
 		enum { MAX_PERIOD_NUM = 10};
@@ -59,6 +56,19 @@ namespace Robots
 	};
 	int adjust(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
 	Aris::Core::MSG parseAdjust(const std::string &cmd, const std::map<std::string, std::string> &params);
+
+	struct FAST_WALK_PARAM :public GAIT_PARAM_BASE
+	{
+		const char fileName[256]{ 0 };
+		std::int32_t totalCount{ 3000 };
+		std::int32_t n{ 1 };
+		double *pInAcc{nullptr};
+		double *pInDec{ nullptr };
+		double *pInConst{ nullptr };
+
+	};
+	int fastWalk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
+	Aris::Core::MSG parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
 
 	struct MOVE_PARAM :public GAIT_PARAM_BASE
 	{

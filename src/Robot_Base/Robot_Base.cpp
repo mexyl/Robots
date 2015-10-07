@@ -83,7 +83,7 @@ namespace Robots
 		case 'G':
 		case 'O':
 		default:
-			s_pv2pv(pBasePm, pRobot->pBodyVel, this->pEE, this->vEE, vEE);
+			s_vp2vp(pBasePm, pRobot->pBodyVel, this->pEE, this->vEE, vEE);
 			break;
 		}
 	}
@@ -104,7 +104,7 @@ namespace Robots
 		{
 			double pnt[3];
 			GetPee(pnt, "G");
-			s_inv_pv2pv(pBasePm, pRobot->pBodyVel, pnt, vEE, this->vEE);
+			s_inv_vp2vp(pBasePm, pRobot->pBodyVel, pnt, vEE, this->vEE);
 			break;
 		}
 			
@@ -122,12 +122,12 @@ namespace Robots
 			break;
 		case 'B':
 		case 'M':
-			s_pa2pa(pBasePrtPm, 0, 0, this->pEE, this->vEE, this->aEE, aEE);
+			s_ap2ap(pBasePrtPm, 0, 0, this->pEE, this->vEE, this->aEE, aEE);
 			break;
 		case 'G':
 		case 'O':
 		default:
-			s_pa2pa(pBasePm, pRobot->pBodyVel, pRobot->pBodyAcc, this->pEE, this->vEE, this->aEE, aEE);
+			s_ap2ap(pBasePm, pRobot->pBodyVel, pRobot->pBodyAcc, this->pEE, this->vEE, this->aEE, aEE);
 			break;
 		}
 	}
@@ -146,10 +146,10 @@ namespace Robots
 		case 'O':
 		default:
 		{
-			double pv[3], pnt[3];
-			GetPee(pnt, "G");
+			double pp[3], pv[3];
+			GetPee(pp, "G");
 			GetVee(pv, "G");
-			s_inv_pa2pa(pBasePm, pRobot->pBodyVel, pRobot->pBodyAcc, pnt, pv, aEE, this->aEE);
+			s_inv_ap2ap(pBasePm, pRobot->pBodyVel, pRobot->pBodyAcc, pp, pv, aEE, this->aEE);
 			break;
 		}
 			
@@ -369,7 +369,7 @@ namespace Robots
 		case 'G':
 		case 'O':
 		default:
-			s_pv2pv(pBasePm, pRobot->pBodyVel, this->pEE, 0, c);
+			s_vp2vp(pBasePm, pRobot->pBodyVel, this->pEE, 0, c);
 		}
 
 	}
@@ -390,7 +390,7 @@ namespace Robots
 		{
 			double tem[3];
 
-			s_pv2pv(pBasePm, pRobot->pBodyVel, this->pEE, nullptr, c);
+			s_vp2vp(pBasePm, pRobot->pBodyVel, this->pEE, nullptr, c);
 			s_dgemmTN(3, 1, 3, 1, pBasePm, 4, c, 1, 0, tem, 1);
 			s_dgemm(3, 1, 3, -1, *Jvi, 3, tem, 1, 0, c, 1);
 			break;
@@ -432,7 +432,7 @@ namespace Robots
 			this->GetPee(pEE_G, "G");
 			this->GetVee(vEE_G, "G");
 
-			s_pv(pEE_G, this->pRobot->pBodyAcc, c);
+			s_vp(pEE_G, this->pRobot->pBodyAcc, c);
 			s_cro3(1, this->pRobot->pBodyVel + 3, vEE_G, 1, c);
 
 			break;
@@ -473,8 +473,8 @@ namespace Robots
 			/*这里pa=Ab + Xb x Pee + Xb x Vee*/
 			/*其中Vb Wb Ab Xb 分别为机器人身体的线速度，角速度，线加速度，角加速度，Pee和Vee相对于地面坐标系*/
 			/*这里一定不能用s_pa2pa函数*/
-			s_pv(pEE_G, this->pRobot->pBodyVel, pv);
-			s_pv(pEE_G, this->pRobot->pBodyAcc, pa);
+			s_vp(pEE_G, this->pRobot->pBodyVel, pv);
+			s_vp(pEE_G, this->pRobot->pBodyAcc, pa);
 			s_cro3(1, this->pRobot->pBodyVel + 3, vEE_G, 1, pa);
 
 			/*之后有：c = -J * pa - dJ * pv */
@@ -796,11 +796,11 @@ namespace Robots
 		findSupportMotion(fixFeet, activeMotor, supportMotor, supportID, dim);
 
 		/*给出身体的位姿初值*/
-		alignas(16) double pm[16], pq[7], pe[6];
-		alignas(16) double jac[18 * 6];
-		alignas(16) double vb[6], vq[7];
-		alignas(16) double pIn[18],vIn[18];
-		alignas(16) double pEE_G[18];
+		double pm[16], pq[7], pe[6];
+		double jac[18 * 6];
+		double vb[6], vq[7];
+		double pIn[18],vIn[18];
+		double pEE_G[18];
 
 		this->GetPee(pEE_G, "G");
 		Aris::DynKer::s_pe2pq(initBodyPE, pq, "313");
