@@ -518,23 +518,6 @@ namespace Robots
 			mapAbs2Phy[i] = std::find(mapPhy2Abs, mapPhy2Abs + 18, i) - mapPhy2Abs;
 		}
 
-
-		std::cout << "map abs 2 phy:" << std::endl;
-		for (auto i:mapAbs2Phy)
-		{
-			std::cout << i << "  ";
-		}
-		std::cout << std::endl;
-		std::cout << "map abs 2 phy:" << std::endl;
-		for (auto i : mapAbs2Phy)
-		{
-			std::cout << i << "  ";
-		}
-		std::cout << std::endl;
-		
-
-
-
 		std::string docName{ doc.RootElement()->Name() };
 
 		pServer->pRobot->LoadXml(doc);

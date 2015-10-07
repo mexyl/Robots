@@ -750,11 +750,14 @@ namespace Robots
 
 				p.release();
 			}
+			else if (i.first == "n")
+			{
+				param.n = std::stod(i.second);
+			}
 			else
 			{
 				throw std::logic_error("internal error happened, because invalid params in parseFastWalk");
 			}
-			param.n=2;
 		}
 		
 

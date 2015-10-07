@@ -484,7 +484,10 @@
         </wk_param>
       </wk>
       <fw default="file">
-        <file type="string" abbreviation="f" default="/usr/Robots/resource/Robot_Type_I/pIn"/>
+        <fw_param type="group">
+          <file type="string" abbreviation="f" default="/usr/Robots/resource/Robot_Type_I/pIn"/>
+          <n type="int" abbreviation="n" default="1"/>
+        </fw_param>
       </fw>
     </Commands>
     <Connection IP="127.0.0.1" Port="5866"/>
