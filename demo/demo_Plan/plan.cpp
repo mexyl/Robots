@@ -21,6 +21,8 @@ const double eePosIni[6][3]{
 
 int leg_index = 0;
 
+
+const double ratio = 0.05;
 void b_const(double s_in, double *b_out)
 {
 	b_out[0] = eePosIni[leg_index][0];
@@ -39,9 +41,36 @@ void h_const(double s_in, double *h_out)
 	h_out[1] = -stepH*sin(s_in);
 	h_out[2] = stepD / 2 * cos(s_in);
 }
+void pe_const(double time, double *bodyPe, double *bodyVel = nullptr, double *bodyAcc = nullptr)
+{
+	double s = time / (totalTime / 1000) * 2 * PI;
+	double ds = 1.0 / (totalTime / 1000) * 2 * PI;
+
+	if (bodyPe)
+	{
+		std::fill_n(bodyPe, 6, 0);
+		bodyPe[2] = v*time - ratio * std::sin(s);
+	}
+
+	if (bodyVel)
+	{
+		std::fill_n(bodyVel, 6, 0);
+		bodyVel[2] = v - ratio * std::cos(s) * ds;
+	}
+
+	if (bodyAcc)
+	{
+		std::fill_n(bodyAcc, 6, 0);
+		bodyAcc[2] = ratio * std::sin(s) * ds * ds;
+	}
+
+
+}
 void get_const(Aris::Plan::FAST_PATH::DATA & data)
 {
-	double bodyPe[6]{ 0,0,v*data.time,0,0,0 }, bodyVel[6]{ 0,0,v,0,0,0 }, bodyAcc[6]{ 0 };
+	double bodyPe[6],bodyVel[6],bodyAcc[6];
+	pe_const(data.time, bodyPe, bodyVel, bodyAcc);
+
 	double bodyPm[16];
 	Aris::DynKer::s_pe2pm(bodyPe, bodyPm);
 	robot.pBody->SetPm(bodyPm);
@@ -177,7 +206,7 @@ void plan_const(const char *fileName)
 		std::cout << "begin to plan leg " << i << std::endl;
 
 		leg_index = i;
-		tg.SetMotorLimit(std::vector<Aris::Plan::FAST_PATH::MOTOR_LIMIT> {3, { 0.9,-0.9,3.2,-3.2 } });
+		tg.SetMotorLimit(std::vector<Aris::Plan::FAST_PATH::MOTOR_LIMIT> {3, { 0.9,-0.9,2.7,-2.7 } });
 		tg.SetBeginNode({ 0.0, 0.0, 0.0, 0.0, true });
 		tg.SetEndNode({ totalTime / 1000.0, PI, 0.0, 0.0, true });
 		tg.SetFunction(get_const);
@@ -188,6 +217,8 @@ void plan_const(const char *fileName)
 		{
 			double pEE[3], pIn[3], pm[16], pe[6]{ 0, 0, v * (j + 1)*0.001, 0, 0, 0 };
 			
+			pe_const((j + 1)*0.001, pe);
+
 			Aris::DynKer::s_pe2pm(pe, pm);
 			b_const(tg.Result().at(j), pEE);
 			robot.pBody->SetPm(pm);

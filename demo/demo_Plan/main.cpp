@@ -5,8 +5,8 @@ int main()
 {
 
 	plan_prepare();
-	//plan_const("C:\\Users\\yang\\Desktop\\pIn_const.txt");
-	plan_dec("C:\\Users\\yang\\Desktop\\pIn_dec.txt");
+	plan_const("C:\\Users\\yang\\Desktop\\pIn_const.txt");
+	//plan_dec("C:\\Users\\yang\\Desktop\\pIn_dec.txt");
 	
 
 	//double pEE_all[NUM][3];
