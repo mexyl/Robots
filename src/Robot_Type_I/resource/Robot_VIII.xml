@@ -510,30 +510,40 @@
           <Motion1 productCode="0x00030924" venderID="0x0000009a" alias="0">
             <PDO>
               <index_1605 index="0x1605" number="6" isTx="false">
-                <TargetPosition index="0x607A" subIndex="0x00" size="32" type="int32"/>
-                <TargetVelocity index="0x60FF" subIndex="0x00" size="32" type="int32"/>
-                <TargetTorque index="0x6071" subIndex="0x00" size="16" type="int16"/>
-                <MaxTorque index="0x6072" subIndex="0x00" size="16" type="int16"/>
-                <ControlWord index="0x6040" subIndex="0x00" size="16" type="uint16"/>
-                <ModeOfOperation index="0x6060" subIndex="0x00" size="8" type="uint8"/>
+                <TargetPosition index="0x607A" subIndex="0x00" type="int32"/>
+                <TargetVelocity index="0x60FF" subIndex="0x00" type="int32"/>
+                <TargetTorque index="0x6071" subIndex="0x00" type="int16"/>
+                <MaxTorque index="0x6072" subIndex="0x00" type="int16"/>
+                <ControlWord index="0x6040" subIndex="0x00" type="uint16"/>
+                <ModeOfOperation index="0x6060" subIndex="0x00" type="uint8"/>
               </index_1605>
               <index_1a03 index="0x1A03" number="4" isTx="true">
-                <PositionActualValue index="0x6064" subIndex="0x00" size="32" type="int32"/>
-                <DigitalInputs index="0x60fd" subIndex="0x00" size="32" type="uint32"/>
-                <VelocityActualValue index="0x606c" subIndex="0x00" size="32" type="int32"/>
-                <StatusWord index="0x6041" subIndex="0x00" size="16" type="uint16"/>
+                <PositionActualValue index="0x6064" subIndex="0x00" type="int32"/>
+                <DigitalInputs index="0x60fd" subIndex="0x00" type="uint32"/>
+                <VelocityActualValue index="0x606c" subIndex="0x00" type="int32"/>
+                <StatusWord index="0x6041" subIndex="0x00" type="uint16"/>
               </index_1a03>
               <index_1a1f index="0x1A1F" number="4" isTx="true">
-                <CurrentActualValue index="0x6078" subIndex="0x00" size="16" type="int16"/>
+                <CurrentActualValue index="0x6078" subIndex="0x00" type="int16"/>
               </index_1a1f>
               <index_1a13 index="0x1A13" number="4" isTx="true">
-                <TorqueActualValue index="0x6077" subIndex="0x00" size="16" type="int16"/>
+                <TorqueActualValue index="0x6077" subIndex="0x00" type="int16"/>
               </index_1a13>
               <index_1a0b index="0x1A0B" number="4" isTx="true">
-                <ModeOfOperationDisplay index="0x6061" subIndex="0x00" size="8" type="uint8"/>
+                <ModeOfOperationDisplay index="0x6061" subIndex="0x00" type="uint8"/>
               </index_1a0b>
            </PDO>
             <SDO>
+              <homeMode index="0x6098" subIndex="0" value="-1" type="int32"/>
+              <homeAcc index="0x609A" subIndex="0" value="200000" type="int32"/>
+              <homeHighSpeed index="0x6099" subIndex="1" value="200000" type="int32"/>
+              <homeLowSpeed index="0x6099" subIndex="2" value="100000" type="int32"/>
+              <RatioOfPosDivVel_Numerator index="0x6096" subIndex="1" value="1" type="int32"/>
+              <RatioOfPosDivVel_Divisor index="0x6096" subIndex="2" value="1" type="int32"/>
+              <homeTorqueLimit index="0x2020" subIndex="1" value="950" type="int32"/>
+              <p2pMaxSpeed index="0x607F" subIndex="0" value="2560" type="int32"/>
+              <p2pSpeed index="0x6081" subIndex="0" value="1792" type="int32"/>
+              <homeOffset index="0x607C" subIndex="0" value="0" type="int32"/>
             </SDO>
           </Motion1>
         </Slave>
