@@ -52,7 +52,7 @@ endif(UNIX)
 # set include and lib folders
 if(UNIX)
 set(GENERAL_INCLUDE_DIR "/usr/Aris_Dependent")
-set(SYSTEM_LINK_LIBS pthread gfortran)
+set(SYSTEM_LINK_LIBS pthread)
 set(ROBOTS_INCLUDE_DIR "src/Robot_Type_I" "src/Robot_Type_II" "src/Robot_Base" "src/Robot_Server" "src/Robot_Client")
 set(ROBOTS_LINK_LIBS Robot_Type_I Robot_Type_II Robot_Base Robot_Server Robot_Client)
 set(ARIS_INCLUDE_DIR "/usr/Aris/include")
