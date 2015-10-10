@@ -511,26 +511,26 @@
             <PDO>
               <index_1605 index="0x1605" number="6" isTx="false">
                 <TargetPosition index="0x607A" subIndex="0x00" size="32" type="int32"/>
-                <TargetVelocity index="0x60FF" subIndex="0x00" size="32"/>
-                <TargetTorque index="0x6071" subIndex="0x00" size="16"/>
-                <MaxTorque index="0x6072" subIndex="0x00" size="16"/>
-                <ControlWord index="0x6040" subIndex="0x00" size="16"/>
-                <ModeOfOperation index="0x6060" subIndex="0x00" size="8"/>
+                <TargetVelocity index="0x60FF" subIndex="0x00" size="32" type="int32"/>
+                <TargetTorque index="0x6071" subIndex="0x00" size="16" type="int16"/>
+                <MaxTorque index="0x6072" subIndex="0x00" size="16" type="int16"/>
+                <ControlWord index="0x6040" subIndex="0x00" size="16" type="uint16"/>
+                <ModeOfOperation index="0x6060" subIndex="0x00" size="8" type="uint8"/>
               </index_1605>
               <index_1a03 index="0x1A03" number="4" isTx="true">
-                <PositionActualValue index="0x6064" subIndex="0x00" size="32"/>
-                <DigitalInputs index="0x60fd" subIndex="0x00" size="32"/>
-                <VelocityActualValue index="0x606c" subIndex="0x00" size="32"/>
-                <StatusWord index="0x6041" subIndex="0x00" size="16"/>
+                <PositionActualValue index="0x6064" subIndex="0x00" size="32" type="int32"/>
+                <DigitalInputs index="0x60fd" subIndex="0x00" size="32" type="uint32"/>
+                <VelocityActualValue index="0x606c" subIndex="0x00" size="32" type="int32"/>
+                <StatusWord index="0x6041" subIndex="0x00" size="16" type="uint16"/>
               </index_1a03>
               <index_1a1f index="0x1A1F" number="4" isTx="true">
-                <CurrentActualValue index="0x6078" subIndex="0x00" size="16"/>
+                <CurrentActualValue index="0x6078" subIndex="0x00" size="16" type="int16"/>
               </index_1a1f>
               <index_1a13 index="0x1A13" number="4" isTx="true">
-                <TorqueActualValue index="0x6077" subIndex="0x00" size="16"/>
+                <TorqueActualValue index="0x6077" subIndex="0x00" size="16" type="int16"/>
               </index_1a13>
               <index_1a0b index="0x1A0B" number="4" isTx="true">
-                <ModeOfOperationDisplay index="0x6061" subIndex="0x00" size="8"/>
+                <ModeOfOperationDisplay index="0x6061" subIndex="0x00" size="8" type="uint8"/>
               </index_1a0b>
            </PDO>
             <SDO>
