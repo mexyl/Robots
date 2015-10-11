@@ -71,7 +71,7 @@ namespace Robots
 				conn.Connect(ip.c_str(), port.c_str());
 				break;
 			}
-			catch (std::exception &e)
+			catch (std::exception &)
 			{
 				std::cout << "failed to connect server, will retry in 1 second" << std::endl;
 				Aris::Core::Sleep(1000);
