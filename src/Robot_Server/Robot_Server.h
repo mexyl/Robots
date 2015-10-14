@@ -22,13 +22,13 @@ namespace Robots
 		template<typename T>
 		void CreateRobot()
 		{
-			if (pRobot.get() == nullptr)
+			if (pRobot.get())
 			{
-				pRobot = std::unique_ptr<Robots::ROBOT_BASE>{ new T };
+				throw std::logic_error("already has a robot instance");
 			}
 			else
 			{
-				throw std::logic_error("already has a robot instance");
+				pRobot = std::unique_ptr<Robots::ROBOT_BASE>{ new T };
 			}
 		};
 		void LoadXml(const char *fileName);
@@ -40,15 +40,14 @@ namespace Robots
 	private:
 		ROBOT_SERVER();
 		~ROBOT_SERVER();
-
 		ROBOT_SERVER(const ROBOT_SERVER &) = delete;
 		ROBOT_SERVER &operator=(const ROBOT_SERVER &) = delete;
 
 		std::unique_ptr<Robots::ROBOT_BASE> pRobot;
 
 	private:
-		class ROBOT_SERVER_IMP;
-		ROBOT_SERVER_IMP *pImp;
+		class IMP;
+		IMP *pImp;
 	};
 }
 

@@ -10,7 +10,7 @@
 
 #include "Robot_Type_I.h"
 
-#define EIGEN_NO_MALLOC
+//#define EIGEN_NO_MALLOC
 #include "Eigen/Eigen"	
 
 using namespace Aris::DynKer;
@@ -850,7 +850,7 @@ namespace Robots
 
 		/*计算C*/
 		/*
-		U1    U2    U3     P1      P2       P3      S2     S3     M1       M2       M3
+		/////////U1    U2    U3     P1       P2      P3      S2      S3      M1      M2      M3
 		P1a      0*0                -0*12                                  -0*33
 		P2a            6*4                  -6*17                                  -6*34
 		P3a                  12*8                  -12*22                                  -12*35
@@ -918,32 +918,32 @@ namespace Robots
 		/*更新右侧的c_M矩阵*/
 		s_daxpy(6, -1, pP1a->GetPrtFgPtr(), 1, &_c_M[0][0], 4);
 		s_daxpy(6, 1, pP1a->GetPrtFvPtr(), 1, &_c_M[0][0], 4);
-		s_tv(pP1a->GetPrtPmPtr(), pP1a->GetAccPtr(), pP1a->GetPrtAccPtr());
+		s_tv(pP1a->GetInvPmPtr(), pP1a->GetAccPtr(), pP1a->GetPrtAccPtr());
 		s_dgemm(6, 1, 6, 1, pP1a->GetPrtImPtr(), 6, pP1a->GetPrtAccPtr(), 1, 1, &_c_M[0][0], 4);
 
 		s_daxpy(6, -1, pP2a->GetPrtFgPtr(), 1, &_c_M[6][0], 4);
 		s_daxpy(6, 1, pP2a->GetPrtFvPtr(), 1, &_c_M[6][0], 4);
-		s_tv(pP2a->GetPrtPmPtr(), pP2a->GetAccPtr(), pP2a->GetPrtAccPtr());
+		s_tv(pP2a->GetInvPmPtr(), pP2a->GetAccPtr(), pP2a->GetPrtAccPtr());
 		s_dgemm(6, 1, 6, 1, pP2a->GetPrtImPtr(), 6, pP2a->GetPrtAccPtr(), 1, 1, &_c_M[6][0], 4);
 
 		s_daxpy(6, -1, pP3a->GetPrtFgPtr(), 1, &_c_M[12][0], 4);
 		s_daxpy(6, 1, pP3a->GetPrtFvPtr(), 1, &_c_M[12][0], 4);
-		s_tv(pP3a->GetPrtPmPtr(), pP3a->GetAccPtr(), pP3a->GetPrtAccPtr());
+		s_tv(pP3a->GetInvPmPtr(), pP3a->GetAccPtr(), pP3a->GetPrtAccPtr());
 		s_dgemm(6, 1, 6, 1, pP3a->GetPrtImPtr(), 6, pP3a->GetPrtAccPtr(), 1, 1, &_c_M[12][0], 4);
 
 		s_daxpy(6, -1, pThigh->GetPrtFgPtr(), 1, &_c_M[18][0], 4);
 		s_daxpy(6, 1, pThigh->GetPrtFvPtr(), 1, &_c_M[18][0], 4);
-		s_tv(pThigh->GetPrtPmPtr(), pThigh->GetAccPtr(), pThigh->GetPrtAccPtr());
+		s_tv(pThigh->GetInvPmPtr(), pThigh->GetAccPtr(), pThigh->GetPrtAccPtr());
 		s_dgemm(6, 1, 6, 1, pThigh->GetPrtImPtr(), 6, pThigh->GetPrtAccPtr(), 1, 1, &_c_M[18][0], 4);
 
 		s_daxpy(6, -1, pP2b->GetPrtFgPtr(), 1, &_c_M[24][0], 4);
 		s_daxpy(6, 1, pP2b->GetPrtFvPtr(), 1, &_c_M[24][0], 4);
-		s_tv(pP2b->GetPrtPmPtr(), pP2b->GetAccPtr(), pP2b->GetPrtAccPtr());
+		s_tv(pP2b->GetInvPmPtr(), pP2b->GetAccPtr(), pP2b->GetPrtAccPtr());
 		s_dgemm(6, 1, 6, 1, pP2b->GetPrtImPtr(), 6, pP2b->GetPrtAccPtr(), 1, 1, &_c_M[24][0], 4);
 
 		s_daxpy(6, -1, pP3b->GetPrtFgPtr(), 1, &_c_M[30][0], 4);
 		s_daxpy(6, 1, pP3b->GetPrtFvPtr(), 1, &_c_M[30][0], 4);
-		s_tv(pP3b->GetPrtPmPtr(), pP3b->GetAccPtr(), pP3b->GetPrtAccPtr());
+		s_tv(pP3b->GetInvPmPtr(), pP3b->GetAccPtr(), pP3b->GetPrtAccPtr());
 		s_dgemm(6, 1, 6, 1, pP3b->GetPrtImPtr(), 6, pP3b->GetPrtAccPtr(), 1, 1, &_c_M[30][0], 4);
 	}
 
@@ -1064,7 +1064,7 @@ namespace Robots
 		int supported_Leg_Num{ 0 }, supported_id[6]{ 0 };
 
 		pBody->Update();
-		s_tv(pBody->GetPrtPmPtr(), pBody->GetAccPtr(), pBody->GetPrtAccPtr());
+		s_tv(pBody->GetInvPmPtr(), pBody->GetAccPtr(), pBody->GetPrtAccPtr());
 		
 		/*更新h，机身只有重力和惯性力*/
 		s_daxpy(6, -1, pBody->GetPrtFgPtr(), 1, h, 1);

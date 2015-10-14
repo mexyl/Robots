@@ -406,16 +406,16 @@ namespace Robots
 
 	
 
-	class ROBOT_SERVER::ROBOT_SERVER_IMP
+	class ROBOT_SERVER::IMP
 	{
 	public:
 		void LoadXml(const Aris::Core::DOCUMENT &doc);
 		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc);
 		void Start();
 
-		ROBOT_SERVER_IMP(ROBOT_SERVER *pServer) { this->pServer = pServer; };
+		IMP(ROBOT_SERVER *pServer) { this->pServer = pServer; };
 	private:
-		ROBOT_SERVER_IMP(const ROBOT_SERVER_IMP&) = delete;
+		IMP(const IMP&) = delete;
 
 		void DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string, std::string> &params);
 		void GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::MSG &msg);
@@ -483,7 +483,7 @@ namespace Robots
 		friend class ROBOT_SERVER;
 	};
 
-	void ROBOT_SERVER::ROBOT_SERVER_IMP::LoadXml(const Aris::Core::DOCUMENT &doc)
+	void ROBOT_SERVER::IMP::LoadXml(const Aris::Core::DOCUMENT &doc)
 	{
 		/*load connection param*/
 		auto pConnEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Connection");
@@ -578,7 +578,7 @@ namespace Robots
 			pImu = std::unique_ptr<Aris::Sensor::IMU>(new Aris::Sensor::IMU(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")));
 		}
 	}
-	void ROBOT_SERVER::ROBOT_SERVER_IMP::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
+	void ROBOT_SERVER::IMP::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 	{
 		if (mapName2ID.find(cmdName) == mapName2ID.end())
 		{
@@ -591,7 +591,7 @@ namespace Robots
 
 		}
 	};
-	void ROBOT_SERVER::ROBOT_SERVER_IMP::Start()
+	void ROBOT_SERVER::IMP::Start()
 	{
 		/*start sensors*/
 		if (pImu)
@@ -667,7 +667,7 @@ namespace Robots
 		}
 	}
 
-	void ROBOT_SERVER::ROBOT_SERVER_IMP::OnReceiveMsg(const Aris::Core::MSG &msg, Aris::Core::MSG &retError)
+	void ROBOT_SERVER::IMP::OnReceiveMsg(const Aris::Core::MSG &msg, Aris::Core::MSG &retError)
 	{
 		Aris::Core::MSG cmdMsg;
 		try
@@ -691,7 +691,7 @@ namespace Robots
 		cs.NRT_PostMsg(cmdMsg);
 #endif
 	}
-	void ROBOT_SERVER::ROBOT_SERVER_IMP::DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string, std::string> &params)
+	void ROBOT_SERVER::IMP::DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string, std::string> &params)
 	{
 		std::vector<std::string> paramVector;
 		int paramNum{0};
@@ -849,7 +849,7 @@ namespace Robots
 			std::cout << std::string(paramPrintLength-i.first.length(),' ') << i.first << " : " << i.second << std::endl;
 		}
 	}
-	void ROBOT_SERVER::ROBOT_SERVER_IMP::GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::MSG &msg)
+	void ROBOT_SERVER::IMP::GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::MSG &msg)
 	{
 		if (cmd == "en")
 		{
@@ -1006,7 +1006,7 @@ namespace Robots
 		}
 	}
 	
-	int ROBOT_SERVER::ROBOT_SERVER_IMP::home(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::IMP::home(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
 	{
 		bool isAllHomed = true;
 
@@ -1055,7 +1055,7 @@ namespace Robots
 			return -1;
 		}
 	};
-	int ROBOT_SERVER::ROBOT_SERVER_IMP::enable(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::IMP::enable(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
 	{
 		static Aris::RT_CONTROL::CMachineData lastCmdData;
 
@@ -1094,7 +1094,7 @@ namespace Robots
 			return -1;
 		}
 	};
-	int ROBOT_SERVER::ROBOT_SERVER_IMP::disable(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::IMP::disable(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
 	{
 		int id[18];
 		a2p(pParam->motorID, id, pParam->motorNum);
@@ -1118,7 +1118,7 @@ namespace Robots
 			return -1;
 		}
 	}
-	int ROBOT_SERVER::ROBOT_SERVER_IMP::resetOrigin(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::IMP::resetOrigin(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
 	{
 		double pEE[18], pBody[6]{ 0 }, vEE[18], vBody[6]{ 0 };
 		pServer->pRobot->GetPee(pEE, "B");
@@ -1129,7 +1129,7 @@ namespace Robots
 
 		return 0;
 	}
-	int ROBOT_SERVER::ROBOT_SERVER_IMP::runGait(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::IMP::runGait(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
 	{
 		/*保存各个腿在机身坐标系下的起始位置信息，当某些腿不运动时，可以还原这些腿再机身坐标系下的位置*/
 		double pIn[18], pEE_B[18];
@@ -1160,7 +1160,7 @@ namespace Robots
 		return ret;
 	}
 
-	int ROBOT_SERVER::ROBOT_SERVER_IMP::execute_cmd(int count, char *cmd, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::IMP::execute_cmd(int count, char *cmd, Aris::RT_CONTROL::CMachineData &data)
 	{
 		static double pBody[6]{ 0 }, vBody[6]{ 0 }, pEE[18]{ 0 }, vEE[18]{ 0 };
 
@@ -1217,7 +1217,7 @@ namespace Robots
 		return ret;
 	}
 
-	int ROBOT_SERVER::ROBOT_SERVER_IMP::tg(Aris::RT_CONTROL::CMachineData &data, Aris::Core::RT_MSG &recvMsg, Aris::Core::RT_MSG &sendMsg)
+	int ROBOT_SERVER::IMP::tg(Aris::RT_CONTROL::CMachineData &data, Aris::Core::RT_MSG &recvMsg, Aris::Core::RT_MSG &sendMsg)
 	{
 		static const int cmdSize{ 8192 };
 		static char cmdQueue[50][cmdSize];
@@ -1314,7 +1314,7 @@ namespace Robots
 
 	ROBOT_SERVER::ROBOT_SERVER()
 	{
-		pImp = new ROBOT_SERVER_IMP(this);
+		pImp = new IMP(this);
 	}
 	ROBOT_SERVER::~ROBOT_SERVER()
 	{

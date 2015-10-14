@@ -752,7 +752,7 @@ namespace Robots
 			}
 			else if (i.first == "n")
 			{
-				param.n = std::stod(i.second);
+				param.n = std::stoi(i.second);
 			}
 			else
 			{

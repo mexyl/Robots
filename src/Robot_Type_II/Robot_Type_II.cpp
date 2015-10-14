@@ -4,10 +4,6 @@
 
 #include "Platform.h"
 
-#ifdef PLATFORM_IS_WINDOWS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
-
 #include "Robot_Type_II.h"
 #include <complex>
 #include <cmath>

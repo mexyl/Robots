@@ -1,10 +1,5 @@
 ﻿#include <Platform.h>
 
-#ifdef PLATFORM_IS_WINDOWS
-#define _CRT_SECURE_NO_WARNINGS
-#define _SCL_SECURE_NO_WARNINGS
-#endif
-
 
 #include <complex>
 #include <cmath>
@@ -37,12 +32,12 @@ namespace Robots
 			break;
 		case 'B':
 		case 'M':
-			s_pm_dot_pnt(pBasePrtPm, this->pEE, pEE);
+			s_pp2pp(pBasePrtPm, this->pEE, pEE);
 			break;
 		case 'G':
 		case 'O':
 		default:
-			s_pm_dot_pnt(pBasePm, this->pEE, pEE);
+			s_pp2pp(pBasePm, this->pEE, pEE);
 			break;
 		}
 	}
