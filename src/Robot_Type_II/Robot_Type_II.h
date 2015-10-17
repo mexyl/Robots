@@ -17,7 +17,7 @@ namespace Robots
 	class LEG_IV:public Robots::LEG_BASE
 	{
 	public:
-		LEG_IV(ROBOT_BASE* pRobot);
+		LEG_IV(ROBOT_BASE* pRobot, const char *Name);
 		~LEG_IV() = default;
 
 		virtual void calculate_from_pEE();
@@ -33,12 +33,12 @@ namespace Robots
 
 	class ROBOT_IV :public Robots::ROBOT_BASE
 	{
-		LEG_IV leg0{ this };
-		LEG_IV leg1{ this };
-		LEG_IV leg2{ this };
-		LEG_IV leg3{ this };
-		LEG_IV leg4{ this };
-		LEG_IV leg5{ this };
+		LEG_IV leg0{ this, "LF" };
+		LEG_IV leg1{ this, "LM" };
+		LEG_IV leg2{ this, "LR" };
+		LEG_IV leg3{ this, "RF" };
+		LEG_IV leg4{ this, "RM" };
+		LEG_IV leg5{ this, "RR" };
 
 	public:
 		ROBOT_IV();

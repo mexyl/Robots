@@ -66,6 +66,10 @@ int main()
 	std::cout << "finished" << std::endl;
 
 
+	Robots::ROBOT_IV rbt;
+
+	rbt.SetPee(beginEE);
+
 	char aaa;
 	std::cin>>aaa;
 	return 0;

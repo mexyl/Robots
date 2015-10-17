@@ -73,9 +73,9 @@ void get_const(Aris::Plan::FAST_PATH::DATA & data)
 
 	double bodyPm[16];
 	Aris::DynKer::s_pe2pm(bodyPe, bodyPm);
-	robot.pBody->SetPm(bodyPm);
-	robot.pBody->SetVel(bodyVel);
-	robot.pBody->SetAcc(bodyAcc);
+	robot.Body().SetPm(bodyPm);
+	robot.Body().SetVel(bodyVel);
+	robot.Body().SetAcc(bodyAcc);
 
 	double pEE[3]{ 0 }, vEE[3]{ 0 };
 	
@@ -118,9 +118,9 @@ void get_acc(Aris::Plan::FAST_PATH::DATA & data)
 	double bodyPe[6]{ 0,0,0.5*a*data.time*data.time,0,0,0 }, bodyVel[6]{ 0,0,a*data.time,0,0,0 }, bodyAcc[6]{ 0,0,a,0,0,0 };
 	double bodyPm[16];
 	Aris::DynKer::s_pe2pm(bodyPe, bodyPm);
-	robot.pBody->SetPm(bodyPm);
-	robot.pBody->SetVel(bodyVel);
-	robot.pBody->SetAcc(bodyAcc);
+	robot.Body().SetPm(bodyPm);
+	robot.Body().SetVel(bodyVel);
+	robot.Body().SetAcc(bodyAcc);
 
 	double pEE[3]{ 0 }, vEE[3]{ 0 };
 
@@ -162,9 +162,9 @@ void get_dec(Aris::Plan::FAST_PATH::DATA & data)
 	double bodyPe[6]{ 0,0, v*data.time - 0.5*a*data.time*data.time,0,0,0 }, bodyVel[6]{ 0,0,v - a*data.time,0,0,0 }, bodyAcc[6]{ 0,0,-a,0,0,0 };
 	double bodyPm[16];
 	Aris::DynKer::s_pe2pm(bodyPe, bodyPm);
-	robot.pBody->SetPm(bodyPm);
-	robot.pBody->SetVel(bodyVel);
-	robot.pBody->SetAcc(bodyAcc);
+	robot.Body().SetPm(bodyPm);
+	robot.Body().SetVel(bodyVel);
+	robot.Body().SetAcc(bodyAcc);
 
 	double pEE[3]{ 0 }, vEE[3]{ 0 };
 
@@ -221,7 +221,7 @@ void plan_const(const char *fileName)
 
 			Aris::DynKer::s_pe2pm(pe, pm);
 			b_const(tg.Result().at(j), pEE);
-			robot.pBody->SetPm(pm);
+			robot.Body().SetPm(pm);
 			robot.pLegs[leg_index]->SetPee(pEE);
 			robot.pLegs[leg_index]->GetPin(&result[j][i * 3]);
 			robot.pLegs[leg_index]->GetPin(&result[j + NUM][(i * 3 + 9) % 18]);
@@ -265,7 +265,7 @@ void plan_acc(const char *fileName)
 			
 			Aris::DynKer::s_pe2pm(pe, pm);
 			b_acc(tg.Result().at(j), pEE);
-			robot.pBody->SetPm(pm);
+			robot.Body().SetPm(pm);
 			robot.pLegs[leg_index]->SetPee(pEE);
 			robot.pLegs[leg_index]->GetPin(&result[j][i * 3]);
 
@@ -306,7 +306,7 @@ void plan_dec(const char *fileName)
 
 			Aris::DynKer::s_pe2pm(pe, pm);
 			b_dec(tg.Result().at(j), pEE);
-			robot.pBody->SetPm(pm);
+			robot.Body().SetPm(pm);
 			robot.pLegs[leg_index]->SetPee(pEE);
 			robot.pLegs[leg_index]->GetPin(&result[j][i * 3]);
 

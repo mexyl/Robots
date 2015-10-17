@@ -8,7 +8,7 @@
 namespace Robots
 {
 	class ROBOT_TYPE_I;
-	class LEG_I :public Aris::DynKer::OBJECT, public Robots::LEG_BASE
+	class LEG_I :public Robots::LEG_BASE
 	{
 	public:
 		union
@@ -182,7 +182,7 @@ namespace Robots
 
 		friend class ROBOT_TYPE_I;
 	};
-	class ROBOT_TYPE_I :public Aris::DynKer::MODEL, public Robots::ROBOT_BASE
+	class ROBOT_TYPE_I :public Robots::ROBOT_BASE
 	{
 	public:
 		struct STATE
@@ -233,7 +233,6 @@ namespace Robots
 			LEG_I *const pLegs[6];
 		};
 
-		Aris::DynKer::PART* pBody;
 		Aris::DynKer::MARKER* pBodyCenter;
 
 	private:
@@ -243,6 +242,8 @@ namespace Robots
 		LEG_I RF_Leg{ "RF", this };
 		LEG_I RM_Leg{ "RM", this };
 		LEG_I RR_Leg{ "RR", this };
+
+		friend class LEG_I;
 	};
 
 	inline void Activate024(int time, ROBOT_TYPE_I *pRobot, Aris::DynKer::SIMULATE_SCRIPT *script)

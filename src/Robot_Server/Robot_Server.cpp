@@ -549,9 +549,7 @@ namespace Robots
 
 		auto pCmds = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Commands");
 
-		if (pCmds == nullptr)
-			throw std::logic_error("invalid client.xml");
-
+		if (pCmds == nullptr) throw std::logic_error("invalid xml file, because it contains no commands information");
 
 		mapCmd.clear();
 		for (auto pChild = pCmds->FirstChildElement(); pChild != nullptr; pChild = pChild->NextSiblingElement())
@@ -580,7 +578,11 @@ namespace Robots
 	}
 	void ROBOT_SERVER::IMP::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 	{
-		if (mapName2ID.find(cmdName) == mapName2ID.end())
+		if (mapName2ID.find(cmdName) != mapName2ID.end())
+		{
+			throw std::runtime_error(std::string("failed to add gait, because \"")+cmdName+"\" already exists");
+		}
+		else
 		{
 			allGaits.push_back(gaitFunc);
 			allParsers.push_back(parseFunc);
@@ -588,7 +590,6 @@ namespace Robots
 			mapName2ID.insert(std::make_pair(cmdName, allGaits.size() - 1));
 
 			std::cout << cmdName << ":" << mapName2ID.at(cmdName) << std::endl;
-
 		}
 	};
 	void ROBOT_SERVER::IMP::Start()
@@ -1312,21 +1313,13 @@ namespace Robots
 		return 0;
 	}
 
-	ROBOT_SERVER::ROBOT_SERVER()
-	{
-		pImp = new IMP(this);
-	}
-	ROBOT_SERVER::~ROBOT_SERVER()
-	{
-		delete pImp;
-	}
-
 	ROBOT_SERVER * ROBOT_SERVER::GetInstance()
 	{
 		static ROBOT_SERVER instance;
 		return &instance;
 	}
-
+	ROBOT_SERVER::ROBOT_SERVER():pImp(new IMP(this)){}
+	ROBOT_SERVER::~ROBOT_SERVER(){}
 	void ROBOT_SERVER::LoadXml(const char *fileName)
 	{
 		Aris::Core::DOCUMENT doc;

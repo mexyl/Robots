@@ -485,7 +485,7 @@
       </wk>
       <fw default="fw_param">
         <fw_param type="group">
-          <file type="string" abbreviation="f" default="/usr/Robots/resource/Robot_Type_I/pIn"/>
+          <file type="string" abbreviation="f" default="/usr/Robots/resource/Robot_Type_I/Robot_VIII/pIn"/>
           <n type="int" abbreviation="n" default="1"/>
         </fw_param>
       </fw>
@@ -506,8 +506,8 @@
         }
       </HomeEE>
       <EtherCat>
-        <Slave>
-          <Motion1 productCode="0x00030924" venderID="0x0000009a" alias="0">
+        <SlaveType>
+          <ElmoSoloWhistle productCode="0x00030924" venderID="0x0000009a" alias="0">
             <PDO>
               <index_1605 index="0x1605" number="6" isTx="false">
                 <TargetPosition index="0x607A" subIndex="0x00" type="int32"/>
@@ -532,7 +532,7 @@
               <index_1a0b index="0x1A0B" number="4" isTx="true">
                 <ModeOfOperationDisplay index="0x6061" subIndex="0x00" type="uint8"/>
               </index_1a0b>
-           </PDO>
+            </PDO>
             <SDO>
               <homeMode index="0x6098" subIndex="0" value="-1" type="int32"/>
               <homeAcc index="0x609A" subIndex="0" value="200000" type="int32"/>
@@ -545,7 +545,12 @@
               <p2pSpeed index="0x6081" subIndex="0" value="1792" type="int32"/>
               <homeOffset index="0x607C" subIndex="0" value="0" type="int32"/>
             </SDO>
-          </Motion1>
+          </ElmoSoloWhistle>
+        </SlaveType>
+        <Slave>
+          <Motion1 type="ElmoSoloWhistle"/>
+          <Motion2 type="ElmoSoloWhistle"/>
+          <Motion3 type="ElmoSoloWhistle"/>
         </Slave>
       </EtherCat>
     </Control>

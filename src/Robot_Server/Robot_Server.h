@@ -47,7 +47,7 @@ namespace Robots
 
 	private:
 		class IMP;
-		IMP *pImp;
+		std::unique_ptr<IMP> pImp;
 	};
 }
 

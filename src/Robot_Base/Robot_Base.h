@@ -4,7 +4,8 @@
 #include <cstdint>
 #include <vector>
 
-#include <Aris_XML.h>
+#include "Aris_XML.h"
+#include <Aris_DynModel.h>
 
 namespace Robots
 {
@@ -12,9 +13,41 @@ namespace Robots
 	struct GAIT_PARAM_BASE;
 	typedef std::function<int(ROBOT_BASE *, const GAIT_PARAM_BASE *)> GAIT_FUNC;
 
-	class LEG_BASE
+	class LEG_BASE:public Aris::DynKer::OBJECT
 	{
 	public:
+		using COORDINATE = Aris::DynKer::COORDINATE;
+		void GetPee(double *pEE, COORDINATE coordinate) const;
+		void SetPee(const double *pEE, COORDINATE coordinate);
+		void GetVee(double *pEE, COORDINATE coordinate) const;
+		void SetVee(const double *pEE, COORDINATE coordinate);
+		void GetAee(double *pEE, COORDINATE coordinate) const;
+		void SetAee(const double *pEE, COORDINATE coordinate);
+		void GetFeeSta(double *fEE_sta, COORDINATE coordinate) const;
+		void SetFeeSta(const double *fEE_sta, COORDINATE coordinate);
+
+		void GetJfd(double *jac, COORDINATE coordinate) const;
+		void GetJfi(double *jac, COORDINATE coordinate) const;
+		void GetJvd(double *jac, COORDINATE coordinate) const;
+		void GetJvi(double *jac, COORDINATE coordinate) const;
+		void GetDifJfd(double *dJac, COORDINATE coordinate) const;
+		void GetDifJfi(double *dJac, COORDINATE coordinate) const;
+		void GetDifJvd(double *dJac, COORDINATE coordinate) const;
+		void GetDifJvi(double *dJac, COORDINATE coordinate) const;
+		void GetCvd(double *c, COORDINATE coordinate) const;
+		void GetCvi(double *c, COORDINATE coordinate) const;
+		/*!
+		* \brief follow equation: Aee = Jvd * Ain + dJvd * Vin + Cad
+		* \param c Cad
+		*/
+		void GetCad(double *c, COORDINATE coordinate) const;
+		/*!
+		* \brief follow equation: Ain = Jvi * Aee + dJvi * Vee + Cai
+		* \param c Cai
+		*/
+		void GetCai(double *c, COORDINATE coordinate) const;
+
+
 		/*!
 		* \brief Get the position of end-effector
 		* \param pEE position of end-effector, double array with 3 elements
@@ -127,7 +160,7 @@ namespace Robots
 			, const char *toMak, double *toPee) const;
 
 	protected:
-		LEG_BASE(ROBOT_BASE* pRobot);
+		LEG_BASE(ROBOT_BASE* pRobot, const char *Name);
 		virtual ~LEG_BASE() = default;
 		
 		virtual void calculate_from_pEE(){};
@@ -141,9 +174,7 @@ namespace Robots
 
 	protected:		
 		ROBOT_BASE *pRobot;
-
-		const double * const pBasePrtPm{ *_BasePrtPm };
-		double * const pBasePm{ *_BasePm };
+		Aris::DynKer::MARKER *pBase;
 
 		union 
 		{
@@ -226,26 +257,71 @@ namespace Robots
 			};
 		};
 
-		 double _c_acc_dir[3]{ 0 };
-		 double _c_acc_inv[3]{ 0 };
+		double _c_acc_dir[3]{ 0 };
+		double _c_acc_inv[3]{ 0 };
 
-		 double Jvd[3][3]{ { 0 } };
-		 double Jvi[3][3]{ { 0 } };
+		double Jvd[3][3]{ { 0 } };
+		double Jvi[3][3]{ { 0 } };
 
-		 double vJvd[3][3]{ { 0 } };
-		 double vJvi[3][3]{ { 0 } };
-
-	private:
-		double _BasePrtPm[4][4]{ { 0 } };
-		double _BasePm[4][4]{ { 0 } };
+		double vJvd[3][3]{ { 0 } };
+		double vJvi[3][3]{ { 0 } };
 
 		friend class ROBOT_BASE;
-};
-	class ROBOT_BASE
+	};
+
+	class ROBOT_BASE:public Aris::DynKer::MODEL
 	{
 	public:
-		ROBOT_BASE() = default;
+		using COORDINATE = Aris::DynKer::COORDINATE;
+		
+		ROBOT_BASE();
 		virtual ~ROBOT_BASE() = default;
+
+		const Aris::DynKer::PART& Ground() const { return *pGround; };
+		Aris::DynKer::PART& Ground() { return *pGround; };
+		const Aris::DynKer::PART& Body() const { return *pBody; };
+		Aris::DynKer::PART& Body() { return *pBody; };
+		COORDINATE* pLegCoors()
+		{ 
+			static Aris::DynKer::COORDINATE pCoors[6];
+			for (int i = 0; i < 6; ++i)
+			{
+				pCoors[i] = *pLegs[i]->pBase;
+			}
+
+
+			return pCoors;
+		};
+
+
+		void GetBodyPm(double *bodyPm, COORDINATE coordinate) const;
+		void SetBodyPm(const double *bodyPm, COORDINATE coordinate);
+		void GetBodyPe(double *bodyPe, const char *eurType, COORDINATE coordinate) const;
+		void SetBodyPe(const double *bodyPe, const char *eurType, COORDINATE coordinate);
+		void GetBodyVel(double *bodyVel, COORDINATE coordinate) const;
+		void SetBodyVel(const double *bodyVel, COORDINATE coordinate);
+		void GetBodyAcc(double *bodyAcc, COORDINATE coordinate) const;
+		void SetBodyAcc(const double *bodyAcc, COORDINATE coordinate);
+
+		void GetPee(double *pEE, COORDINATE coordinate) const;
+		void SetPee(const double *pEE, COORDINATE coordinate);
+		void GetVee(double *vEE, COORDINATE coordinate) const;
+		void SetVee(const double *vEE, COORDINATE coordinate);
+		void GetAee(double *aEE, COORDINATE coordinate) const;
+		void SetAee(const double *aEE, COORDINATE coordinate);
+		void GetFeeSta(double *fee_sta, COORDINATE coordinate) const;
+		void SetFeeSta(const double *fee_sta, COORDINATE coordinate);
+		void GetPee(double *pEE, COORDINATE *coordinate) const;
+		void SetPee(const double *pEE, COORDINATE *coordinate);
+		void GetVee(double *vEE, COORDINATE *coordinate) const;
+		void SetVee(const double *vEE, COORDINATE *coordinate);
+		void GetAee(double *aEE, COORDINATE *coordinate) const;
+		void SetAee(const double *aEE, COORDINATE *coordinate);
+		void GetFeeSta(double *fee_sta, COORDINATE *coordinate) const;
+		void SetFeeSta(const double *fee_sta, COORDINATE *coordinate);
+
+
+
 
 		/*!
 		* \brief Get the body pose matrix
@@ -267,6 +343,11 @@ namespace Robots
 		* \param body acceleration, double array with 6 elements
 		*/
 		void GetBodyAcc(double *bodyAcc) const;
+
+		
+
+
+
 
 		void GetPee(double *pEE, const char *RelativeCoodinate = "G") const;
 		void SetPee(const double *pEE = nullptr, const double *bodyPe = nullptr, const char *coodinate = "G", const char *eurType = "313");
@@ -302,20 +383,18 @@ namespace Robots
 		void TransformCoordinatePee(const double *bodyPe, const char *fromMak, const double *fromPee
 			, const char *toMak, double *toPee) const;
 
-		virtual void LoadXml(const char *) {};
-		virtual void LoadXml(const Aris::Core::DOCUMENT &doc) {};
+		virtual void LoadXml(const char *file) { this->MODEL::LoadXml(file); };
+		virtual void LoadXml(const Aris::Core::DOCUMENT &doc) { this->MODEL::LoadXml(doc); };
 
 		LEG_BASE *pLegs[6];
 
 	protected:
-		double *const pBodyPm{ *_BodyPm };
-		double *const pBodyVel{ _BodyVel };
-		double *const pBodyAcc{ _BodyAcc };
+		Aris::DynKer::PART *pBody;
 
 	private:
 		double _BodyPm[4][4]{ {0} }, _BodyVel[6]{ 0 }, _BodyAcc[6]{ 0 };
-		 double Jvi[18][6]{ {0} };
-		 double vJvi[18][6]{ {0} };
+		double Jvi[18][6]{ {0} };
+		double vJvi[18][6]{ {0} };
 		void calculate_jac();
 		void calculate_jac_c();
 
