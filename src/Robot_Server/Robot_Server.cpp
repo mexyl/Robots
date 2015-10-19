@@ -1140,6 +1140,8 @@ namespace Robots
 	}
 	int ROBOT_SERVER::IMP::recover(Robots::RECOVER_PARAM *pParam, Aris::Control::CONTROLLER::DATA data)
 	{
+			
+			
 		/*写入初值*/
 		if (pParam->count == 0)
 		{
@@ -1281,11 +1283,11 @@ namespace Robots
 		static int cmdNum{ 0 };
 		static int count{ 0 };
 
-		static int dspNum = 0;
+		/*static int dspNum = 0;
 		if (++dspNum % 1000 == 0)
 		{
 			rt_printf("pos is:%d \n",data.pMotionData->at(0).feedbackPos);
-		}
+		}*/
 
 		/*检查是否出错*/
 		bool isAllNormal = true;
@@ -1300,8 +1302,14 @@ namespace Robots
 		static int faultCount = 0;
 		if (!isAllNormal)
 		{
-			if (faultCount++ % 100 == 0)
+			if (faultCount++ % 1000 == 0)
 			{
+				for (auto &motData : *data.pMotionData)
+				{
+					rt_printf("%d ", motData.ret);
+				}				
+				rt_printf("\n");
+
 				rt_printf("Some motor is in fault, now try to disable all motors\n");
 				rt_printf("All commands in command queue are discarded\n");
 			}
@@ -1311,6 +1319,8 @@ namespace Robots
 			}
 			
 			cmdNum = 0;
+			count = 0;
+			return 0;
 		}
 		else
 		{
@@ -1340,20 +1350,22 @@ namespace Robots
 		{
 			if (Robots::ROBOT_SERVER::GetInstance()->pImp->execute_cmd(count, cmdQueue[currentCmd], data) == 0)
 			{
+				rt_printf("cmd finished, spend %d counts\n\n", count + 1);				
 				count = 0;
 				currentCmd = (currentCmd + 1) % CMD_POOL_SIZE;
-				cmdNum--;
-				rt_printf("cmd finished\n");
+				cmdNum--;				
 			}
 			else
 			{
 				count++;
+
+				if (count % 1000 == 0)
+				{
+					rt_printf("execute cmd in count: %d\n", count);
+				}
 			}
 
-			if (count % 1000 == 0)
-			{
-				rt_printf("execute cmd in count: %d\n", count);
-			}
+			
 		}
 
 		//检查连续
@@ -1386,6 +1398,7 @@ namespace Robots
 
 				rt_printf("All commands in command queue are discarded\n");
 				cmdNum = 0;
+				count = 0;
 
 				/*发现不连续，那么使用上一个成功的cmd，以便等待修复*/
 				for (int i = 0; i < 18; ++i)
