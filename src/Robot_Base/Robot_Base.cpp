@@ -37,6 +37,8 @@ namespace Robots
 	{
 		pMak = pMak ? pMak : pRobot->pGround;
 		
+		pBase->Update();
+
 		double pEE_G[3];
 		
 		s_pp2pp(pMak->GetPmPtr(), pEE, pEE_G);

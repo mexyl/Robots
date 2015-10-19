@@ -452,8 +452,8 @@ namespace Robots
 		int home(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
 		int enable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
 		int disable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
-		int recover(const Robots::RECOVER_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
-		int runGait(const Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data);
+		int recover(Robots::RECOVER_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
+		int runGait(Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data);
 
 		int execute_cmd(int count, char *cmd, Aris::Control::CONTROLLER::DATA data);
 		static int tg(Aris::Control::CONTROLLER::DATA &data);
@@ -464,7 +464,7 @@ namespace Robots
 			ENABLE,
 			DISABLE,
 			HOME,
-			RESET_ORIGIN,
+			RECOVER,
 			RUN_GAIT,
 
 			ROBOT_CMD_COUNT
@@ -483,7 +483,6 @@ namespace Robots
 
 		double alignEE[18], alignIn[18], recoverEE[18];
 		int homeCount[18];
-		int homeCur{ 0 };
 		double meter2count{ 0 };
 
 		int mapPhy2Abs[18];
@@ -498,19 +497,33 @@ namespace Robots
 
 	void ROBOT_SERVER::IMP::LoadXml(const Aris::Core::DOCUMENT &doc)
 	{
-		std::cout<<"load"<<std::endl;		
-
 		/*load robot model*/
 		pServer->pRobot->LoadXml(doc);
 		
+		/*begin to create imu*/
+		if (doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")->Attribute("Active", "true"))
+		{
+			pImu.reset(new Aris::Sensor::IMU(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")));
+		}
+
+		/*begin to load controller*/
+#ifdef PLATFORM_IS_LINUX
+		pController->LoadXml(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control")->FirstChildElement("EtherCat"));
+		pController->SetControlStrategy(tg);
+#endif
+
+
 		/*load connection param*/
 		auto pConnEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Connection");
 		ip = pConnEle->Attribute("IP");
 		port = pConnEle->Attribute("Port");
 
-		/*load recover parameter*/
+		/*motion parameter*/
 		auto pContEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control");
 		Aris::DynKer::CALCULATOR c;
+		meter2count = c.CalculateExpression(pContEle->Attribute("meter2count")).ToDouble();
+
+		/*load recover parameter and home parameter*/
 		auto mat = c.CalculateExpression(pContEle->FirstChildElement("AlignPee")->GetText());
 		std::copy_n(mat.Data(), 18, alignEE);
 		mat = c.CalculateExpression(pContEle->FirstChildElement("RecoverPee")->GetText());
@@ -519,12 +532,18 @@ namespace Robots
 		pServer->pRobot->SetBodyPe(pe);
 		pServer->pRobot->SetPee(alignEE);
 		pServer->pRobot->GetPin(alignIn);
-std::cout<<"load1"<<std::endl;	
-		/*home parameter*/
-		std::string homeCurStr(pContEle->Attribute("homeCur"));
-		homeCur = std::stoi(homeCurStr);
-		meter2count = c.CalculateExpression(pContEle->Attribute("meter2count")).ToDouble();
-std::cout<<"load2"<<std::endl;	
+
+		mat = c.CalculateExpression(pContEle->FirstChildElement("homePin")->GetText());
+		for (int i = 0; i < 18; ++i)
+		{
+			homeCount[i] = static_cast<std::int32_t>(-mat.Data()[a2p(i)] * meter2count);
+			pController->Motion(i)->WriteSdo(9,homeCount[i]);
+		}
+
+		
+
+
+
 		/*construct mapPhy2Abs and mapAbs2Phy*/
 		std::string mapPhy2AbsText{ pContEle->FirstChildElement("MapPhy2Abs")->GetText() };
 		std::stringstream stream(mapPhy2AbsText);
@@ -545,7 +564,7 @@ std::cout<<"load2"<<std::endl;
 		}
 
 		std::string docName{ doc.RootElement()->Name() };
-std::cout<<"load3"<<std::endl;	
+
 		/*begin to copy client and insert cmd nodes*/
 		const int TASK_NAME_LEN = 1024;
 		char path_char[TASK_NAME_LEN] = { 0 };
@@ -561,7 +580,7 @@ std::cout<<"load3"<<std::endl;
 		std::string path(path_char);
 		path = path.substr(0, path.rfind('/'));
 #endif
-std::cout<<"load4"<<std::endl;
+
 		auto pCmds = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Commands");
 
 		if (pCmds == nullptr) throw std::logic_error("invalid xml file, because it contains no commands information");
@@ -584,17 +603,7 @@ std::cout<<"load4"<<std::endl;
 			addAllParams(pChild, mapCmd.at(pChild->Name())->root.get(), mapCmd.at(pChild->Name())->allParams, mapCmd.at(pChild->Name())->shortNames);
 		}
 
-std::cout<<"load5"<<std::endl;
-		/*begin to create imu*/
-		if (doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")->Attribute("Active", "true"))
-		{
-			pImu = std::unique_ptr<Aris::Sensor::IMU>(new Aris::Sensor::IMU(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")));
-		}
 
-#ifdef PLATFORM_IS_LINUX
-		pController->LoadXml(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control")->FirstChildElement("EtherCat"));
-		pController->SetControlStrategy(tg);
-#endif
 	}
 	void ROBOT_SERVER::IMP::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 	{
@@ -968,11 +977,42 @@ std::cout<<"load5"<<std::endl;
 			return;
 		}
 
-		if (cmd == "ro")
+		if (cmd == "rc")
 		{
-			Robots::GAIT_PARAM_BASE robotState;
-			robotState.cmdType = RESET_ORIGIN;
-			msg.CopyStruct(robotState);
+			Robots::RECOVER_PARAM cmdParam;
+			cmdParam.cmdType = RECOVER;
+
+			std::copy_n(this->recoverEE, 18, cmdParam.recoverPee);
+			std::copy_n(this->alignIn, 18, cmdParam.alignPin);
+			std::copy_n(this->alignEE, 18, cmdParam.alignPee);
+
+			for (auto &i : params)
+			{
+				if (i.first == "all")
+				{
+					std::fill_n(cmdParam.isLegActive, 6, true);
+				}
+				else if (i.first == "first")
+				{
+					cmdParam.isLegActive[0] = true;
+					cmdParam.isLegActive[2] = true;
+					cmdParam.isLegActive[4] = true;
+				}
+				else if (i.first == "second")
+				{
+					cmdParam.isLegActive[1] = true;
+					cmdParam.isLegActive[3] = true;
+					cmdParam.isLegActive[5] = true;
+				}
+				else if (i.first == "leg")
+				{
+					std::fill_n(cmdParam.isLegActive, 6, false);
+					int id = { stoi(i.second) };
+					cmdParam.isLegActive[id] = true;
+				}
+			}
+
+			msg.CopyStruct(cmdParam);
 			return;
 		}
 
@@ -1097,31 +1137,88 @@ std::cout<<"load5"<<std::endl;
 
 		return isAllDisabled ? 0 : 1;
 	}
-	/*int ROBOT_SERVER::IMP::resetOrigin(const Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data)
+	int ROBOT_SERVER::IMP::recover(Robots::RECOVER_PARAM *pParam, Aris::Control::CONTROLLER::DATA data)
 	{
-		double pEE[18], pBody[6]{ 0 }, vEE[18], vBody[6]{ 0 };
-		pServer->pRobot->GetPee(pEE, &pServer->pRobot->Body());
-		pServer->pRobot->GetVee(vEE, &pServer->pRobot->Body());
+		/*写入初值*/
+		if (pParam->count == 0)
+		{
+			for (int i = 0; i<18; ++i)
+			{
+				pParam->beginPin[i] = data.pMotionData->operator[](i).feedbackPos/ meter2count;
+			}
+		}
+		
+		
+		const double pe[6]{ 0 };
+		this->pServer->pRobot->SetBodyPe(pe);
 
-		pServer->pRobot->SetBodyPe(pBody);
-		pServer->pRobot->SetPee(pEE);
+		int leftCount = pParam->count < pParam->alignCount ? 0 : pParam->alignCount;
+		int rightCount = pParam->count < pParam->alignCount ? pParam->alignCount : pParam->alignCount + pParam->recoverCount;
 
-		pServer->pRobot->SetBodyVel(vBody);
-		pServer->pRobot->SetVee(vEE);
+		double s = -(PI / 2)*cos(PI * (pParam->count - leftCount + 1) / (rightCount - leftCount)) + PI / 2;
 
-		return 0;
-	}*/
-	int ROBOT_SERVER::IMP::recover(const Robots::RECOVER_PARAM *pParam, Aris::Control::CONTROLLER::DATA data)
-	{
+		for (int i = 0; i < 6; ++i)
+		{
+			if (pParam->isLegActive)
+			{
+				if (pParam->count < pParam->alignCount)
+				{
+					double pIn[3];
+					for (int j = 0; j < 3; ++j)
+					{
+						pIn[i * 3 + j] = pParam->beginPin[i * 3 + j] * (cos(s) + 1) / 2 + pParam->alignPin[i * 3 + j] * (1 - cos(s)) / 2;
+					}
+
+					this->pServer->pRobot->pLegs[i]->SetPin(pIn);
+
+				}
+				else
+				{
+					double pEE[3];
+					for (int j = 0; j < 3; ++j)
+					{
+						pEE[i * 3 + j] = pParam->alignPee[i * 3 + j] * (cos(s) + 1) / 2 + pParam->recoverPee[i * 3 + j] * (1 - cos(s)) / 2;
+					}
+
+					this->pServer->pRobot->pLegs[i]->SetPee(pEE);
+				}
+			}
+		}
+
+		//向下写入输入位置
+		double pIn[18];
+		pServer->pRobot->GetPin(pIn);
 		
-		
-		
-		
-		
-		return 0;
+		for (int i = 0; i<18; ++i)
+		{
+			data.pMotionData->operator[](i).cmd = Aris::Control::MOTION::RUN;
+			data.pMotionData->operator[](i).targetPos = static_cast<std::int32_t>(pIn[i] * meter2count);
+		}
+
+		return pParam->alignCount + pParam->recoverCount - pParam->count - 1;
 	}
-	int ROBOT_SERVER::IMP::runGait(const Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data)
+	int ROBOT_SERVER::IMP::runGait(Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data)
 	{
+		static double pBody[6]{ 0 }, vBody[6]{ 0 }, pEE[18]{ 0 }, vEE[18]{ 0 };
+		if (pParam->count == 0)
+		{
+			pServer->pRobot->GetBodyPe(pBody);
+			pServer->pRobot->GetPee(pEE);
+			pServer->pRobot->GetBodyVel(vBody);
+			pServer->pRobot->GetVee(vEE);
+
+			rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
+				, pEE[0], pEE[1], pEE[2], pEE[3], pEE[4], pEE[5], pEE[6], pEE[7], pEE[8]
+				, pEE[9], pEE[10], pEE[11], pEE[12], pEE[13], pEE[14], pEE[15], pEE[16], pEE[17]);
+			rt_printf("%f %f %f %f %f %f\n"
+				, pBody[0], pBody[1], pBody[2], pBody[3], pBody[4], pBody[5]);
+		}
+
+		std::copy_n(pEE, 18, pParam->beginPee);
+		std::copy_n(vEE, 18, pParam->beginVee);
+		std::copy_n(pBody, 6, pParam->beginBodyPE);
+		std::copy_n(vBody, 6, pParam->beginBodyVel);
+
 		//执行gait函数
 		int ret = this->allGaits.at(pParam->cmdID).operator()(pServer->pRobot.get(),pParam);
 		
@@ -1140,12 +1237,9 @@ std::cout<<"load5"<<std::endl;
 	
 	int ROBOT_SERVER::IMP::execute_cmd(int count, char *cmd, Aris::Control::CONTROLLER::DATA data)
 	{
-		static double pBody[6]{ 0 }, vBody[6]{ 0 }, pEE[18]{ 0 }, vEE[18]{ 0 };
-
 		int ret;
-		Robots::ALL_PARAM_BASE *pParam = reinterpret_cast<Robots::GAIT_PARAM_BASE *>(cmd);
+		Robots::ALL_PARAM_BASE *pParam = reinterpret_cast<Robots::ALL_PARAM_BASE *>(cmd);
 		pParam->count = count;
-		//pParam->pActuationData = &data;
 
 		switch (pParam->cmdType)
 		{
@@ -1158,39 +1252,17 @@ std::cout<<"load5"<<std::endl;
 		case HOME:
 			ret = home(static_cast<Robots::BASIC_FUNCTION_PARAM *>(pParam), data);
 			break;
-		case RUN_GAIT:
-		{
-			auto gaitParam = static_cast<Robots::GAIT_PARAM_BASE *>(pParam);
-
-			std::copy_n(pEE, 18, gaitParam->beginPee);
-			std::copy_n(vEE, 18, gaitParam->beginVee);
-			std::copy_n(pBody, 6, gaitParam->beginBodyPE);
-			std::copy_n(vBody, 6, gaitParam->beginBodyVel);
-
-			ret = runGait(gaitParam, data);
+		case RECOVER:
+			ret = recover(static_cast<Robots::RECOVER_PARAM *>(pParam), data);
 			break;
-		}
+		case RUN_GAIT:
+			ret = runGait(static_cast<Robots::GAIT_PARAM_BASE *>(pParam), data);
+			break;
 		default:
 			rt_printf("unknown cmd type\n");
 			ret = 0;
 			break;
 		}
-
-		/*记录结束时的位置，以便下次用于beginPee*/
-		if (ret == 0)
-		{
-			pServer->pRobot->GetBodyPe(pBody);
-			pServer->pRobot->GetPee(pEE);
-			pServer->pRobot->GetBodyVel(vBody);
-			pServer->pRobot->GetVee(vEE);
-
-			rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
-				, pEE[0], pEE[1], pEE[2], pEE[3], pEE[4], pEE[5], pEE[6], pEE[7], pEE[8]
-				, pEE[9], pEE[10], pEE[11], pEE[12], pEE[13], pEE[14], pEE[15], pEE[16], pEE[17]);
-			rt_printf("%f %f %f %f %f %f\n"
-				, pBody[0], pBody[1], pBody[2], pBody[3], pBody[4], pBody[5]);
-		}
-
 
 		return ret;
 	}
@@ -1204,6 +1276,14 @@ std::cout<<"load5"<<std::endl;
 		static int currentCmd{ 0 };
 		static int cmdNum{ 0 };
 		static int count{ 0 };
+
+		if (count % 1000 == 0)
+		{
+			rt_printf("pos is:%d \n",data.pMotionData->at(0).feedbackPos);
+		}
+
+
+
 
 		//查看是否有新cmd
 		if (data.pMsgRecv)

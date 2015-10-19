@@ -30,7 +30,7 @@ namespace Robots
 	{
 		std::int32_t alignCount{ 3000 };
 		std::int32_t recoverCount{ 3000 };
-		
+		double beginPin[18]{ 0 };
 		double alignPin[18]{ 0 };
 		double alignPee[18]{ 0 };
 		double recoverPee[18]{ 0 };
@@ -97,6 +97,23 @@ namespace Robots
 		double targetBodyPE[6];
 		std::int32_t totalCount;
 	};
+
+
+
+	/*int ROBOT_SERVER::IMP::resetOrigin(const Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data)
+	{
+	double pEE[18], pBody[6]{ 0 }, vEE[18], vBody[6]{ 0 };
+	pServer->pRobot->GetPee(pEE, &pServer->pRobot->Body());
+	pServer->pRobot->GetVee(vEE, &pServer->pRobot->Body());
+
+	pServer->pRobot->SetBodyPe(pBody);
+	pServer->pRobot->SetPee(pEE);
+
+	pServer->pRobot->SetBodyVel(vBody);
+	pServer->pRobot->SetVee(vEE);
+
+	return 0;
+	}*/
 }
 
 #endif
