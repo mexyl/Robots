@@ -1146,7 +1146,9 @@ namespace Robots
 			for (int i = 0; i<18; ++i)
 			{
 				pParam->beginPin[i] = data.pMotionData->operator[](i).feedbackPos/ meter2count;
+				rt_printf("%f ", pParam->beginPin[i]);
 			}
+			rt_printf("\n");
 		}
 		
 		
@@ -1167,7 +1169,7 @@ namespace Robots
 					double pIn[3];
 					for (int j = 0; j < 3; ++j)
 					{
-						pIn[i * 3 + j] = pParam->beginPin[i * 3 + j] * (cos(s) + 1) / 2 + pParam->alignPin[i * 3 + j] * (1 - cos(s)) / 2;
+						pIn[j] = pParam->beginPin[i * 3 + j] * (cos(s) + 1) / 2 + pParam->alignPin[i * 3 + j] * (1 - cos(s)) / 2;
 					}
 
 					this->pServer->pRobot->pLegs[i]->SetPin(pIn);
@@ -1178,7 +1180,8 @@ namespace Robots
 					double pEE[3];
 					for (int j = 0; j < 3; ++j)
 					{
-						pEE[i * 3 + j] = pParam->alignPee[i * 3 + j] * (cos(s) + 1) / 2 + pParam->recoverPee[i * 3 + j] * (1 - cos(s)) / 2;
+						pEE[j] = pParam->alignPee[i * 3 + j] * (cos(s) + 1) / 2 + pParam->recoverPee[i * 3 + j] * (1 - cos(s)) / 2;
+											
 					}
 
 					this->pServer->pRobot->pLegs[i]->SetPee(pEE);
@@ -1278,7 +1281,7 @@ namespace Robots
 		static int cmdNum{ 0 };
 		static int count{ 0 };
 
-		if (count % 1000 == 0)
+		if ((count!=0)&&(count % 1000 == 0))
 		{
 			rt_printf("pos is:%d \n",data.pMotionData->at(0).feedbackPos);
 		}

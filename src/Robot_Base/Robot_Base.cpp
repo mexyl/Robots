@@ -301,6 +301,8 @@ namespace Robots
 		std::copy_n(pIn, 3, this->pIn);
 		calculate_from_pIn();
 		calculate_jac();
+
+		std::copy_n(pIn, 3, this->pIn);
 	}
 	void LEG_BASE::GetVin(double *vIn) const
 	{
