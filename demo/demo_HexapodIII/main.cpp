@@ -134,13 +134,13 @@ int main()
 	double pEE[18];
 	rbt.GetPee(pEE,"B");
 	dsp(pEE, 6, 3);
-	rbt.GetPee(pEE, rbt.Body());
+	rbt.GetPee(pEE, &rbt.Body());
 	dsp(pEE, 6, 3);
 
 	std::cout << "-----------" << std::endl;
 	rbt.SetPee(zeros, nullptr, "G");
 
-	rbt.SetPee(pEE, rbt.Body());
+	rbt.SetPee(pEE, &rbt.Body());
 	rbt.GetPee(pEE, "B");
 	dsp(pEE, 6, 3);
 
@@ -149,13 +149,13 @@ int main()
 	double vEE[18];
 	rbt.GetVee(vEE, "B");
 	dsp(vEE, 6, 3);
-	rbt.GetVee(vEE, rbt.Body());
+	rbt.GetVee(vEE, &rbt.Body());
 	dsp(vEE, 6, 3);
 
 	std::cout << "-----------" << std::endl;
 	rbt.SetVee(zeros, nullptr, "G");
 
-	rbt.SetVee(vEE, rbt.Ground());
+	rbt.SetVee(vEE, &rbt.Ground());
 	rbt.GetVee(vEE, "G");
 	dsp(vEE, 6, 3);
 
@@ -163,13 +163,13 @@ int main()
 	double aEE[3];
 	rbt.pLM->GetAee(aEE, "B");
 	dsp(aEE, 3, 1);
-	rbt.pLM->GetAee(aEE, rbt.Body());
+	rbt.pLM->GetAee(aEE, &rbt.Body());
 	dsp(aEE, 3, 1);
 
 	std::cout << "-----------" << std::endl;
 	rbt.pLM->SetAee(zeros, "G");
 
-	rbt.pLM->SetAee(aEE, rbt.Body());
+	rbt.pLM->SetAee(aEE, &rbt.Body());
 	rbt.pLM->GetAee(aEE, "B");
 	dsp(aEE, 3, 1);
 
@@ -177,7 +177,7 @@ int main()
 	double fEE[3]{0,1,0.2};
 	rbt.pLM->SetFeeSta(fEE, "L");
 	//dsp(fEE, 3, 1);
-	rbt.pLM->GetFeeSta(fEE, rbt.Body());
+	rbt.pLM->GetFeeSta(fEE, &rbt.Body());
 	dsp(fEE, 3, 1);
 	rbt.pLM->GetFeeSta(fEE, "B");
 	dsp(fEE, 3, 1);
@@ -185,19 +185,19 @@ int main()
 	std::cout << "-----------" << std::endl;
 	rbt.pLM->SetFeeSta(zeros, "G");
 
-	rbt.pLM->SetFeeSta(fEE, rbt.Body());
+	rbt.pLM->SetFeeSta(fEE, &rbt.Body());
 	rbt.pLM->GetFeeSta(fEE, "B");
 	dsp(fEE, 3, 1);
 
 	std::cout << "*****************  Jacobian  ********************" << std::endl;
 	double J[9];
-	rbt.pLM->GetJfd(J, rbt.Body());
+	rbt.pLM->GetJfd(J, &rbt.Body());
 	dsp(J, 3, 3);
 	rbt.pLM->GetJfd(J, "B");
 	dsp(J, 3, 3);
 
 	std::cout << "-----------" << std::endl;
-	rbt.pLM->GetJfi(J, rbt.Body());
+	rbt.pLM->GetJfi(J, &rbt.Body());
 	dsp(J, 3, 3);
 	rbt.pLM->GetJfi(J, "B");
 	dsp(J, 3, 3);
@@ -205,40 +205,40 @@ int main()
 
 	std::cout << "*****************  Jacobian  ********************" << std::endl;
 	double dJ[9];
-	rbt.pLM->GetDifJfd(dJ, rbt.Ground());
+	rbt.pLM->GetDifJfd(dJ, &rbt.Ground());
 	dsp(dJ, 3, 3);
 	rbt.pLM->GetDifJfd(dJ, "G");
 	dsp(dJ, 3, 3);
 
 	std::cout << "-----------" << std::endl;
-	rbt.pLM->GetDifJfi(dJ, rbt.Ground());
+	rbt.pLM->GetDifJfi(dJ, &rbt.Ground());
 	dsp(dJ, 3, 3);
 	rbt.pLM->GetDifJfi(dJ, "G");
 	dsp(dJ, 3, 3);
 
 	std::cout << "*****************  cv  ********************" << std::endl;
 	double c[3];
-	rbt.pLM->GetCvd(c, rbt.Body());
+	rbt.pLM->GetCvd(c, &rbt.Body());
 	dsp(c, 3, 1);
 	rbt.pLM->GetCvd(c, "B");
 	dsp(c, 3, 1);
 
 	std::cout << "-----------" << std::endl;
-	rbt.pLM->GetCvi(c, rbt.Body());
+	rbt.pLM->GetCvi(c, &rbt.Ground());
 	dsp(c, 3, 1);
-	rbt.pLM->GetCvi(c, "B");
-	dsp(c, 3, 1);
-
-	std::cout << "-----------" << std::endl;
-	rbt.pLM->GetCai(c, rbt.Body());
-	dsp(c, 3, 1);
-	rbt.pLM->GetCai(c, "B");
+	rbt.pLM->GetCvi(c, "G");
 	dsp(c, 3, 1);
 
 	std::cout << "-----------" << std::endl;
-	rbt.pLM->GetCad(c, rbt.Body());
+	rbt.pLM->GetCai(c, &rbt.Ground());
 	dsp(c, 3, 1);
-	rbt.pLM->GetCad(c, "B");
+	rbt.pLM->GetCai(c, "G");
+	dsp(c, 3, 1);
+
+	std::cout << "-----------" << std::endl;
+	rbt.pLM->GetCad(c, &rbt.Ground());
+	dsp(c, 3, 1);
+	rbt.pLM->GetCad(c, "G");
 	dsp(c, 3, 1);
 
 	char aaa;

@@ -35,7 +35,7 @@ namespace Robots
 		void LoadXml(const Aris::Core::DOCUMENT &xmlDoc);
 		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc);
 		void Start();
-		Aris::Sensor::IMU* Imu();
+		void Stop();
 
 	private:
 		ROBOT_SERVER();

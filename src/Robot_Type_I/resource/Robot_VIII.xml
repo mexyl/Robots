@@ -495,16 +495,26 @@
       <MapPhy2Abs>
         { 1 , 0 , 2, 5 , 3 , 4 , 7 , 6 , 8 , 10 , 9, 11 , 14 , 12 , 13 , 16 , 17 , 15 }
       </MapPhy2Abs>
-      <HomeEE>
+      <AlignPee>
         {
-        -0.2413064570,   -0.7015286210,   -0.4332509078;
-        -0.3183118156,   -0.7015286210,    0;
-        -0.2413064570,   -0.7015286210,    0.4332509078;
-        0.2413064570,   -0.7015286210,   -0.4332509078;
-        0.3183118156,   -0.7015286210,    0;
-        0.2413064570,   -0.7015286210,    0.4332509078;
+        -0.3,   -0.75,   -0.65;
+        -0.45,  -0.75,   0;
+        -0.3,   -0.75,    0.65;
+         0.3,   -0.75,    -0.65;
+         0.45,  -0.75,    0;
+         0.3,   -0.75,     0.65;
         }
-      </HomeEE>
+      </AlignPee>
+      <RecoverPee>
+        {
+        -0.3,   -0.85,   -0.65;
+        -0.45,  -0.85,    0;
+        -0.3,   -0.85,    0.65;
+        0.3,   -0.85,    -0.65;
+        0.45,  -0.85,     0;
+        0.3,   -0.85,     0.65;
+        }
+      </RecoverPee>
       <EtherCat>
         <SlaveType>
           <ElmoSoloWhistle productCode="0x00030924" venderID="0x0000009a" alias="0">
@@ -548,9 +558,24 @@
           </ElmoSoloWhistle>
         </SlaveType>
         <Slave>
-          <Motion1 type="ElmoSoloWhistle"/>
-          <Motion2 type="ElmoSoloWhistle"/>
-          <Motion3 type="ElmoSoloWhistle"/>
+          <Motion1 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion2 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion3 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion4 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion5 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion6 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion7 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion8 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion9 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion10 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion11 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion12 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion13 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion14 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion15 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion16 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion17 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion18 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
         </Slave>
       </EtherCat>
     </Control>

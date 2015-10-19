@@ -10,11 +10,12 @@
 #ifdef PLATFORM_IS_LINUX
 #include <Aris_Control.h>
 #endif
-#include <Aris_ControlData.h>
+
 #include <Aris_Core.h>
 #include <Aris_Socket.h>
 #include <Aris_ExpCal.h>
 #include <Aris_Plan.h>
+#include <Aris_Motion.h>
 #include "Robot_Base.h"
 #include "Robot_Server.h"
 
@@ -403,17 +404,21 @@ namespace Robots
 		}
 	};
 	
-
-	
-
 	class ROBOT_SERVER::IMP
 	{
 	public:
 		void LoadXml(const Aris::Core::DOCUMENT &doc);
 		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc);
 		void Start();
+		void Stop();
 
-		IMP(ROBOT_SERVER *pServer) { this->pServer = pServer; };
+		IMP(ROBOT_SERVER *pServer) 
+		{ 
+			this->pServer = pServer;
+#ifdef PLATFORM_IS_LINUX
+			this->pController = Aris::Control::CONTROLLER::CreateMaster<Aris::Control::CONTROLLER>();
+#endif
+		};
 	private:
 		IMP(const IMP&) = delete;
 
@@ -421,14 +426,22 @@ namespace Robots
 		void GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::MSG &msg);
 		void OnReceiveMsg(const Aris::Core::MSG &m, Aris::Core::MSG &retError);
 
-		void inline p2a(const int *phy, int *abs, int num = 18)
+		inline int p2a(const int phy)
+		{
+			return mapPhy2Abs[phy];
+		}
+		inline int a2p(const int abs)
+		{
+			return mapAbs2Phy[abs];
+		}
+		inline void p2a(const int *phy, int *abs, int num = 18)
 		{
 			for (int i = 0; i<num; ++i)
 			{
 				abs[i] = mapPhy2Abs[phy[i]];
 			}
 		}
-		void inline a2p(const int *abs, int *phy, int num = 18)
+		inline void a2p(const int *abs, int *phy, int num = 18)
 		{
 			for (int i = 0; i<num; ++i)
 			{
@@ -436,14 +449,14 @@ namespace Robots
 			}
 		}
 
-		int home(const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data);
-		int enable(const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data);
-		int disable(const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data);
-		int resetOrigin(const Robots::GAIT_PARAM_BASE *param, Aris::RT_CONTROL::CMachineData &data);
-		int runGait(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data);
+		int home(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
+		int enable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
+		int disable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
+		int recover(const Robots::RECOVER_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
+		int runGait(const Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data);
 
-		int execute_cmd(int count, char *cmd, Aris::RT_CONTROL::CMachineData &data);
-		static int tg(Aris::RT_CONTROL::CMachineData &data, Aris::Core::RT_MSG &recvMsg, Aris::Core::RT_MSG &sendMsg);
+		int execute_cmd(int count, char *cmd, Aris::Control::CONTROLLER::DATA data);
+		static int tg(Aris::Control::CONTROLLER::DATA &data);
 
 	private:
 		enum ROBOT_CMD_ID
@@ -468,33 +481,44 @@ namespace Robots
 		Aris::Core::CONN server;
 		std::string ip, port;
 
-		double homeEE[18], homeIn[18];
+		double alignEE[18], alignIn[18], recoverEE[18];
 		int homeCount[18];
 		int homeCur{ 0 };
 		double meter2count{ 0 };
 
 		int mapPhy2Abs[18];
 		int mapAbs2Phy[18];
-#ifdef PLATFORM_IS_LINUX
-		Aris::RT_CONTROL::ACTUATION cs;
-#endif
 
+//#ifdef PLATFORM_IS_LINUX
+		Aris::Control::CONTROLLER *pController;
+//#endif
 		std::unique_ptr<Aris::Sensor::IMU> pImu;
 		friend class ROBOT_SERVER;
 	};
 
 	void ROBOT_SERVER::IMP::LoadXml(const Aris::Core::DOCUMENT &doc)
 	{
+		/*load robot model*/
+		pServer->pRobot->LoadXml(doc);
+		
 		/*load connection param*/
 		auto pConnEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Connection");
 		ip = pConnEle->Attribute("IP");
 		port = pConnEle->Attribute("Port");
 
-		/*load home parameters and map*/
+		/*load recover parameter*/
 		auto pContEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control");
 		Aris::DynKer::CALCULATOR c;
-		auto mat = c.CalculateExpression(pContEle->FirstChildElement("HomeEE")->GetText());
-		std::copy_n(mat.Data(), 18, homeEE);
+		auto mat = c.CalculateExpression(pContEle->FirstChildElement("AlignPee")->GetText());
+		std::copy_n(mat.Data(), 18, alignEE);
+		mat = c.CalculateExpression(pContEle->FirstChildElement("RecoverPee")->GetText());
+		std::copy_n(mat.Data(), 18, recoverEE);
+		double pe[6]{ 0 };
+		pServer->pRobot->SetBodyPe(pe);
+		pServer->pRobot->SetPee(alignEE);
+		pServer->pRobot->GetPin(alignIn);
+
+		/*home parameter*/
 		std::string homeCurStr(pContEle->Attribute("homeCur"));
 		homeCur = std::stoi(homeCurStr);
 		meter2count = c.CalculateExpression(pContEle->Attribute("meter2count")).ToDouble();
@@ -519,17 +543,6 @@ namespace Robots
 		}
 
 		std::string docName{ doc.RootElement()->Name() };
-
-		pServer->pRobot->LoadXml(doc);
-
-		double pe[6]{ 0 };
-		pServer->pRobot->SetPee(homeEE, pe, "B");
-		pServer->pRobot->GetPin(homeIn);
-
-		for (int i = 0; i < 18; ++i)
-		{
-			homeCount[i] = -static_cast<int>(homeIn[mapPhy2Abs[i]] * meter2count);
-		}
 
 		/*begin to copy client and insert cmd nodes*/
 		const int TASK_NAME_LEN = 1024;
@@ -575,6 +588,10 @@ namespace Robots
 		{
 			pImu = std::unique_ptr<Aris::Sensor::IMU>(new Aris::Sensor::IMU(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")));
 		}
+
+#ifdef PLATFORM_IS_LINUX
+		pController->LoadXml(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control")->FirstChildElement("EtherCat"));
+#endif
 	}
 	void ROBOT_SERVER::IMP::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 	{
@@ -600,26 +617,9 @@ namespace Robots
 			pImu->Start();
 		}
 
-
-#ifdef PLATFORM_IS_LINUX
-		Aris::RT_CONTROL::CSysInitParameters initParam;
-
-		initParam.motorNum = 18;
-		initParam.homeMode = -1;
-		initParam.homeTorqueLimit = homeCur;
-		initParam.homeHighSpeed = 140000;
-		initParam.homeLowSpeed = 80000;
-		initParam.homeOffsets = homeCount;
-
-		cs.SetTrajectoryGenerator(tg);
-		cs.SysInit(initParam);
-		cs.SysInitCommunication();
-		cs.SysStart();
-#endif
-
 		server.SetOnReceivedConnection([](Aris::Core::CONN *pConn, const char *pRemoteIP, int remotePort)
 		{
-			Aris::Core::log(std::string("received connection, the ip is: ") + pRemoteIP +"\n");
+			Aris::Core::log(std::string("received connection, the ip is: ") + pRemoteIP);
 			return 0;
 		});
 		server.SetOnReceiveRequest([this](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
@@ -631,7 +631,7 @@ namespace Robots
 		});
 		server.SetOnLoseConnection([this](Aris::Core::CONN *pConn)
 		{
-			Aris::Core::log("lost connection\n");
+			Aris::Core::log("lost connection");
 			while (true)
 			{
 				try
@@ -641,10 +641,8 @@ namespace Robots
 				}
 				catch (Aris::Core::CONN::START_SERVER_ERROR &e)
 				{
-					std::cout << e.what() << std::endl << "will restart in 5s" << std::endl;
-#ifdef PLATFORM_IS_LINUX
-					usleep(5000000);
-#endif
+					std::cout << e.what() << std::endl << "will try to restart in 1s" << std::endl;
+					Aris::Core::Sleep(1000);
 				}
 			}
 
@@ -689,7 +687,7 @@ namespace Robots
 		cmdMsg.SetMsgID(0);
 
 #ifdef PLATFORM_IS_LINUX
-		cs.NRT_PostMsg(cmdMsg);
+		this->pController->MsgPipe().SendToRT(cmdMsg);
 #endif
 	}
 	void ROBOT_SERVER::IMP::DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string, std::string> &params)
@@ -706,9 +704,9 @@ namespace Robots
 
 			if (!(inputStream >> cmd))
 			{
-				throw std::logic_error(Aris::Core::log("invalid message from client, please at least contain a word\n"));
+				throw std::logic_error(Aris::Core::log("invalid message from client, please at least contain a word"));
 			};
-			Aris::Core::log(std::string("received command string:")+msg.GetDataAddress()+"\n");
+			Aris::Core::log(std::string("received command string:")+msg.GetDataAddress());
 
 			while (inputStream >> word)
 			{
@@ -718,7 +716,7 @@ namespace Robots
 		}
 		else
 		{
-			throw std::logic_error(Aris::Core::log("invalid message from client, please be sure that the command message end with char \'\\0\'\n"));
+			throw std::logic_error(Aris::Core::log("invalid message from client, please be sure that the command message end with char \'\\0\'"));
 		}
 
 		if (mapCmd.find(cmd) != mapCmd.end())
@@ -727,7 +725,7 @@ namespace Robots
 		}
 		else
 		{
-			throw std::logic_error(Aris::Core::log(std::string("invalid command name, server does not have command \"") + cmd + "\"\n"));
+			throw std::logic_error(Aris::Core::log(std::string("invalid command name, server does not have command \"") + cmd + "\""));
 		}
 
 		for (int i = 0; i<paramNum; ++i)
@@ -753,7 +751,7 @@ namespace Robots
 			{
 				if (paramValue != "")
 				{
-					throw std::logic_error("invalid param: only param start with - or -- can be assigned a value\n");
+					throw std::logic_error("invalid param: only param start with - or -- can be assigned a value");
 				}
 
 				for (auto c : paramName)
@@ -854,128 +852,112 @@ namespace Robots
 	{
 		if (cmd == "en")
 		{
-			Robots::GAIT_PARAM_BASE robotState;
-			robotState.cmdType = ENABLE;
+			Robots::BASIC_FUNCTION_PARAM cmdParam;
+			cmdParam.cmdType = ENABLE;
 
 			for (auto &i : params)
 			{
 				if (i.first == "all")
 				{
-					int motors[18] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 };
-					std::memcpy(robotState.motorID, motors, sizeof(motors));
-					robotState.motorNum = 18;
+					std::fill_n(cmdParam.isMotorActive, 18, true);
 				}
 				else if (i.first == "first")
 				{
-					robotState.motorNum = 9;
-					int motors[9] = { 0,1,2,6,7,8,12,13,14 };
-					std::memcpy(robotState.motorID, motors, sizeof(motors));
+					std::fill_n(cmdParam.isMotorActive, 18, false);
+					std::fill_n(cmdParam.isMotorActive + 0, 3, true);
+					std::fill_n(cmdParam.isMotorActive + 6, 3, true);
+					std::fill_n(cmdParam.isMotorActive + 12, 3, true);
 				}
 				else if (i.first == "second")
 				{
-					robotState.motorNum = 9;
-					int motors[9] = { 3,4,5,9,10,11,15,16,17 };
-					std::memcpy(robotState.motorID, motors, sizeof(motors));
+					std::fill_n(cmdParam.isMotorActive, 18, false);
+					std::fill_n(cmdParam.isMotorActive + 3, 3, true);
+					std::fill_n(cmdParam.isMotorActive + 9, 3, true);
+					std::fill_n(cmdParam.isMotorActive + 15, 3, true);
 				}
 				else if (i.first == "motor")
 				{
-					int motors[1] = { stoi(i.second) };
-					std::memcpy(robotState.motorID, motors, sizeof(motors));
-					robotState.motorNum = 1;
+					std::fill_n(cmdParam.isMotorActive, 18, false);
+					int id = { stoi(i.second) };
+					cmdParam.isMotorActive[id] = true;
 				}
 			}
 
-			msg.CopyStruct(robotState);
+			msg.CopyStruct(cmdParam);
 			return;
 		}
 
 		if (cmd == "ds")
 		{
-			Robots::GAIT_PARAM_BASE robotState;
-			robotState.cmdType = DISABLE;
+			Robots::BASIC_FUNCTION_PARAM cmdParam;
+			cmdParam.cmdType = DISABLE;
 
 			for (auto &i : params)
 			{
 				if (i.first == "all")
 				{
-					int motors[18] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 };
-					std::memcpy(robotState.motorID, motors, sizeof(motors));
-					robotState.motorNum = 18;
+					std::fill_n(cmdParam.isMotorActive, 18, true);
 				}
 				else if (i.first == "first")
 				{
-					int motors[9] = { 0,1,2,6,7,8,12,13,14 };
-					std::memcpy(robotState.motorID, motors, sizeof(motors));
-					robotState.motorNum = 9;
+					std::fill_n(cmdParam.isMotorActive, 18, false);
+					std::fill_n(cmdParam.isMotorActive + 0, 3, true);
+					std::fill_n(cmdParam.isMotorActive + 6, 3, true);
+					std::fill_n(cmdParam.isMotorActive + 12, 3, true);
 				}
 				else if (i.first == "second")
 				{
-					int motors[9] = { 3,4,5,9,10,11,15,16,17 };
-					std::memcpy(robotState.motorID, motors, sizeof(motors));
-					robotState.motorNum = 9;
+					std::fill_n(cmdParam.isMotorActive, 18, false);
+					std::fill_n(cmdParam.isMotorActive + 3, 3, true);
+					std::fill_n(cmdParam.isMotorActive + 9, 3, true);
+					std::fill_n(cmdParam.isMotorActive + 15, 3, true);
 				}
 				else if (i.first == "motor")
 				{
-					int motors[1] = { stoi(i.second) };
-					std::memcpy(robotState.motorID, motors, sizeof(motors));
-					robotState.motorNum = 1;
+					std::fill_n(cmdParam.isMotorActive, 18, false);
+					int id = { stoi(i.second) };
+					cmdParam.isMotorActive[id] = true;
 				}
 			}
 
-			msg.CopyStruct(robotState);
+			msg.CopyStruct(cmdParam);
 			return;
 		}
 
 		if (cmd == "hm")
 		{
-			Robots::GAIT_PARAM_BASE robotState;
-			robotState.cmdType = HOME;
+			Robots::BASIC_FUNCTION_PARAM cmdParam;
+			cmdParam.cmdType = HOME;
 
 			for (auto &i : params)
 			{
 				if (i.first == "all")
 				{
-					int motors[18] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 };
-					std::memcpy(robotState.motorID, motors, sizeof(motors));
-					robotState.motorNum = 18;
-
-					robotState.legNum = 6;
-					int legs[6] = { 0,1,2,3,4,5 };
-					std::memcpy(robotState.legID, legs, sizeof(legs));
+					std::fill_n(cmdParam.isMotorActive, 18, true);
 				}
 				else if (i.first == "first")
 				{
-					int motors[9] = { 0,1,2,6,7,8,12,13,14 };
-					std::memcpy(robotState.motorID, motors, sizeof(motors));
-					robotState.motorNum = 9;
-
-					robotState.legNum = 3;
-					int legs[3] = { 0,2,4 };
-					std::memcpy(robotState.legID, legs, sizeof(legs));
+					std::fill_n(cmdParam.isMotorActive, 18, false);
+					std::fill_n(cmdParam.isMotorActive + 0, 3, true);
+					std::fill_n(cmdParam.isMotorActive + 6, 3, true);
+					std::fill_n(cmdParam.isMotorActive + 12, 3, true);
 				}
 				else if (i.first == "second")
 				{
-					int motors[9] = { 3,4,5,9,10,11,15,16,17 };
-					std::memcpy(robotState.motorID, motors, sizeof(motors));
-					robotState.motorNum = 9;
-
-					robotState.legNum = 3;
-					int legs[3] = { 1,3,5 };
-					std::memcpy(robotState.legID, legs, sizeof(legs));
+					std::fill_n(cmdParam.isMotorActive, 18, false);
+					std::fill_n(cmdParam.isMotorActive + 3, 3, true);
+					std::fill_n(cmdParam.isMotorActive + 9, 3, true);
+					std::fill_n(cmdParam.isMotorActive + 15, 3, true);
 				}
 				else if (i.first == "motor")
 				{
-					int motors[1] = { stoi(i.second) };
-					std::memcpy(robotState.motorID, motors, sizeof(motors));
-					robotState.motorNum = 1;
-
-					robotState.legNum = 6;
-					int legs[6] = { 0,1,2,3,4,5 };
-					std::memcpy(robotState.legID, legs, sizeof(legs));
+					std::fill_n(cmdParam.isMotorActive, 18, false);
+					int id = { stoi(i.second) };
+					cmdParam.isMotorActive[id] = true;
 				}
 			}
 
-			msg.CopyStruct(robotState);
+			msg.CopyStruct(cmdParam);
 			return;
 		}
 
@@ -995,7 +977,7 @@ namespace Robots
 
 			if (msg.GetLength() < sizeof(GAIT_PARAM_BASE))
 			{
-				throw std::logic_error(std::string("parse function of command \"") + cmdPair->first + "\" failed: because it returned invalid msg\n");
+				throw std::logic_error(std::string("parse function of command \"") + cmdPair->first + "\" failed: because it returned invalid msg");
 			}
 
 			reinterpret_cast<GAIT_PARAM_BASE *>(msg.GetDataAddress())->cmdType=RUN_GAIT;
@@ -1003,209 +985,195 @@ namespace Robots
 		}
 		else
 		{
-			throw std::logic_error(std::string("command \"") + cmdPair->first + "\" does not have gait function, please AddGait() first\n");
+			throw std::logic_error(std::string("command \"") + cmdPair->first + "\" does not have gait function, please AddGait() first");
 		}
 	}
 	
-	int ROBOT_SERVER::IMP::home(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::IMP::home(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data)
 	{
 		bool isAllHomed = true;
 
-		int id[18];
-		a2p(pParam->motorID, id, pParam->motorNum);
-
-		for (int i = 0; i< pParam->motorNum; ++i)
+		for (int i = 0; i < 18; ++i)
 		{
-			if (data.isMotorHomed[id[i]])
+			if (pParam->isMotorActive[i])
 			{
-				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_RUNNING;
-				data.commandData[id[i]].Position = -homeCount[id[i]];
-			}
-			else
-			{
-				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_GOHOME;
-				data.commandData[id[i]].Position = -homeCount[id[i]];
-				isAllHomed = false;
-
-				if (pParam->count % 1000 == 0)
+				/*根据返回值来判断是否走到home了*/
+				if ((pParam->count != 0) && (data.pMotionData->operator[](a2p(i)).ret == 0))
 				{
-					rt_printf("motor not homed, physical id: %d, absolute id: %d\n", id[i], pParam->motorID[i]);
+					/*判断是否为第一次走到home,否则什么也不做，这样就会继续刷上次的值*/
+					if (data.pMotionData->operator[](a2p(i)).cmd == Aris::Control::MOTION::HOME)
+					{
+						data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::RUN;
+						data.pMotionData->operator[](a2p(i)).targetPos = data.pMotionData->operator[](a2p(i)).feedbackPos;
+						data.pMotionData->operator[](a2p(i)).targetVel = 0;
+						data.pMotionData->operator[](a2p(i)).targetCur = 0;
+					}
+				}
+				else
+				{
+					isAllHomed = false;
+					data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::HOME;
+
+					if (pParam->count % 1000 == 0)
+					{
+						rt_printf("Unhomed motor, physical id: %d, absolute id: %d\n", a2p(i), i);
+					}
 				}
 			}
 		}
 
-
-		if (isAllHomed)
-		{
-			double pBody[6]{ 0,0,0,0,0,0 }, vBody[6]{ 0 };
-			double vEE[18]{ 0 };
-
-			pServer->pRobot->SetPin(nullptr, pBody);
-
-			for (int i = 0; i < pParam->legNum; ++i)
-			{
-				rt_printf("leg %d is homed\n", pParam->legID[i]);
-				pServer->pRobot->pLegs[pParam->legID[i]]->SetPee(&homeEE[pParam->legID[i] * 3], "B");
-			}
-			pServer->pRobot->SetVee(vEE, vBody);
-
-			return 0;
-		}
-		else
-		{
-			return -1;
-		}
+		return isAllHomed ? 0 : 1;
 	};
-	int ROBOT_SERVER::IMP::enable(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::IMP::enable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data)
 	{
-		static Aris::RT_CONTROL::CMachineData lastCmdData;
+		bool isAllEnabled = true;
 
-		bool isAllRunning = true;
-
-		int id[18];
-		a2p(pParam->motorID, id, pParam->motorNum);
-
-		for (int i = 0; i< pParam->motorNum; ++i)
+		for (int i = 0; i < 18; ++i)
 		{
-			if (data.motorsStates[id[i]] == Aris::RT_CONTROL::EMSTAT_RUNNING)
+			if (pParam->isMotorActive[i])
 			{
-				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_RUNNING;
-				data.commandData[id[i]] = lastCmdData.commandData[id[i]];
-			}
-			else if (data.motorsStates[id[i]] == Aris::RT_CONTROL::EMSTAT_ENABLED)
-			{
-				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_RUNNING;
-				data.commandData[id[i]] = data.feedbackData[id[i]];
-				lastCmdData.commandData[id[i]] = data.feedbackData[id[i]];
-				isAllRunning = false;
-			}
-			else
-			{
-				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_ENABLE;
-				isAllRunning = false;
+				/*判断是否已经Enable了*/
+				if ((pParam->count != 0) && (data.pMotionData->operator[](a2p(i)).ret == 0))
+				{
+					/*判断是否为第一次走到enable,否则什么也不做，这样就会继续刷上次的值*/
+					if (data.pMotionData->operator[](a2p(i)).cmd == Aris::Control::MOTION::HOME)
+					{
+						data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::RUN;
+						data.pMotionData->operator[](a2p(i)).targetPos = data.pMotionData->operator[](a2p(i)).feedbackPos;
+						data.pMotionData->operator[](a2p(i)).targetVel = 0;
+						data.pMotionData->operator[](a2p(i)).targetCur = 0;
+					}
+				}
+				else
+				{
+					isAllEnabled = false;
+					data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::ENABLE;
+
+					if (pParam->count % 1000 == 0)
+					{
+						rt_printf("Unenabled motor, physical id: %d, absolute id: %d\n", a2p(i), i);
+					}
+				}
 			}
 		}
 
-		if (isAllRunning)
-		{
-			return 0;
-		}
-		else
-		{
-			return -1;
-		}
+		return isAllEnabled ? 0 : 1;
 	};
-	int ROBOT_SERVER::IMP::disable(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+	int ROBOT_SERVER::IMP::disable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data)
 	{
-		int id[18];
-		a2p(pParam->motorID, id, pParam->motorNum);
-
 		bool isAllDisabled = true;
-		for (int i = 0; i< pParam->motorNum; ++i)
+
+		for (int i = 0; i < 18; ++i)
 		{
-			if (data.motorsStates[id[i]] != Aris::RT_CONTROL::EMSTAT_STOPPED)
+			if (pParam->isMotorActive[i])
 			{
-				data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_STOP;
-				isAllDisabled = false;
+				/*判断是否已经Disabled了*/
+				if ((pParam->count != 0) && (data.pMotionData->operator[](a2p(i)).ret == 0))
+				{
+					/*如果已经disable了，那么什么都不做*/
+				}
+				else
+				{
+					/*否则往下刷disable指令*/
+					isAllDisabled = false;
+					data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::DISABLE;
+
+					if (pParam->count % 1000 == 0)
+					{
+						rt_printf("Undisabled motor, physical id: %d, absolute id: %d\n", a2p(i), i);
+					}
+				}
 			}
 		}
 
-		if (isAllDisabled)
-		{
-			return 0;
-		}
-		else
-		{
-			return -1;
-		}
+		return isAllDisabled ? 0 : 1;
 	}
-	int ROBOT_SERVER::IMP::resetOrigin(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+	/*int ROBOT_SERVER::IMP::resetOrigin(const Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data)
 	{
 		double pEE[18], pBody[6]{ 0 }, vEE[18], vBody[6]{ 0 };
-		pServer->pRobot->GetPee(pEE, "B");
-		pServer->pRobot->GetVee(vEE, "B");
+		pServer->pRobot->GetPee(pEE, &pServer->pRobot->Body());
+		pServer->pRobot->GetVee(vEE, &pServer->pRobot->Body());
 
-		pServer->pRobot->SetPee(pEE, pBody, "G");
-		pServer->pRobot->SetVee(vEE, vBody, "G");
+		pServer->pRobot->SetBodyPe(pBody);
+		pServer->pRobot->SetPee(pEE);
+
+		pServer->pRobot->SetBodyVel(vBody);
+		pServer->pRobot->SetVee(vEE);
 
 		return 0;
-	}
-	int ROBOT_SERVER::IMP::runGait(const Robots::GAIT_PARAM_BASE *pParam, Aris::RT_CONTROL::CMachineData &data)
+	}*/
+	int ROBOT_SERVER::IMP::recover(const Robots::RECOVER_PARAM *pParam, Aris::Control::CONTROLLER::DATA data)
 	{
-		/*保存各个腿在机身坐标系下的起始位置信息，当某些腿不运动时，可以还原这些腿再机身坐标系下的位置*/
-		double pIn[18], pEE_B[18];
-		pServer->pRobot->TransformCoordinatePee(pParam->beginBodyPE, "G", pParam->beginPee, "B", pEE_B);
-
-		/*执行gait函数*/
+		
+		
+		
+		
+		
+		return 0;
+	}
+	int ROBOT_SERVER::IMP::runGait(const Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data)
+	{
+		//执行gait函数
 		int ret = this->allGaits.at(pParam->cmdID).operator()(pServer->pRobot.get(),pParam);
+		
+		double pIn[18];
 		pServer->pRobot->GetPin(pIn);
 
-		/*向下写入输入位置*/
-		int id[18];
-		a2p(pParam->motorID, id, pParam->motorNum);
-		for (int i = 0; i<pParam->motorNum; ++i)
+		//向下写入输入位置
+		for (int i = 0; i<18; ++i)
 		{
-			data.motorsCommands[id[i]] = Aris::RT_CONTROL::EMCMD_RUNNING;
-			data.commandData[id[i]].Position = static_cast<int>(pIn[pParam->motorID[i]] * meter2count);
-		}
-
-		/*寻找不运动的腿，并将其设到初始位置*/
-		for (int i = 0; i<6; ++i)
-		{
-			if ((std::find(pParam->legID, pParam->legID + pParam->legNum, i)) == (pParam->legID + pParam->legNum))
-			{
-				pServer->pRobot->pLegs[i]->SetPee(pEE_B + i * 3, "B");
-			}
+			data.pMotionData->operator[](i).cmd = Aris::Control::MOTION::RUN;
+			data.pMotionData->operator[](i).targetPos = static_cast<std::int32_t>(pIn[i] * meter2count);
 		}
 
 		return ret;
 	}
-
-	int ROBOT_SERVER::IMP::execute_cmd(int count, char *cmd, Aris::RT_CONTROL::CMachineData &data)
+	
+	int ROBOT_SERVER::IMP::execute_cmd(int count, char *cmd, Aris::Control::CONTROLLER::DATA data)
 	{
 		static double pBody[6]{ 0 }, vBody[6]{ 0 }, pEE[18]{ 0 }, vEE[18]{ 0 };
 
 		int ret;
-
-		Robots::GAIT_PARAM_BASE *pParam = reinterpret_cast<Robots::GAIT_PARAM_BASE *>(cmd);
+		Robots::ALL_PARAM_BASE *pParam = reinterpret_cast<Robots::GAIT_PARAM_BASE *>(cmd);
 		pParam->count = count;
-		pParam->pActuationData = &data;
-
-		std::copy_n(pEE, 18, pParam->beginPee);
-		std::copy_n(vEE, 18, pParam->beginVee);
-		std::copy_n(pBody, 6, pParam->beginBodyPE);
-		std::copy_n(vBody, 6, pParam->beginBodyVel);
+		//pParam->pActuationData = &data;
 
 		switch (pParam->cmdType)
 		{
 		case ENABLE:
-			ret = enable(pParam, data);
+			ret = enable(static_cast<Robots::BASIC_FUNCTION_PARAM *>(pParam), data);
 			break;
 		case DISABLE:
-			ret = disable(pParam, data);
+			ret = disable(static_cast<Robots::BASIC_FUNCTION_PARAM *>(pParam), data);
 			break;
 		case HOME:
-			ret = home(pParam, data);
-			break;
-		case RESET_ORIGIN:
-			ret = resetOrigin(pParam, data);
+			ret = home(static_cast<Robots::BASIC_FUNCTION_PARAM *>(pParam), data);
 			break;
 		case RUN_GAIT:
-			ret = runGait(pParam, data);
+		{
+			auto gaitParam = static_cast<Robots::GAIT_PARAM_BASE *>(pParam);
+
+			std::copy_n(pEE, 18, gaitParam->beginPee);
+			std::copy_n(vEE, 18, gaitParam->beginVee);
+			std::copy_n(pBody, 6, gaitParam->beginBodyPE);
+			std::copy_n(vBody, 6, gaitParam->beginBodyVel);
+
+			ret = runGait(gaitParam, data);
 			break;
+		}
 		default:
 			rt_printf("unknown cmd type\n");
 			ret = 0;
 			break;
 		}
 
+		/*记录结束时的位置，以便下次用于beginPee*/
 		if (ret == 0)
 		{
 			pServer->pRobot->GetBodyPe(pBody);
 			pServer->pRobot->GetPee(pEE);
 			pServer->pRobot->GetBodyVel(vBody);
 			pServer->pRobot->GetVee(vEE);
-
 
 			rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
 				, pEE[0], pEE[1], pEE[2], pEE[3], pEE[4], pEE[5], pEE[6], pEE[7], pEE[8]
@@ -1217,40 +1185,38 @@ namespace Robots
 
 		return ret;
 	}
-
-	int ROBOT_SERVER::IMP::tg(Aris::RT_CONTROL::CMachineData &data, Aris::Core::RT_MSG &recvMsg, Aris::Core::RT_MSG &sendMsg)
+	int ROBOT_SERVER::IMP::tg(Aris::Control::CONTROLLER::DATA &data)
 	{
+		enum { CMD_POOL_SIZE = 50 };
+		
 		static const int cmdSize{ 8192 };
-		static char cmdQueue[50][cmdSize];
+		static char cmdQueue[CMD_POOL_SIZE][cmdSize];
 
 		static int currentCmd{ 0 };
 		static int cmdNum{ 0 };
 		static int count{ 0 };
 
-		static Aris::RT_CONTROL::CMachineData lastCmdData=data , lastStateData=data ;
-		static Aris::RT_CONTROL::CMachineData stateData, cmdData;
-
-		stateData = data;
-		cmdData = data;
-		
-		/*根据msg来看是否有cmd*/
-		switch (recvMsg.GetMsgID())
+		//查看是否有新cmd
+		if (data.pMsgRecv)
 		{
-		case 0:
-			recvMsg.Paste(cmdQueue[(currentCmd + cmdNum) % 10]);
-			++cmdNum;
-			break;
-		default:
-			break;
+			if (cmdNum >= CMD_POOL_SIZE)
+			{
+				rt_printf("cmd pool is full, thus ignore last one\n");
+			}
+			else
+			{
+				data.pMsgRecv->Paste(cmdQueue[(currentCmd + cmdNum) % CMD_POOL_SIZE]);
+				++cmdNum;
+			}
 		}
 
-		/*执行cmd queue中的cmd*/
+		//执行cmd queue中的cmd
 		if (cmdNum>0)
 		{
-			if (Robots::ROBOT_SERVER::GetInstance()->pImp->execute_cmd(count, cmdQueue[currentCmd], cmdData) == 0)
+			if (Robots::ROBOT_SERVER::GetInstance()->pImp->execute_cmd(count, cmdQueue[currentCmd], data) == 0)
 			{
 				count = 0;
-				currentCmd = (currentCmd + 1) % 10;
+				currentCmd = (currentCmd + 1) % CMD_POOL_SIZE;
 				cmdNum--;
 				rt_printf("cmd finished\n");
 			}
@@ -1261,20 +1227,16 @@ namespace Robots
 
 			if (count % 1000 == 0)
 			{
-				rt_printf("the server is in count: %d\n", count);
+				rt_printf("execute cmd in count: %d\n", count);
 			}
 		}
-		else
-		{
-			cmdData = lastCmdData;
-		}
 
-		/*检查连续*/
+		//检查连续
 		for (int i = 0; i<18; ++i)
 		{
-			if ((lastCmdData.motorsCommands[i] == Aris::RT_CONTROL::EMCMD_RUNNING)
-				&& (cmdData.motorsCommands[i] == Aris::RT_CONTROL::EMCMD_RUNNING)
-				&& (std::abs(lastCmdData.commandData[i].Position - cmdData.commandData[i].Position)>20000))
+			if ((data.pLastMotionData->at(i).cmd == Aris::Control::MOTION::RUN)
+				&& (data.pMotionData->at(i).cmd == Aris::Control::MOTION::RUN)
+				&& (std::abs(data.pLastMotionData->at(i).targetPos - data.pMotionData->at(i).targetPos)>20000))
 			{
 				rt_printf("Data not continuous in count:%d\n", count);
 
@@ -1294,21 +1256,22 @@ namespace Robots
 				rt_printf("The input of last and this count are:\n");
 				for (int i = 0; i<18; ++i)
 				{
-					rt_printf("%d   %d\n", lastCmdData.commandData[i].Position, cmdData.commandData[i].Position);
+					rt_printf("%d   %d\n", data.pLastMotionData->at(i).targetPos, data.pMotionData->at(i).targetPos);
 				}
 
 				rt_printf("All commands in command queue are discarded\n");
 				cmdNum = 0;
 
-				data = lastCmdData;
+				/*发现不连续，那么使用上一个成功的cmd，以便等待修复*/
+				for (int i = 0; i < 18; ++i)
+				{
+					data.pMotionData->operator[](i) = data.pLastMotionData->operator[](i);
+				}
+
+
 				return 0;
 			}
 		}
-
-		/*最终向下刷数据*/
-		data = cmdData;
-		lastStateData = stateData;
-		lastCmdData = cmdData;
 
 		return 0;
 	}
@@ -1342,10 +1305,6 @@ namespace Robots
 	void ROBOT_SERVER::Start()
 	{
 		pImp->Start();
-	}
-	Aris::Sensor::IMU* ROBOT_SERVER::Imu()
-	{
-		return pImp->pImu.get();
 	}
 }
 

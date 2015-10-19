@@ -16,84 +16,15 @@ namespace Robots
 	class LEG_BASE:public Aris::DynKer::OBJECT
 	{
 	public:
-		using COORDINATE = Aris::DynKer::COORDINATE;
-		void GetPee(double *pEE, COORDINATE coordinate) const;
-		void SetPee(const double *pEE, COORDINATE coordinate);
-		void GetVee(double *pEE, COORDINATE coordinate) const;
-		void SetVee(const double *pEE, COORDINATE coordinate);
-		void GetAee(double *pEE, COORDINATE coordinate) const;
-		void SetAee(const double *pEE, COORDINATE coordinate);
-		void GetFeeSta(double *fEE_sta, COORDINATE coordinate) const;
-		void SetFeeSta(const double *fEE_sta, COORDINATE coordinate);
-
-		void GetJfd(double *jac, COORDINATE coordinate) const;
-		void GetJfi(double *jac, COORDINATE coordinate) const;
-		void GetJvd(double *jac, COORDINATE coordinate) const;
-		void GetJvi(double *jac, COORDINATE coordinate) const;
-		void GetDifJfd(double *dJac, COORDINATE coordinate) const;
-		void GetDifJfi(double *dJac, COORDINATE coordinate) const;
-		void GetDifJvd(double *dJac, COORDINATE coordinate) const;
-		void GetDifJvi(double *dJac, COORDINATE coordinate) const;
-		void GetCvd(double *c, COORDINATE coordinate) const;
-		void GetCvi(double *c, COORDINATE coordinate) const;
-		/*!
-		* \brief follow equation: Aee = Jvd * Ain + dJvd * Vin + Cad
-		* \param c Cad
-		*/
-		void GetCad(double *c, COORDINATE coordinate) const;
-		/*!
-		* \brief follow equation: Ain = Jvi * Aee + dJvi * Vee + Cai
-		* \param c Cai
-		*/
-		void GetCai(double *c, COORDINATE coordinate) const;
-
-
-		/*!
-		* \brief Get the position of end-effector
-		* \param pEE position of end-effector, double array with 3 elements
-		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
-		*/
-		void GetPee(double *pEE, const char *RelativeCoodinate = "G") const;
-		/*!
-		* \brief Set the position of end-effector
-		* \param pEE position of end-effector, double array with 3 elements
-		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
-		*/
-		void SetPee(const double *pEE, const char *RelativeCoodinate = "G");
-		/*!
-		* \brief Get the velocity of end-effector
-		* \param vEE velocity of end-effector, double array with 3 elements
-		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
-		*/
-		void GetVee(double *vEE, const char *RelativeCoodinate = "G") const;
-		/*!
-		* \brief Set the velocity of end-effector, must be called after position is set
-		* \param vEE velocity of end-effector, double array with 3 elements
-		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
-		*/
-		void SetVee(const double *vEE, const char *RelativeCoodinate = "G");
-		/*!
-		* \brief Get the acceleration of end-effector
-		* \param pEE acceleration of end-effector, double array with 3 elements
-		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
-		*/
-		void GetAee(double *aEE, const char *RelativeCoodinate = "G") const;
-		/*!
-		* \brief Set the velocity of end-effector, must be called after velocity is set
-		* \param vEE acceleration of end-effector, double array with 3 elements
-		* \param RelativeCoodinate coordinate, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
-		*/
-		void SetAee(const double *aEE, const char *RelativeCoodinate = "G");
-		/*!
-		* \brief Get the static end-effector force of inputs, which is equal to Jfd * Fin_sta
-		* \param fIn actuation force of inputs, double array with 3 elements
-		*/
-		void GetFeeSta(double *fEE_sta, const char *RelativeCoodinate = "G") const;
-		/*!
-		* \brief Set the static end-effector force of inputs, meanwhile the Fin_sta will be Jfi * Fee_sta
-		* \param aIn actuation force of inputs, double array with 3 elements
-		*/
-		void SetFeeSta(const double *fEE_sta, const char *RelativeCoodinate = "G");
+		using MARKER = Aris::DynKer::MARKER;
+		void GetPee(double *pEE, const MARKER* pMak = nullptr) const;
+		void SetPee(const double *pEE, const MARKER* pMak = nullptr);
+		void GetVee(double *pEE, const MARKER* pMak = nullptr) const;
+		void SetVee(const double *pEE, const MARKER* pMak = nullptr);
+		void GetAee(double *pEE, const MARKER* pMak = nullptr) const;
+		void SetAee(const double *pEE, const MARKER* pMak = nullptr);
+		void GetFeeSta(double *fEE_sta, const MARKER* pMak = nullptr) const;
+		void SetFeeSta(const double *fEE_sta, const MARKER* pMak = nullptr);
 		/*!
 		* \brief Get the position of inputs
 		* \param pIn position of inputs, double array with 3 elements
@@ -134,27 +65,96 @@ namespace Robots
 		* \param aIn actuation force of inputs, double array with 3 elements
 		*/
 		void SetFinSta(const double *fIn_sta);
-		
-		void GetJfd(double *jac, const char *RelativeCoodinate = "G") const;
-		void GetJfi(double *jac, const char *RelativeCoodinate = "G") const;
-		void GetJvd(double *jac, const char *RelativeCoodinate = "G") const;
-		void GetJvi(double *jac, const char *RelativeCoodinate = "G") const;
-		void GetDifJfd(double *jac, const char *RelativeCoodinate = "G") const;
-		void GetDifJfi(double *jac, const char *RelativeCoodinate = "G") const;
-		void GetDifJvd(double *jac, const char *RelativeCoodinate = "G") const;
-		void GetDifJvi(double *jac, const char *RelativeCoodinate = "G") const;
-		void GetCvd(double *c, const char *RelativeCoodinate = "G") const;
-		void GetCvi(double *c, const char *RelativeCoodinate = "G") const;
+
+		void GetJfd(double *jac, const MARKER* pMak = nullptr) const;
+		void GetJfi(double *jac, const MARKER* pMak = nullptr) const;
+		void GetJvd(double *jac, const MARKER* pMak = nullptr) const;
+		void GetJvi(double *jac, const MARKER* pMak = nullptr) const;
+		void GetDifJfd(double *dJac, const MARKER* pMak = nullptr) const;
+		void GetDifJfi(double *dJac, const MARKER* pMak = nullptr) const;
+		void GetDifJvd(double *dJac, const MARKER* pMak = nullptr) const;
+		void GetDifJvi(double *dJac, const MARKER* pMak = nullptr) const;
+		void GetCvd(double *c, const MARKER* pMak = nullptr) const;
+		void GetCvi(double *c, const MARKER* pMak = nullptr) const;
 		/*!
 		* \brief follow equation: Aee = Jvd * Ain + dJvd * Vin + Cad
 		* \param c Cad
 		*/
-		void GetCad(double *c, const char *RelativeCoodinate = "G") const;
+		void GetCad(double *c, const MARKER* pMak = nullptr) const;
 		/*!
 		* \brief follow equation: Ain = Jvi * Aee + dJvi * Vee + Cai
 		* \param c Cai
 		*/
-		void GetCai(double *c, const char *RelativeCoodinate = "G") const;
+		void GetCai(double *c, const MARKER* pMak = nullptr) const;
+
+
+		/*!
+		* \brief Get the position of end-effector
+		* \param pEE position of end-effector, double array with 3 elements
+		* \param RelativeCoodinate pMak, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void GetPee(double *pEE, const char *RelativeCoodinate) const;
+		/*!
+		* \brief Set the position of end-effector
+		* \param pEE position of end-effector, double array with 3 elements
+		* \param RelativeCoodinate pMak, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void SetPee(const double *pEE, const char *RelativeCoodinate);
+		/*!
+		* \brief Get the velocity of end-effector
+		* \param vEE velocity of end-effector, double array with 3 elements
+		* \param RelativeCoodinate pMak, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void GetVee(double *vEE, const char *RelativeCoodinate) const;
+		/*!
+		* \brief Set the velocity of end-effector, must be called after position is set
+		* \param vEE velocity of end-effector, double array with 3 elements
+		* \param RelativeCoodinate pMak, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void SetVee(const double *vEE, const char *RelativeCoodinate);
+		/*!
+		* \brief Get the acceleration of end-effector
+		* \param pEE acceleration of end-effector, double array with 3 elements
+		* \param RelativeCoodinate pMak, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void GetAee(double *aEE, const char *RelativeCoodinate) const;
+		/*!
+		* \brief Set the velocity of end-effector, must be called after velocity is set
+		* \param vEE acceleration of end-effector, double array with 3 elements
+		* \param RelativeCoodinate pMak, which can be "O" or "G" both means origin ground, "M" or "B" mainbody, "L" leg
+		*/
+		void SetAee(const double *aEE, const char *RelativeCoodinate);
+		/*!
+		* \brief Get the static end-effector force of inputs, which is equal to Jfd * Fin_sta
+		* \param fIn actuation force of inputs, double array with 3 elements
+		*/
+		void GetFeeSta(double *fEE_sta, const char *RelativeCoodinate) const;
+		/*!
+		* \brief Set the static end-effector force of inputs, meanwhile the Fin_sta will be Jfi * Fee_sta
+		* \param aIn actuation force of inputs, double array with 3 elements
+		*/
+		void SetFeeSta(const double *fEE_sta, const char *RelativeCoodinate);
+		
+		void GetJfd(double *jac, const char *RelativeCoodinate) const;
+		void GetJfi(double *jac, const char *RelativeCoodinate) const;
+		void GetJvd(double *jac, const char *RelativeCoodinate) const;
+		void GetJvi(double *jac, const char *RelativeCoodinate) const;
+		void GetDifJfd(double *jac, const char *RelativeCoodinate) const;
+		void GetDifJfi(double *jac, const char *RelativeCoodinate) const;
+		void GetDifJvd(double *jac, const char *RelativeCoodinate) const;
+		void GetDifJvi(double *jac, const char *RelativeCoodinate) const;
+		void GetCvd(double *c, const char *RelativeCoodinate) const;
+		void GetCvi(double *c, const char *RelativeCoodinate) const;
+		/*!
+		* \brief follow equation: Aee = Jvd * Ain + dJvd * Vin + Cad
+		* \param c Cad
+		*/
+		void GetCad(double *c, const char *RelativeCoodinate) const;
+		/*!
+		* \brief follow equation: Ain = Jvi * Aee + dJvi * Vee + Cai
+		* \param c Cai
+		*/
+		void GetCai(double *c, const char *RelativeCoodinate) const;
 
 		void TransformCoordinatePee(const double *bodyPe, const char *fromMak, const double *fromPee
 			, const char *toMak, double *toPee) const;
@@ -272,7 +272,7 @@ namespace Robots
 	class ROBOT_BASE:public Aris::DynKer::MODEL
 	{
 	public:
-		using COORDINATE = Aris::DynKer::COORDINATE;
+		using MARKER = Aris::DynKer::MARKER;
 		
 		ROBOT_BASE();
 		virtual ~ROBOT_BASE() = default;
@@ -281,91 +281,71 @@ namespace Robots
 		Aris::DynKer::PART& Ground() { return *pGround; };
 		const Aris::DynKer::PART& Body() const { return *pBody; };
 		Aris::DynKer::PART& Body() { return *pBody; };
-		COORDINATE* pLegCoors()
+		MARKER** pLegMaks()
 		{ 
-			static Aris::DynKer::COORDINATE pCoors[6];
-			for (int i = 0; i < 6; ++i)
+			static MARKER* pBases[6]
 			{
-				pCoors[i] = *pLegs[i]->pBase;
-			}
-
-
-			return pCoors;
+				pLegs[0]->pBase,
+				pLegs[1]->pBase,
+				pLegs[2]->pBase,
+				pLegs[3]->pBase,
+				pLegs[4]->pBase,
+				pLegs[5]->pBase,
+			};
+			return pBases;
 		};
 
 
-		void GetBodyPm(double *bodyPm, COORDINATE coordinate) const;
-		void SetBodyPm(const double *bodyPm, COORDINATE coordinate);
-		void GetBodyPe(double *bodyPe, const char *eurType, COORDINATE coordinate) const;
-		void SetBodyPe(const double *bodyPe, const char *eurType, COORDINATE coordinate);
-		void GetBodyVel(double *bodyVel, COORDINATE coordinate) const;
-		void SetBodyVel(const double *bodyVel, COORDINATE coordinate);
-		void GetBodyAcc(double *bodyAcc, COORDINATE coordinate) const;
-		void SetBodyAcc(const double *bodyAcc, COORDINATE coordinate);
+		void GetBodyPm(double *bodyPm, const MARKER* pMak = nullptr) const;
+		void SetBodyPm(const double *bodyPm, const MARKER* pMak = nullptr);
+		void GetBodyPq(double *bodyPq, const MARKER* pMak = nullptr) const;
+		void SetBodyPq(const double *bodyPq, const MARKER* pMak = nullptr);
+		void GetBodyPe(double *bodyPe, const char *eurType = "313", const MARKER* pMak = nullptr) const;
+		void SetBodyPe(const double *bodyPe, const char *eurType = "313", const MARKER* pMak = nullptr);
+		void GetBodyVel(double *bodyVel, const MARKER* pMak = nullptr) const;
+		void SetBodyVel(const double *bodyVel, const MARKER* pMak = nullptr);
+		void GetBodyAcc(double *bodyAcc, const MARKER* pMak = nullptr) const;
+		void SetBodyAcc(const double *bodyAcc, const MARKER* pMak = nullptr);
 
-		void GetPee(double *pEE, COORDINATE coordinate) const;
-		void SetPee(const double *pEE, COORDINATE coordinate);
-		void GetVee(double *vEE, COORDINATE coordinate) const;
-		void SetVee(const double *vEE, COORDINATE coordinate);
-		void GetAee(double *aEE, COORDINATE coordinate) const;
-		void SetAee(const double *aEE, COORDINATE coordinate);
-		void GetFeeSta(double *fee_sta, COORDINATE coordinate) const;
-		void SetFeeSta(const double *fee_sta, COORDINATE coordinate);
-		void GetPee(double *pEE, COORDINATE *coordinate) const;
-		void SetPee(const double *pEE, COORDINATE *coordinate);
-		void GetVee(double *vEE, COORDINATE *coordinate) const;
-		void SetVee(const double *vEE, COORDINATE *coordinate);
-		void GetAee(double *aEE, COORDINATE *coordinate) const;
-		void SetAee(const double *aEE, COORDINATE *coordinate);
-		void GetFeeSta(double *fee_sta, COORDINATE *coordinate) const;
-		void SetFeeSta(const double *fee_sta, COORDINATE *coordinate);
-
-
-
-
-		/*!
-		* \brief Get the body pose matrix
-		* \param body pose matrix, double array with 16 elements
-		*/
-		void GetBodyPm(double *bodyPm) const;
-		/*!
-		* \brief Get the body PE
-		* \param body pose matrix, double array with 16 elements
-		*/
-		void GetBodyPe(double *bodyPe, const char *eurType = "313") const;
-		/*!
-		* \brief Get the body velocity
-		* \param body velocity, double array with 6 elements
-		*/
-		void GetBodyVel(double *bodyVel) const;
-		/*!
-		* \brief Get the body acceleration
-		* \param body acceleration, double array with 6 elements
-		*/
-		void GetBodyAcc(double *bodyAcc) const;
-
+		void GetPee(double *pEE, const MARKER* pMak = nullptr) const;
+		void SetPee(const double *pEE, const MARKER* pMak = nullptr);
+		void GetVee(double *vEE, const MARKER* pMak = nullptr) const;
+		void SetVee(const double *vEE, const MARKER* pMak = nullptr);
+		void GetAee(double *aEE, const MARKER* pMak = nullptr) const;
+		void SetAee(const double *aEE, const MARKER* pMak = nullptr);
+		void GetFeeSta(double *fee_sta, const MARKER* pMak = nullptr) const;
+		void SetFeeSta(const double *fee_sta, const MARKER* pMak = nullptr);
 		
-
-
-
-
-		void GetPee(double *pEE, const char *RelativeCoodinate = "G") const;
-		void SetPee(const double *pEE = nullptr, const double *bodyPe = nullptr, const char *coodinate = "G", const char *eurType = "313");
-		void GetVee(double *aEE, const char *RelativeCoodinate = "G") const;
-		void SetVee(const double *vEE = nullptr, const double *bodyVel = nullptr, const char *coodinate = "G");
-		void GetAee(double *vEE, const char *RelativeCoodinate = "G") const;
-		void SetAee(const double *aEE = nullptr, const double *bodyAcc = nullptr, const char *coodinate = "G");
-		void GetFeeSta(double *fee_sta, const char *RelativeCoodinate = "G") const;
-		void SetFeeSta(const double *fee_sta, const char *RelativeCoodinate = "G");
+		void GetPee(double *pEE, const MARKER** pMak) const;
+		void SetPee(const double *pEE, const MARKER** pMak);
+		void GetVee(double *vEE, const MARKER** pMak) const;
+		void SetVee(const double *vEE, const MARKER** pMak);
+		void GetAee(double *aEE, const MARKER** pMak) const;
+		void SetAee(const double *aEE, const MARKER** pMak);
+		void GetFeeSta(double *fee_sta, const MARKER** pMak) const;
+		void SetFeeSta(const double *fee_sta, const MARKER** pMak);
 		
 		void GetPin(double *pIn) const;
-		void SetPin(const double *pIn = nullptr, const double *bodyPe = nullptr, const char *eurType = "313");
+		void SetPin(const double *pIn);
 		void GetVin(double *vIn) const;
-		void SetVin(const double *vIn = nullptr, const double *bodyPe = nullptr);
+		void SetVin(const double *pIn);
 		void GetAin(double *aIn) const;
-		void SetAin(const double *aIn = nullptr, const double *bodyPe = nullptr);
+		void SetAin(const double *pIn);
 		void GetFinSta(double *fIn_sta) const;
 		void SetFinSta(const double *fIn_sta);
+
+		void GetPee(double *pEE, const char *RelativeCoodinate) const;
+		void SetPee(const double *pEE, const double *bodyPe, const char *coodinate = "G", const char *eurType = "313");
+		void GetVee(double *aEE, const char *RelativeCoodinate) const;
+		void SetVee(const double *vEE, const double *bodyVel, const char *coodinate = "G");
+		void GetAee(double *vEE, const char *RelativeCoodinate) const;
+		void SetAee(const double *aEE, const double *bodyAcc, const char *coodinate = "G");
+		void GetFeeSta(double *fee_sta, const char *RelativeCoodinate) const;
+		void SetFeeSta(const double *fee_sta, const char *RelativeCoodinate);
+		void SetPin(const double *pIn, const double *bodyPe, const char *eurType = "313");
+		void SetVin(const double *vIn, const double *bodyPe);
+		void SetAin(const double *aIn, const double *bodyPe);
+
 
 		/*!
 		* \brief 根据雅可比矩阵和初值迭代求解，主要用来在已知足端位置和输入位置时，机器人身体的位置。
