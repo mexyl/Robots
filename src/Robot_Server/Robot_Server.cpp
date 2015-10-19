@@ -1281,10 +1281,42 @@ namespace Robots
 		static int cmdNum{ 0 };
 		static int count{ 0 };
 
-		if ((count!=0)&&(count % 1000 == 0))
+		static int dspNum = 0;
+		if (++dspNum % 1000 == 0)
 		{
 			rt_printf("pos is:%d \n",data.pMotionData->at(0).feedbackPos);
 		}
+
+		/*检查是否出错*/
+		bool isAllNormal = true;
+		for (auto &motData : *data.pMotionData)
+		{
+			if (motData.ret < 0)
+			{
+				isAllNormal = false;
+				break;
+			}
+		}
+		static int faultCount = 0;
+		if (!isAllNormal)
+		{
+			if (faultCount++ % 100 == 0)
+			{
+				rt_printf("Some motor is in fault, now try to disable all motors\n");
+				rt_printf("All commands in command queue are discarded\n");
+			}
+			for (auto &motData : *data.pMotionData)
+			{
+				motData.cmd = Aris::Control::MOTION::DISABLE;
+			}
+			
+			cmdNum = 0;
+		}
+		else
+		{
+			faultCount = 0;
+		}
+
 
 
 

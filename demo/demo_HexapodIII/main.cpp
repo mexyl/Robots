@@ -14,11 +14,31 @@ int main()
 	ROBOT_TYPE_I rbt;
 
 #ifdef PLATFORM_IS_WINDOWS
-	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII.xml");
+	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III.xml");
 #endif
 #ifdef PLATFORM_IS_LINUX
 	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III.xml");
 #endif
+
+	double pEE____[18]
+	{
+		-0.318791579531186,   -0.719675656557493,   -0.500049789146799,
+	-0.413084678293599,   -0.719675656557493,    0,
+	-0.318791579531187,   -0.719675656557493,    0.498125689146798,
+	0.318791579531186,   -0.719675656557493,   -0.500049789146799,
+	0.413084678293599,   -0.719675656557493,    0,
+	0.318791579531187,   -0.719675656557493,    0.498125689146798,
+	};
+
+	double pe_____[6]{ 0 };
+
+	rbt.SetBodyPe(pe_____);
+	rbt.SetPee(pEE____);
+	rbt.GetPin(pEE____);
+
+	dlmwrite("C:\\Users\\yang\\Desktop\\data.txt", pEE____,6,3);
+
+
 
 	//double pEE_G[18] =
 	//{

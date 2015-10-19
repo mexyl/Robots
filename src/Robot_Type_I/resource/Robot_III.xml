@@ -466,6 +466,12 @@
         <second abbreviation="s"/>
         <motor abbreviation="m" type="intArray" default="0"/>
       </hm>
+      <rc default="all">
+        <all abbreviation="a"/>
+        <first abbreviation="f"/>
+        <second abbreviation="s"/>
+        <leg abbreviation="l" type="intArray" default="0"/>
+      </rc>
       <ro/>
       <ad>
         <first abbreviation="f"/>
@@ -485,23 +491,106 @@
       </wk>
     </Commands>
     <Connection IP="127.0.0.1" Port="5866"/>
-    <Control homeCur="950" meter2count="1 / 0.01*3.5 * 65536">
+    <Control meter2count="1 / 0.01*3.5 * 65536">
       <MapPhy2Abs>
         { 15 , 17 , 16, 12 , 14 , 13 , 9 , 11 , 10 , 2 , 0, 1 , 3 , 5 , 4 , 7 , 8 , 6 }
       </MapPhy2Abs>
-      <HomeEE>
+      <homePin>
         {
-        -0.318791579531186,   -0.719675656557493,   -0.500049789146799;
-        -0.413084678293599,   -0.719675656557493,    0;
-        -0.318791579531187,   -0.719675656557493,    0.498125689146798;
-        0.318791579531186,   -0.719675656557493,   -0.500049789146799;
-        0.413084678293599,   -0.719675656557493,    0;
-        0.318791579531187,   -0.719675656557493,    0.498125689146798;
+        0.675784824916295,   0.697784816196987,   0.697784816196987;
+        0.675784824916295,   0.697784816196987,   0.697784816196987;
+        0.675784824916295,   0.697784816196987,   0.697784816196987;
+        0.675784824916295,   0.697784816196987,   0.697784816196987;
+        0.675784824916295,   0.697784816196987,   0.697784816196987;
+        0.675784824916295,   0.697784816196987,   0.697784816196987;
         }
-      </HomeEE>
+      </homePin>
+      <AlignPee>
+        {
+        -0.3,   -0.75,   -0.65;
+        -0.45,  -0.75,   0;
+        -0.3,   -0.75,    0.65;
+        0.3,   -0.75,    -0.65;
+        0.45,  -0.75,    0;
+        0.3,   -0.75,     0.65;
+        }
+      </AlignPee>
+      <RecoverPee>
+        {
+        -0.3,   -0.85,   -0.65;
+        -0.45,  -0.85,    0;
+        -0.3,   -0.85,    0.65;
+        0.3,   -0.85,    -0.65;
+        0.45,  -0.85,     0;
+        0.3,   -0.85,     0.65;
+        }
+      </RecoverPee>
+      <EtherCat>
+        <SlaveType>
+          <ElmoSoloWhistle productCode="0x00030924" venderID="0x0000009a" alias="0">
+            <PDO>
+              <index_1605 index="0x1605" number="6" isTx="false">
+                <TargetPosition index="0x607A" subIndex="0x00" type="int32"/>
+                <TargetVelocity index="0x60FF" subIndex="0x00" type="int32"/>
+                <TargetTorque index="0x6071" subIndex="0x00" type="int16"/>
+                <MaxTorque index="0x6072" subIndex="0x00" type="int16"/>
+                <ControlWord index="0x6040" subIndex="0x00" type="uint16"/>
+                <ModeOfOperation index="0x6060" subIndex="0x00" type="uint8"/>
+              </index_1605>
+              <index_1a03 index="0x1A03" number="4" isTx="true">
+                <PositionActualValue index="0x6064" subIndex="0x00" type="int32"/>
+                <DigitalInputs index="0x60fd" subIndex="0x00" type="uint32"/>
+                <VelocityActualValue index="0x606c" subIndex="0x00" type="int32"/>
+                <StatusWord index="0x6041" subIndex="0x00" type="uint16"/>
+              </index_1a03>
+              <index_1a1f index="0x1A1F" number="4" isTx="true">
+                <CurrentActualValue index="0x6078" subIndex="0x00" type="int16"/>
+              </index_1a1f>
+              <index_1a13 index="0x1A13" number="4" isTx="true">
+                <TorqueActualValue index="0x6077" subIndex="0x00" type="int16"/>
+              </index_1a13>
+              <index_1a0b index="0x1A0B" number="4" isTx="true">
+                <ModeOfOperationDisplay index="0x6061" subIndex="0x00" type="uint8"/>
+              </index_1a0b>
+            </PDO>
+            <SDO>
+              <homeMode index="0x6098" subIndex="0" value="-1" type="int32"/>
+              <homeAcc index="0x609A" subIndex="0" value="200000" type="int32"/>
+              <homeHighSpeed index="0x6099" subIndex="1" value="200000" type="int32"/>
+              <homeLowSpeed index="0x6099" subIndex="2" value="100000" type="int32"/>
+              <RatioOfPosDivVel_Numerator index="0x6096" subIndex="1" value="1" type="int32"/>
+              <RatioOfPosDivVel_Divisor index="0x6096" subIndex="2" value="1" type="int32"/>
+              <homeTorqueLimit index="0x2020" subIndex="1" value="200" type="int32"/>
+              <p2pMaxSpeed index="0x607F" subIndex="0" value="2560" type="int32"/>
+              <p2pSpeed index="0x6081" subIndex="0" value="1792" type="int32"/>
+              <homeOffset index="0x607C" subIndex="0" value="0" type="int32"/>
+            </SDO>
+          </ElmoSoloWhistle>
+        </SlaveType>
+        <Slave>
+          <Motion1 type="ElmoSoloWhistle"/>
+          <Motion2 type="ElmoSoloWhistle"/>
+          <Motion3 type="ElmoSoloWhistle"/>
+          <Motion4 type="ElmoSoloWhistle"/>
+          <Motion5 type="ElmoSoloWhistle"/>
+          <Motion6 type="ElmoSoloWhistle"/>
+          <Motion7 type="ElmoSoloWhistle"/>
+          <Motion8 type="ElmoSoloWhistle"/>
+          <Motion9 type="ElmoSoloWhistle"/>
+          <Motion10 type="ElmoSoloWhistle"/>
+          <Motion11 type="ElmoSoloWhistle"/>
+          <Motion12 type="ElmoSoloWhistle"/>
+          <Motion13 type="ElmoSoloWhistle"/>
+          <Motion14 type="ElmoSoloWhistle"/>
+          <Motion15 type="ElmoSoloWhistle"/>
+          <Motion16 type="ElmoSoloWhistle"/>
+          <Motion17 type="ElmoSoloWhistle"/>
+          <Motion18 type="ElmoSoloWhistle"/>
+        </Slave>
+      </EtherCat>
     </Control>
     <Sensors>
-      <IMU active="true" type="xsens_imu" portLinux="/dev/ttyUSB0" baudRate="921600" sampleRate="400" PeImuGround2BodyGound="{0,0,0,0,-PI/2,PI}" PeImu2Body="{0,0,0,0,PI/2,0}"/>
+      <IMU active="false" type="xsens_imu" portLinux="/dev/ttyUSB0" baudRate="921600" sampleRate="400" PeImuGround2BodyGound="{0,0,0,0,-PI/2,PI}" PeImu2Body="{0,0,0,0,PI/2,0}"/>
       <Vision type="kinect2.0"/>
     </Sensors> 
   </Server>
