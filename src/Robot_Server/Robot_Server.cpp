@@ -512,7 +512,6 @@ namespace Robots
 		pController->SetControlStrategy(tg);
 #endif
 
-
 		/*load connection param*/
 		auto pConnEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Connection");
 		ip = pConnEle->Attribute("IP");
@@ -522,27 +521,6 @@ namespace Robots
 		auto pContEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control");
 		Aris::DynKer::CALCULATOR c;
 		meter2count = c.CalculateExpression(pContEle->Attribute("meter2count")).ToDouble();
-
-		/*load recover parameter and home parameter*/
-		auto mat = c.CalculateExpression(pContEle->FirstChildElement("AlignPee")->GetText());
-		std::copy_n(mat.Data(), 18, alignEE);
-		mat = c.CalculateExpression(pContEle->FirstChildElement("RecoverPee")->GetText());
-		std::copy_n(mat.Data(), 18, recoverEE);
-		double pe[6]{ 0 };
-		pServer->pRobot->SetBodyPe(pe);
-		pServer->pRobot->SetPee(alignEE);
-		pServer->pRobot->GetPin(alignIn);
-
-		mat = c.CalculateExpression(pContEle->FirstChildElement("homePin")->GetText());
-		for (int i = 0; i < 18; ++i)
-		{
-			homeCount[i] = static_cast<std::int32_t>(-mat.Data()[a2p(i)] * meter2count);
-			pController->Motion(i)->WriteSdo(9,homeCount[i]);
-		}
-
-		
-
-
 
 		/*construct mapPhy2Abs and mapAbs2Phy*/
 		std::string mapPhy2AbsText{ pContEle->FirstChildElement("MapPhy2Abs")->GetText() };
@@ -563,7 +541,31 @@ namespace Robots
 			mapAbs2Phy[i] = std::find(mapPhy2Abs, mapPhy2Abs + 18, i) - mapPhy2Abs;
 		}
 
-		std::string docName{ doc.RootElement()->Name() };
+
+		/*load recover parameter*/
+		auto mat = c.CalculateExpression(pContEle->FirstChildElement("AlignPee")->GetText());
+		std::copy_n(mat.Data(), 18, alignEE);
+		mat = c.CalculateExpression(pContEle->FirstChildElement("RecoverPee")->GetText());
+		std::copy_n(mat.Data(), 18, recoverEE);
+		double pe[6]{ 0 };
+		pServer->pRobot->SetBodyPe(pe);
+		pServer->pRobot->SetPee(alignEE);
+		pServer->pRobot->GetPin(alignIn);
+
+		/*set home offset*/
+		mat = c.CalculateExpression(pContEle->FirstChildElement("homePin")->GetText());
+		for (int i = 0; i < 18; ++i)
+		{
+#ifdef PLATFORM_IS_LINUX
+			pController->Motion(i)->WriteSdo(9, static_cast<std::int32_t>(-mat.Data()[a2p(i)] * meter2count));
+#endif
+		}
+
+		
+
+
+
+		
 
 		/*begin to copy client and insert cmd nodes*/
 		const int TASK_NAME_LEN = 1024;
