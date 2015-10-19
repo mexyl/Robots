@@ -482,7 +482,6 @@ namespace Robots
 		std::string ip, port;
 
 		double alignEE[18], alignIn[18], recoverEE[18];
-		int homeCount[18];
 		double meter2count{ 0 };
 
 		int mapPhy2Abs[18];
