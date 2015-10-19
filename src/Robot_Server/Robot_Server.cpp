@@ -498,6 +498,8 @@ namespace Robots
 
 	void ROBOT_SERVER::IMP::LoadXml(const Aris::Core::DOCUMENT &doc)
 	{
+		std::cout<<"load"<<std::endl;		
+
 		/*load robot model*/
 		pServer->pRobot->LoadXml(doc);
 		
@@ -517,12 +519,12 @@ namespace Robots
 		pServer->pRobot->SetBodyPe(pe);
 		pServer->pRobot->SetPee(alignEE);
 		pServer->pRobot->GetPin(alignIn);
-
+std::cout<<"load1"<<std::endl;	
 		/*home parameter*/
 		std::string homeCurStr(pContEle->Attribute("homeCur"));
 		homeCur = std::stoi(homeCurStr);
 		meter2count = c.CalculateExpression(pContEle->Attribute("meter2count")).ToDouble();
-
+std::cout<<"load2"<<std::endl;	
 		/*construct mapPhy2Abs and mapAbs2Phy*/
 		std::string mapPhy2AbsText{ pContEle->FirstChildElement("MapPhy2Abs")->GetText() };
 		std::stringstream stream(mapPhy2AbsText);
@@ -543,7 +545,7 @@ namespace Robots
 		}
 
 		std::string docName{ doc.RootElement()->Name() };
-
+std::cout<<"load3"<<std::endl;	
 		/*begin to copy client and insert cmd nodes*/
 		const int TASK_NAME_LEN = 1024;
 		char path_char[TASK_NAME_LEN] = { 0 };
@@ -559,7 +561,7 @@ namespace Robots
 		std::string path(path_char);
 		path = path.substr(0, path.rfind('/'));
 #endif
-
+std::cout<<"load4"<<std::endl;
 		auto pCmds = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Commands");
 
 		if (pCmds == nullptr) throw std::logic_error("invalid xml file, because it contains no commands information");
@@ -582,7 +584,7 @@ namespace Robots
 			addAllParams(pChild, mapCmd.at(pChild->Name())->root.get(), mapCmd.at(pChild->Name())->allParams, mapCmd.at(pChild->Name())->shortNames);
 		}
 
-
+std::cout<<"load5"<<std::endl;
 		/*begin to create imu*/
 		if (doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")->Attribute("Active", "true"))
 		{
@@ -591,6 +593,7 @@ namespace Robots
 
 #ifdef PLATFORM_IS_LINUX
 		pController->LoadXml(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control")->FirstChildElement("EtherCat"));
+		pController->SetControlStrategy(tg);
 #endif
 	}
 	void ROBOT_SERVER::IMP::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
@@ -664,6 +667,10 @@ namespace Robots
 #endif
 			}
 		}
+
+#ifdef PLATFORM_IS_LINUX
+		pController->Start();	
+#endif
 	}
 
 	void ROBOT_SERVER::IMP::OnReceiveMsg(const Aris::Core::MSG &msg, Aris::Core::MSG &retError)
@@ -1036,9 +1043,10 @@ namespace Robots
 				if ((pParam->count != 0) && (data.pMotionData->operator[](a2p(i)).ret == 0))
 				{
 					/*判断是否为第一次走到enable,否则什么也不做，这样就会继续刷上次的值*/
-					if (data.pMotionData->operator[](a2p(i)).cmd == Aris::Control::MOTION::HOME)
+					if (data.pMotionData->operator[](a2p(i)).cmd == Aris::Control::MOTION::ENABLE)
 					{
 						data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::RUN;
+						data.pMotionData->operator[](a2p(i)).mode = Aris::Control::MOTION::POSITION;
 						data.pMotionData->operator[](a2p(i)).targetPos = data.pMotionData->operator[](a2p(i)).feedbackPos;
 						data.pMotionData->operator[](a2p(i)).targetVel = 0;
 						data.pMotionData->operator[](a2p(i)).targetCur = 0;
@@ -1048,6 +1056,7 @@ namespace Robots
 				{
 					isAllEnabled = false;
 					data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::ENABLE;
+					data.pMotionData->operator[](a2p(i)).mode = Aris::Control::MOTION::POSITION;
 
 					if (pParam->count % 1000 == 0)
 					{

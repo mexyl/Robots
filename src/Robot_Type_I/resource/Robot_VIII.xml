@@ -550,7 +550,7 @@
               <homeLowSpeed index="0x6099" subIndex="2" value="100000" type="int32"/>
               <RatioOfPosDivVel_Numerator index="0x6096" subIndex="1" value="1" type="int32"/>
               <RatioOfPosDivVel_Divisor index="0x6096" subIndex="2" value="1" type="int32"/>
-              <homeTorqueLimit index="0x2020" subIndex="1" value="950" type="int32"/>
+              <homeTorqueLimit index="0x2020" subIndex="1" value="0" type="int32"/>
               <p2pMaxSpeed index="0x607F" subIndex="0" value="2560" type="int32"/>
               <p2pSpeed index="0x6081" subIndex="0" value="1792" type="int32"/>
               <homeOffset index="0x607C" subIndex="0" value="0" type="int32"/>
@@ -558,24 +558,24 @@
           </ElmoSoloWhistle>
         </SlaveType>
         <Slave>
-          <Motion1 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion2 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion3 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion4 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion5 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion6 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion7 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion8 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion9 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion10 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion11 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion12 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion13 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion14 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion15 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion16 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion17 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
-          <Motion18 type="ElmoSoloWhistle" countPerUnit="9216000" homeCount="0"/>
+          <Motion1 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion2 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion3 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion4 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion5 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion6 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion7 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion8 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion9 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion10 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion11 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion12 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion13 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion14 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion15 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion16 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion17 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
+          <Motion18 type="ElmoSoloWhistle" countPerUnit="9216000" homeOffSet="0"/>
         </Slave>
       </EtherCat>
     </Control>

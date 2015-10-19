@@ -41,21 +41,22 @@ using namespace Aris::Core;
 
 int main()
 {
+	std::cout<<1<<std::endl;
 	auto rs = Robots::ROBOT_SERVER::GetInstance();
 	rs->CreateRobot<Robots::ROBOT_TYPE_I>();
-
+std::cout<<2<<std::endl;
 #ifdef PLATFORM_IS_LINUX
 	rs->LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_VIII.xml");
 #endif
 #ifdef PLATFORM_IS_WINDOWS
 	rs->LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII.xml");
 #endif
-
+std::cout<<3<<std::endl;
 	rs->AddGait("wk", Robots::walk, Robots::parseWalk);
 	rs->AddGait("ad", Robots::adjust, Robots::parseAdjust);
 	rs->AddGait("fw", Robots::fastWalk, Robots::parseFastWalk);
 	rs->Start();
-
+std::cout<<4<<std::endl;
 	Aris::Core::RunMsgLoop();
 
 	return 0;
