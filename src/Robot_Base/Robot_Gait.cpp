@@ -1,10 +1,11 @@
 ﻿#include <Platform.h>
 
 #ifdef PLATFORM_IS_LINUX
-#include <Aris_Control.h>
+#include "rtdk.h"
 #endif
-
+#ifdef PLATFORM_IS_WINDOWS
 #define rt_printf printf
+#endif
 
 #include <cstring>
 #include <cmath>
@@ -773,7 +774,9 @@ namespace Robots
 	{
 		if (pParam->imuData)
 		{
-			rt_printf("imu eul321: %f,%f,%f\n", pParam->imuData->eul321[1], pParam->imuData->eul321[2], pParam->imuData->eul321[3]);
+			double eul[3];
+			pParam->imuData->ToEulBody2Ground(eul,PI,"321");			
+			rt_printf("imu eul321: %f,%f,%f\n", eul[0], eul[1], eul[2]);
 		}
 		else
 		{

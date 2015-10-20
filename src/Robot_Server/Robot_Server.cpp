@@ -4,12 +4,14 @@
 #include <windows.h>
 #undef CM_NONE
 #endif
+#ifdef PLATFORM_IS_LINUX
+#include "rtdk.h"
+#include "unistd.h"
+#endif
+
 
 #include <cstring>
-
-#ifdef PLATFORM_IS_LINUX
-#include <Aris_Control.h>
-#endif
+#include <thread>
 
 #include <Aris_Core.h>
 #include <Aris_Socket.h>
@@ -501,7 +503,12 @@ namespace Robots
 		/*begin to create imu*/
 		if (doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")->Attribute("Active", "true"))
 		{
+			std::cout<<"imu found"<<std::endl;			
 			pImu.reset(new Aris::Sensor::IMU(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")));
+		}
+		else
+		{
+			std::cout<<"imu not find"<<std::endl;
 		}
 
 		/*begin to load controller*/
@@ -1208,10 +1215,7 @@ namespace Robots
 	}
 	int ROBOT_SERVER::IMP::runGait(Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data)
 	{
-		/*获取传感器数据*/
-		static Aris::Sensor::SENSOR_DATA<Aris::Sensor::IMU_DATA> imuDataProtected;
-		if (pImu)imuDataProtected = pImu->GetSensorData();
-		pParam->imuData = &imuDataProtected.Get();
+		
 
 		/*保存初始位置*/
 		static double pBody[6]{ 0 }, vBody[6]{ 0 }, pEE[18]{ 0 }, vEE[18]{ 0 };
@@ -1235,9 +1239,14 @@ namespace Robots
 		std::copy_n(pBody, 6, pParam->beginBodyPE);
 		std::copy_n(vBody, 6, pParam->beginBodyVel);
 
+		/*获取传感器数据*/
+		Aris::Sensor::SENSOR_DATA<Aris::Sensor::IMU_DATA> imuDataProtected;
+		if (pImu) imuDataProtected = pImu->GetSensorData();
+		pParam->imuData = &imuDataProtected.Get();
+
 		//执行gait函数
 		int ret = this->allGaits.at(pParam->cmdID).operator()(pServer->pRobot.get(),pParam);
-		
+
 		double pIn[18];
 		pServer->pRobot->GetPin(pIn);
 

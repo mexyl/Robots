@@ -92,7 +92,7 @@ namespace Robots
 	Aris::Core::MSG parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
 
 	int resetOrigin(ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE *pParam);
-	Aris::Core::MSG parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
+	Aris::Core::MSG parseResetOrigin(const std::string &cmd, const std::map<std::string, std::string> &params);
 
 	struct MOVE_PARAM :public GAIT_PARAM_BASE
 	{
