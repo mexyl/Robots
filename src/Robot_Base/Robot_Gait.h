@@ -6,6 +6,7 @@
 #include <map>
 
 #include <Aris_Core.h>
+#include <Aris_IMU.h>
 #include <Robot_Base.h>
 
 namespace Robots
@@ -39,6 +40,7 @@ namespace Robots
 
 	struct GAIT_PARAM_BASE:ALL_PARAM_BASE
 	{
+		const Aris::Sensor::IMU_DATA *imuData;
 		double beginPee[18]{0};
 		double beginVee[18]{0};
 		double beginBodyPE[6]{0};
@@ -89,6 +91,9 @@ namespace Robots
 	int fastWalk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
 	Aris::Core::MSG parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
 
+	int resetOrigin(ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE *pParam);
+	Aris::Core::MSG parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
+
 	struct MOVE_PARAM :public GAIT_PARAM_BASE
 	{
 		double targetPee[18];
@@ -97,23 +102,6 @@ namespace Robots
 		double targetBodyPE[6];
 		std::int32_t totalCount;
 	};
-
-
-
-	/*int ROBOT_SERVER::IMP::resetOrigin(const Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data)
-	{
-	double pEE[18], pBody[6]{ 0 }, vEE[18], vBody[6]{ 0 };
-	pServer->pRobot->GetPee(pEE, &pServer->pRobot->Body());
-	pServer->pRobot->GetVee(vEE, &pServer->pRobot->Body());
-
-	pServer->pRobot->SetBodyPe(pBody);
-	pServer->pRobot->SetPee(pEE);
-
-	pServer->pRobot->SetBodyVel(vBody);
-	pServer->pRobot->SetVee(vEE);
-
-	return 0;
-	}*/
 }
 
 #endif

@@ -487,9 +487,8 @@ namespace Robots
 		int mapPhy2Abs[18];
 		int mapAbs2Phy[18];
 
-//#ifdef PLATFORM_IS_LINUX
 		Aris::Control::CONTROLLER *pController;
-//#endif
+
 		std::unique_ptr<Aris::Sensor::IMU> pImu;
 		friend class ROBOT_SERVER;
 	};
@@ -540,7 +539,6 @@ namespace Robots
 			mapAbs2Phy[i] = std::find(mapPhy2Abs, mapPhy2Abs + 18, i) - mapPhy2Abs;
 		}
 
-
 		/*load recover parameter*/
 		auto mat = c.CalculateExpression(pContEle->FirstChildElement("AlignPee")->GetText());
 		std::copy_n(mat.Data(), 18, alignEE);
@@ -559,12 +557,6 @@ namespace Robots
 			pController->Motion(i)->WriteSdo(9, static_cast<std::int32_t>(-mat.Data()[p2a(i)] * meter2count));
 #endif
 		}
-
-		
-
-
-
-		
 
 		/*begin to copy client and insert cmd nodes*/
 		const int TASK_NAME_LEN = 1024;
@@ -604,7 +596,38 @@ namespace Robots
 			addAllParams(pChild, mapCmd.at(pChild->Name())->root.get(), mapCmd.at(pChild->Name())->allParams, mapCmd.at(pChild->Name())->shortNames);
 		}
 
+		/*Set socket connection callback function*/
+		server.SetOnReceivedConnection([](Aris::Core::CONN *pConn, const char *pRemoteIP, int remotePort)
+		{
+			Aris::Core::log(std::string("received connection, the ip is: ") + pRemoteIP);
+			return 0;
+		});
+		server.SetOnReceiveRequest([this](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
+		{
+			Aris::Core::MSG ret;
+			this->OnReceiveMsg(msg, ret);
 
+			return ret;
+		});
+		server.SetOnLoseConnection([this](Aris::Core::CONN *pConn)
+		{
+			Aris::Core::log("lost connection");
+			while (true)
+			{
+				try
+				{
+					pConn->StartServer(this->port.c_str());
+					break;
+				}
+				catch (Aris::Core::CONN::START_SERVER_ERROR &e)
+				{
+					std::cout << e.what() << std::endl << "will try to restart in 1s" << std::endl;
+					Aris::Core::Sleep(1000);
+				}
+			}
+
+			return 0;
+		});
 	}
 	void ROBOT_SERVER::IMP::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 	{
@@ -630,38 +653,6 @@ namespace Robots
 			pImu->Start();
 		}
 
-		server.SetOnReceivedConnection([](Aris::Core::CONN *pConn, const char *pRemoteIP, int remotePort)
-		{
-			Aris::Core::log(std::string("received connection, the ip is: ") + pRemoteIP);
-			return 0;
-		});
-		server.SetOnReceiveRequest([this](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
-		{
-			Aris::Core::MSG ret;
-			this->OnReceiveMsg(msg,ret);
-
-			return ret;
-		});
-		server.SetOnLoseConnection([this](Aris::Core::CONN *pConn)
-		{
-			Aris::Core::log("lost connection");
-			while (true)
-			{
-				try
-				{
-					pConn->StartServer(this->port.c_str());
-					break;
-				}
-				catch (Aris::Core::CONN::START_SERVER_ERROR &e)
-				{
-					std::cout << e.what() << std::endl << "will try to restart in 1s" << std::endl;
-					Aris::Core::Sleep(1000);
-				}
-			}
-
-			return 0;
-		});
-
 		while (true)
 		{
 			try
@@ -671,16 +662,26 @@ namespace Robots
 			}
 			catch (Aris::Core::CONN::START_SERVER_ERROR &e)
 			{
-				std::cout << e.what() << std::endl << "will restart in 5s" << std::endl;
-#ifdef PLATFORM_IS_LINUX
-				usleep(5000000);
-#endif
+				std::cout << e.what() << std::endl << "will restart in 1s" << std::endl;
+				Aris::Core::Sleep(1000);
 			}
 		}
 
 #ifdef PLATFORM_IS_LINUX
-		pController->Start();	
+		pController->Start();
 #endif
+	}
+	void ROBOT_SERVER::IMP::Stop()
+	{
+		server.Close();
+
+#ifdef PLATFORM_IS_LINUX
+		pController->Stop();
+#endif
+		if (pImu)
+		{
+			pImu->Stop();
+		}
 	}
 
 	void ROBOT_SERVER::IMP::OnReceiveMsg(const Aris::Core::MSG &msg, Aris::Core::MSG &retError)
@@ -1207,6 +1208,12 @@ namespace Robots
 	}
 	int ROBOT_SERVER::IMP::runGait(Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data)
 	{
+		/*获取传感器数据*/
+		static Aris::Sensor::SENSOR_DATA<Aris::Sensor::IMU_DATA> imuDataProtected;
+		if (pImu)imuDataProtected = pImu->GetSensorData();
+		pParam->imuData = &imuDataProtected.Get();
+
+		/*保存初始位置*/
 		static double pBody[6]{ 0 }, vBody[6]{ 0 }, pEE[18]{ 0 }, vEE[18]{ 0 };
 		if (pParam->count == 0)
 		{
@@ -1215,6 +1222,7 @@ namespace Robots
 			pServer->pRobot->GetBodyVel(vBody);
 			pServer->pRobot->GetVee(vEE);
 
+			rt_printf("begin position:");
 			rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
 				, pEE[0], pEE[1], pEE[2], pEE[3], pEE[4], pEE[5], pEE[6], pEE[7], pEE[8]
 				, pEE[9], pEE[10], pEE[11], pEE[12], pEE[13], pEE[14], pEE[15], pEE[16], pEE[17]);
@@ -1445,6 +1453,10 @@ namespace Robots
 	void ROBOT_SERVER::Start()
 	{
 		pImp->Start();
+	}
+	void ROBOT_SERVER::Stop()
+	{
+		this->pImp->Stop();
 	}
 }
 

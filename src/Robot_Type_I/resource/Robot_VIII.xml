@@ -572,6 +572,26 @@
               <homeOffset index="0x607C" subIndex="0" value="0" type="int32"/>
             </SDO>
           </ElmoSoloWhistle>
+          <AtiForceSensor productCode="0x26483052" venderID="0x00000732" alias="0">
+            <PDO>
+              <index_1a00 index="0x1a00" number="6" isTx="true">
+                <Fx index="0x6000" subIndex="0x01" type="int32"/>
+                <Fy index="0x6000" subIndex="0x02" type="int32"/>
+                <Fz index="0x6000" subIndex="0x03" type="int32"/>
+                <Mx index="0x6000" subIndex="0x04" type="int32"/>
+                <My index="0x6000" subIndex="0x05" type="int32"/>
+                <Mz index="0x6000" subIndex="0x06" type="int32"/>
+                <statusCode index="0x6010" subIndex="0x00" type="int32"/>
+                <sampleCount index="0x6020" subIndex="0x00" type="int32"/>
+              </index_1a00>
+              <index_1601 index="0x1601" number="4" isTx="false">
+                <cw1 index="0x7010" subIndex="0x01" type="int32"/>
+                <cw2 index="0x7010" subIndex="0x02" type="int32"/>
+              </index_1601>
+            </PDO>
+            <SDO>
+            </SDO>
+          </AtiForceSensor>
         </SlaveType>
         <Slave>
           <Motion1 type="ElmoSoloWhistle"/>

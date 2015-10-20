@@ -4,6 +4,8 @@
 #include <Aris_Control.h>
 #endif
 
+#define rt_printf printf
+
 #include <cstring>
 #include <cmath>
 #include <algorithm>
@@ -661,7 +663,6 @@ namespace Robots
 		return msg;
 	}
 	
-	
 	int fastWalk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		auto pFP = static_cast<const FAST_WALK_PARAM*>(pParam);
@@ -760,13 +761,45 @@ namespace Robots
 			}
 		}
 		
-
 		Aris::Core::MSG msg;
 
 		msg.CopyStruct(param);
 
 		return msg;
 		
+	}
+
+	int resetOrigin(ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE *pParam)
+	{
+		if (pParam->imuData)
+		{
+			rt_printf("imu eul321: %f,%f,%f\n", pParam->imuData->eul321[1], pParam->imuData->eul321[2], pParam->imuData->eul321[3]);
+		}
+		else
+		{
+			rt_printf("cannot find imu\n");
+		}
+		
+		
+		double pEE[18], pBody[6]{ 0 }, vEE[18], vBody[6]{ 0 };
+		pRobot->GetPee(pEE, &pRobot->Body());
+		pRobot->GetVee(vEE, &pRobot->Body());
+
+		pRobot->SetBodyPe(pBody);
+		pRobot->SetPee(pEE);
+
+		pRobot->SetBodyVel(vBody);
+		pRobot->SetVee(vEE);
+
+		return 0;
+	}
+
+	Aris::Core::MSG parseResetOrigin(const std::string &cmd, const std::map<std::string, std::string> &params)
+	{
+		Robots::GAIT_PARAM_BASE param;
+		Aris::Core::MSG msg;
+		msg.CopyStruct(param);
+		return msg;
 	}
 
 
