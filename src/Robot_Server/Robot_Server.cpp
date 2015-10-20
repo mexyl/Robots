@@ -556,7 +556,7 @@ namespace Robots
 		for (int i = 0; i < 18; ++i)
 		{
 #ifdef PLATFORM_IS_LINUX
-			pController->Motion(i)->WriteSdo(9, static_cast<std::int32_t>(-mat.Data()[a2p(i)] * meter2count));
+			pController->Motion(i)->WriteSdo(9, static_cast<std::int32_t>(-mat.Data()[p2a(i)] * meter2count));
 #endif
 		}
 
@@ -995,12 +995,14 @@ namespace Robots
 				}
 				else if (i.first == "first")
 				{
+					std::fill_n(cmdParam.isLegActive, 6, false);
 					cmdParam.isLegActive[0] = true;
 					cmdParam.isLegActive[2] = true;
 					cmdParam.isLegActive[4] = true;
 				}
 				else if (i.first == "second")
 				{
+					std::fill_n(cmdParam.isLegActive, 6, false);					
 					cmdParam.isLegActive[1] = true;
 					cmdParam.isLegActive[3] = true;
 					cmdParam.isLegActive[5] = true;
@@ -1147,7 +1149,7 @@ namespace Robots
 		{
 			for (int i = 0; i<18; ++i)
 			{
-				pParam->beginPin[i] = data.pMotionData->operator[](i).feedbackPos/ meter2count;
+				pParam->beginPin[i] = data.pMotionData->operator[](a2p(i)).feedbackPos/ meter2count;
 				rt_printf("%f ", pParam->beginPin[i]);
 			}
 			rt_printf("\n");
@@ -1164,8 +1166,8 @@ namespace Robots
 
 		for (int i = 0; i < 6; ++i)
 		{
-			if (pParam->isLegActive)
-			{
+			if (pParam->isLegActive[i])
+			{				
 				if (pParam->count < pParam->alignCount)
 				{
 					double pIn[3];
@@ -1188,19 +1190,19 @@ namespace Robots
 
 					this->pServer->pRobot->pLegs[i]->SetPee(pEE);
 				}
+				
+				double pIn[3];
+				this->pServer->pRobot->pLegs[i]->GetPin(pIn);
+				for (int j = 0; j < 3; ++j)
+				{
+					data.pMotionData->operator[](a2p(i * 3 + j)).cmd = Aris::Control::MOTION::RUN;
+					data.pMotionData->operator[](a2p(i * 3 + j)).targetPos = static_cast<std::int32_t>(pIn[j] * meter2count);
+				}
+				
 			}
 		}
 
 		//向下写入输入位置
-		double pIn[18];
-		pServer->pRobot->GetPin(pIn);
-		
-		for (int i = 0; i<18; ++i)
-		{
-			data.pMotionData->operator[](i).cmd = Aris::Control::MOTION::RUN;
-			data.pMotionData->operator[](i).targetPos = static_cast<std::int32_t>(pIn[i] * meter2count);
-		}
-
 		return pParam->alignCount + pParam->recoverCount - pParam->count - 1;
 	}
 	int ROBOT_SERVER::IMP::runGait(Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data)
@@ -1234,8 +1236,8 @@ namespace Robots
 		//向下写入输入位置
 		for (int i = 0; i<18; ++i)
 		{
-			data.pMotionData->operator[](i).cmd = Aris::Control::MOTION::RUN;
-			data.pMotionData->operator[](i).targetPos = static_cast<std::int32_t>(pIn[i] * meter2count);
+			data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::RUN;
+			data.pMotionData->operator[](a2p(i)).targetPos = static_cast<std::int32_t>(pIn[i] * meter2count);
 		}
 
 		return ret;

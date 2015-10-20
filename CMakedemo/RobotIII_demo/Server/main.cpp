@@ -46,10 +46,10 @@ int main()
 	rs->CreateRobot<Robots::ROBOT_TYPE_I>();
 std::cout<<2<<std::endl;
 #ifdef PLATFORM_IS_LINUX
-	rs->LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_VIII.xml");
+	rs->LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III.xml");
 #endif
 #ifdef PLATFORM_IS_WINDOWS
-	rs->LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII.xml");
+	rs->LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III.xml");
 #endif
 std::cout<<3<<std::endl;
 	rs->AddGait("wk", Robots::walk, Robots::parseWalk);
