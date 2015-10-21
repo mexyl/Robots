@@ -574,7 +574,7 @@
           </ElmoSoloWhistle>
           <AtiForceSensor productCode="0x26483052" venderID="0x00000732" alias="0">
             <PDO>
-              <index_1a00 index="0x1a00" number="6" isTx="true">
+              <index_1a00 index="0x1a00" isTx="true">
                 <Fx index="0x6000" subIndex="0x01" type="int32"/>
                 <Fy index="0x6000" subIndex="0x02" type="int32"/>
                 <Fz index="0x6000" subIndex="0x03" type="int32"/>
@@ -584,7 +584,7 @@
                 <statusCode index="0x6010" subIndex="0x00" type="int32"/>
                 <sampleCount index="0x6020" subIndex="0x00" type="int32"/>
               </index_1a00>
-              <index_1601 index="0x1601" number="4" isTx="false">
+              <index_1601 index="0x1601" isTx="false">
                 <cw1 index="0x7010" subIndex="0x01" type="int32"/>
                 <cw2 index="0x7010" subIndex="0x02" type="int32"/>
               </index_1601>
