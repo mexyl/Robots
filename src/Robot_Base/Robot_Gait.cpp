@@ -782,6 +782,22 @@ namespace Robots
 		{
 			rt_printf("cannot find imu\n");
 		}
+
+		if (pParam->pForceData->empty())
+		{
+			rt_printf("cannot find force sensor\n");
+		}
+		else
+		{
+			rt_printf("force are:\n%f %f %f %f %f %f\n"
+				, pParam->pForceData->at(0).Fx
+				, pParam->pForceData->at(0).Fy
+				, pParam->pForceData->at(0).Fz
+				, pParam->pForceData->at(0).Mx
+				, pParam->pForceData->at(0).My
+				, pParam->pForceData->at(0).Mz);
+		}
+
 		
 		
 		double pEE[18], pBody[6]{ 0 }, vEE[18], vBody[6]{ 0 };

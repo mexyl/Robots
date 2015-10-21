@@ -501,7 +501,7 @@ namespace Robots
 		pServer->pRobot->LoadXml(doc);
 		
 		/*begin to create imu*/
-		if (doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")->Attribute("Active", "true"))
+		if (doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")->Attribute("active", "true"))
 		{
 			std::cout<<"imu found"<<std::endl;			
 			pImu.reset(new Aris::Sensor::IMU(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Sensors")->FirstChildElement("IMU")));
@@ -1215,8 +1215,6 @@ namespace Robots
 	}
 	int ROBOT_SERVER::IMP::runGait(Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data)
 	{
-		
-
 		/*保存初始位置*/
 		static double pBody[6]{ 0 }, vBody[6]{ 0 }, pEE[18]{ 0 }, vEE[18]{ 0 };
 		if (pParam->count == 0)
@@ -1239,10 +1237,13 @@ namespace Robots
 		std::copy_n(pBody, 6, pParam->beginBodyPE);
 		std::copy_n(vBody, 6, pParam->beginBodyVel);
 
-		/*获取传感器数据*/
+		/*获取陀螺仪传感器数据*/
 		Aris::Sensor::SENSOR_DATA<Aris::Sensor::IMU_DATA> imuDataProtected;
 		if (pImu) imuDataProtected = pImu->GetSensorData();
 		pParam->imuData = &imuDataProtected.Get();
+
+		/*获取力传感器数据*/
+		pParam->pForceData = data.pForceSensorData;
 
 		//执行gait函数
 		int ret = this->allGaits.at(pParam->cmdID).operator()(pServer->pRobot.get(),pParam);

@@ -594,24 +594,24 @@
           </AtiForceSensor>
         </SlaveType>
         <Slave>
-          <Motion1 type="ElmoSoloWhistle"/>
-          <Motion2 type="ElmoSoloWhistle"/>
-          <Motion3 type="ElmoSoloWhistle"/>
-          <Motion4 type="ElmoSoloWhistle"/>
-          <Motion5 type="ElmoSoloWhistle"/>
-          <Motion6 type="ElmoSoloWhistle"/>
-          <Motion7 type="ElmoSoloWhistle"/>
-          <Motion8 type="ElmoSoloWhistle"/>
-          <Motion9 type="ElmoSoloWhistle"/>
-          <Motion10 type="ElmoSoloWhistle"/>
-          <Motion11 type="ElmoSoloWhistle"/>
-          <Motion12 type="ElmoSoloWhistle"/>
-          <Motion13 type="ElmoSoloWhistle"/>
-          <Motion14 type="ElmoSoloWhistle"/>
-          <Motion15 type="ElmoSoloWhistle"/>
-          <Motion16 type="ElmoSoloWhistle"/>
-          <Motion17 type="ElmoSoloWhistle"/>
-          <Motion18 type="ElmoSoloWhistle"/>
+          <Motion1 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion2 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion3 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion4 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion5 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion6 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion7 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion8 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion9 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion10 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion11 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion12 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion13 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion14 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion15 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion16 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion17 type="ElmoSoloWhistle" maxSpeed="8738133"/>
+          <Motion18 type="ElmoSoloWhistle" maxSpeed="8738133"/>
         </Slave>
       </EtherCat>
     </Control>

@@ -6,6 +6,7 @@
 #include <map>
 
 #include <Aris_Core.h>
+#include <Aris_Motion.h>
 #include <Aris_IMU.h>
 #include <Robot_Base.h>
 
@@ -41,6 +42,7 @@ namespace Robots
 	struct GAIT_PARAM_BASE:ALL_PARAM_BASE
 	{
 		const Aris::Sensor::IMU_DATA *imuData;
+		const std::vector<Aris::Control::FORCE_SENSOR::DATA> *pForceData;
 		double beginPee[18]{0};
 		double beginVee[18]{0};
 		double beginBodyPE[6]{0};

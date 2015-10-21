@@ -566,31 +566,52 @@
               <homeOffset index="0x607C" subIndex="0" value="0" type="int32"/>
             </SDO>
           </ElmoSoloWhistle>
+          <AtiForceSensor productCode="0x26483052" venderID="0x00000732" alias="0">
+            <PDO>
+              <index_1a00 index="0x1a00" number="6" isTx="true">
+                <Fx index="0x6000" subIndex="0x01" type="int32"/>
+                <Fy index="0x6000" subIndex="0x02" type="int32"/>
+                <Fz index="0x6000" subIndex="0x03" type="int32"/>
+                <Mx index="0x6000" subIndex="0x04" type="int32"/>
+                <My index="0x6000" subIndex="0x05" type="int32"/>
+                <Mz index="0x6000" subIndex="0x06" type="int32"/>
+                <statusCode index="0x6010" subIndex="0x00" type="int32"/>
+                <sampleCount index="0x6020" subIndex="0x00" type="int32"/>
+              </index_1a00>
+              <index_1601 index="0x1601" number="4" isTx="false">
+                <cw1 index="0x7010" subIndex="0x01" type="int32"/>
+                <cw2 index="0x7010" subIndex="0x02" type="int32"/>
+              </index_1601>
+            </PDO>
+            <SDO>
+            </SDO>
+          </AtiForceSensor>
         </SlaveType>
         <Slave>
-          <Motion1 type="ElmoSoloWhistle"/>
-          <Motion2 type="ElmoSoloWhistle"/>
-          <Motion3 type="ElmoSoloWhistle"/>
-          <Motion4 type="ElmoSoloWhistle"/>
-          <Motion5 type="ElmoSoloWhistle"/>
-          <Motion6 type="ElmoSoloWhistle"/>
-          <Motion7 type="ElmoSoloWhistle"/>
-          <Motion8 type="ElmoSoloWhistle"/>
-          <Motion9 type="ElmoSoloWhistle"/>
-          <Motion10 type="ElmoSoloWhistle"/>
-          <Motion11 type="ElmoSoloWhistle"/>
-          <Motion12 type="ElmoSoloWhistle"/>
-          <Motion13 type="ElmoSoloWhistle"/>
-          <Motion14 type="ElmoSoloWhistle"/>
-          <Motion15 type="ElmoSoloWhistle"/>
-          <Motion16 type="ElmoSoloWhistle"/>
-          <Motion17 type="ElmoSoloWhistle"/>
-          <Motion18 type="ElmoSoloWhistle"/>
+          <Motion1 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion2 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion3 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion4 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion5 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion6 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion7 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion8 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion9 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion10 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion11 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion12 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion13 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion14 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion15 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion16 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion17 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <Motion18 type="ElmoSoloWhistle" masSpeed="5417642"/>
+          <ForceSensor type="ElmoSoloWhistle"/>
         </Slave>
       </EtherCat>
     </Control>
     <Sensors>
-      <IMU Active="true" type="xsens_imu" portLinux="/dev/ttyUSB0" baudRate="921600" sampleRate="400" PeImuGround2BodyGound="{0,0,0,0,-PI/2,PI}" PeImu2Body="{0,0,0,0,PI/2,0}"/>
+      <IMU active="true" type="xsens_imu" portLinux="/dev/ttyUSB0" baudRate="921600" sampleRate="400" PeImuGround2BodyGound="{0,0,0,0,-PI/2,PI}" PeImu2Body="{0,0,0,0,PI/2,0}"/>
       <Vision type="kinect2.0"/>
     </Sensors> 
   </Server>
