@@ -527,7 +527,7 @@
       </RecoverPee>
       <EtherCat>
         <SlaveType>
-          <ElmoSoloWhistle productCode="0x00030924" venderID="0x0000009a" alias="0">
+          <ElmoSoloWhistle productCode="0x00030924" venderID="0x0000009a" alias="0" distributedClock="0x0300">
             <PDO>
               <index_1605 index="0x1605" number="6" isTx="false">
                 <TargetPosition index="0x607A" subIndex="0x00" type="int32"/>
@@ -560,7 +560,7 @@
               <homeLowSpeed index="0x6099" subIndex="2" value="100000" type="int32"/>
               <RatioOfPosDivVel_Numerator index="0x6096" subIndex="1" value="1" type="int32"/>
               <RatioOfPosDivVel_Divisor index="0x6096" subIndex="2" value="1" type="int32"/>
-              <homeTorqueLimit index="0x2020" subIndex="1" value="200" type="int32"/>
+              <homeTorqueLimit index="0x2020" subIndex="1" value="950" type="int32"/>
               <p2pMaxSpeed index="0x607F" subIndex="0" value="2560" type="int32"/>
               <p2pSpeed index="0x6081" subIndex="0" value="1792" type="int32"/>
               <homeOffset index="0x607C" subIndex="0" value="0" type="int32"/>
@@ -568,7 +568,7 @@
           </ElmoSoloWhistle>
           <AtiForceSensor productCode="0x26483052" venderID="0x00000732" alias="0">
             <PDO>
-              <index_1a00 index="0x1a00" number="6" isTx="true">
+              <index_1a00 index="0x1a00" isTx="true">
                 <Fx index="0x6000" subIndex="0x01" type="int32"/>
                 <Fy index="0x6000" subIndex="0x02" type="int32"/>
                 <Fz index="0x6000" subIndex="0x03" type="int32"/>
@@ -578,7 +578,7 @@
                 <statusCode index="0x6010" subIndex="0x00" type="int32"/>
                 <sampleCount index="0x6020" subIndex="0x00" type="int32"/>
               </index_1a00>
-              <index_1601 index="0x1601" number="4" isTx="false">
+              <index_1601 index="0x1601" isTx="false">
                 <cw1 index="0x7010" subIndex="0x01" type="int32"/>
                 <cw2 index="0x7010" subIndex="0x02" type="int32"/>
               </index_1601>
@@ -588,25 +588,25 @@
           </AtiForceSensor>
         </SlaveType>
         <Slave>
-          <Motion1 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion2 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion3 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion4 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion5 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion6 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion7 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion8 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion9 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion10 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion11 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion12 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion13 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion14 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion15 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion16 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion17 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <Motion18 type="ElmoSoloWhistle" masSpeed="5417642"/>
-          <ForceSensor type="ElmoSoloWhistle"/>
+          <Motion1 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion2 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion3 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion4 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion5 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion6 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion7 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion8 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion9 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion10 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion11 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion12 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion13 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion14 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion15 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion16 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion17 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <Motion18 type="ElmoSoloWhistle" maxSpeed="5417642"/>
+          <ForceSensor type="AtiForceSensor"/>
         </Slave>
       </EtherCat>
     </Control>
