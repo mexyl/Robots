@@ -683,12 +683,7 @@ namespace Robots
 			pRobot->SetPin(&pFP->pInDec[count * 18]);
 		}
 
-		auto ret = pFP->accCount + ((pFP->n - 1) * pFP->constCount) + pFP->decCount - pFP->count;
-		if (ret == 0)
-		{
-			delete [] pFP->pInAcc;
-		}
-		return ret;
+		return pFP->accCount + ((pFP->n - 1) * pFP->constCount) + pFP->decCount - pFP->count-1;
 	}
 	Aris::Core::MSG parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params)
 	{
@@ -708,9 +703,9 @@ namespace Robots
 					param.pInConst = std::get<3>(found->second).get() + 18* param.accCount;
 					param.pInDec = std::get<3>(found->second).get() + 18 * (param.accCount + param.constCount);
 
-					std::cout << "acc count:" << param.accCount << std::endl;
-					std::cout << "const count:" << param.constCount << std::endl;
-					std::cout << "dec count:" << param.decCount << std::endl;
+					//std::cout << "acc count:" << param.accCount << std::endl;
+					//std::cout << "const count:" << param.constCount << std::endl;
+					//std::cout << "dec count:" << param.decCount << std::endl;
 				}
 				else
 				{
@@ -730,7 +725,6 @@ namespace Robots
 					file.open(accFile);
 					if (!file) throw std::logic_error("acc file not exist");
 					for (double tem; !file.eof(); file >> tem) ++accNum;
-					//std::cout<<"acc num:"<<accNum<<std::endl;
 					if (accNum % 18 != 0) throw std::logic_error("acc file invalid, because the num of numbers is not valid");
 					accNum /= 18;
 					file.close();
@@ -751,7 +745,7 @@ namespace Robots
 
 					param.accCount = accNum;
 					param.constCount = constNum;
-					param.accCount = decNum;
+					param.decCount = decNum;
 
 					std::unique_ptr<double> p(new double[(accNum + constNum + decNum) * 18]);
 
