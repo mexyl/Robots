@@ -6,11 +6,15 @@ Robots::ROBOT_TYPE_I robot;
 Aris::Plan::FAST_PATH tg;
 
 #define NUM 900
+#define ACC_NUM 1200
+#define DEC_NUM 1200
 const double stepH = 0.04;
 const double stepD = 1.1;
-const double totalTime = NUM;
-const double v = stepD / totalTime * 1000 / 2;
-const double a = v / totalTime * 1000;
+const double constTime = NUM;
+const double accTime = ACC_NUM;
+const double decTime = DEC_NUM;
+const double v = stepD /  constTime * 1000 / 2;
+const double a = stepD / 2 / accTime / accTime * 1000 * 1000;
 const double eePosIni[6][3]{ 
  { -0.3, -0.85, -0.65 }
 ,{ -0.45, -0.85, 0 }
@@ -22,7 +26,7 @@ const double eePosIni[6][3]{
 int leg_index = 0;
 
 
-const double ratio = 0.05;
+const double ratio = (v-a*accTime/1000)/(1.0 / (constTime / 1000) * 2 * PI);
 void b_const(double s_in, double *b_out)
 {
 	b_out[0] = eePosIni[leg_index][0];
@@ -43,8 +47,8 @@ void h_const(double s_in, double *h_out)
 }
 void pe_const(double time, double *bodyPe, double *bodyVel = nullptr, double *bodyAcc = nullptr)
 {
-	double s = time / (totalTime / 1000) * 2 * PI;
-	double ds = 1.0 / (totalTime / 1000) * 2 * PI;
+	double s = time / ( constTime / 1000) * 2 * PI;
+	double ds = 1.0 / ( constTime / 1000) * 2 * PI;
 
 	if (bodyPe)
 	{
@@ -159,7 +163,10 @@ void h_dec(double s_in, double *h_out)
 }
 void get_dec(Aris::Plan::FAST_PATH::DATA & data)
 {
-	double bodyPe[6]{ 0,0, v*data.time - 0.5*a*data.time*data.time,0,0,0 }, bodyVel[6]{ 0,0,v - a*data.time,0,0,0 }, bodyAcc[6]{ 0,0,-a,0,0,0 };
+	double bodyPe[6]{ 0,0, 0.5*a*decTime / 1000 * decTime / 1000 - 0.5*a*data.time*data.time,0,0,0 };
+	double bodyVel[6]{ 0,0,a*decTime / 1000 - a*data.time,0,0,0 };
+	double bodyAcc[6]{ 0,0,-a,0,0,0 };
+
 	double bodyPm[16];
 	Aris::DynKer::s_pe2pm(bodyPe, bodyPm);
 	robot.Body().SetPm(bodyPm);
@@ -198,7 +205,7 @@ void plan_prepare()
 void plan_const(const char *fileName)
 {
 	std::vector<std::array<double, 18> > result;
-	result.resize(totalTime * 2);
+	result.resize(NUM * 2);
 	
 	int legId[3]{ 0,2,4 };
 	for (int i : legId)
@@ -208,7 +215,7 @@ void plan_const(const char *fileName)
 		leg_index = i;
 		tg.SetMotorLimit(std::vector<Aris::Plan::FAST_PATH::MOTOR_LIMIT> {3, { 0.9,-0.9,2.7,-2.7 } });
 		tg.SetBeginNode({ 0.0, 0.0, 0.0, 0.0, true });
-		tg.SetEndNode({ totalTime / 1000.0, PI, 0.0, 0.0, true });
+		tg.SetEndNode({  constTime / 1000.0, PI, 0.0, 0.0, true });
 		tg.SetFunction(get_const);
 		tg.Run();
 
@@ -243,7 +250,7 @@ void plan_const(const char *fileName)
 void plan_acc(const char *fileName)
 {
 	std::vector<std::array<double, 18> > result;
-	result.resize(totalTime);
+	result.resize(ACC_NUM);
 
 	int legId[3]{ 1,3,5 };
 	for (int i : legId)
@@ -253,13 +260,13 @@ void plan_acc(const char *fileName)
 		leg_index = i;
 		tg.SetMotorLimit(std::vector<Aris::Plan::FAST_PATH::MOTOR_LIMIT> {3, { 0.9,-0.9,3.2,-3.2 } });
 		tg.SetBeginNode({ 0.0, 0.0, 0.0, 0.0, true });
-		tg.SetEndNode({ totalTime / 1000.0, PI, 0.0, 0.0, true });
+		tg.SetEndNode({ accTime / 1000.0, PI, 0.0, 0.0, true });
 		tg.SetFunction(get_acc);
 		tg.Run();
 
 
 		double pEE[3], pIn[3], pm[16], pe[6]{ 0, 0, 0, 0, 0, 0 };
-		for (int j = 0; j < NUM; ++j)
+		for (int j = 0; j < ACC_NUM; ++j)
 		{
 			pe[2] = 0.5*a * (j + 1)*(j + 1)*1e-6;
 			
@@ -284,7 +291,7 @@ void plan_acc(const char *fileName)
 void plan_dec(const char *fileName)
 {
 	std::vector<std::array<double, 18> > result;
-	result.resize(totalTime);
+	result.resize(DEC_NUM);
 
 	int legId[3]{ 0,2,4 };
 	for (int i : legId)
@@ -294,15 +301,15 @@ void plan_dec(const char *fileName)
 		leg_index = i;
 		tg.SetMotorLimit(std::vector<Aris::Plan::FAST_PATH::MOTOR_LIMIT> {3, { 0.9,-0.9,3.2,-3.2 } });
 		tg.SetBeginNode({ 0.0, 0.0, 0.0, 0.0, true });
-		tg.SetEndNode({ totalTime / 1000.0, PI, 0.0, 0.0, true });
+		tg.SetEndNode({  decTime / 1000.0, PI, 0.0, 0.0, true });
 		tg.SetFunction(get_dec);
 		tg.Run();
 
 
 		double pEE[3], pIn[3], pm[16], pe[6]{ 0, 0, 0, 0, 0, 0 };
-		for (int j = 0; j < NUM; ++j)
+		for (int j = 0; j < DEC_NUM; ++j)
 		{
-			pe[2] = v*(j + 1)*1e-3 - 0.5*a * (j + 1)*(j + 1)*1e-6;
+			pe[2] = a*decTime/1000*(j + 1)*1e-3 - 0.5*a * (j + 1)*(j + 1)*1e-6;
 
 			Aris::DynKer::s_pe2pm(pe, pm);
 			b_dec(tg.Result().at(j), pEE);
