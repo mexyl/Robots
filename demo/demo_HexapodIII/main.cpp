@@ -14,10 +14,10 @@ int main()
 	ROBOT_TYPE_I rbt;
 
 #ifdef PLATFORM_IS_WINDOWS
-	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III.xml");
+	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
 #endif
 #ifdef PLATFORM_IS_LINUX
-	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III.xml");
+	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
 #endif
 
 	double pEE____[18]

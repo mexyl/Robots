@@ -84,7 +84,9 @@ namespace Robots
 	struct FAST_WALK_PARAM :public GAIT_PARAM_BASE
 	{
 		const char fileName[256]{ 0 };
-		std::int32_t totalCount{ 3000 };
+		std::int32_t accCount{ 0 };
+		std::int32_t decCount{ 0 };
+		std::int32_t constCount{ 0 };
 		std::int32_t n{ 1 };
 		double *pInAcc{ nullptr };
 		double *pInDec{ nullptr };

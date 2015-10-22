@@ -668,22 +668,22 @@ namespace Robots
 	{
 		auto pFP = static_cast<const FAST_WALK_PARAM*>(pParam);
 		
-		if (pFP->count < pFP->totalCount)
+		if (pFP->count < pFP->accCount)
 		{
 			pRobot->SetPin(&pFP->pInAcc[pFP->count * 18]);
 		}
-		else if (pFP->count < (pFP->n * 2 - 1) * pFP->totalCount)
+		else if ((pFP->count- pFP->accCount) < ((pFP->n - 1) * pFP->constCount))
 		{
-			int count = (pFP->count - pFP->totalCount) % (2 * pFP->totalCount);
+			int count = (pFP->count - pFP->accCount) % pFP->constCount;
 			pRobot->SetPin(&pFP->pInConst[count * 18]);
 		}
 		else
 		{
-			int count = (pFP->count - pFP->totalCount) % (2 * pFP->totalCount);
+			int count = pFP->count - pFP->accCount - ((pFP->n - 1) * pFP->constCount);
 			pRobot->SetPin(&pFP->pInDec[count * 18]);
 		}
 
-		auto ret = 2 * pFP->n * pFP->totalCount - pFP->count - 1;
+		auto ret = pFP->accCount + ((pFP->n - 1) * pFP->constCount) + pFP->decCount - pFP->count;
 		if (ret == 0)
 		{
 			delete [] pFP->pInAcc;
@@ -697,60 +697,83 @@ namespace Robots
 		{
 			if (i.first == "file")
 			{
-				std::ifstream file;
-				std::string accFile = i.second + "_acc.txt";
-				std::string constFile = i.second + "_const.txt";
-				std::string decFile = i.second + "_dec.txt";
+				static std::map<std::string, std::tuple<int, int, int, std::unique_ptr<double> > > walkFileMap;
 
-				int accNum{ -1 }, decNum{ -1 }, constNum{ -1 };
+				const auto found = walkFileMap.find(i.second);
+				if (found != walkFileMap.end())
+				{
+					/*步态已经存在*/
+					std::tie(param.accCount, param.constCount, param.decCount, std::ignore) = found->second;
+					param.pInAcc = std::get<3>(found->second).get();
+					param.pInConst = std::get<3>(found->second).get() + 18* param.accCount;
+					param.pInDec = std::get<3>(found->second).get() + 18 * (param.accCount + param.constCount);
 
-				file.open(accFile);
-				if (!file) throw std::logic_error("acc file not exist");
-				for (double tem; !file.eof(); file >> tem) ++accNum;
-				//std::cout<<"acc num:"<<accNum<<std::endl;
-				if (accNum % 18 != 0) throw std::logic_error("acc file invalid, because the num of numbers is not valid");
-				accNum /= 18;
-				file.close();
+					std::cout << "acc count:" << param.accCount << std::endl;
+					std::cout << "const count:" << param.constCount << std::endl;
+					std::cout << "dec count:" << param.decCount << std::endl;
+				}
+				else
+				{
+					if (walkFileMap.size() > 1)
+					{
+						throw std::runtime_error("only one path is allowed");
+					}
+					
+					/*插入步态*/
+					std::ifstream file;
+					std::string accFile = i.second + "_acc.txt";
+					std::string constFile = i.second + "_const.txt";
+					std::string decFile = i.second + "_dec.txt";
 
-				file.open(constFile);
-				if (!file) throw std::logic_error("const file not exist");
-				for (double tem; !file.eof(); file >> tem) ++constNum;
-				if (constNum % 18 != 0) throw std::logic_error("const file invalid, because the num of numbers is not valid");
-				constNum = constNum / 18;
-				file.close();
+					int accNum{ -1 }, decNum{ -1 }, constNum{ -1 };
 
-				file.open(decFile);
-				if (!file) throw std::logic_error("dec file not exist");
-				for (double tem; !file.eof(); file >> tem) ++decNum;
-				if (decNum % 18 != 0) throw std::logic_error("dec file invalid, because the num of numbers is not valid");
-				decNum = decNum / 18;
-				file.close();
+					file.open(accFile);
+					if (!file) throw std::logic_error("acc file not exist");
+					for (double tem; !file.eof(); file >> tem) ++accNum;
+					//std::cout<<"acc num:"<<accNum<<std::endl;
+					if (accNum % 18 != 0) throw std::logic_error("acc file invalid, because the num of numbers is not valid");
+					accNum /= 18;
+					file.close();
 
-				if (accNum != decNum)throw std::logic_error("acc number is not equal to dec number");
-				if (accNum*2 != constNum)throw std::logic_error("acc number is not equal to 2 x constNum");
+					file.open(constFile);
+					if (!file) throw std::logic_error("const file not exist");
+					for (double tem; !file.eof(); file >> tem) ++constNum;
+					if (constNum % 18 != 0) throw std::logic_error("const file invalid, because the num of numbers is not valid");
+					constNum = constNum / 18;
+					file.close();
 
-				param.totalCount = accNum;
+					file.open(decFile);
+					if (!file) throw std::logic_error("dec file not exist");
+					for (double tem; !file.eof(); file >> tem) ++decNum;
+					if (decNum % 18 != 0) throw std::logic_error("dec file invalid, because the num of numbers is not valid");
+					decNum = decNum / 18;
+					file.close();
 
-				std::unique_ptr<double> p(new double[accNum * 18 * 4]);
-				
-				param.pInAcc = p.get();
-				param.pInConst = p.get() + accNum * 18;
-				param.pInDec = p.get() + accNum * 18 * 3;
+					param.accCount = accNum;
+					param.constCount = constNum;
+					param.accCount = decNum;
 
+					std::unique_ptr<double> p(new double[(accNum + constNum + decNum) * 18]);
 
-				file.open(accFile);
-				for (int i = 0; !file.eof(); file >> param.pInAcc[i++]);
-				file.close();
+					param.pInAcc = p.get();
+					param.pInConst = p.get() + accNum * 18;
+					param.pInDec = p.get() + (accNum + constNum) * 18;
 
-				file.open(constFile);
-				for (int i = 0; !file.eof(); file >> param.pInConst[i++]);
-				file.close();
+					file.open(accFile);
+					for (int i = 0; !file.eof(); file >> param.pInAcc[i++]);
+					file.close();
 
-				file.open(decFile);
-				for (int i = 0; !file.eof(); file >> param.pInDec[i++]);
-				file.close();
+					file.open(constFile);
+					for (int i = 0; !file.eof(); file >> param.pInConst[i++]);
+					file.close();
 
-				p.release();
+					file.open(decFile);
+					for (int i = 0; !file.eof(); file >> param.pInDec[i++]);
+					file.close();
+
+					walkFileMap.insert(std::make_pair(i.second, std::make_tuple(accNum, constNum, decNum, std::move(p))));
+					
+				}
 			}
 			else if (i.first == "n")
 			{

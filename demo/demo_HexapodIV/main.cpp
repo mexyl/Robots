@@ -45,10 +45,10 @@ Robots::ROBOT_TYPE_I rbt;
 int main()
 {
 #ifdef PLATFORM_IS_WINDOWS
-	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII.xml");
+	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
 #endif
 #ifdef PLATFORM_IS_LINUX
-	rbt.LoadXml("/usr/Robots/resource/HexapodIII/HexapodVIII.xml");
+	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/HexapodVIII.xml");
 #endif
 
 	rbt.SetPee(beginEE, beginPe);
