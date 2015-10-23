@@ -6,8 +6,8 @@ Robots::ROBOT_TYPE_I robot;
 Aris::Plan::FAST_PATH tg;
 
 #define NUM 900
-#define ACC_NUM 1200
-#define DEC_NUM 1200
+#define ACC_NUM 900
+#define DEC_NUM 900
 const double stepH = 0.04;
 const double stepD = 1.1;
 const double constTime = NUM;
@@ -195,7 +195,7 @@ void get_dec(Aris::Plan::FAST_PATH::DATA & data)
 void plan_prepare()
 {
 #ifdef PLATFORM_IS_WINDOWS
-	robot.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII.xml");
+	robot.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
 #endif
 #ifdef PLATFORM_IS_LINUX
 	robot.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III.xml");
@@ -213,7 +213,7 @@ void plan_const(const char *fileName)
 		std::cout << "begin to plan leg " << i << std::endl;
 
 		leg_index = i;
-		tg.SetMotorLimit(std::vector<Aris::Plan::FAST_PATH::MOTOR_LIMIT> {3, { 0.9,-0.9,2.7,-2.7 } });
+		tg.SetMotorLimit(std::vector<Aris::Plan::FAST_PATH::MOTOR_LIMIT> {3, { 0.9,-0.9,3.0,-3.0 } });
 		tg.SetBeginNode({ 0.0, 0.0, 0.0, 0.0, true });
 		tg.SetEndNode({  constTime / 1000.0, PI, 0.0, 0.0, true });
 		tg.SetFunction(get_const);
