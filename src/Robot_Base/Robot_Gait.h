@@ -13,11 +13,10 @@
 namespace Robots
 {
 	class RobotBase;
-	struct GAIT_PARAM_BASE;
-	typedef std::function<int(RobotBase *, const GAIT_PARAM_BASE *)> GAIT_FUNC;
+	struct GaitParamBase;
+	typedef std::function<int(RobotBase *, const GaitParamBase *)> GaitFunc;
 
-
-	struct ALL_PARAM_BASE
+	struct AllParamBase
 	{
 		std::int32_t cmdType{ 0 };
 		std::int32_t cmdID{ 0 };
@@ -25,13 +24,13 @@ namespace Robots
 	};
 
 	/*for enable, disable, and home*/
-	struct BASIC_FUNCTION_PARAM final :ALL_PARAM_BASE
+	struct BasicFunctionParam final :AllParamBase
 	{
 		bool isMotorActive[18]{ true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true,true };
 	};
 
 	/*for recover*/
-	struct RECOVER_PARAM final :ALL_PARAM_BASE
+	struct RecoverParam final :AllParamBase
 	{
 		std::int32_t alignCount{ 3000 };
 		std::int32_t recoverCount{ 3000 };
@@ -42,7 +41,7 @@ namespace Robots
 		bool isLegActive[6]{ true,true,true,true,true,true };
 	};
 
-	struct GAIT_PARAM_BASE:ALL_PARAM_BASE
+	struct GaitParamBase:AllParamBase
 	{
 		const Aris::Sensor::ImuData *imuData;
 		const std::vector<Aris::Control::EthercatForceSensor::Data> *pForceData;
@@ -52,7 +51,7 @@ namespace Robots
 		double beginBodyVel[6]{0};
 	};
 
-	struct WALK_PARAM final:public GAIT_PARAM_BASE
+	struct WalkParam final:public GaitParamBase
 	{
 		std::int32_t totalCount{3000};
 		std::int32_t n{1};
@@ -63,10 +62,10 @@ namespace Robots
 		double alpha{0};
 		double beta{0};
 	};
-	int walk(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam);
+	int walk(RobotBase * pRobot, const GaitParamBase * pParam);
 	Aris::Core::Msg parseWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
 	
-	struct ADJUST_PARAM :public GAIT_PARAM_BASE
+	struct AdjustParam :public GaitParamBase
 	{
 		enum { MAX_PERIOD_NUM = 10};
 		
@@ -81,10 +80,10 @@ namespace Robots
 		char relativeCoordinate[8]{ 'G',0 };
 		char relativeBodyCoordinate[8]{ 'G',0 };
 	};
-	int adjust(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam);
+	int adjust(RobotBase * pRobot, const GaitParamBase * pParam);
 	Aris::Core::Msg parseAdjust(const std::string &cmd, const std::map<std::string, std::string> &params);
 
-	struct FAST_WALK_PARAM :public GAIT_PARAM_BASE
+	struct FAST_WALK_PARAM :public GaitParamBase
 	{
 		const char fileName[256]{ 0 };
 		std::int32_t accCount{ 0 };
@@ -95,13 +94,13 @@ namespace Robots
 		double *pInDec{ nullptr };
 		double *pInConst{ nullptr };
 	};
-	int fastWalk(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam);
+	int fastWalk(RobotBase * pRobot, const GaitParamBase * pParam);
 	Aris::Core::Msg parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
 
-	int resetOrigin(RobotBase * pRobot, const Robots::GAIT_PARAM_BASE *pParam);
+	int resetOrigin(RobotBase * pRobot, const Robots::GaitParamBase *pParam);
 	Aris::Core::Msg parseResetOrigin(const std::string &cmd, const std::map<std::string, std::string> &params);
 
-	struct MOVE_PARAM :public GAIT_PARAM_BASE
+	struct MOVE_PARAM :public GaitParamBase
 	{
 		double targetPee[18];
 		double targetVee[18];

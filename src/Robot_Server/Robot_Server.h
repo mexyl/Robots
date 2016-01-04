@@ -23,17 +23,13 @@ namespace Robots
 		void CreateRobot()
 		{
 			if (pRobot)
-			{
 				throw std::logic_error("already has a robot instance");
-			}
 			else
-			{
-				pRobot = std::unique_ptr<Robots::RobotBase>{ new T };
-			}
+				pRobot.reset(new T);
 		};
 		void LoadXml(const char *fileName);
 		void LoadXml(const Aris::Core::XmlDocument &xmlDoc);
-		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc);
+		void AddGait(std::string cmdName, GaitFunc gaitFunc, PARSE_FUNC parseFunc);
 		void Start();
 		void Stop();
 

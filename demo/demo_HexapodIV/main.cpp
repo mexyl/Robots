@@ -66,7 +66,7 @@ int main()
 	rbt.SetPeb(beginPe);
 	rbt.SetPee(beginEE);
 
-	Robots::WALK_PARAM param;
+	Robots::WalkParam param;
 	param.totalCount = 3000;
 	param.alpha = 2.7489;
 	param.d = 0.26105;

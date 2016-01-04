@@ -1298,7 +1298,7 @@ namespace Robots
 		}
 	}
 
-	void SetAkimaAndScript(RobotTypeI *pRobot, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const SimulateScript *pScript)
+	void SetAkimaAndScript(RobotTypeI *pRobot, const GaitFunc &fun, GaitParamBase *param, const SimulateScript *pScript)
 	{
 		int dt{1};
 		SimulateScript realScript;
@@ -1384,7 +1384,7 @@ namespace Robots
 		}
 	}
 
-	void RobotTypeI::SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const SimulateScript *pScript)
+	void RobotTypeI::SimByAdams(const char *adamsFile, const GaitFunc &fun, GaitParamBase *param, const SimulateScript *pScript)
 	{
 		/*设置驱动的Akima函数*/
 		SetAkimaAndScript(this, fun, param, pScript);
@@ -1436,7 +1436,7 @@ namespace Robots
 		this->SetPee(param->beginPee);
 		Model::SaveAdams(adamsFile, pScript);
 	}
-	void RobotTypeI::SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, int dt)
+	void RobotTypeI::SimByAdams(const char *adamsFile, const GaitFunc &fun, GaitParamBase *param, int dt)
 	{
 		std::vector<std::vector<double> > motionPos(18);
 		std::vector<std::vector<double> > motionFce(18);
@@ -1572,7 +1572,7 @@ namespace Robots
 			}
 		}
 	}
-	void RobotTypeI::SimByMatlab(const std::string &folderName, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param)
+	void RobotTypeI::SimByMatlab(const std::string &folderName, const GaitFunc &fun, GaitParamBase *param)
 	{
 		std::list<std::array<double, 18> > pInList, pEEList;
 		std::list<std::array<double, 6> > bodyPeList;

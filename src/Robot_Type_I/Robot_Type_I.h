@@ -214,9 +214,9 @@ namespace Robots
 		void Dyn();
 		
 		void SimByAdamsResultAt(int momentTime);
-		void SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const Aris::DynKer::SimulateScript *script = nullptr);
-		void SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, int dt);
-		void SimByMatlab(const std::string &folderName, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param);
+		void SimByAdams(const char *adamsFile, const GaitFunc &fun, GaitParamBase *param, const Aris::DynKer::SimulateScript *script = nullptr);
+		void SimByAdams(const char *adamsFile, const GaitFunc &fun, GaitParamBase *param, int dt);
+		void SimByMatlab(const std::string &folderName, const GaitFunc &fun, GaitParamBase *param);
 	
 	public:
 		union

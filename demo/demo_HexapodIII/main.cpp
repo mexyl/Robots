@@ -35,7 +35,7 @@ int main()
 	rbt.SetFixFeet("101010");
 	rbt.SetActiveMotion("011111011111011111");
 	/**/
-	Robots::ADJUST_PARAM param;
+	Robots::AdjustParam param;
 	std::copy_n(pEE_G, 18, &param.targetPee[0][0]);
 	std::copy_n(bodyPE, 6, &param.targetBodyPE[0][0]);
 

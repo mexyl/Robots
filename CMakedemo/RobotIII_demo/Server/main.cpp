@@ -28,8 +28,8 @@ using namespace Aris::Core;
 
 int main()
 {
-	auto rs = Robots::ROBOT_SERVER::GetInstance();
-	rs->CreateRobot<Robots::ROBOT_TYPE_I>();
+	auto rs = Robots::RobotServer::GetInstance();
+	rs->CreateRobot<Robots::RobotTypeI>();
 #ifdef PLATFORM_IS_LINUX
 	rs->LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_VIII/Robot_VIII.xml");
 #endif

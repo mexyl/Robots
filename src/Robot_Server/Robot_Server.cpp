@@ -410,7 +410,7 @@ namespace Robots
 	{
 	public:
 		void LoadXml(const Aris::Core::XmlDocument &doc);
-		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc);
+		void AddGait(std::string cmdName, GaitFunc gaitFunc, PARSE_FUNC parseFunc);
 		void Start();
 		void Stop();
 
@@ -451,11 +451,11 @@ namespace Robots
 			}
 		}
 
-		int home(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::Controller::Data data);
-		int enable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::Controller::Data data);
-		int disable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::Controller::Data data);
-		int recover(Robots::RECOVER_PARAM *pParam, Aris::Control::Controller::Data data);
-		int runGait(Robots::GAIT_PARAM_BASE *pParam, Aris::Control::Controller::Data data);
+		int home(const Robots::BasicFunctionParam *pParam, Aris::Control::Controller::Data data);
+		int enable(const Robots::BasicFunctionParam *pParam, Aris::Control::Controller::Data data);
+		int disable(const Robots::BasicFunctionParam *pParam, Aris::Control::Controller::Data data);
+		int recover(Robots::RecoverParam *pParam, Aris::Control::Controller::Data data);
+		int runGait(Robots::GaitParamBase *pParam, Aris::Control::Controller::Data data);
 
 		int execute_cmd(int count, char *cmd, Aris::Control::Controller::Data data);
 		static int tg(Aris::Control::Controller::Data &data);
@@ -475,7 +475,7 @@ namespace Robots
 	private:
 		RobotServer *pServer;
 		std::map<std::string, int> mapName2ID;//store gait id in follow vector
-		std::vector<GAIT_FUNC> allGaits;
+		std::vector<GaitFunc> allGaits;
 		std::vector<PARSE_FUNC> allParsers;
 
 		std::map<std::string, std::unique_ptr<COMMAND_STRUCT> > mapCmd;//store NODE of command
@@ -636,7 +636,7 @@ namespace Robots
 			return 0;
 		});
 	}
-	void RobotServer::Imp::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
+	void RobotServer::Imp::AddGait(std::string cmdName, GaitFunc gaitFunc, PARSE_FUNC parseFunc)
 	{
 		if (mapName2ID.find(cmdName) != mapName2ID.end())
 		{
@@ -877,7 +877,7 @@ namespace Robots
 	{
 		if (cmd == "en")
 		{
-			Robots::BASIC_FUNCTION_PARAM cmdParam;
+			Robots::BasicFunctionParam cmdParam;
 			cmdParam.cmdType = ENABLE;
 
 			for (auto &i : params)
@@ -914,7 +914,7 @@ namespace Robots
 
 		if (cmd == "ds")
 		{
-			Robots::BASIC_FUNCTION_PARAM cmdParam;
+			Robots::BasicFunctionParam cmdParam;
 			cmdParam.cmdType = DISABLE;
 
 			for (auto &i : params)
@@ -951,7 +951,7 @@ namespace Robots
 
 		if (cmd == "hm")
 		{
-			Robots::BASIC_FUNCTION_PARAM cmdParam;
+			Robots::BasicFunctionParam cmdParam;
 			cmdParam.cmdType = HOME;
 
 			for (auto &i : params)
@@ -988,7 +988,7 @@ namespace Robots
 
 		if (cmd == "rc")
 		{
-			Robots::RECOVER_PARAM cmdParam;
+			Robots::RecoverParam cmdParam;
 			cmdParam.cmdType = RECOVER;
 
 			std::copy_n(this->recoverEE, 18, cmdParam.recoverPee);
@@ -1033,13 +1033,13 @@ namespace Robots
 		{
 			msg = this->allParsers.at(cmdPair->second).operator()(cmd, params);
 
-			if (msg.GetLength() < sizeof(GAIT_PARAM_BASE))
+			if (msg.GetLength() < sizeof(GaitParamBase))
 			{
 				throw std::logic_error(std::string("parse function of command \"") + cmdPair->first + "\" failed: because it returned invalid msg");
 			}
 
-			reinterpret_cast<GAIT_PARAM_BASE *>(msg.GetDataAddress())->cmdType=RUN_GAIT;
-			reinterpret_cast<GAIT_PARAM_BASE *>(msg.GetDataAddress())->cmdID=cmdPair->second;
+			reinterpret_cast<GaitParamBase *>(msg.GetDataAddress())->cmdType=RUN_GAIT;
+			reinterpret_cast<GaitParamBase *>(msg.GetDataAddress())->cmdID=cmdPair->second;
 		}
 		else
 		{
@@ -1047,7 +1047,7 @@ namespace Robots
 		}
 	}
 	
-	int RobotServer::Imp::home(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::Controller::Data data)
+	int RobotServer::Imp::home(const Robots::BasicFunctionParam *pParam, Aris::Control::Controller::Data data)
 	{
 		bool isAllHomed = true;
 
@@ -1082,7 +1082,7 @@ namespace Robots
 
 		return isAllHomed ? 0 : 1;
 	};
-	int RobotServer::Imp::enable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::Controller::Data data)
+	int RobotServer::Imp::enable(const Robots::BasicFunctionParam *pParam, Aris::Control::Controller::Data data)
 	{
 		bool isAllEnabled = true;
 
@@ -1119,7 +1119,7 @@ namespace Robots
 
 		return isAllEnabled ? 0 : 1;
 	};
-	int RobotServer::Imp::disable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::Controller::Data data)
+	int RobotServer::Imp::disable(const Robots::BasicFunctionParam *pParam, Aris::Control::Controller::Data data)
 	{
 		bool isAllDisabled = true;
 
@@ -1148,7 +1148,7 @@ namespace Robots
 
 		return isAllDisabled ? 0 : 1;
 	}
-	int RobotServer::Imp::recover(Robots::RECOVER_PARAM *pParam, Aris::Control::Controller::Data data)
+	int RobotServer::Imp::recover(Robots::RecoverParam *pParam, Aris::Control::Controller::Data data)
 	{
 			
 			
@@ -1213,7 +1213,7 @@ namespace Robots
 		//向下写入输入位置
 		return pParam->alignCount + pParam->recoverCount - pParam->count - 1;
 	}
-	int RobotServer::Imp::runGait(Robots::GAIT_PARAM_BASE *pParam, Aris::Control::Controller::Data data)
+	int RobotServer::Imp::runGait(Robots::GaitParamBase *pParam, Aris::Control::Controller::Data data)
 	{
 		/*保存初始位置*/
 		static double pBody[6]{ 0 }, vBody[6]{ 0 }, pEE[18]{ 0 }, vEE[18]{ 0 };
@@ -1264,25 +1264,25 @@ namespace Robots
 	int RobotServer::Imp::execute_cmd(int count, char *cmd, Aris::Control::Controller::Data data)
 	{
 		int ret;
-		Robots::ALL_PARAM_BASE *pParam = reinterpret_cast<Robots::ALL_PARAM_BASE *>(cmd);
+		Robots::AllParamBase *pParam = reinterpret_cast<Robots::AllParamBase *>(cmd);
 		pParam->count = count;
 
 		switch (pParam->cmdType)
 		{
 		case ENABLE:
-			ret = enable(static_cast<Robots::BASIC_FUNCTION_PARAM *>(pParam), data);
+			ret = enable(static_cast<Robots::BasicFunctionParam *>(pParam), data);
 			break;
 		case DISABLE:
-			ret = disable(static_cast<Robots::BASIC_FUNCTION_PARAM *>(pParam), data);
+			ret = disable(static_cast<Robots::BasicFunctionParam *>(pParam), data);
 			break;
 		case HOME:
-			ret = home(static_cast<Robots::BASIC_FUNCTION_PARAM *>(pParam), data);
+			ret = home(static_cast<Robots::BasicFunctionParam *>(pParam), data);
 			break;
 		case RECOVER:
-			ret = recover(static_cast<Robots::RECOVER_PARAM *>(pParam), data);
+			ret = recover(static_cast<Robots::RecoverParam *>(pParam), data);
 			break;
 		case RUN_GAIT:
-			ret = runGait(static_cast<Robots::GAIT_PARAM_BASE *>(pParam), data);
+			ret = runGait(static_cast<Robots::GaitParamBase *>(pParam), data);
 			break;
 		default:
 			rt_printf("unknown cmd type\n");
@@ -1456,7 +1456,7 @@ namespace Robots
 	{
 		pImp->LoadXml(xmlDoc);
 	}
-	void RobotServer::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
+	void RobotServer::AddGait(std::string cmdName, GaitFunc gaitFunc, PARSE_FUNC parseFunc)
 	{
 		pImp->AddGait(cmdName, gaitFunc, parseFunc);
 	}
