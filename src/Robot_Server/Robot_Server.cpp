@@ -418,7 +418,7 @@ namespace Robots
 		{ 
 			this->pServer = pServer;
 #ifdef PLATFORM_IS_LINUX
-			this->pController = Aris::Control::Controller::CreateMaster<Aris::Control::Controller>();
+			this->pController = Aris::Control::EthercatController::CreateMaster<Aris::Control::EthercatController>();
 #endif
 		};
 	private:
@@ -451,14 +451,14 @@ namespace Robots
 			}
 		}
 
-		int home(const Robots::BasicFunctionParam *pParam, Aris::Control::Controller::Data data);
-		int enable(const Robots::BasicFunctionParam *pParam, Aris::Control::Controller::Data data);
-		int disable(const Robots::BasicFunctionParam *pParam, Aris::Control::Controller::Data data);
-		int recover(Robots::RecoverParam *pParam, Aris::Control::Controller::Data data);
-		int runGait(Robots::GaitParamBase *pParam, Aris::Control::Controller::Data data);
+		int home(const Robots::BasicFunctionParam *pParam, Aris::Control::EthercatController::Data data);
+		int enable(const Robots::BasicFunctionParam *pParam, Aris::Control::EthercatController::Data data);
+		int disable(const Robots::BasicFunctionParam *pParam, Aris::Control::EthercatController::Data data);
+		int recover(Robots::RecoverParam *pParam, Aris::Control::EthercatController::Data data);
+		int runGait(Robots::GaitParamBase *pParam, Aris::Control::EthercatController::Data data);
 
-		int execute_cmd(int count, char *cmd, Aris::Control::Controller::Data data);
-		static int tg(Aris::Control::Controller::Data &data);
+		int execute_cmd(int count, char *cmd, Aris::Control::EthercatController::Data data);
+		static int tg(Aris::Control::EthercatController::Data &data);
 
 	private:
 		enum ROBOT_CMD_ID
@@ -489,7 +489,7 @@ namespace Robots
 		int mapPhy2Abs[18];
 		int mapAbs2Phy[18];
 
-		Aris::Control::Controller *pController;
+		Aris::Control::EthercatController *pController;
 
 		std::unique_ptr<Aris::Sensor::IMU> pImu;
 		friend class RobotServer;
@@ -1047,7 +1047,7 @@ namespace Robots
 		}
 	}
 	
-	int RobotServer::Imp::home(const Robots::BasicFunctionParam *pParam, Aris::Control::Controller::Data data)
+	int RobotServer::Imp::home(const Robots::BasicFunctionParam *pParam, Aris::Control::EthercatController::Data data)
 	{
 		bool isAllHomed = true;
 
@@ -1082,7 +1082,7 @@ namespace Robots
 
 		return isAllHomed ? 0 : 1;
 	};
-	int RobotServer::Imp::enable(const Robots::BasicFunctionParam *pParam, Aris::Control::Controller::Data data)
+	int RobotServer::Imp::enable(const Robots::BasicFunctionParam *pParam, Aris::Control::EthercatController::Data data)
 	{
 		bool isAllEnabled = true;
 
@@ -1119,7 +1119,7 @@ namespace Robots
 
 		return isAllEnabled ? 0 : 1;
 	};
-	int RobotServer::Imp::disable(const Robots::BasicFunctionParam *pParam, Aris::Control::Controller::Data data)
+	int RobotServer::Imp::disable(const Robots::BasicFunctionParam *pParam, Aris::Control::EthercatController::Data data)
 	{
 		bool isAllDisabled = true;
 
@@ -1148,7 +1148,7 @@ namespace Robots
 
 		return isAllDisabled ? 0 : 1;
 	}
-	int RobotServer::Imp::recover(Robots::RecoverParam *pParam, Aris::Control::Controller::Data data)
+	int RobotServer::Imp::recover(Robots::RecoverParam *pParam, Aris::Control::EthercatController::Data data)
 	{
 			
 			
@@ -1213,7 +1213,7 @@ namespace Robots
 		//向下写入输入位置
 		return pParam->alignCount + pParam->recoverCount - pParam->count - 1;
 	}
-	int RobotServer::Imp::runGait(Robots::GaitParamBase *pParam, Aris::Control::Controller::Data data)
+	int RobotServer::Imp::runGait(Robots::GaitParamBase *pParam, Aris::Control::EthercatController::Data data)
 	{
 		/*保存初始位置*/
 		static double pBody[6]{ 0 }, vBody[6]{ 0 }, pEE[18]{ 0 }, vEE[18]{ 0 };
@@ -1261,7 +1261,7 @@ namespace Robots
 		return ret;
 	}
 	
-	int RobotServer::Imp::execute_cmd(int count, char *cmd, Aris::Control::Controller::Data data)
+	int RobotServer::Imp::execute_cmd(int count, char *cmd, Aris::Control::EthercatController::Data data)
 	{
 		int ret;
 		Robots::AllParamBase *pParam = reinterpret_cast<Robots::AllParamBase *>(cmd);
@@ -1292,7 +1292,7 @@ namespace Robots
 
 		return ret;
 	}
-	int RobotServer::Imp::tg(Aris::Control::Controller::Data &data)
+	int RobotServer::Imp::tg(Aris::Control::EthercatController::Data &data)
 	{
 		enum { CMD_POOL_SIZE = 50 };
 		
