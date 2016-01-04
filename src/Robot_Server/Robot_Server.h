@@ -12,42 +12,42 @@
 
 namespace Robots
 {
-	typedef std::function<Aris::Core::MSG(const std::string &cmd, const std::map<std::string, std::string> &params)> PARSE_FUNC;
+	typedef std::function<Aris::Core::Msg(const std::string &cmd, const std::map<std::string, std::string> &params)> PARSE_FUNC;
 
-	class ROBOT_SERVER
+	class RobotServer
 	{
 	public:
-		static ROBOT_SERVER * GetInstance();
+		static RobotServer * GetInstance();
 
 		template<typename T>
 		void CreateRobot()
 		{
-			if (pRobot.get())
+			if (pRobot)
 			{
 				throw std::logic_error("already has a robot instance");
 			}
 			else
 			{
-				pRobot = std::unique_ptr<Robots::ROBOT_BASE>{ new T };
+				pRobot = std::unique_ptr<Robots::RobotBase>{ new T };
 			}
 		};
 		void LoadXml(const char *fileName);
-		void LoadXml(const Aris::Core::DOCUMENT &xmlDoc);
+		void LoadXml(const Aris::Core::XmlDocument &xmlDoc);
 		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc);
 		void Start();
 		void Stop();
 
 	private:
-		ROBOT_SERVER();
-		~ROBOT_SERVER();
-		ROBOT_SERVER(const ROBOT_SERVER &) = delete;
-		ROBOT_SERVER &operator=(const ROBOT_SERVER &) = delete;
+		RobotServer();
+		~RobotServer();
+		RobotServer(const RobotServer &) = delete;
+		RobotServer &operator=(const RobotServer &) = delete;
 
-		std::unique_ptr<Robots::ROBOT_BASE> pRobot;
+		std::unique_ptr<Robots::RobotBase> pRobot;
 
 	private:
-		class IMP;
-		std::unique_ptr<IMP> pImp;
+		class Imp;
+		std::unique_ptr<Imp> pImp;
 	};
 }
 

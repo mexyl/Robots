@@ -28,9 +28,21 @@ double firstEE[18] =
 	0.3,-0.75,0.65,
 };
 
+//double beginEE[18]
+//{
+//	-0.3,-0.85,-0.65,
+//	-0.45,-0.85,0,
+//	-0.3,-0.85,0.65,
+//	0.3,-0.85,-0.65,
+//	0.45,-0.85,0,
+//	0.3,-0.85,0.65,
+//};
+
+//double beginPe[6]{ 0 };
+
 double beginEE[18]
 {
-	-0.3,-0.85,-0.65,
+	-0.317036,-0.85,-0.670592,
 	-0.45,-0.85,0,
 	-0.3,-0.85,0.65,
 	0.3,-0.85,-0.65,
@@ -38,9 +50,9 @@ double beginEE[18]
 	0.3,-0.85,0.65,
 };
 
-double beginPe[6]{ 0 };
+double beginPe[6]{ 0.002996, -0.030742, -0.020592, 0.043633, 0, 0.043633 };
 
-Robots::ROBOT_TYPE_I rbt;
+Robots::RobotTypeI rbt;
 
 int main()
 {
@@ -51,24 +63,21 @@ int main()
 	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/HexapodVIII.xml");
 #endif
 
-	rbt.SetPee(beginEE, beginPe);
+	rbt.SetPeb(beginPe);
+	rbt.SetPee(beginEE);
 
 	Robots::WALK_PARAM param;
-	param.totalCount = 900;
-	param.d = 1.1;
-	param.h = 0.04;
+	param.totalCount = 3000;
+	param.alpha = 2.7489;
+	param.d = 0.26105;
+	param.h = 0.05;
 	param.n = 1;
 
 
-	rbt.SimByMatlab("C:\\Users\\yang\\Desktop\\pIn_Walk.txt", Robots::walk, &param);
+	rbt.SimByMatlab("C:\\Users\\yang\\Desktop\\Walk\\", Robots::walk, &param);
 
 
 	std::cout << "finished" << std::endl;
-
-
-	Robots::ROBOT_IV rbt;
-
-	rbt.SetPee(beginEE);
 
 	char aaa;
 	std::cin>>aaa;

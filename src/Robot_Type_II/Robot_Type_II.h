@@ -14,10 +14,10 @@
 
 namespace Robots
 {
-	class LEG_IV:public Robots::LEG_BASE
+	class LEG_IV:public Robots::LegBase
 	{
 	public:
-		LEG_IV(ROBOT_BASE* pRobot, const char *Name);
+		LEG_IV(RobotBase* pRobot, const char *Name);
 		~LEG_IV() = default;
 
 		virtual void calculate_from_pEE();
@@ -31,7 +31,7 @@ namespace Robots
 		friend class ROBOT_IV;
 	};
 
-	class ROBOT_IV :public Robots::ROBOT_BASE
+	class ROBOT_IV :public Robots::RobotBase
 	{
 		LEG_IV leg0{ this, "LF" };
 		LEG_IV leg1{ this, "LM" };

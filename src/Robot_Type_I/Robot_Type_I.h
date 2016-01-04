@@ -7,94 +7,94 @@
 
 namespace Robots
 {
-	class ROBOT_TYPE_I;
-	class LEG_I :public Robots::LEG_BASE
+	class RobotTypeI;
+	class LegI :public Robots::LegBase
 	{
 	public:
 		union
 		{
 			struct
 			{
-				Aris::DynKer::PART* pP1a;/*!< \brief 指向部件P1a的指针 */
-				Aris::DynKer::PART* pP2a;/*!< \brief 指向部件P2a的指针 */
-				Aris::DynKer::PART* pP3a;/*!< \brief 指向部件P3a的指针 */
-				Aris::DynKer::PART* pThigh;/*!< \brief 指向部件Thigh的指针 */
-				Aris::DynKer::PART* pP2b;/*!< \brief 指向部件P2b的指针 */
-				Aris::DynKer::PART* pP3b;/*!< \brief 指向部件P3b的指针 */
+				Aris::DynKer::Part* pP1a;/*!< \brief 指向部件P1a的指针 */
+				Aris::DynKer::Part* pP2a;/*!< \brief 指向部件P2a的指针 */
+				Aris::DynKer::Part* pP3a;/*!< \brief 指向部件P3a的指针 */
+				Aris::DynKer::Part* pThigh;/*!< \brief 指向部件Thigh的指针 */
+				Aris::DynKer::Part* pP2b;/*!< \brief 指向部件P2b的指针 */
+				Aris::DynKer::Part* pP3b;/*!< \brief 指向部件P3b的指针 */
 			};
-			Aris::DynKer::PART* pPrts[6];
+			Aris::DynKer::Part* pPrts[6];
 		};
 		union
 		{
 			struct
 			{
-				Aris::DynKer::JOINT_BASE *pU1;/*!< \brief 指向关节U1的指针 */
-				Aris::DynKer::JOINT_BASE *pU2;/*!< \brief 指向关节U2的指针 */
-				Aris::DynKer::JOINT_BASE *pU3;/*!< \brief 指向关节U3的指针 */
-				Aris::DynKer::JOINT_BASE *pP1;/*!< \brief 指向关节P1的指针 */
-				Aris::DynKer::JOINT_BASE *pP2;/*!< \brief 指向关节P2的指针 */
-				Aris::DynKer::JOINT_BASE *pP3;/*!< \brief 指向关节P3的指针 */
-				Aris::DynKer::JOINT_BASE *pS2;/*!< \brief 指向关节S2的指针 */
-				Aris::DynKer::JOINT_BASE *pS3;/*!< \brief 指向关节S3的指针 */
-				Aris::DynKer::JOINT_BASE *pSf;/*!< \brief 指向关节Sf的指针 */
+				Aris::DynKer::JointBase *pU1;/*!< \brief 指向关节U1的指针 */
+				Aris::DynKer::JointBase *pU2;/*!< \brief 指向关节U2的指针 */
+				Aris::DynKer::JointBase *pU3;/*!< \brief 指向关节U3的指针 */
+				Aris::DynKer::JointBase *pP1;/*!< \brief 指向关节P1的指针 */
+				Aris::DynKer::JointBase *pP2;/*!< \brief 指向关节P2的指针 */
+				Aris::DynKer::JointBase *pP3;/*!< \brief 指向关节P3的指针 */
+				Aris::DynKer::JointBase *pS2;/*!< \brief 指向关节S2的指针 */
+				Aris::DynKer::JointBase *pS3;/*!< \brief 指向关节S3的指针 */
+				Aris::DynKer::JointBase *pSf;/*!< \brief 指向关节Sf的指针 */
 			};
-			Aris::DynKer::JOINT_BASE *pJnts[9];
+			Aris::DynKer::JointBase *pJnts[9];
 		};
 		union
 		{
 			struct
 			{
-				Aris::DynKer::MARKER *pBase;/*!< \brief 指向坐标系Base的指针，位于部件MainBody上 */
-				Aris::DynKer::MARKER *pU1i;/*!< \brief 指向坐标系U1i的指针，位于部件MainBody上 */
-				Aris::DynKer::MARKER *pU1j;/*!< \brief 指向坐标系U1j的指针，位于部件P1a上 */
-				Aris::DynKer::MARKER *pU2i;/*!< \brief 指向坐标系U2i的指针，位于部件MainBody上 */
-				Aris::DynKer::MARKER *pU2j;/*!< \brief 指向坐标系U2j的指针，位于部件P2a上 */
-				Aris::DynKer::MARKER *pU3i;/*!< \brief 指向坐标系U3i的指针，位于部件MainBody上 */
-				Aris::DynKer::MARKER *pU3j;/*!< \brief 指向坐标系U3j的指针，位于部件P3a上 */
-				Aris::DynKer::MARKER *pP1i;/*!< \brief 指向坐标系P1i的指针，位于部件Thigh上 */
-				Aris::DynKer::MARKER *pP1j;/*!< \brief 指向坐标系P1j的指针，位于部件P1a上 */
-				Aris::DynKer::MARKER *pP2i;/*!< \brief 指向坐标系P2i的指针，位于部件P2b上 */
-				Aris::DynKer::MARKER *pP2j;/*!< \brief 指向坐标系P2j的指针，位于部件P2a上 */
-				Aris::DynKer::MARKER *pP3i;/*!< \brief 指向坐标系P3i的指针，位于部件P3b上 */
-				Aris::DynKer::MARKER *pP3j;/*!< \brief 指向坐标系P3i的指针，位于部件P3a上 */
-				Aris::DynKer::MARKER *pS2i;/*!< \brief 指向坐标系S2i的指针，位于部件Thigh上 */
-				Aris::DynKer::MARKER *pS2j;/*!< \brief 指向坐标系S2j的指针，位于部件P2b上 */
-				Aris::DynKer::MARKER *pS3i;/*!< \brief 指向坐标系S3i的指针，位于部件Thigh上 */
-				Aris::DynKer::MARKER *pS3j;/*!< \brief 指向坐标系S3j的指针，位于部件P3b上 */
-				Aris::DynKer::MARKER *pSfi;/*!< \brief 指向坐标系Sfi的指针，位于部件Thigh上 */
-				Aris::DynKer::MARKER *pSfj;/*!< \brief 指向坐标系Sfj的指针，位于部件Ground上 */
+				Aris::DynKer::Marker *pBase;/*!< \brief 指向坐标系Base的指针，位于部件MainBody上 */
+				Aris::DynKer::Marker *pU1i;/*!< \brief 指向坐标系U1i的指针，位于部件MainBody上 */
+				Aris::DynKer::Marker *pU1j;/*!< \brief 指向坐标系U1j的指针，位于部件P1a上 */
+				Aris::DynKer::Marker *pU2i;/*!< \brief 指向坐标系U2i的指针，位于部件MainBody上 */
+				Aris::DynKer::Marker *pU2j;/*!< \brief 指向坐标系U2j的指针，位于部件P2a上 */
+				Aris::DynKer::Marker *pU3i;/*!< \brief 指向坐标系U3i的指针，位于部件MainBody上 */
+				Aris::DynKer::Marker *pU3j;/*!< \brief 指向坐标系U3j的指针，位于部件P3a上 */
+				Aris::DynKer::Marker *pP1i;/*!< \brief 指向坐标系P1i的指针，位于部件Thigh上 */
+				Aris::DynKer::Marker *pP1j;/*!< \brief 指向坐标系P1j的指针，位于部件P1a上 */
+				Aris::DynKer::Marker *pP2i;/*!< \brief 指向坐标系P2i的指针，位于部件P2b上 */
+				Aris::DynKer::Marker *pP2j;/*!< \brief 指向坐标系P2j的指针，位于部件P2a上 */
+				Aris::DynKer::Marker *pP3i;/*!< \brief 指向坐标系P3i的指针，位于部件P3b上 */
+				Aris::DynKer::Marker *pP3j;/*!< \brief 指向坐标系P3i的指针，位于部件P3a上 */
+				Aris::DynKer::Marker *pS2i;/*!< \brief 指向坐标系S2i的指针，位于部件Thigh上 */
+				Aris::DynKer::Marker *pS2j;/*!< \brief 指向坐标系S2j的指针，位于部件P2b上 */
+				Aris::DynKer::Marker *pS3i;/*!< \brief 指向坐标系S3i的指针，位于部件Thigh上 */
+				Aris::DynKer::Marker *pS3j;/*!< \brief 指向坐标系S3j的指针，位于部件P3b上 */
+				Aris::DynKer::Marker *pSfi;/*!< \brief 指向坐标系Sfi的指针，位于部件Thigh上 */
+				Aris::DynKer::Marker *pSfj;/*!< \brief 指向坐标系Sfj的指针，位于部件Ground上 */
 			};
-			Aris::DynKer::MARKER *pMaks[19];
+			Aris::DynKer::Marker *pMaks[19];
 		};
 		union
 		{
 			struct
 			{
-				Aris::DynKer::MOTION_BASE *pM1;/*!< \brief 指向驱动M1的指针 */
-				Aris::DynKer::MOTION_BASE *pM2;/*!< \brief 指向驱动M2的指针 */
-				Aris::DynKer::MOTION_BASE *pM3;/*!< \brief 指向驱动M3的指针 */
+				Aris::DynKer::MotionBase *pM1;/*!< \brief 指向驱动M1的指针 */
+				Aris::DynKer::MotionBase *pM2;/*!< \brief 指向驱动M2的指针 */
+				Aris::DynKer::MotionBase *pM3;/*!< \brief 指向驱动M3的指针 */
 			};
 
-			Aris::DynKer::MOTION_BASE *pMots[3];
+			Aris::DynKer::MotionBase *pMots[3];
 		};
 		union
 		{
 			struct
 			{
-				Aris::DynKer::SINGLE_COMPONENT_FORCE *pF1;/*!< \brief 指向驱动M1的指针 */
-				Aris::DynKer::SINGLE_COMPONENT_FORCE *pF2;/*!< \brief 指向驱动M2的指针 */
-				Aris::DynKer::SINGLE_COMPONENT_FORCE *pF3;/*!< \brief 指向驱动M3的指针 */
+				Aris::DynKer::SingleComponentForce *pF1;/*!< \brief 指向驱动M1的指针 */
+				Aris::DynKer::SingleComponentForce *pF2;/*!< \brief 指向驱动M2的指针 */
+				Aris::DynKer::SingleComponentForce *pF3;/*!< \brief 指向驱动M3的指针 */
 			};
 
-			Aris::DynKer::SINGLE_COMPONENT_FORCE *pFces[3];
+			Aris::DynKer::SingleComponentForce *pFces[3];
 		};
 		
 	public:
 		void GetdJacOverPee(double *dJi_x, double *dJi_y, double *dJi_z, const char *relativeCoordinate="G")const;
 
 	private:
-		LEG_I(const char *Name, ROBOT_TYPE_I* pRobot);
-		virtual ~LEG_I() = default;
+		LegI(const char *Name, RobotTypeI* pRobot);
+		virtual ~LegI() = default;
 
 		void FastDyn();
 		
@@ -151,7 +151,7 @@ namespace Robots
 		};
 
 	private:
-		ROBOT_TYPE_I *pRobot;
+		RobotTypeI *pRobot;
 
 		const double U2x{ 0 }, U2y{ 0 }, U2z{ 0 }, U3x{ 0 }, U3y{ 0 }, U3z{ 0 };
 		const double S2x{ 0 }, S2y{ 0 }, S2z{ 0 }, S3x{ 0 }, S3y{ 0 }, S3z{ 0 };
@@ -180,9 +180,9 @@ namespace Robots
 		double _C[36][36];
 		double _c_M[36][4];
 
-		friend class ROBOT_TYPE_I;
+		friend class RobotTypeI;
 	};
-	class ROBOT_TYPE_I :public Robots::ROBOT_BASE
+	class RobotTypeI :public Robots::RobotBase
 	{
 	public:
 		struct STATE
@@ -193,17 +193,17 @@ namespace Robots
 			bool isSfActive[6];
 		};
 
-		ROBOT_TYPE_I();
-		~ROBOT_TYPE_I() = default;
+		RobotTypeI();
+		~RobotTypeI() = default;
 		virtual void LoadXml(const char *filename);
-		virtual void LoadXml(const Aris::Core::DOCUMENT &doc);
+		virtual void LoadXml(const Aris::Core::XmlDocument &doc);
 
 		void GetFin(double *fIn) const;
 		void GetFinDyn(double *fIn) const;
 		void GetFinFrc(double *fIn) const;
 
-		void GetState(ROBOT_TYPE_I::STATE &state) const;
-		void SetState(const ROBOT_TYPE_I::STATE &state);
+		void GetState(RobotTypeI::STATE &state) const;
+		void SetState(const RobotTypeI::STATE &state);
 
 		void SetFixFeet(const char* fixFeet);
 		const char* GetFixFeet() const;
@@ -214,39 +214,39 @@ namespace Robots
 		void Dyn();
 		
 		void SimByAdamsResultAt(int momentTime);
-		void SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const Aris::DynKer::SIMULATE_SCRIPT *script = nullptr);
+		void SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, const Aris::DynKer::SimulateScript *script = nullptr);
 		void SimByAdams(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param, int dt);
-		void SimByMatlab(const char *adamsFile, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param);
+		void SimByMatlab(const std::string &folderName, const GAIT_FUNC &fun, GAIT_PARAM_BASE *param);
 	
 	public:
 		union
 		{
 			struct
 			{
-				LEG_I *const pLF;
-				LEG_I *const pLM;
-				LEG_I *const pLR;
-				LEG_I *const pRF;
-				LEG_I *const pRM;
-				LEG_I *const pRR;
+				LegI *const pLF;
+				LegI *const pLM;
+				LegI *const pLR;
+				LegI *const pRF;
+				LegI *const pRM;
+				LegI *const pRR;
 			};
-			LEG_I *const pLegs[6];
+			LegI *const pLegs[6];
 		};
 
-		Aris::DynKer::MARKER* pBodyCenter;
+		Aris::DynKer::Marker* pBodyCenter;
 
 	private:
-		LEG_I LF_Leg{ "LF", this };
-		LEG_I LM_Leg{ "LM", this };
-		LEG_I LR_Leg{ "LR", this };
-		LEG_I RF_Leg{ "RF", this };
-		LEG_I RM_Leg{ "RM", this };
-		LEG_I RR_Leg{ "RR", this };
+		LegI LF_Leg{ "LF", this };
+		LegI LM_Leg{ "LM", this };
+		LegI LR_Leg{ "LR", this };
+		LegI RF_Leg{ "RF", this };
+		LegI RM_Leg{ "RM", this };
+		LegI RR_Leg{ "RR", this };
 
-		friend class LEG_I;
+		friend class LegI;
 	};
 
-	inline void Activate024(int time, ROBOT_TYPE_I *pRobot, Aris::DynKer::SIMULATE_SCRIPT *script)
+	inline void Activate024(int time, RobotTypeI *pRobot, Aris::DynKer::SimulateScript *script)
 	{
 		script->ScriptDeactivate(time, pRobot->pLF->pSf);
 		script->ScriptActivate(time, pRobot->pLM->pSf);
@@ -299,7 +299,7 @@ namespace Robots
 
 		
 	}
-	inline void Activate135(int time, ROBOT_TYPE_I *pRobot, Aris::DynKer::SIMULATE_SCRIPT *script)
+	inline void Activate135(int time, RobotTypeI *pRobot, Aris::DynKer::SimulateScript *script)
 	{
 		script->ScriptActivate(time, pRobot->pLF->pSf);
 		script->ScriptDeactivate(time, pRobot->pLM->pSf);
@@ -350,105 +350,105 @@ namespace Robots
 		script->ScriptDeactivate(time, pRobot->pRR->pF2);
 		script->ScriptDeactivate(time, pRobot->pRR->pF3);
 	}
-	inline void Activate024(ROBOT_TYPE_I *pRobot)
+	inline void Activate024(RobotTypeI *pRobot)
 	{
-		pRobot->pLF->pSf->Deactivate();
-		pRobot->pLF->pM1->Activate();
-		pRobot->pLF->pM2->Activate();
-		pRobot->pLF->pM3->Activate();
-		pRobot->pLF->pF1->Deactivate();
-		pRobot->pLF->pF2->Deactivate();
-		pRobot->pLF->pF3->Deactivate();
+		pRobot->pLF->pSf->Activate(false);
+		pRobot->pLF->pM1->Activate(true);
+		pRobot->pLF->pM2->Activate(true);
+		pRobot->pLF->pM3->Activate(true);
+		pRobot->pLF->pF1->Activate(false);
+		pRobot->pLF->pF2->Activate(false);
+		pRobot->pLF->pF3->Activate(false);
 
-		pRobot->pLR->pSf->Deactivate();
-		pRobot->pLR->pM1->Activate();
-		pRobot->pLR->pM2->Activate();
-		pRobot->pLR->pM3->Activate();
-		pRobot->pLR->pF1->Deactivate();
-		pRobot->pLR->pF2->Deactivate();
-		pRobot->pLR->pF3->Deactivate();
+		pRobot->pLR->pSf->Activate(false);
+		pRobot->pLR->pM1->Activate(true);
+		pRobot->pLR->pM2->Activate(true);
+		pRobot->pLR->pM3->Activate(true);
+		pRobot->pLR->pF1->Activate(false);
+		pRobot->pLR->pF2->Activate(false);
+		pRobot->pLR->pF3->Activate(false);
 
-		pRobot->pRM->pSf->Deactivate();
-		pRobot->pRM->pM1->Activate();
-		pRobot->pRM->pM2->Activate();
-		pRobot->pRM->pM3->Activate();
-		pRobot->pRM->pF1->Deactivate();
-		pRobot->pRM->pF2->Deactivate();
-		pRobot->pRM->pF3->Deactivate();
+		pRobot->pRM->pSf->Activate(false);
+		pRobot->pRM->pM1->Activate(true);
+		pRobot->pRM->pM2->Activate(true);
+		pRobot->pRM->pM3->Activate(true);
+		pRobot->pRM->pF1->Activate(false);
+		pRobot->pRM->pF2->Activate(false);
+		pRobot->pRM->pF3->Activate(false);
 
-		pRobot->pLM->pSf->Activate();
-		pRobot->pLM->pM1->Deactivate();
-		pRobot->pLM->pM2->Activate();
-		pRobot->pLM->pM3->Activate();
-		pRobot->pLM->pF1->Activate();
-		pRobot->pLM->pF2->Deactivate();
-		pRobot->pLM->pF3->Deactivate();
+		pRobot->pLM->pSf->Activate(true);
+		pRobot->pLM->pM1->Activate(false);
+		pRobot->pLM->pM2->Activate(true);
+		pRobot->pLM->pM3->Activate(true);
+		pRobot->pLM->pF1->Activate(true);
+		pRobot->pLM->pF2->Activate(false);
+		pRobot->pLM->pF3->Activate(false);
 
-		pRobot->pRF->pSf->Activate();
-		pRobot->pRF->pM1->Deactivate();
-		pRobot->pRF->pM2->Activate();
-		pRobot->pRF->pM3->Activate();
-		pRobot->pRF->pF1->Activate();
-		pRobot->pRF->pF2->Deactivate();
-		pRobot->pRF->pF3->Deactivate();
+		pRobot->pRF->pSf->Activate(true);
+		pRobot->pRF->pM1->Activate(false);
+		pRobot->pRF->pM2->Activate(true);
+		pRobot->pRF->pM3->Activate(true);
+		pRobot->pRF->pF1->Activate(true);
+		pRobot->pRF->pF2->Activate(false);
+		pRobot->pRF->pF3->Activate(false);
 
-		pRobot->pRR->pSf->Activate();
-		pRobot->pRR->pM1->Deactivate();
-		pRobot->pRR->pM2->Activate();
-		pRobot->pRR->pM3->Activate();
-		pRobot->pRR->pF1->Activate();
-		pRobot->pRR->pF2->Deactivate();
-		pRobot->pRR->pF3->Deactivate();
+		pRobot->pRR->pSf->Activate(true);
+		pRobot->pRR->pM1->Activate(false);
+		pRobot->pRR->pM2->Activate(true);
+		pRobot->pRR->pM3->Activate(true);
+		pRobot->pRR->pF1->Activate(true);
+		pRobot->pRR->pF2->Activate(false);
+		pRobot->pRR->pF3->Activate(false);
 	}
-	inline void Activate135(ROBOT_TYPE_I *pRobot)
+	inline void Activate135(RobotTypeI *pRobot)
 	{
-		pRobot->pLF->pSf->Activate();
-		pRobot->pLF->pM1->Deactivate();
-		pRobot->pLF->pM2->Activate();
-		pRobot->pLF->pM3->Activate();
-		pRobot->pLF->pF1->Activate();
-		pRobot->pLF->pF2->Deactivate();
-		pRobot->pLF->pF3->Deactivate();
+		pRobot->pLF->pSf->Activate(true);
+		pRobot->pLF->pM1->Activate(false);
+		pRobot->pLF->pM2->Activate(true);
+		pRobot->pLF->pM3->Activate(true);
+		pRobot->pLF->pF1->Activate(true);
+		pRobot->pLF->pF2->Activate(false);
+		pRobot->pLF->pF3->Activate(false);
 
-		pRobot->pLR->pSf->Activate();
-		pRobot->pLR->pM1->Deactivate();
-		pRobot->pLR->pM2->Activate();
-		pRobot->pLR->pM3->Activate();
-		pRobot->pLR->pF1->Activate();
-		pRobot->pLR->pF2->Deactivate();
-		pRobot->pLR->pF3->Deactivate();
+		pRobot->pLR->pSf->Activate(true);
+		pRobot->pLR->pM1->Activate(false);
+		pRobot->pLR->pM2->Activate(true);
+		pRobot->pLR->pM3->Activate(true);
+		pRobot->pLR->pF1->Activate(true);
+		pRobot->pLR->pF2->Activate(false);
+		pRobot->pLR->pF3->Activate(false);
 
-		pRobot->pRM->pSf->Activate();
-		pRobot->pRM->pM1->Deactivate();
-		pRobot->pRM->pM2->Activate();
-		pRobot->pRM->pM3->Activate();
-		pRobot->pRM->pF1->Activate();
-		pRobot->pRM->pF2->Deactivate();
-		pRobot->pRM->pF3->Deactivate();
+		pRobot->pRM->pSf->Activate(true);
+		pRobot->pRM->pM1->Activate(false);
+		pRobot->pRM->pM2->Activate(true);
+		pRobot->pRM->pM3->Activate(true);
+		pRobot->pRM->pF1->Activate(true);
+		pRobot->pRM->pF2->Activate(false);
+		pRobot->pRM->pF3->Activate(false);
 
-		pRobot->pLM->pSf->Deactivate();
-		pRobot->pLM->pM1->Activate();
-		pRobot->pLM->pM2->Activate();
-		pRobot->pLM->pM3->Activate();
-		pRobot->pLM->pF1->Deactivate();
-		pRobot->pLM->pF2->Deactivate();
-		pRobot->pLM->pF3->Deactivate();
+		pRobot->pLM->pSf->Activate(false);
+		pRobot->pLM->pM1->Activate(true);
+		pRobot->pLM->pM2->Activate(true);
+		pRobot->pLM->pM3->Activate(true);
+		pRobot->pLM->pF1->Activate(false);
+		pRobot->pLM->pF2->Activate(false);
+		pRobot->pLM->pF3->Activate(false);
 
-		pRobot->pRF->pSf->Deactivate();
-		pRobot->pRF->pM1->Activate();
-		pRobot->pRF->pM2->Activate();
-		pRobot->pRF->pM3->Activate();
-		pRobot->pRF->pF1->Deactivate();
-		pRobot->pRF->pF2->Deactivate();
-		pRobot->pRF->pF3->Deactivate();
+		pRobot->pRF->pSf->Activate(false);
+		pRobot->pRF->pM1->Activate(true);
+		pRobot->pRF->pM2->Activate(true);
+		pRobot->pRF->pM3->Activate(true);
+		pRobot->pRF->pF1->Activate(false);
+		pRobot->pRF->pF2->Activate(false);
+		pRobot->pRF->pF3->Activate(false);
 
-		pRobot->pRR->pSf->Deactivate();
-		pRobot->pRR->pM1->Activate();
-		pRobot->pRR->pM2->Activate();
-		pRobot->pRR->pM3->Activate();
-		pRobot->pRR->pF1->Deactivate();
-		pRobot->pRR->pF2->Deactivate();
-		pRobot->pRR->pF3->Deactivate();
+		pRobot->pRR->pSf->Activate(false);
+		pRobot->pRR->pM1->Activate(true);
+		pRobot->pRR->pM2->Activate(true);
+		pRobot->pRR->pM3->Activate(true);
+		pRobot->pRR->pF1->Activate(false);
+		pRobot->pRR->pF2->Activate(false);
+		pRobot->pRR->pF3->Activate(false);
 	}
 
 }

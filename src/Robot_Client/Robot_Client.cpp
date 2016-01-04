@@ -48,13 +48,13 @@ namespace Robots
 
 
 		/*构造msg，这里需要先copy命令名称，然后依次copy各个参数*/
-		Aris::Core::MSG msg;
+		Aris::Core::Msg msg;
 		msg.Copy(cmdName.c_str());
 		
 
 
 		/*连接并发送msg*/
-		Aris::Core::DOCUMENT doc;
+		Aris::Core::XmlDocument doc;
 
 		if (doc.LoadFile(xmlFileName) != 0)
 			throw std::logic_error("failed to read configuration xml file");
@@ -62,7 +62,7 @@ namespace Robots
 		std::string ip = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Connection")->Attribute("IP");
 		std::string port = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Connection")->Attribute("Port");
 
-		Aris::Core::CONN conn;
+		Aris::Core::Socket conn;
 
 		while (true)
 		{
@@ -79,7 +79,7 @@ namespace Robots
 			
 		}
 		
-		Aris::Core::MSG ret = conn.SendRequest(msg);
+		Aris::Core::Msg ret = conn.SendRequest(msg);
 
 		/*错误处理*/
 		if (ret.GetLength() > 0)

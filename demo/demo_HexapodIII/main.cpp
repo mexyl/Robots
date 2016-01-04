@@ -11,7 +11,7 @@ using namespace Aris::DynKer;
 int main()
 {
 
-	ROBOT_TYPE_I rbt;
+	RobotTypeI rbt;
 
 #ifdef PLATFORM_IS_WINDOWS
 	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
@@ -20,60 +20,44 @@ int main()
 	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
 #endif
 
-	double pEE____[18]
+	double pEE_G[18] =
 	{
-		-0.318791579531186,   -0.719675656557493,   -0.500049789146799,
-	-0.413084678293599,   -0.719675656557493,    0,
-	-0.318791579531187,   -0.719675656557493,    0.498125689146798,
-	0.318791579531186,   -0.719675656557493,   -0.500049789146799,
-	0.413084678293599,   -0.719675656557493,    0,
-	0.318791579531187,   -0.719675656557493,    0.498125689146798,
+		-0.4, -0.75, -0.7,
+		-0.5, -0.75, 0,
+		-0.4, -0.75, 0.7,
+		 0.4, -0.75, -0.7,
+		 0.5, -0.75, 0,
+		 0.4, -0.75, 0.7
 	};
+	double bodyPE[6]{ 0,0,0,0,0,0 };
+	rbt.SetPeb(bodyPE);
+	rbt.SetPee(pEE_G);
+	rbt.SetFixFeet("101010");
+	rbt.SetActiveMotion("011111011111011111");
+	/**/
+	Robots::ADJUST_PARAM param;
+	std::copy_n(pEE_G, 18, &param.targetPee[0][0]);
+	std::copy_n(bodyPE, 6, &param.targetBodyPE[0][0]);
 
-	double pe_____[6]{ 0 };
+	param.targetBodyPE[0][1] += 0.1;
+	param.targetPee[0][15] += 0.1;
 
-	rbt.SetBodyPe(pe_____);
-	rbt.SetPee(pEE____);
-	rbt.GetPin(pEE____);
+	rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test", Robots::adjust, &param, 10);
+	rbt.SimByAdamsResultAt(155);
+	double fIn[18];
+	rbt.GetFinDyn(fIn);
+	dsp(fIn, 18, 1);
 
-	dlmwrite("C:\\Users\\yang\\Desktop\\data.txt", pEE____,6,3);
-
-
-
-	//double pEE_G[18] =
-	//{
-	//	-0.4, -0.75, -0.7,
-	//	-0.5, -0.75, 0,
-	//	-0.4, -0.75, 0.7,
-	//	 0.4, -0.75, -0.7,
-	//	 0.5, -0.75, 0,
-	//	 0.4, -0.75, 0.7
-	//};
-	//double bodyPE[6]{ 0,0,0,0,0,0 };
-	//rbt.SetPee(pEE_G, bodyPE);
-	//rbt.SetFixFeet("101010");
-	//rbt.SetActiveMotion("011111011111011111");
-	///**/
-	//Robots::ADJUST_PARAM param;
-	//std::copy_n(pEE_G, 18, &param.targetPee[0][0]);
-	//std::copy_n(bodyPE, 6, &param.targetBodyPE[0][0]);
-
-	//param.targetBodyPE[0][1] += 0.1;
-	//param.targetPee[0][15] += 0.1;
-
-	//rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test", Robots::adjust, &param, 10);
-	//rbt.SimByAdamsResultAt(155);
-	//double fIn[18];
-	//rbt.GetFinDyn(fIn);
-	//dsp(fIn, 18, 1);
-
-	//param.targetBodyPE[0][1] += 0.1;
-	//param.targetPee[0][15] += 0.1;
-	//rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test1", Robots::adjust, &param, 10);
+	param.targetBodyPE[0][1] += 0.1;
+	param.targetPee[0][15] += 0.1;
+	rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test1", Robots::adjust, &param, 10);
 
 
 	
 	/*Compute inverse position kinematics in Ground coordinates*/
+	
+	
+	/*
 	double pIn[18], vIn[18], aIn[18], fIn[18];
 	double pEE_G[18] =
 	{
@@ -143,7 +127,7 @@ int main()
 	
 	rbt.Dyn();
 
-	rbt.ForEachMotion([](Aris::DynKer::MOTION_BASE *mot)
+	rbt.ForEachMotion([](Aris::DynKer::MotionBase *mot)
 	{
 		cout << mot->GetMotFceDyn() << endl;
 	});
@@ -161,7 +145,7 @@ int main()
 	rbt.SetPee(zeros, nullptr, "G");
 
 	rbt.SetPee(pEE, &rbt.Body());
-	rbt.GetPee(pEE, "B");
+	rbt.GetPee(pEE, &rbt.Body());
 	dsp(pEE, 6, 3);
 
 
@@ -260,10 +244,12 @@ int main()
 	dsp(c, 3, 1);
 	rbt.pLM->GetCad(c, "G");
 	dsp(c, 3, 1);
+	*/
+
 
 	char aaa;
 	cin >> aaa;
-
+	
 	
 	return 0;
 }

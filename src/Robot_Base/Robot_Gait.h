@@ -12,8 +12,11 @@
 
 namespace Robots
 {
-	class ROBOT_BASE;
-	
+	class RobotBase;
+	struct GAIT_PARAM_BASE;
+	typedef std::function<int(RobotBase *, const GAIT_PARAM_BASE *)> GAIT_FUNC;
+
+
 	struct ALL_PARAM_BASE
 	{
 		std::int32_t cmdType{ 0 };
@@ -41,8 +44,8 @@ namespace Robots
 
 	struct GAIT_PARAM_BASE:ALL_PARAM_BASE
 	{
-		const Aris::Sensor::IMU_DATA *imuData;
-		const std::vector<Aris::Control::FORCE_SENSOR::DATA> *pForceData;
+		const Aris::Sensor::ImuData *imuData;
+		const std::vector<Aris::Control::EthercatForceSensor::Data> *pForceData;
 		double beginPee[18]{0};
 		double beginVee[18]{0};
 		double beginBodyPE[6]{0};
@@ -60,8 +63,8 @@ namespace Robots
 		double alpha{0};
 		double beta{0};
 	};
-	int walk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
-	Aris::Core::MSG parseWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
+	int walk(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam);
+	Aris::Core::Msg parseWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
 	
 	struct ADJUST_PARAM :public GAIT_PARAM_BASE
 	{
@@ -78,8 +81,8 @@ namespace Robots
 		char relativeCoordinate[8]{ 'G',0 };
 		char relativeBodyCoordinate[8]{ 'G',0 };
 	};
-	int adjust(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
-	Aris::Core::MSG parseAdjust(const std::string &cmd, const std::map<std::string, std::string> &params);
+	int adjust(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam);
+	Aris::Core::Msg parseAdjust(const std::string &cmd, const std::map<std::string, std::string> &params);
 
 	struct FAST_WALK_PARAM :public GAIT_PARAM_BASE
 	{
@@ -92,11 +95,11 @@ namespace Robots
 		double *pInDec{ nullptr };
 		double *pInConst{ nullptr };
 	};
-	int fastWalk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam);
-	Aris::Core::MSG parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
+	int fastWalk(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam);
+	Aris::Core::Msg parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
 
-	int resetOrigin(ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE *pParam);
-	Aris::Core::MSG parseResetOrigin(const std::string &cmd, const std::map<std::string, std::string> &params);
+	int resetOrigin(RobotBase * pRobot, const Robots::GAIT_PARAM_BASE *pParam);
+	Aris::Core::Msg parseResetOrigin(const std::string &cmd, const std::map<std::string, std::string> &params);
 
 	struct MOVE_PARAM :public GAIT_PARAM_BASE
 	{

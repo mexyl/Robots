@@ -68,7 +68,7 @@ namespace Robots
 
 		bool isTaken{ false };
 
-		friend void addAllParams(const Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
+		friend void addAllParams(const Aris::Core::XmlElement *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
 		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
 	};
 	class ROOT_NODE :public NODE
@@ -79,7 +79,7 @@ namespace Robots
 	private:
 		NODE *pDefault;
 
-		friend void addAllParams(const Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
+		friend void addAllParams(const Aris::Core::XmlElement *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
 		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
 	};
 	class GROUP_NODE :public NODE
@@ -95,7 +95,7 @@ namespace Robots
 	private:
 		NODE *pDefault;
 
-		friend void addAllParams(const Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
+		friend void addAllParams(const Aris::Core::XmlElement *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
 		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
 	};
 	class PARAM_NODE :public NODE
@@ -107,7 +107,7 @@ namespace Robots
 		std::string defaultValue;
 		std::string minValue, maxValue;
 
-		friend void addAllParams(const Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
+		friend void addAllParams(const Aris::Core::XmlElement *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
 		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
 	};
 
@@ -166,7 +166,7 @@ namespace Robots
 		}
 	}
 
-	void addAllParams(const Aris::Core::ELEMENT *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames)
+	void addAllParams(const Aris::Core::XmlElement *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames)
 	{
 		/*add all children*/
 		for (auto pChild = pEle->FirstChildElement();pChild != nullptr;	pChild = pChild->NextSiblingElement())
@@ -406,27 +406,27 @@ namespace Robots
 		}
 	};
 	
-	class ROBOT_SERVER::IMP
+	class RobotServer::Imp
 	{
 	public:
-		void LoadXml(const Aris::Core::DOCUMENT &doc);
+		void LoadXml(const Aris::Core::XmlDocument &doc);
 		void AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc);
 		void Start();
 		void Stop();
 
-		IMP(ROBOT_SERVER *pServer) 
+		Imp(RobotServer *pServer) 
 		{ 
 			this->pServer = pServer;
 #ifdef PLATFORM_IS_LINUX
-			this->pController = Aris::Control::CONTROLLER::CreateMaster<Aris::Control::CONTROLLER>();
+			this->pController = Aris::Control::Controller::CreateMaster<Aris::Control::Controller>();
 #endif
 		};
 	private:
-		IMP(const IMP&) = delete;
+		Imp(const Imp&) = delete;
 
-		void DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string, std::string> &params);
-		void GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::MSG &msg);
-		void OnReceiveMsg(const Aris::Core::MSG &m, Aris::Core::MSG &retError);
+		void DecodeMsg(const Aris::Core::Msg &msg, std::string &cmd, std::map<std::string, std::string> &params);
+		void GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg);
+		void OnReceiveMsg(const Aris::Core::Msg &m, Aris::Core::Msg &retError);
 
 		inline int p2a(const int phy)
 		{
@@ -451,14 +451,14 @@ namespace Robots
 			}
 		}
 
-		int home(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
-		int enable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
-		int disable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
-		int recover(Robots::RECOVER_PARAM *pParam, Aris::Control::CONTROLLER::DATA data);
-		int runGait(Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data);
+		int home(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::Controller::Data data);
+		int enable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::Controller::Data data);
+		int disable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::Controller::Data data);
+		int recover(Robots::RECOVER_PARAM *pParam, Aris::Control::Controller::Data data);
+		int runGait(Robots::GAIT_PARAM_BASE *pParam, Aris::Control::Controller::Data data);
 
-		int execute_cmd(int count, char *cmd, Aris::Control::CONTROLLER::DATA data);
-		static int tg(Aris::Control::CONTROLLER::DATA &data);
+		int execute_cmd(int count, char *cmd, Aris::Control::Controller::Data data);
+		static int tg(Aris::Control::Controller::Data &data);
 
 	private:
 		enum ROBOT_CMD_ID
@@ -473,14 +473,14 @@ namespace Robots
 		};
 
 	private:
-		ROBOT_SERVER *pServer;
+		RobotServer *pServer;
 		std::map<std::string, int> mapName2ID;//store gait id in follow vector
 		std::vector<GAIT_FUNC> allGaits;
 		std::vector<PARSE_FUNC> allParsers;
 
 		std::map<std::string, std::unique_ptr<COMMAND_STRUCT> > mapCmd;//store NODE of command
 
-		Aris::Core::CONN server;
+		Aris::Core::Socket server;
 		std::string ip, port;
 
 		double alignEE[18], alignIn[18], recoverEE[18];
@@ -489,13 +489,13 @@ namespace Robots
 		int mapPhy2Abs[18];
 		int mapAbs2Phy[18];
 
-		Aris::Control::CONTROLLER *pController;
+		Aris::Control::Controller *pController;
 
 		std::unique_ptr<Aris::Sensor::IMU> pImu;
-		friend class ROBOT_SERVER;
+		friend class RobotServer;
 	};
 
-	void ROBOT_SERVER::IMP::LoadXml(const Aris::Core::DOCUMENT &doc)
+	void RobotServer::Imp::LoadXml(const Aris::Core::XmlDocument &doc)
 	{
 		/*load robot model*/
 		pServer->pRobot->LoadXml(doc);
@@ -524,7 +524,7 @@ namespace Robots
 
 		/*motion parameter*/
 		auto pContEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control");
-		Aris::DynKer::CALCULATOR c;
+		Aris::DynKer::Calculator c;
 		meter2count = c.CalculateExpression(pContEle->Attribute("meter2count")).ToDouble();
 
 		/*construct mapPhy2Abs and mapAbs2Phy*/
@@ -552,7 +552,7 @@ namespace Robots
 		mat = c.CalculateExpression(pContEle->FirstChildElement("RecoverPee")->GetText());
 		std::copy_n(mat.Data(), 18, recoverEE);
 		double pe[6]{ 0 };
-		pServer->pRobot->SetBodyPe(pe);
+		pServer->pRobot->SetPeb(pe);
 		pServer->pRobot->SetPee(alignEE);
 		pServer->pRobot->GetPin(alignIn);
 
@@ -604,19 +604,19 @@ namespace Robots
 		}
 
 		/*Set socket connection callback function*/
-		server.SetOnReceivedConnection([](Aris::Core::CONN *pConn, const char *pRemoteIP, int remotePort)
+		server.SetOnReceivedConnection([](Aris::Core::Socket *pConn, const char *pRemoteIP, int remotePort)
 		{
 			Aris::Core::log(std::string("received connection, the ip is: ") + pRemoteIP);
 			return 0;
 		});
-		server.SetOnReceiveRequest([this](Aris::Core::CONN *pConn, Aris::Core::MSG &msg)
+		server.SetOnReceiveRequest([this](Aris::Core::Socket *pConn, Aris::Core::Msg &msg)
 		{
-			Aris::Core::MSG ret;
+			Aris::Core::Msg ret;
 			this->OnReceiveMsg(msg, ret);
 
 			return ret;
 		});
-		server.SetOnLoseConnection([this](Aris::Core::CONN *pConn)
+		server.SetOnLoseConnection([this](Aris::Core::Socket *pConn)
 		{
 			Aris::Core::log("lost connection");
 			while (true)
@@ -626,7 +626,7 @@ namespace Robots
 					pConn->StartServer(this->port.c_str());
 					break;
 				}
-				catch (Aris::Core::CONN::START_SERVER_ERROR &e)
+				catch (Aris::Core::Socket::StartServerError &e)
 				{
 					std::cout << e.what() << std::endl << "will try to restart in 1s" << std::endl;
 					Aris::Core::Sleep(1000);
@@ -636,7 +636,7 @@ namespace Robots
 			return 0;
 		});
 	}
-	void ROBOT_SERVER::IMP::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
+	void RobotServer::Imp::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 	{
 		if (mapName2ID.find(cmdName) != mapName2ID.end())
 		{
@@ -652,7 +652,7 @@ namespace Robots
 			std::cout << cmdName << ":" << mapName2ID.at(cmdName) << std::endl;
 		}
 	};
-	void ROBOT_SERVER::IMP::Start()
+	void RobotServer::Imp::Start()
 	{
 		/*start sensors*/
 		if (pImu)
@@ -667,7 +667,7 @@ namespace Robots
 				server.StartServer(port.c_str());
 				break;
 			}
-			catch (Aris::Core::CONN::START_SERVER_ERROR &e)
+			catch (Aris::Core::Socket::StartServerError &e)
 			{
 				std::cout << e.what() << std::endl << "will restart in 1s" << std::endl;
 				Aris::Core::Sleep(1000);
@@ -678,7 +678,7 @@ namespace Robots
 		pController->Start();
 #endif
 	}
-	void ROBOT_SERVER::IMP::Stop()
+	void RobotServer::Imp::Stop()
 	{
 		server.Close();
 
@@ -691,9 +691,9 @@ namespace Robots
 		}
 	}
 
-	void ROBOT_SERVER::IMP::OnReceiveMsg(const Aris::Core::MSG &msg, Aris::Core::MSG &retError)
+	void RobotServer::Imp::OnReceiveMsg(const Aris::Core::Msg &msg, Aris::Core::Msg &retError)
 	{
-		Aris::Core::MSG cmdMsg;
+		Aris::Core::Msg cmdMsg;
 		try
 		{
 			std::string cmd;
@@ -715,7 +715,7 @@ namespace Robots
 		this->pController->MsgPipe().SendToRT(cmdMsg);
 #endif
 	}
-	void ROBOT_SERVER::IMP::DecodeMsg(const Aris::Core::MSG &msg, std::string &cmd, std::map<std::string, std::string> &params)
+	void RobotServer::Imp::DecodeMsg(const Aris::Core::Msg &msg, std::string &cmd, std::map<std::string, std::string> &params)
 	{
 		std::vector<std::string> paramVector;
 		int paramNum{0};
@@ -873,7 +873,7 @@ namespace Robots
 			std::cout << std::string(paramPrintLength-i.first.length(),' ') << i.first << " : " << i.second << std::endl;
 		}
 	}
-	void ROBOT_SERVER::IMP::GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::MSG &msg)
+	void RobotServer::Imp::GenerateCmdMsg(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)
 	{
 		if (cmd == "en")
 		{
@@ -1047,7 +1047,7 @@ namespace Robots
 		}
 	}
 	
-	int ROBOT_SERVER::IMP::home(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data)
+	int RobotServer::Imp::home(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::Controller::Data data)
 	{
 		bool isAllHomed = true;
 
@@ -1059,9 +1059,9 @@ namespace Robots
 				if ((pParam->count != 0) && (data.pMotionData->operator[](a2p(i)).ret == 0))
 				{
 					/*判断是否为第一次走到home,否则什么也不做，这样就会继续刷上次的值*/
-					if (data.pMotionData->operator[](a2p(i)).cmd == Aris::Control::MOTION::HOME)
+					if (data.pMotionData->operator[](a2p(i)).cmd ==  Aris::Control::EthercatMotion::HOME)
 					{
-						data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::RUN;
+						data.pMotionData->operator[](a2p(i)).cmd =  Aris::Control::EthercatMotion::RUN;
 						data.pMotionData->operator[](a2p(i)).targetPos = data.pMotionData->operator[](a2p(i)).feedbackPos;
 						data.pMotionData->operator[](a2p(i)).targetVel = 0;
 						data.pMotionData->operator[](a2p(i)).targetCur = 0;
@@ -1070,7 +1070,7 @@ namespace Robots
 				else
 				{
 					isAllHomed = false;
-					data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::HOME;
+					data.pMotionData->operator[](a2p(i)).cmd =  Aris::Control::EthercatMotion::HOME;
 
 					if (pParam->count % 1000 == 0)
 					{
@@ -1082,7 +1082,7 @@ namespace Robots
 
 		return isAllHomed ? 0 : 1;
 	};
-	int ROBOT_SERVER::IMP::enable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data)
+	int RobotServer::Imp::enable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::Controller::Data data)
 	{
 		bool isAllEnabled = true;
 
@@ -1094,10 +1094,10 @@ namespace Robots
 				if ((pParam->count != 0) && (data.pMotionData->operator[](a2p(i)).ret == 0))
 				{
 					/*判断是否为第一次走到enable,否则什么也不做，这样就会继续刷上次的值*/
-					if (data.pMotionData->operator[](a2p(i)).cmd == Aris::Control::MOTION::ENABLE)
+					if (data.pMotionData->operator[](a2p(i)).cmd ==  Aris::Control::EthercatMotion::ENABLE)
 					{
-						data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::RUN;
-						data.pMotionData->operator[](a2p(i)).mode = Aris::Control::MOTION::POSITION;
+						data.pMotionData->operator[](a2p(i)).cmd =  Aris::Control::EthercatMotion::RUN;
+						data.pMotionData->operator[](a2p(i)).mode =  Aris::Control::EthercatMotion::POSITION;
 						data.pMotionData->operator[](a2p(i)).targetPos = data.pMotionData->operator[](a2p(i)).feedbackPos;
 						data.pMotionData->operator[](a2p(i)).targetVel = 0;
 						data.pMotionData->operator[](a2p(i)).targetCur = 0;
@@ -1106,8 +1106,8 @@ namespace Robots
 				else
 				{
 					isAllEnabled = false;
-					data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::ENABLE;
-					data.pMotionData->operator[](a2p(i)).mode = Aris::Control::MOTION::POSITION;
+					data.pMotionData->operator[](a2p(i)).cmd =  Aris::Control::EthercatMotion::ENABLE;
+					data.pMotionData->operator[](a2p(i)).mode =  Aris::Control::EthercatMotion::POSITION;
 
 					if (pParam->count % 1000 == 0)
 					{
@@ -1119,7 +1119,7 @@ namespace Robots
 
 		return isAllEnabled ? 0 : 1;
 	};
-	int ROBOT_SERVER::IMP::disable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::CONTROLLER::DATA data)
+	int RobotServer::Imp::disable(const Robots::BASIC_FUNCTION_PARAM *pParam, Aris::Control::Controller::Data data)
 	{
 		bool isAllDisabled = true;
 
@@ -1136,7 +1136,7 @@ namespace Robots
 				{
 					/*否则往下刷disable指令*/
 					isAllDisabled = false;
-					data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::DISABLE;
+					data.pMotionData->operator[](a2p(i)).cmd =  Aris::Control::EthercatMotion::DISABLE;
 
 					if (pParam->count % 1000 == 0)
 					{
@@ -1148,7 +1148,7 @@ namespace Robots
 
 		return isAllDisabled ? 0 : 1;
 	}
-	int ROBOT_SERVER::IMP::recover(Robots::RECOVER_PARAM *pParam, Aris::Control::CONTROLLER::DATA data)
+	int RobotServer::Imp::recover(Robots::RECOVER_PARAM *pParam, Aris::Control::Controller::Data data)
 	{
 			
 			
@@ -1165,7 +1165,7 @@ namespace Robots
 		
 		
 		const double pe[6]{ 0 };
-		this->pServer->pRobot->SetBodyPe(pe);
+		this->pServer->pRobot->SetPeb(pe);
 
 		int leftCount = pParam->count < pParam->alignCount ? 0 : pParam->alignCount;
 		int rightCount = pParam->count < pParam->alignCount ? pParam->alignCount : pParam->alignCount + pParam->recoverCount;
@@ -1203,7 +1203,7 @@ namespace Robots
 				this->pServer->pRobot->pLegs[i]->GetPin(pIn);
 				for (int j = 0; j < 3; ++j)
 				{
-					data.pMotionData->operator[](a2p(i * 3 + j)).cmd = Aris::Control::MOTION::RUN;
+					data.pMotionData->operator[](a2p(i * 3 + j)).cmd =  Aris::Control::EthercatMotion::RUN;
 					data.pMotionData->operator[](a2p(i * 3 + j)).targetPos = static_cast<std::int32_t>(pIn[j] * meter2count);
 				}
 				
@@ -1213,15 +1213,15 @@ namespace Robots
 		//向下写入输入位置
 		return pParam->alignCount + pParam->recoverCount - pParam->count - 1;
 	}
-	int ROBOT_SERVER::IMP::runGait(Robots::GAIT_PARAM_BASE *pParam, Aris::Control::CONTROLLER::DATA data)
+	int RobotServer::Imp::runGait(Robots::GAIT_PARAM_BASE *pParam, Aris::Control::Controller::Data data)
 	{
 		/*保存初始位置*/
 		static double pBody[6]{ 0 }, vBody[6]{ 0 }, pEE[18]{ 0 }, vEE[18]{ 0 };
 		if (pParam->count == 0)
 		{
-			pServer->pRobot->GetBodyPe(pBody);
+			pServer->pRobot->GetPeb(pBody);
 			pServer->pRobot->GetPee(pEE);
-			pServer->pRobot->GetBodyVel(vBody);
+			pServer->pRobot->GetVb(vBody);
 			pServer->pRobot->GetVee(vEE);
 
 			rt_printf("begin position:");
@@ -1238,7 +1238,7 @@ namespace Robots
 		std::copy_n(vBody, 6, pParam->beginBodyVel);
 
 		/*获取陀螺仪传感器数据*/
-		Aris::Sensor::SENSOR_DATA<Aris::Sensor::IMU_DATA> imuDataProtected;
+		Aris::Sensor::SensorData<Aris::Sensor::ImuData> imuDataProtected;
 		if (pImu) imuDataProtected = pImu->GetSensorData();
 		pParam->imuData = &imuDataProtected.Get();
 
@@ -1254,14 +1254,14 @@ namespace Robots
 		//向下写入输入位置
 		for (int i = 0; i<18; ++i)
 		{
-			data.pMotionData->operator[](a2p(i)).cmd = Aris::Control::MOTION::RUN;
+			data.pMotionData->operator[](a2p(i)).cmd =  Aris::Control::EthercatMotion::RUN;
 			data.pMotionData->operator[](a2p(i)).targetPos = static_cast<std::int32_t>(pIn[i] * meter2count);
 		}
 
 		return ret;
 	}
 	
-	int ROBOT_SERVER::IMP::execute_cmd(int count, char *cmd, Aris::Control::CONTROLLER::DATA data)
+	int RobotServer::Imp::execute_cmd(int count, char *cmd, Aris::Control::Controller::Data data)
 	{
 		int ret;
 		Robots::ALL_PARAM_BASE *pParam = reinterpret_cast<Robots::ALL_PARAM_BASE *>(cmd);
@@ -1292,7 +1292,7 @@ namespace Robots
 
 		return ret;
 	}
-	int ROBOT_SERVER::IMP::tg(Aris::Control::CONTROLLER::DATA &data)
+	int RobotServer::Imp::tg(Aris::Control::Controller::Data &data)
 	{
 		enum { CMD_POOL_SIZE = 50 };
 		
@@ -1335,7 +1335,7 @@ namespace Robots
 			}
 			for (auto &motData : *data.pMotionData)
 			{
-				motData.cmd = Aris::Control::MOTION::DISABLE;
+				motData.cmd =  Aris::Control::EthercatMotion::DISABLE;
 			}
 			
 			cmdNum = 0;
@@ -1368,7 +1368,7 @@ namespace Robots
 		//执行cmd queue中的cmd
 		if (cmdNum>0)
 		{
-			if (Robots::ROBOT_SERVER::GetInstance()->pImp->execute_cmd(count, cmdQueue[currentCmd], data) == 0)
+			if (Robots::RobotServer::GetInstance()->pImp->execute_cmd(count, cmdQueue[currentCmd], data) == 0)
 			{
 				rt_printf("cmd finished, spend %d counts\n\n", count + 1);				
 				count = 0;
@@ -1391,17 +1391,17 @@ namespace Robots
 		//检查连续
 		for (int i = 0; i<18; ++i)
 		{
-			if ((data.pLastMotionData->at(i).cmd == Aris::Control::MOTION::RUN)
-				&& (data.pMotionData->at(i).cmd == Aris::Control::MOTION::RUN)
+			if ((data.pLastMotionData->at(i).cmd ==  Aris::Control::EthercatMotion::RUN)
+				&& (data.pMotionData->at(i).cmd ==  Aris::Control::EthercatMotion::RUN)
 				&& (std::abs(data.pLastMotionData->at(i).targetPos - data.pMotionData->at(i).targetPos)>20000))
 			{
 				rt_printf("Data not continuous in count:%d\n", count);
 
-				auto pR = ROBOT_SERVER::GetInstance()->pRobot.get();
+				auto pR = RobotServer::GetInstance()->pRobot.get();
 				double pEE[18];
 				double pBody[6];
 				pR->GetPee(pEE);
-				pR->GetBodyPe(pBody);
+				pR->GetPeb(pBody);
 
 				rt_printf("The coming pee and body pe are:\n");
 				rt_printf("%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
@@ -1434,16 +1434,16 @@ namespace Robots
 		return 0;
 	}
 
-	ROBOT_SERVER * ROBOT_SERVER::GetInstance()
+	RobotServer * RobotServer::GetInstance()
 	{
-		static ROBOT_SERVER instance;
+		static RobotServer instance;
 		return &instance;
 	}
-	ROBOT_SERVER::ROBOT_SERVER():pImp(new IMP(this)){}
-	ROBOT_SERVER::~ROBOT_SERVER(){}
-	void ROBOT_SERVER::LoadXml(const char *fileName)
+	RobotServer::RobotServer():pImp(new Imp(this)){}
+	RobotServer::~RobotServer(){}
+	void RobotServer::LoadXml(const char *fileName)
 	{
-		Aris::Core::DOCUMENT doc;
+		Aris::Core::XmlDocument doc;
 
 		if (doc.LoadFile(fileName) != 0)
 		{
@@ -1452,19 +1452,19 @@ namespace Robots
 		
 		pImp->LoadXml(doc);
 	}
-	void ROBOT_SERVER::LoadXml(const Aris::Core::DOCUMENT &xmlDoc)
+	void RobotServer::LoadXml(const Aris::Core::XmlDocument &xmlDoc)
 	{
 		pImp->LoadXml(xmlDoc);
 	}
-	void ROBOT_SERVER::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
+	void RobotServer::AddGait(std::string cmdName, GAIT_FUNC gaitFunc, PARSE_FUNC parseFunc)
 	{
 		pImp->AddGait(cmdName, gaitFunc, parseFunc);
 	}
-	void ROBOT_SERVER::Start()
+	void RobotServer::Start()
 	{
 		pImp->Start();
 	}
-	void ROBOT_SERVER::Stop()
+	void RobotServer::Stop()
 	{
 		this->pImp->Stop();
 	}

@@ -15,8 +15,8 @@ using namespace std;
 
 namespace Robots
 {	
-	LEG_IV::LEG_IV(ROBOT_BASE* pRobot, const char *Name)
-		:LEG_BASE(pRobot, Name)
+	LEG_IV::LEG_IV(RobotBase* pRobot, const char *Name)
+		:LegBase(pRobot, Name)
 	{
 
 	}
@@ -170,12 +170,12 @@ namespace Robots
 
 	ROBOT_IV::ROBOT_IV()
 	{
-		ROBOT_BASE::pLegs[0] = static_cast<LEG_BASE*>(&leg0);
-		ROBOT_BASE::pLegs[1] = static_cast<LEG_BASE*>(&leg1);
-		ROBOT_BASE::pLegs[2] = static_cast<LEG_BASE*>(&leg2);
-		ROBOT_BASE::pLegs[3] = static_cast<LEG_BASE*>(&leg3);
-		ROBOT_BASE::pLegs[4] = static_cast<LEG_BASE*>(&leg4);
-		ROBOT_BASE::pLegs[5] = static_cast<LEG_BASE*>(&leg5);
+		RobotBase::pLegs[0] = static_cast<LegBase*>(&leg0);
+		RobotBase::pLegs[1] = static_cast<LegBase*>(&leg1);
+		RobotBase::pLegs[2] = static_cast<LegBase*>(&leg2);
+		RobotBase::pLegs[3] = static_cast<LegBase*>(&leg3);
+		RobotBase::pLegs[4] = static_cast<LegBase*>(&leg4);
+		RobotBase::pLegs[5] = static_cast<LegBase*>(&leg5);
 
 
 		double ep0[] = { -0.396, 0.357, 0, PI, 0, 0, };
@@ -187,11 +187,11 @@ namespace Robots
 
 
 
-		s_pe2pm(ep0, const_cast<double * const>(leg0.pBase->GetPrtPmPtr()));
-		s_pe2pm(ep1, const_cast<double * const>(leg1.pBase->GetPrtPmPtr()));
-		s_pe2pm(ep2, const_cast<double * const>(leg2.pBase->GetPrtPmPtr()));
-		s_pe2pm(ep3, const_cast<double * const>(leg3.pBase->GetPrtPmPtr()));
-		s_pe2pm(ep4, const_cast<double * const>(leg4.pBase->GetPrtPmPtr()));
-		s_pe2pm(ep5, const_cast<double * const>(leg5.pBase->GetPrtPmPtr()));
+		s_pe2pm(ep0, const_cast<double * const>(*leg0.pBase->PrtPm()));
+		s_pe2pm(ep1, const_cast<double * const>(*leg1.pBase->PrtPm()));
+		s_pe2pm(ep2, const_cast<double * const>(*leg2.pBase->PrtPm()));
+		s_pe2pm(ep3, const_cast<double * const>(*leg3.pBase->PrtPm()));
+		s_pe2pm(ep4, const_cast<double * const>(*leg4.pBase->PrtPm()));
+		s_pe2pm(ep5, const_cast<double * const>(*leg5.pBase->PrtPm()));
 	}
 }

@@ -23,7 +23,7 @@ using namespace Aris::DynKer;
 
 namespace Robots
 {
-	int walkAcc(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
+	int walkAcc(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		/*初始化参数*/
 		const WALK_PARAM *pRealParam = static_cast<const WALK_PARAM *>(pParam);
@@ -95,10 +95,11 @@ namespace Robots
 		pBodyPE[lAxis] += lSign*0.25*d / cos(b / 2)*sin(a + b * 3 / 4)*(acc_even(totalCount, count + 1));
 
 		/*计算完毕，更新pRobot*/
-		pRobot->SetPee(pEE, pBodyPE, "G");
+		pRobot->SetPeb(pBodyPE);
+		pRobot->SetPee(pEE);
 		return totalCount - count - 1;
 	}
-	int walkConst(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
+	int walkConst(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		/*初始化参数*/
 		const WALK_PARAM *pRealParam = static_cast<const WALK_PARAM *>(pParam);
@@ -214,10 +215,11 @@ namespace Robots
 
 
 		/*计算完毕，更新pRobot*/
-		pRobot->SetPee(pEE, pBodyPE, "G");
+		pRobot->SetPeb(pBodyPE);
+		pRobot->SetPee(pEE);
 		return 2 * totalCount - pRealParam->count - 1;
 	}
-	int walkDec(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
+	int walkDec(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		/*初始化参数*/
 		const WALK_PARAM *pRealParam = static_cast<const WALK_PARAM *>(pParam);
@@ -292,10 +294,11 @@ namespace Robots
 		pBodyPE[lAxis] += lSign*0.25*d / cos(b / 2)*sin(a + b / 2)*(dec_even(totalCount, count + 1));
 
 		/*计算完毕，更新pRobot*/
-		pRobot->SetPee(pEE, pBodyPE, "G");
+		pRobot->SetPeb(pBodyPE);
+		pRobot->SetPee(pEE);
 		return totalCount - count - 1;
 	}
-	int walk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
+	int walk(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		const Robots::WALK_PARAM *pWP = static_cast<const Robots::WALK_PARAM *>(pParam);
 
@@ -413,7 +416,7 @@ namespace Robots
 
 		return 2 * pWP->n * pWP->totalCount - pWP->count - 1;
 	}
-	Aris::Core::MSG parseWalk(const std::string &cmd, const std::map<std::string, std::string> &params)
+	Aris::Core::Msg parseWalk(const std::string &cmd, const std::map<std::string, std::string> &params)
 	{
 		Robots::WALK_PARAM  param;
 
@@ -453,14 +456,14 @@ namespace Robots
 			}
 		}
 
-		Aris::Core::MSG msg;
+		Aris::Core::Msg msg;
 
 		msg.CopyStruct(param);
 
 		return msg;
 	}
 
-	int adjust(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
+	int adjust(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		auto pAP = static_cast<const ADJUST_PARAM*>(pParam);
 
@@ -581,7 +584,8 @@ namespace Robots
 			s_pq2pe(pq, pBody);
 		}
 
-		pRobot->SetPee(pEE, pBody);
+		pRobot->SetPeb(pBody);
+		pRobot->SetPee(pEE);
 
 		/*计算总共所需要花的时间，以便返回剩余的count数*/
 		int totalCount{ 0 };
@@ -593,7 +597,7 @@ namespace Robots
 
 		return totalCount - pAP->count - 1;
 	}
-	Aris::Core::MSG parseAdjust(const std::string &cmd, const std::map<std::string, std::string> &params)
+	Aris::Core::Msg parseAdjust(const std::string &cmd, const std::map<std::string, std::string> &params)
 	{
 		double firstEE[18] =
 		{
@@ -657,14 +661,14 @@ namespace Robots
 			}
 		}
 
-		Aris::Core::MSG msg;
+		Aris::Core::Msg msg;
 
 		msg.CopyStruct(param);
 
 		return msg;
 	}
 	
-	int fastWalk(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
+	int fastWalk(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		auto pFP = static_cast<const FAST_WALK_PARAM*>(pParam);
 		
@@ -685,7 +689,7 @@ namespace Robots
 
 		return pFP->accCount + ((pFP->n - 1) * pFP->constCount) + pFP->decCount - pFP->count-1;
 	}
-	Aris::Core::MSG parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params)
+	Aris::Core::Msg parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params)
 	{
 		FAST_WALK_PARAM param;
 		for (auto &i : params)
@@ -779,7 +783,7 @@ namespace Robots
 			}
 		}
 		
-		Aris::Core::MSG msg;
+		Aris::Core::Msg msg;
 
 		msg.CopyStruct(param);
 
@@ -787,7 +791,7 @@ namespace Robots
 		
 	}
 
-	int resetOrigin(ROBOT_BASE * pRobot, const Robots::GAIT_PARAM_BASE *pParam)
+	int resetOrigin(RobotBase * pRobot, const Robots::GAIT_PARAM_BASE *pParam)
 	{
 		if (pParam->imuData)
 		{
@@ -818,28 +822,28 @@ namespace Robots
 		
 		
 		double pEE[18], pBody[6]{ 0 }, vEE[18], vBody[6]{ 0 };
-		pRobot->GetPee(pEE, &pRobot->Body());
-		pRobot->GetVee(vEE, &pRobot->Body());
+		pRobot->GetPee(pEE, pRobot->Body());
+		pRobot->GetVee(vEE, pRobot->Body());
 
-		pRobot->SetBodyPe(pBody);
+		pRobot->SetPeb(pBody);
 		pRobot->SetPee(pEE);
 
-		pRobot->SetBodyVel(vBody);
+		pRobot->SetVb(vBody);
 		pRobot->SetVee(vEE);
 
 		return 0;
 	}
 
-	Aris::Core::MSG parseResetOrigin(const std::string &cmd, const std::map<std::string, std::string> &params)
+	Aris::Core::Msg parseResetOrigin(const std::string &cmd, const std::map<std::string, std::string> &params)
 	{
 		Robots::GAIT_PARAM_BASE param;
-		Aris::Core::MSG msg;
+		Aris::Core::Msg msg;
 		msg.CopyStruct(param);
 		return msg;
 	}
 
 
-	int move(ROBOT_BASE * pRobot, const GAIT_PARAM_BASE * pParam)
+	int move(RobotBase * pRobot, const GAIT_PARAM_BASE * pParam)
 	{
 		//const Robots::MOVE_PARAM *param = static_cast<const Robots::MOVE_PARAM *>(pParam);
 

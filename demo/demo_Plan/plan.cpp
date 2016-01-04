@@ -2,8 +2,8 @@
 #include "plan.h"
 #include <Aris_DynKer.h>
 
-Robots::ROBOT_TYPE_I robot;
-Aris::Plan::FAST_PATH tg;
+Robots::RobotTypeI robot;
+Aris::Plan::FastPath tg;
 
 #define NUM 900
 #define ACC_NUM 900
@@ -70,7 +70,7 @@ void pe_const(double time, double *bodyPe, double *bodyVel = nullptr, double *bo
 
 
 }
-void get_const(Aris::Plan::FAST_PATH::DATA & data)
+void get_const(Aris::Plan::FastPath::Data & data)
 {
 	double bodyPe[6],bodyVel[6],bodyAcc[6];
 	pe_const(data.time, bodyPe, bodyVel, bodyAcc);
@@ -89,13 +89,13 @@ void get_const(Aris::Plan::FAST_PATH::DATA & data)
 	
 	Aris::DynKer::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
 
-	robot.pLegs[leg_index]->SetPee(pEE, "G");
-	robot.pLegs[leg_index]->SetVee(vEE, "G");
+	robot.pLegs[leg_index]->SetPee(pEE);
+	robot.pLegs[leg_index]->SetVee(vEE);
 
-	robot.pLegs[leg_index]->GetJvi(data.Ji, "G");
-	robot.pLegs[leg_index]->GetDifJvi(data.dJi, "G");
-	robot.pLegs[leg_index]->GetCvi(data.Cv, "G");
-	robot.pLegs[leg_index]->GetCai(data.Ca, "G");
+	robot.pLegs[leg_index]->GetJvi(data.Ji);
+	robot.pLegs[leg_index]->GetDifJvi(data.dJi);
+	robot.pLegs[leg_index]->GetCvi(data.Cv);
+	robot.pLegs[leg_index]->GetCai(data.Ca);
 }
 
 
@@ -117,7 +117,7 @@ void h_acc(double s_in, double *h_out)
 	h_out[1] = -stepH*sin(s_in);
 	h_out[2] = stepD / 4 * cos(s_in);
 }
-void get_acc(Aris::Plan::FAST_PATH::DATA & data)
+void get_acc(Aris::Plan::FastPath::Data & data)
 {
 	double bodyPe[6]{ 0,0,0.5*a*data.time*data.time,0,0,0 }, bodyVel[6]{ 0,0,a*data.time,0,0,0 }, bodyAcc[6]{ 0,0,a,0,0,0 };
 	double bodyPm[16];
@@ -134,13 +134,13 @@ void get_acc(Aris::Plan::FAST_PATH::DATA & data)
 
 	Aris::DynKer::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
 
-	robot.pLegs[leg_index]->SetPee(pEE, "G");
-	robot.pLegs[leg_index]->SetVee(vEE, "G");
+	robot.pLegs[leg_index]->SetPee(pEE);
+	robot.pLegs[leg_index]->SetVee(vEE);
 
-	robot.pLegs[leg_index]->GetJvi(data.Ji, "G");
-	robot.pLegs[leg_index]->GetDifJvi(data.dJi, "G");
-	robot.pLegs[leg_index]->GetCvi(data.Cv, "G");
-	robot.pLegs[leg_index]->GetCai(data.Ca, "G");
+	robot.pLegs[leg_index]->GetJvi(data.Ji);
+	robot.pLegs[leg_index]->GetDifJvi(data.dJi);
+	robot.pLegs[leg_index]->GetCvi(data.Cv);
+	robot.pLegs[leg_index]->GetCai(data.Ca);
 }
 
 void b_dec(double s_in, double *b_out)
@@ -161,7 +161,7 @@ void h_dec(double s_in, double *h_out)
 	h_out[1] = -stepH*sin(s_in);
 	h_out[2] = stepD / 4 * cos(s_in);
 }
-void get_dec(Aris::Plan::FAST_PATH::DATA & data)
+void get_dec(Aris::Plan::FastPath::Data & data)
 {
 	double bodyPe[6]{ 0,0, 0.5*a*decTime / 1000 * decTime / 1000 - 0.5*a*data.time*data.time,0,0,0 };
 	double bodyVel[6]{ 0,0,a*decTime / 1000 - a*data.time,0,0,0 };
@@ -181,13 +181,13 @@ void get_dec(Aris::Plan::FAST_PATH::DATA & data)
 
 	Aris::DynKer::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
 
-	robot.pLegs[leg_index]->SetPee(pEE, "G");
-	robot.pLegs[leg_index]->SetVee(vEE, "G");
+	robot.pLegs[leg_index]->SetPee(pEE);
+	robot.pLegs[leg_index]->SetVee(vEE);
 
-	robot.pLegs[leg_index]->GetJvi(data.Ji, "G");
-	robot.pLegs[leg_index]->GetDifJvi(data.dJi, "G");
-	robot.pLegs[leg_index]->GetCvi(data.Cv, "G");
-	robot.pLegs[leg_index]->GetCai(data.Ca, "G");
+	robot.pLegs[leg_index]->GetJvi(data.Ji);
+	robot.pLegs[leg_index]->GetDifJvi(data.dJi);
+	robot.pLegs[leg_index]->GetCvi(data.Cv);
+	robot.pLegs[leg_index]->GetCai(data.Ca);
 }
 
 
@@ -213,7 +213,7 @@ void plan_const(const char *fileName)
 		std::cout << "begin to plan leg " << i << std::endl;
 
 		leg_index = i;
-		tg.SetMotorLimit(std::vector<Aris::Plan::FAST_PATH::MOTOR_LIMIT> {3, { 0.9,-0.9,3.0,-3.0 } });
+		tg.SetMotorLimit(std::vector<Aris::Plan::FastPath::MotionLimit> {3, { 0.9,-0.9,3.0,-3.0 } });
 		tg.SetBeginNode({ 0.0, 0.0, 0.0, 0.0, true });
 		tg.SetEndNode({  constTime / 1000.0, PI, 0.0, 0.0, true });
 		tg.SetFunction(get_const);
@@ -258,7 +258,7 @@ void plan_acc(const char *fileName)
 		std::cout << "begin to plan leg " << i << std::endl;
 
 		leg_index = i;
-		tg.SetMotorLimit(std::vector<Aris::Plan::FAST_PATH::MOTOR_LIMIT> {3, { 0.9,-0.9,3.2,-3.2 } });
+		tg.SetMotorLimit(std::vector<Aris::Plan::FastPath::MotionLimit> {3, { 0.9,-0.9,3.2,-3.2 } });
 		tg.SetBeginNode({ 0.0, 0.0, 0.0, 0.0, true });
 		tg.SetEndNode({ accTime / 1000.0, PI, 0.0, 0.0, true });
 		tg.SetFunction(get_acc);
@@ -299,7 +299,7 @@ void plan_dec(const char *fileName)
 		std::cout << "begin to plan leg " << i << std::endl;
 
 		leg_index = i;
-		tg.SetMotorLimit(std::vector<Aris::Plan::FAST_PATH::MOTOR_LIMIT> {3, { 0.9,-0.9,3.2,-3.2 } });
+		tg.SetMotorLimit(std::vector<Aris::Plan::FastPath::MotionLimit> {3, { 0.9,-0.9,3.2,-3.2 } });
 		tg.SetBeginNode({ 0.0, 0.0, 0.0, 0.0, true });
 		tg.SetEndNode({  decTime / 1000.0, PI, 0.0, 0.0, true });
 		tg.SetFunction(get_dec);
