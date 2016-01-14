@@ -1,10 +1,9 @@
-﻿#include <Platform.h>
-#ifdef PLATFORM_IS_WINDOWS
+﻿#ifdef WIN32
 #define rt_printf printf
 #include <windows.h>
 #undef CM_NONE
 #endif
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 #include "rtdk.h"
 #include "unistd.h"
 #endif
@@ -23,15 +22,15 @@
 
 namespace Robots
 {
-	class NODE
+	class Node
 	{
 	public:
-		NODE* AddChildGroup(const char *Name);
-		NODE* AddChildUnique(const char *Name);
-		NODE* AddChildParam(const char *Name);
-		NODE* FindChild(const char *Name)
+		Node* AddChildGroup(const char *Name);
+		Node* AddChildUnique(const char *Name);
+		Node* AddChildParam(const char *Name);
+		Node* FindChild(const char *Name)
 		{
-			auto result = std::find_if(children.begin(), children.end(), [Name](std::unique_ptr<NODE> &node)
+			auto result = std::find_if(children.begin(), children.end(), [Name](std::unique_ptr<Node> &node)
 			{
 				return (!std::strcmp(node->name.c_str(), Name));
 			});
@@ -58,77 +57,77 @@ namespace Robots
 		};
 
 	public:
-		NODE(NODE*father, const char *Name) :name(Name) { this->father = father; };
-		virtual ~NODE() {};
+		Node(Node*father, const char *Name) :name(Name) { this->father = father; };
+		virtual ~Node() {};
 
 	private:
 		std::string name;
-		NODE* father;
-		std::vector<std::unique_ptr<NODE> > children;
+		Node* father;
+		std::vector<std::unique_ptr<Node> > children;
 
 		bool isTaken{ false };
 
-		friend void addAllParams(const Aris::Core::XmlElement *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
-		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
+		friend void AddAllParams(const Aris::Core::XmlElement *pEle, Node *pNode, std::map<std::string, Node *> &allParams, std::map<char, std::string>& shortNames);
+		friend void AddAllDefault(Node *pNode, std::map<std::string, std::string> &params);
 	};
-	class ROOT_NODE :public NODE
+	class RootNode :public Node
 	{
 	public:
-		ROOT_NODE(const char *Name) :NODE(nullptr, Name) {};
+		RootNode(const char *Name) :Node(nullptr, Name) {};
 
 	private:
-		NODE *pDefault;
+		Node *pDefault;
 
-		friend void addAllParams(const Aris::Core::XmlElement *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
-		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
+		friend void AddAllParams(const Aris::Core::XmlElement *pEle, Node *pNode, std::map<std::string, Node *> &allParams, std::map<char, std::string>& shortNames);
+		friend void AddAllDefault(Node *pNode, std::map<std::string, std::string> &params);
 	};
-	class GROUP_NODE :public NODE
+	class GroupNode :public Node
 	{
 	public:
-		GROUP_NODE(NODE*father, const char *Name) :NODE(father, Name) {};
+		GroupNode(Node*father, const char *Name) :Node(father, Name) {};
 	};
-	class UNIQUE_NODE :public NODE
+	class UniqueNode :public Node
 	{
 	public:
-		UNIQUE_NODE(NODE*father, const char *Name) :NODE(father, Name) {};
+		UniqueNode(Node*father, const char *Name) :Node(father, Name) {};
 
 	private:
-		NODE *pDefault;
+		Node *pDefault;
 
-		friend void addAllParams(const Aris::Core::XmlElement *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
-		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
+		friend void AddAllParams(const Aris::Core::XmlElement *pEle, Node *pNode, std::map<std::string, Node *> &allParams, std::map<char, std::string>& shortNames);
+		friend void AddAllDefault(Node *pNode, std::map<std::string, std::string> &params);
 	};
-	class PARAM_NODE :public NODE
+	class ParamNode :public Node
 	{
 	public:
-		PARAM_NODE(NODE*father, const char *Name) :NODE(father, Name) {};
+		ParamNode(Node*father, const char *Name) :Node(father, Name) {};
 	private:
 		std::string type;
 		std::string defaultValue;
 		std::string minValue, maxValue;
 
-		friend void addAllParams(const Aris::Core::XmlElement *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames);
-		friend void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params);
+		friend void AddAllParams(const Aris::Core::XmlElement *pEle, Node *pNode, std::map<std::string, Node *> &allParams, std::map<char, std::string>& shortNames);
+		friend void AddAllDefault(Node *pNode, std::map<std::string, std::string> &params);
 	};
 
-	NODE* NODE::AddChildGroup(const char *Name)
+	Node* Node::AddChildGroup(const char *Name)
 	{
-		this->children.push_back(std::unique_ptr<NODE>(new GROUP_NODE(this, Name)));
+		this->children.push_back(std::unique_ptr<Node>(new GroupNode(this, Name)));
 		return children.back().get();
 	};
-	NODE* NODE::AddChildUnique(const char *Name)
+	Node* Node::AddChildUnique(const char *Name)
 	{
-		this->children.push_back(std::unique_ptr<NODE>(new UNIQUE_NODE(this, Name)));
+		this->children.push_back(std::unique_ptr<Node>(new UniqueNode(this, Name)));
 		return children.back().get();
 	}
-	NODE* NODE::AddChildParam(const char *Name)
+	Node* Node::AddChildParam(const char *Name)
 	{
-		this->children.push_back(std::unique_ptr<NODE>(new PARAM_NODE(this, Name)));
+		this->children.push_back(std::unique_ptr<Node>(new ParamNode(this, Name)));
 		return children.back().get();
 	}
-	void NODE::Take()
+	void Node::Take()
 	{
-		if (dynamic_cast<ROOT_NODE*>(this))
+		if (dynamic_cast<RootNode*>(this))
 		{
 			if (this->isTaken)
 			{
@@ -140,7 +139,7 @@ namespace Robots
 				return;
 			}
 		}
-		else if (dynamic_cast<GROUP_NODE*>(this))
+		else if (dynamic_cast<GroupNode*>(this))
 		{
 			if (this->isTaken)
 			{
@@ -166,7 +165,7 @@ namespace Robots
 		}
 	}
 
-	void addAllParams(const Aris::Core::XmlElement *pEle, NODE *pNode, std::map<std::string, NODE *> &allParams, std::map<char, std::string>& shortNames)
+	void AddAllParams(const Aris::Core::XmlElement *pEle, Node *pNode, std::map<std::string, Node *> &allParams, std::map<char, std::string>& shortNames)
 	{
 		/*add all children*/
 		for (auto pChild = pEle->FirstChildElement();pChild != nullptr;	pChild = pChild->NextSiblingElement())
@@ -180,16 +179,16 @@ namespace Robots
 			/*set all children*/
 			if (pChild->Attribute("type", "group"))
 			{
-				addAllParams(pChild, pNode->AddChildGroup(pChild->Name()), allParams, shortNames);
+				AddAllParams(pChild, pNode->AddChildGroup(pChild->Name()), allParams, shortNames);
 			}
 			else if (pChild->Attribute("type", "unique"))
 			{
-				addAllParams(pChild, pNode->AddChildUnique(pChild->Name()), allParams, shortNames);
+				AddAllParams(pChild, pNode->AddChildUnique(pChild->Name()), allParams, shortNames);
 			}
 			else
 			{
 				/*now the pChild is a param_node*/
-				NODE * insertNode;
+				Node * insertNode;
 
 				if (allParams.find(std::string(pChild->Name())) != allParams.end())
 				{
@@ -198,7 +197,7 @@ namespace Robots
 				else
 				{
 					insertNode = pNode->AddChildParam(pChild->Name());
-					allParams.insert(std::pair<std::string, NODE *>(std::string(pChild->Name()), insertNode));
+					allParams.insert(std::pair<std::string, Node *>(std::string(pChild->Name()), insertNode));
 				}
 
 				/*set abbreviation*/
@@ -218,50 +217,50 @@ namespace Robots
 				/*set values*/
 				if (pChild->Attribute("type"))
 				{
-					dynamic_cast<PARAM_NODE*>(insertNode)->type = std::string(pChild->Attribute("type"));
+					dynamic_cast<ParamNode*>(insertNode)->type = std::string(pChild->Attribute("type"));
 				}
 				else
 				{
-					dynamic_cast<PARAM_NODE*>(insertNode)->type = "";
+					dynamic_cast<ParamNode*>(insertNode)->type = "";
 				}
 
 				if (pChild->Attribute("default"))
 				{
-					dynamic_cast<PARAM_NODE*>(insertNode)->defaultValue = std::string(pChild->Attribute("default"));
+					dynamic_cast<ParamNode*>(insertNode)->defaultValue = std::string(pChild->Attribute("default"));
 				}
 				else
 				{
-					dynamic_cast<PARAM_NODE*>(insertNode)->defaultValue = "";
+					dynamic_cast<ParamNode*>(insertNode)->defaultValue = "";
 				}
 
 				if (pChild->Attribute("maxValue"))
 				{
-					dynamic_cast<PARAM_NODE*>(insertNode)->maxValue = std::string(pChild->Attribute("maxValue"));
+					dynamic_cast<ParamNode*>(insertNode)->maxValue = std::string(pChild->Attribute("maxValue"));
 				}
 				else
 				{
-					dynamic_cast<PARAM_NODE*>(insertNode)->maxValue = "";
+					dynamic_cast<ParamNode*>(insertNode)->maxValue = "";
 				}
 
 				if (pChild->Attribute("minValue"))
 				{
-					dynamic_cast<PARAM_NODE*>(insertNode)->minValue = std::string(pChild->Attribute("minValue"));
+					dynamic_cast<ParamNode*>(insertNode)->minValue = std::string(pChild->Attribute("minValue"));
 				}
 				else
 				{
-					dynamic_cast<PARAM_NODE*>(insertNode)->minValue = "";
+					dynamic_cast<ParamNode*>(insertNode)->minValue = "";
 				}
 			}
 		}
 
 		/*set all values*/
-		if (dynamic_cast<ROOT_NODE*>(pNode))
+		if (dynamic_cast<RootNode*>(pNode))
 		{
 			if (pEle->Attribute("default"))
 			{
 				if (pNode->FindChild(pEle->Attribute("default")))
 				{
-					dynamic_cast<ROOT_NODE*>(pNode)->pDefault = pNode->FindChild(pEle->Attribute("default"));
+					dynamic_cast<RootNode*>(pNode)->pDefault = pNode->FindChild(pEle->Attribute("default"));
 				}
 				else
 				{
@@ -270,17 +269,17 @@ namespace Robots
 			}
 			else
 			{
-				dynamic_cast<ROOT_NODE*>(pNode)->pDefault = nullptr;
+				dynamic_cast<RootNode*>(pNode)->pDefault = nullptr;
 			}
 		}
 
-		if (dynamic_cast<UNIQUE_NODE*>(pNode))
+		if (dynamic_cast<UniqueNode*>(pNode))
 		{
 			if (pEle->Attribute("default"))
 			{
 				if (pNode->FindChild(pEle->Attribute("default")))
 				{
-					dynamic_cast<UNIQUE_NODE*>(pNode)->pDefault = pNode->FindChild(pEle->Attribute("default"));
+					dynamic_cast<UniqueNode*>(pNode)->pDefault = pNode->FindChild(pEle->Attribute("default"));
 				}
 				else
 				{
@@ -295,59 +294,59 @@ namespace Robots
 				}
 				else
 				{
-					dynamic_cast<UNIQUE_NODE*>(pNode)->pDefault = nullptr;
+					dynamic_cast<UniqueNode*>(pNode)->pDefault = nullptr;
 				}
 			}
 		}
 	}
-	void addAllDefault(NODE *pNode, std::map<std::string, std::string> &params)
+	void AddAllDefault(Node *pNode, std::map<std::string, std::string> &params)
 	{
 		if (pNode->isTaken)
 		{
-			if (dynamic_cast<ROOT_NODE*>(pNode))
+			if (dynamic_cast<RootNode*>(pNode))
 			{
-				auto found = find_if(pNode->children.begin(), pNode->children.end(), [](std::unique_ptr<NODE> &a)
+				auto found = find_if(pNode->children.begin(), pNode->children.end(), [](std::unique_ptr<Node> &a)
 				{
 					return a->isTaken;
 				});
 
-				addAllDefault(found->get(), params);
+				AddAllDefault(found->get(), params);
 			}
 
-			if (dynamic_cast<UNIQUE_NODE*>(pNode))
+			if (dynamic_cast<UniqueNode*>(pNode))
 			{
-				auto found = find_if(pNode->children.begin(), pNode->children.end(), [](std::unique_ptr<NODE> &a)
+				auto found = find_if(pNode->children.begin(), pNode->children.end(), [](std::unique_ptr<Node> &a)
 				{
 					return a->isTaken;
 				});
 
-				addAllDefault(found->get(), params);
+				AddAllDefault(found->get(), params);
 			}
 
-			if (dynamic_cast<GROUP_NODE*>(pNode))
+			if (dynamic_cast<GroupNode*>(pNode))
 			{
 				for (auto &i : pNode->children)
-					addAllDefault(i.get(), params);
+					AddAllDefault(i.get(), params);
 			}
 
-			if (dynamic_cast<PARAM_NODE*>(pNode))
+			if (dynamic_cast<ParamNode*>(pNode))
 			{
 				if (params.at(pNode->name) == "")
 				{
-					params.at(pNode->name) = dynamic_cast<PARAM_NODE*>(pNode)->defaultValue;
+					params.at(pNode->name) = dynamic_cast<ParamNode*>(pNode)->defaultValue;
 				}
 				return;
 			}
 		}
 		else
 		{
-			if (dynamic_cast<ROOT_NODE*>(pNode))
+			if (dynamic_cast<RootNode*>(pNode))
 			{
 				if (!pNode->children.empty())
 				{
-					if ((dynamic_cast<ROOT_NODE*>(pNode)->pDefault))
+					if ((dynamic_cast<RootNode*>(pNode)->pDefault))
 					{
-						addAllDefault(dynamic_cast<ROOT_NODE*>(pNode)->pDefault, params);
+						AddAllDefault(dynamic_cast<RootNode*>(pNode)->pDefault, params);
 					}
 					else
 					{
@@ -358,13 +357,13 @@ namespace Robots
 				pNode->isTaken = true;
 			}
 
-			if (dynamic_cast<UNIQUE_NODE*>(pNode))
+			if (dynamic_cast<UniqueNode*>(pNode))
 			{
 				if (!pNode->children.empty())
 				{
-					if (dynamic_cast<UNIQUE_NODE*>(pNode)->pDefault)
+					if (dynamic_cast<UniqueNode*>(pNode)->pDefault)
 					{
-						addAllDefault(dynamic_cast<UNIQUE_NODE*>(pNode)->pDefault, params);
+						AddAllDefault(dynamic_cast<UniqueNode*>(pNode)->pDefault, params);
 					}
 					else
 					{
@@ -375,33 +374,33 @@ namespace Robots
 				pNode->isTaken = true;
 			}
 
-			if (dynamic_cast<GROUP_NODE*>(pNode))
+			if (dynamic_cast<GroupNode*>(pNode))
 			{
 				for (auto &i : pNode->children)
 				{
-					addAllDefault(i.get(), params);
+					AddAllDefault(i.get(), params);
 				}
 					
 
 				pNode->isTaken = true;
 			}
 
-			if (dynamic_cast<PARAM_NODE*>(pNode))
+			if (dynamic_cast<ParamNode*>(pNode))
 			{
-				params.insert(make_pair(pNode->name, dynamic_cast<PARAM_NODE*>(pNode)->defaultValue));
+				params.insert(make_pair(pNode->name, dynamic_cast<ParamNode*>(pNode)->defaultValue));
 				pNode->isTaken = true;
 			}
 		}
 	}
 
-	struct COMMAND_STRUCT
+	struct CommandStruct
 	{
-		std::unique_ptr<ROOT_NODE> root;
-		std::map<std::string, NODE *> allParams{};
+		std::unique_ptr<RootNode> root;
+		std::map<std::string, Node *> allParams{};
 		std::map<char, std::string> shortNames{};
 
-		COMMAND_STRUCT(const std::string &name) 
-			:root(new ROOT_NODE(name.c_str()))
+		CommandStruct(const std::string &name) 
+			:root(new RootNode(name.c_str()))
 		{
 		}
 	};
@@ -410,14 +409,14 @@ namespace Robots
 	{
 	public:
 		void LoadXml(const Aris::Core::XmlDocument &doc);
-		void AddGait(std::string cmdName, GaitFunc gaitFunc, PARSE_FUNC parseFunc);
+		void AddGait(std::string cmdName, GaitFunc gaitFunc, ParseFunc parseFunc);
 		void Start();
 		void Stop();
 
 		Imp(RobotServer *pServer) 
 		{ 
 			this->pServer = pServer;
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 			this->pController = Aris::Control::EthercatController::CreateMaster<Aris::Control::EthercatController>();
 #endif
 		};
@@ -461,7 +460,7 @@ namespace Robots
 		static int tg(Aris::Control::EthercatController::Data &data);
 
 	private:
-		enum ROBOT_CMD_ID
+		enum RobotCmdID
 		{
 			ENABLE,
 			DISABLE,
@@ -476,9 +475,9 @@ namespace Robots
 		RobotServer *pServer;
 		std::map<std::string, int> mapName2ID;//store gait id in follow vector
 		std::vector<GaitFunc> allGaits;
-		std::vector<PARSE_FUNC> allParsers;
+		std::vector<ParseFunc> allParsers;
 
-		std::map<std::string, std::unique_ptr<COMMAND_STRUCT> > mapCmd;//store NODE of command
+		std::map<std::string, std::unique_ptr<CommandStruct> > mapCmd;//store Node of command
 
 		Aris::Core::Socket server;
 		std::string ip, port;
@@ -512,7 +511,7 @@ namespace Robots
 		}
 
 		/*begin to load controller*/
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 		pController->LoadXml(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control")->FirstChildElement("EtherCat"));
 		pController->SetControlStrategy(tg);
 #endif
@@ -560,20 +559,20 @@ namespace Robots
 		mat = c.CalculateExpression(pContEle->FirstChildElement("homePin")->GetText());
 		for (int i = 0; i < 18; ++i)
 		{
-#ifdef PLATFORM_IS_LINUX
-			pController->Motion(i)->WriteSdo(9, static_cast<std::int32_t>(-mat.Data()[p2a(i)] * meter2count));
+#ifdef UNIX
+			pController->MotionAt(i)->WriteSdo(9, static_cast<std::int32_t>(-mat.Data()[p2a(i)] * meter2count));
 #endif
 		}
 
 		/*begin to copy client and insert cmd nodes*/
 		const int TASK_NAME_LEN = 1024;
 		char path_char[TASK_NAME_LEN] = { 0 };
-#ifdef PLATFORM_IS_WINDOWS
+#ifdef WIN32
 		GetModuleFileName(NULL, path_char, TASK_NAME_LEN);
 		std::string path(path_char);
 		path = path.substr(0, path.rfind('\\'));
 #endif
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 		char cParam[100] = { 0 };
 		sprintf(cParam, "/proc/%d/exe", getpid());
 		auto count = readlink(cParam, path_char, TASK_NAME_LEN);
@@ -588,10 +587,10 @@ namespace Robots
 		mapCmd.clear();
 		for (auto pChild = pCmds->FirstChildElement(); pChild != nullptr; pChild = pChild->NextSiblingElement())
 		{
-#ifdef PLATFORM_IS_WINDOWS
+#ifdef WIN32
 			std::string fullpath = std::string("copy ") + path + std::string("\\Client.exe ") + path + "\\" + pChild->Name() + ".exe";
 #endif
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 			std::string fullpath = std::string("cp ") + path + std::string("/Client ") + path + "/" + pChild->Name();
 #endif
 			auto ret = system(fullpath.c_str());
@@ -599,8 +598,8 @@ namespace Robots
 			if (mapCmd.find(pChild->Name())!=mapCmd.end())
 				throw std::logic_error(std::string("command ")+ pChild->Name() +" is already existed, please rename it");
 
-			mapCmd.insert(std::make_pair(std::string(pChild->Name()), std::unique_ptr<COMMAND_STRUCT>(new COMMAND_STRUCT(pChild->Name()))));
-			addAllParams(pChild, mapCmd.at(pChild->Name())->root.get(), mapCmd.at(pChild->Name())->allParams, mapCmd.at(pChild->Name())->shortNames);
+			mapCmd.insert(std::make_pair(std::string(pChild->Name()), std::unique_ptr<CommandStruct>(new CommandStruct(pChild->Name()))));
+			AddAllParams(pChild, mapCmd.at(pChild->Name())->root.get(), mapCmd.at(pChild->Name())->allParams, mapCmd.at(pChild->Name())->shortNames);
 		}
 
 		/*Set socket connection callback function*/
@@ -636,7 +635,7 @@ namespace Robots
 			return 0;
 		});
 	}
-	void RobotServer::Imp::AddGait(std::string cmdName, GaitFunc gaitFunc, PARSE_FUNC parseFunc)
+	void RobotServer::Imp::AddGait(std::string cmdName, GaitFunc gaitFunc, ParseFunc parseFunc)
 	{
 		if (mapName2ID.find(cmdName) != mapName2ID.end())
 		{
@@ -674,7 +673,7 @@ namespace Robots
 			}
 		}
 
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 		pController->Start();
 #endif
 	}
@@ -682,7 +681,7 @@ namespace Robots
 	{
 		server.Close();
 
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 		pController->Stop();
 #endif
 		if (pImu)
@@ -711,7 +710,7 @@ namespace Robots
 
 		cmdMsg.SetMsgID(0);
 
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 		this->pController->MsgPipe().SendToRT(cmdMsg);
 #endif
 	}
@@ -850,7 +849,7 @@ namespace Robots
 			}
 		}
 
-		addAllDefault(mapCmd.at(cmd)->root.get(), params);
+		AddAllDefault(mapCmd.at(cmd)->root.get(), params);
 
 		std::cout << cmd << std::endl;
 
@@ -1234,8 +1233,8 @@ namespace Robots
 
 		std::copy_n(pEE, 18, pParam->beginPee);
 		std::copy_n(vEE, 18, pParam->beginVee);
-		std::copy_n(pBody, 6, pParam->beginBodyPE);
-		std::copy_n(vBody, 6, pParam->beginBodyVel);
+		std::copy_n(pBody, 6, pParam->beginPeb);
+		std::copy_n(vBody, 6, pParam->beginVb);
 
 		/*获取陀螺仪传感器数据*/
 		Aris::Sensor::SensorData<Aris::Sensor::ImuData> imuDataProtected;
@@ -1456,7 +1455,7 @@ namespace Robots
 	{
 		pImp->LoadXml(xmlDoc);
 	}
-	void RobotServer::AddGait(std::string cmdName, GaitFunc gaitFunc, PARSE_FUNC parseFunc)
+	void RobotServer::AddGait(std::string cmdName, GaitFunc gaitFunc, ParseFunc parseFunc)
 	{
 		pImp->AddGait(cmdName, gaitFunc, parseFunc);
 	}

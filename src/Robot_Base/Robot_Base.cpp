@@ -1,7 +1,4 @@
-﻿#include <Platform.h>
-
-
-#include <complex>
+﻿#include <complex>
 #include <cmath>
 #include <ctime>
 #include <iostream>
@@ -19,7 +16,7 @@ using namespace std;
 namespace Robots
 {
 	LegBase::LegBase(RobotBase* pRobot, const char *Name)
-		: Object(static_cast<Aris::DynKer::Model *>(pRobot), Name)
+		: Object(static_cast<Aris::DynKer::Model &>(*pRobot), Name)
 		, pRobot(pRobot)
 	{
 		pBase = pRobot->pBody->AddMarker(std::string(Name) + "_Base");
@@ -30,78 +27,78 @@ namespace Robots
 	const Aris::DynKer::Part& LegBase::Body() const { return pRobot->Body(); };
 	Aris::DynKer::Part& LegBase::Body() { return pRobot->Body(); };
 	
-	void LegBase::GetPee(double *pEE, const Marker &Mak) const
+	void LegBase::GetPee(double *pEE, const Marker &mak) const
 	{
 		double pEE_G[3];
 		
 		s_pp2pp(*pBase->Pm(), this->pEE, pEE_G);
-		s_inv_pp2pp(*Mak.Pm(), pEE_G, pEE);
+		s_inv_pp2pp(*mak.Pm(), pEE_G, pEE);
 	}
-	void LegBase::SetPee(const double *pEE, const Marker &Mak)
+	void LegBase::SetPee(const double *pEE, const Marker &mak)
 	{
 		pBase->Update();
 
 		double pEE_G[3];
 		
-		s_pp2pp(*Mak.Pm(), pEE, pEE_G);
+		s_pp2pp(*mak.Pm(), pEE, pEE_G);
 		s_inv_pp2pp(*pBase->Pm(), pEE_G, this->pEE);
 
 		calculate_from_pEE();
 		calculate_jac();
 	}
-	void LegBase::GetVee(double *vEE, const Marker &Mak) const
+	void LegBase::GetVee(double *vEE, const Marker &mak) const
 	{
 		double pEE_G[3], vEE_G[3];
 		
 		s_vp2vp(*pBase->Pm(), pBase->Vel(), this->pEE, this->vEE, vEE_G, pEE_G);
-		s_inv_vp2vp(*Mak.Pm(), Mak.Vel(), pEE_G, vEE_G, vEE);
+		s_inv_vp2vp(*mak.Pm(), mak.Vel(), pEE_G, vEE_G, vEE);
 	}
-	void LegBase::SetVee(const double *vEE, const Marker &Mak)
+	void LegBase::SetVee(const double *vEE, const Marker &mak)
 	{
 		double pEE[3];
-		GetPee(pEE, Mak);
+		GetPee(pEE, mak);
 
 		double pEE_G[3], vEE_G[3];
 		
-		s_vp2vp(*Mak.Pm(), Mak.Vel(), pEE, vEE, vEE_G, pEE_G);
+		s_vp2vp(*mak.Pm(), mak.Vel(), pEE, vEE, vEE_G, pEE_G);
 		s_inv_vp2vp(*pBase->Pm(), pBase->Vel(), pEE_G, vEE_G, this->vEE);
 
 		calculate_from_vEE();
 		calculate_diff_jac();
 	}
-	void LegBase::GetAee(double *aEE, const Marker &Mak) const
+	void LegBase::GetAee(double *aEE, const Marker &mak) const
 	{
 		double pEE_G[3], vEE_G[3], aEE_G[3];
 		
 		s_ap2ap(*pBase->Pm(), pBase->Vel(), pBase->Acc(), this->pEE, this->vEE, this->aEE, aEE_G, vEE_G, pEE_G);
-		s_inv_ap2ap(*Mak.Pm(), Mak.Vel(), Mak.Acc(), pEE_G, vEE_G, aEE_G, aEE);
+		s_inv_ap2ap(*mak.Pm(), mak.Vel(), mak.Acc(), pEE_G, vEE_G, aEE_G, aEE);
 	}
-	void LegBase::SetAee(const double *aEE, const Marker &Mak)
+	void LegBase::SetAee(const double *aEE, const Marker &mak)
 	{
 		double pEE[3], vEE[3];
-		GetPee(pEE, Mak);
-		GetVee(vEE, Mak);
+		GetPee(pEE, mak);
+		GetVee(vEE, mak);
 
 		double pEE_G[3], vEE_G[3], aEE_G[3];
 		
-		s_ap2ap(*Mak.Pm(), Mak.Vel(), Mak.Acc(), pEE, vEE, aEE, aEE_G, vEE_G, pEE_G);
+		s_ap2ap(*mak.Pm(), mak.Vel(), mak.Acc(), pEE, vEE, aEE, aEE_G, vEE_G, pEE_G);
 		s_inv_ap2ap(*pBase->Pm(), pBase->Vel(),pBase->Acc(), pEE_G, vEE_G,aEE_G, this->aEE);
 
 		calculate_from_aEE();
 	}
-	void LegBase::GetFeeSta(double *fEE_sta, const Marker &Mak) const
+	void LegBase::GetFeeSta(double *fEE_sta, const Marker &mak) const
 	{
 		double f_G[3];
 		
 		s_pm_dot_v3(*pBase->Pm(), this->fEE_sta, f_G);
-		s_inv_pm_dot_v3(*Mak.Pm(), f_G, fEE_sta);
+		s_inv_pm_dot_v3(*mak.Pm(), f_G, fEE_sta);
 	}
-	void LegBase::SetFeeSta(const double *fEE_sta, const Marker &Mak)
+	void LegBase::SetFeeSta(const double *fEE_sta, const Marker &mak)
 	{
 
 		double f_G[3];
 		
-		s_pm_dot_v3(*Mak.Pm(), fEE_sta, f_G);
+		s_pm_dot_v3(*mak.Pm(), fEE_sta, f_G);
 		s_inv_pm_dot_v3(*pBase->Pm(), f_G, this->fEE_sta);
 	}
 	void LegBase::GetPin(double *pIn) const
@@ -147,68 +144,72 @@ namespace Robots
 		std::copy_n(fIn_sta, 3, this->fIn_sta);
 		s_dgemmTN(3, 1, 3, 1, *Jvi, 3, fIn_sta, 1, 0, fEE_sta, 1);
 	}
-	void LegBase::GetJfd(double *jac, const Marker &Mak) const
+	void LegBase::GetJfd(double *jac, const Marker &mak) const
 	{
-		
+		std::fill_n(jac, 9, 0);
 		
 		/*力雅克比是速度雅克比转置的逆*/
 		double locJac[3][3];
 
-		GetJvi(*locJac, Mak);
+		GetJvi(*locJac, mak);
 		s_transpose(3, 3, *locJac, 3, jac, 3);
 	}
-	void LegBase::GetJfi(double *jac, const Marker &Mak) const
+	void LegBase::GetJfi(double *jac, const Marker &mak) const
 	{
-		
+		std::fill_n(jac, 9, 0);
 		
 		/*力雅克比是速度雅克比转置的逆*/
 		double locJac[3][3];
 
-		GetJvd(*locJac, Mak);
+		GetJvd(*locJac, mak);
 		s_transpose(3, 3, *locJac, 3, jac, 3);
 	}
-	void LegBase::GetJvd(double *jac, const Marker &Mak) const
+	void LegBase::GetJvd(double *jac, const Marker &mak) const
 	{
+		std::fill_n(jac, 9, 0);
+		
 		double relativePm[16];
 		
-		s_inv_pm_dot_pm(*Mak.Pm(), *pBase->Pm(), relativePm);
+		s_inv_pm_dot_pm(*mak.Pm(), *pBase->Pm(), relativePm);
 		s_dgemm(3, 3, 3, 1, relativePm, 4, *Jvd, 3, 0, jac, 3);
 	}
-	void LegBase::GetJvi(double *jac, const Marker &Mak) const
+	void LegBase::GetJvi(double *jac, const Marker &mak) const
 	{
+		std::fill_n(jac, 9, 0);
+		
 		double relativePm[16];
 		
-		s_inv_pm_dot_pm(*Mak.Pm(), *pBase->Pm(), relativePm);
+		s_inv_pm_dot_pm(*mak.Pm(), *pBase->Pm(), relativePm);
 		s_dgemmNT(3, 3, 3, 1, *Jvi, 3, relativePm, 4, 0, jac, 3);
 	}
-	void LegBase::GetDifJfd(double *dJac, const Marker &Mak) const
+	void LegBase::GetDifJfd(double *dJac, const Marker &mak) const
 	{
 		
 		
 		/*力雅克比是速度雅克比转置的逆*/
 		double locJac[3][3];
 
-		GetDifJvi(*locJac, Mak);
+		GetDifJvi(*locJac, mak);
 		s_transpose(3, 3, *locJac, 3, dJac, 3);
 	}
-	void LegBase::GetDifJfi(double *dJac, const Marker &Mak) const
+	void LegBase::GetDifJfi(double *dJac, const Marker &mak) const
 	{
 		
 		
 		/*力雅克比是速度雅克比转置的逆*/
 		double locJac[3][3];
 
-		GetJvd(*locJac, Mak);
+		GetJvd(*locJac, mak);
 		s_transpose(3, 3, *locJac, 3, dJac, 3);
 	}
-	void LegBase::GetDifJvd(double *dJac, const Marker &Mak) const
+	void LegBase::GetDifJvd(double *dJac, const Marker &mak) const
 	{
-		
+		std::fill_n(dJac, 9, 0);
 		
 		double relativePm[16], relativeV[6];
 		
-		s_inv_pm_dot_pm(*Mak.Pm(), *pBase->Pm(), relativePm);
-		s_inv_v2v(*Mak.Pm(), Mak.Vel(), pBase->Vel(), relativeV);
+		s_inv_pm_dot_pm(*mak.Pm(), *pBase->Pm(), relativePm);
+		s_inv_v2v(*mak.Pm(), mak.Vel(), pBase->Vel(), relativeV);
 		
 		double dR[4][4];
 		s_v_cro_pm(relativeV, relativePm, *dR);
@@ -216,14 +217,14 @@ namespace Robots
 		s_dgemm(3, 3, 3, 1, *dR, 4, *Jvd, 3, 0, dJac, 3);
 		s_dgemm(3, 3, 3, 1, relativePm, 4, *vJvd, 3, 1, dJac, 3);
 	}
-	void LegBase::GetDifJvi(double *dJac, const Marker &Mak) const
+	void LegBase::GetDifJvi(double *dJac, const Marker &mak) const
 	{
-		
+		std::fill_n(dJac, 9, 0);
 		
 		double relativePm[16], relativeV[6];
-		
-		s_inv_pm_dot_pm(*Mak.Pm(), *pBase->Pm(), relativePm);
-		s_inv_v2v(*Mak.Pm(), Mak.Vel(), pBase->Vel(), relativeV);
+
+		s_inv_pm_dot_pm(*mak.Pm(), *pBase->Pm(), relativePm);
+		s_inv_v2v(*mak.Pm(), mak.Vel(), pBase->Vel(), relativeV);
 
 		double dR[4][4];
 		s_v_cro_pm(relativeV, relativePm, *dR);
@@ -231,38 +232,38 @@ namespace Robots
 		s_dgemmNT(3, 3, 3, 1, *vJvi, 3, relativePm, 4, 0, dJac, 3);
 		s_dgemmNT(3, 3, 3, 1, *Jvi, 3, *dR, 4, 1, dJac, 3);
 	}
-	void LegBase::GetCvd(double *c, const Marker &Mak) const
+	void LegBase::GetCvd(double *c, const Marker &mak) const
 	{
 		
 		
 		double relativePm[16], relativeV[6];
 		
-		s_inv_pm_dot_pm(*Mak.Pm(), *pBase->Pm(), relativePm);
-		s_inv_v2v(*Mak.Pm(), Mak.Vel(), pBase->Vel(), relativeV);
+		s_inv_pm_dot_pm(*mak.Pm(), *pBase->Pm(), relativePm);
+		s_inv_v2v(*mak.Pm(), mak.Vel(), pBase->Vel(), relativeV);
 		
 		s_vp2vp(relativePm, relativeV, this->pEE, 0, c);
 	}
-	void LegBase::GetCvi(double *c, const Marker &Mak) const
+	void LegBase::GetCvi(double *c, const Marker &mak) const
 	{
 		
 		
 		double relativePm[16], relativeV[6];
 		
-		s_inv_pm_dot_pm(*Mak.Pm(), *pBase->Pm(), relativePm);
-		s_inv_v2v(*Mak.Pm(), Mak.Vel(), pBase->Vel(), relativeV);
+		s_inv_pm_dot_pm(*mak.Pm(), *pBase->Pm(), relativePm);
+		s_inv_v2v(*mak.Pm(), mak.Vel(), pBase->Vel(), relativeV);
 
 		double tem[3];
 		s_vp2vp(relativePm, relativeV, this->pEE, nullptr, c);
 		s_dgemmTN(3, 1, 3, 1, *pBase->Pm(), 4, c, 1, 0, tem, 1);
 		s_dgemm(3, 1, 3, -1, *Jvi, 3, tem, 1, 0, c, 1);
 	}
-	void LegBase::GetCad(double *c, const Marker &Mak) const
+	void LegBase::GetCad(double *c, const Marker &mak) const
 	{
 		
 		
 		double relativeV[6], relativeA[6];
 		
-		s_inv_a2a(*Mak.Pm(), Mak.Vel(), Mak.Acc(), pBase->Vel(), pBase->Acc(), relativeA, relativeV);
+		s_inv_a2a(*mak.Pm(), mak.Vel(), mak.Acc(), pBase->Vel(), pBase->Acc(), relativeA, relativeV);
 		
 		/*推导如下*/
 		//Vee_G = R_L2G * Vee_L + Vb + Wb x Pee_G = R_L2G * Jvd_L * Vin + Vb + Wb x Pee_G
@@ -274,19 +275,19 @@ namespace Robots
 		//Ain = Jvi_G * Aee_G + dJvi_G * Vee_G - Jvi_G * (Vb + Wb x Pee_G) - dJvi_G * (Ab + Xb x Pee_G + Wb x Vee_G)
 
 		double pEE_G[3], vEE_G[3];
-		this->GetPee(pEE_G, Mak);
-		this->GetVee(vEE_G, Mak);
+		this->GetPee(pEE_G, mak);
+		this->GetVee(vEE_G, mak);
 
 		s_vp(pEE_G, relativeA, c);
 		s_cro3(1, relativeV + 3, vEE_G, 1, c);
 	}
-	void LegBase::GetCai(double *c, const Marker &Mak) const
+	void LegBase::GetCai(double *c, const Marker &mak) const
 	{
 		
 		
 		double relativeV[6], relativeA[6];
 		
-		s_inv_a2a(*Mak.Pm(), Mak.Vel(), Mak.Acc(), pBase->Vel(), pBase->Acc(), relativeA, relativeV);
+		s_inv_a2a(*mak.Pm(), mak.Vel(), mak.Acc(), pBase->Vel(), pBase->Acc(), relativeA, relativeV);
 		/*推导如下*/
 		//Vee_G = R_L2G * Vee_L + Vb + Wb x Pee_G
 		//Vee_L = R_G2L * (Vee_G - Vb - Wb x Pee_G)
@@ -298,8 +299,8 @@ namespace Robots
 		
 
 		double pEE_G[3], vEE_G[3];
-		this->GetPee(pEE_G, Mak);
-		this->GetVee(vEE_G, Mak);
+		this->GetPee(pEE_G, mak);
+		this->GetVee(vEE_G, mak);
 		double pv[3], pa[3];
 
 
@@ -421,124 +422,124 @@ namespace Robots
 		pBody = AddPart("MainBody");
 	}
 
-	void RobotBase::GetPmb(double *pmb, const Marker &Mak) const
+	void RobotBase::GetPmb(double *pmb, const Marker &mak) const
 	{
-		s_inv_pm_dot_pm(*Mak.Pm(), *pBody->Pm(), pmb);
+		s_inv_pm_dot_pm(*mak.Pm(), *pBody->Pm(), pmb);
 	}
-	void RobotBase::SetPmb(const double *pmb, const Marker &Mak)
+	void RobotBase::SetPmb(const double *pmb, const Marker &mak)
 	{
-		s_pm_dot_pm(*Mak.Pm(), pmb, *pBody->Pm());
+		s_pm_dot_pm(*mak.Pm(), pmb, *pBody->Pm());
 	}
-	void RobotBase::GetPeb(double *peb, const Marker &Mak, const char *eurType) const
+	void RobotBase::GetPeb(double *peb, const Marker &mak, const char *eurType) const
 	{
 		double pm[16];
-		GetPmb(pm, Mak);
+		GetPmb(pm, mak);
 		s_pm2pe(pm, peb, eurType);
 	}
-	void RobotBase::SetPeb(const double *peb, const Marker &Mak, const char *eurType)
+	void RobotBase::SetPeb(const double *peb, const Marker &mak, const char *eurType)
 	{
 		double pm[16];
 		s_pe2pm(peb, pm, eurType);
-		SetPmb(pm, Mak);
+		SetPmb(pm, mak);
 	}
-	void RobotBase::GetPqb(double *pqb, const Marker &Mak) const
+	void RobotBase::GetPqb(double *pqb, const Marker &mak) const
 	{
 		double pm[16];
-		GetPmb(pm, Mak);
+		GetPmb(pm, mak);
 		s_pm2pq(pm, pqb);
 	}
-	void RobotBase::SetPqb(const double *pqb, const Marker &Mak)
+	void RobotBase::SetPqb(const double *pqb, const Marker &mak)
 	{
 		double pm[16];
 		s_pq2pm(pqb, pm);
-		SetPmb(pm, Mak);
+		SetPmb(pm, mak);
 	}
-	void RobotBase::GetVb(double *vb, const Marker &Mak) const
+	void RobotBase::GetVb(double *vb, const Marker &mak) const
 	{
-		s_inv_v2v(*Mak.Pm(), Mak.Vel(), pBody->Vel(), vb);
+		s_inv_v2v(*mak.Pm(), mak.Vel(), pBody->Vel(), vb);
 	}
-	void RobotBase::SetVb(const double *vb, const Marker &Mak)
+	void RobotBase::SetVb(const double *vb, const Marker &mak)
 	{
-		s_v2v(*Mak.Pm(), Mak.Vel(), vb, pBody->Vel());
+		s_v2v(*mak.Pm(), mak.Vel(), vb, pBody->Vel());
 	}
-	void RobotBase::GetAb(double *ab, const Marker &Mak) const
+	void RobotBase::GetAb(double *ab, const Marker &mak) const
 	{
-		s_inv_a2a(*Mak.Pm(), Mak.Vel(), Mak.Acc(), pBody->Vel(), pBody->Acc(), ab);
+		s_inv_a2a(*mak.Pm(), mak.Vel(), mak.Acc(), pBody->Vel(), pBody->Acc(), ab);
 	}
-	void RobotBase::SetAb(const double *ab, const Marker &Mak)
+	void RobotBase::SetAb(const double *ab, const Marker &mak)
 	{
 		double vb[6];
-		s_inv_v2v(*Mak.Pm(), Mak.Vel(), pBody->Vel(), vb);
-		s_a2a(*Mak.Pm(), Mak.Vel(), Mak.Acc(), vb, ab, pBody->Acc());
+		s_inv_v2v(*mak.Pm(), mak.Vel(), pBody->Vel(), vb);
+		s_a2a(*mak.Pm(), mak.Vel(), mak.Acc(), vb, ab, pBody->Acc());
 	}
 
-	void RobotBase::GetPee(double *pEE, const Marker &Mak) const
+	void RobotBase::GetPee(double *pEE, const Marker &mak) const
 	{
 		
 		for (int i = 0; i < 6; ++i)
 		{
-			pLegs[i]->GetPee(pEE + i * 3, Mak);
+			pLegs[i]->GetPee(pEE + i * 3, mak);
 		}
 	}
-	void RobotBase::SetPee(const double *pEE, const Marker &Mak)
+	void RobotBase::SetPee(const double *pEE, const Marker &mak)
 	{
 		
 		for (int i = 0; i < 6; i++)
 		{
-			pLegs[i]->SetPee(pEE + i * 3, Mak);
+			pLegs[i]->SetPee(pEE + i * 3, mak);
 		}
 
 
 		calculate_jac();
 	}
-	void RobotBase::GetVee(double *vEE, const Marker &Mak) const
+	void RobotBase::GetVee(double *vEE, const Marker &mak) const
 	{
 		
 		for (int i = 0; i < 6; ++i)
 		{
-			pLegs[i]->GetVee(vEE + i * 3, Mak);
+			pLegs[i]->GetVee(vEE + i * 3, mak);
 		}
 	}
-	void RobotBase::SetVee(const double *vEE, const Marker &Mak)
+	void RobotBase::SetVee(const double *vEE, const Marker &mak)
 	{
 		
 		for (int i = 0; i < 6; i++)
 		{
-			pLegs[i]->SetVee(vEE + i * 3, Mak);
+			pLegs[i]->SetVee(vEE + i * 3, mak);
 		}
 
 		calculate_jac_c();
 	}
-	void RobotBase::GetAee(double *aEE, const Marker &Mak) const
+	void RobotBase::GetAee(double *aEE, const Marker &mak) const
 	{
 		
 		for (int i = 0; i < 6; ++i)
 		{
-			pLegs[i]->GetAee(aEE + i * 3, Mak);
+			pLegs[i]->GetAee(aEE + i * 3, mak);
 		}
 	}
-	void RobotBase::SetAee(const double *aEE, const Marker &Mak)
+	void RobotBase::SetAee(const double *aEE, const Marker &mak)
 	{
 		
 		for (int i = 0; i < 6; i++)
 		{
-			pLegs[i]->SetAee(aEE + i * 3, Mak);
+			pLegs[i]->SetAee(aEE + i * 3, mak);
 		}
 	}
-	void RobotBase::GetFeeSta(double *fee_sta, const Marker &Mak) const
+	void RobotBase::GetFeeSta(double *fee_sta, const Marker &mak) const
 	{
 		
 		for (int i = 0; i < 6; i++)
 		{
-			pLegs[i]->GetFeeSta(fee_sta + i * 3, Mak);
+			pLegs[i]->GetFeeSta(fee_sta + i * 3, mak);
 		}
 	}
-	void RobotBase::SetFeeSta(const double *fee_sta, const Marker &Mak)
+	void RobotBase::SetFeeSta(const double *fee_sta, const Marker &mak)
 	{
 		
 		for (int i = 0; i < 6; i++)
 		{
-			pLegs[i]->SetFeeSta(fee_sta + i * 3, Mak);
+			pLegs[i]->SetFeeSta(fee_sta + i * 3, mak);
 		}
 	}
 	void RobotBase::GetPee(double *pEE, const Marker* const pMaks[]) const
@@ -741,7 +742,7 @@ namespace Robots
 				Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 6, Eigen::RowMajor, 18, 6> > jac_m(jac, dim, 6);
 				Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, 18, 1> > vIn_m(vIn, dim);
 				Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > vb_m(vb);
-				vb_m = jac_m.jacobiSvd(Eigen::ComputeThinU|Eigen::ComputeThinV).solve(vIn_m);
+				vb_m = jac_m.jacobiSvd(Eigen::ComputeFullU|Eigen::ComputeFullV).solve(vIn_m);
 			}
 
 			//std::copy_n(vIn, dim, vb);
@@ -822,7 +823,9 @@ namespace Robots
 			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 6, Eigen::RowMajor, 18, 6> > jac_m(jac, dim, 6);
 			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, 18, 1> > vIn_m(vIn_loc, dim);
 			Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > vb_m(vb);
-			vb_m = jac_m.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(vIn_m);
+			vb_m = jac_m.jacobiSvd(Eigen::ComputeFullU | Eigen::ComputeFullV).solve(vIn_m);
+
+
 		}
 
 		/*先设置支撑腿的末端速度为0，之后设置其他腿的输入*/
@@ -861,12 +864,10 @@ namespace Robots
 		GetDifJvi(dJac, supportMotor);
 		s_dgemm(dim, 1, 6, -1, dJac, 6, this->pBody->Vel(), 1, 1, aIn_loc, 1);
 
+		
 
 		if (dim == 6)
 		{
-			/*int ipiv[6];
-			s_dgesv(6, 1, jac, 6, ipiv, aIn_loc, 1);*/
-
 			Eigen::Map<Eigen::Matrix<double, 6, 6, Eigen::RowMajor> > jac_m(jac);
 			Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > aIn_m(aIn_loc);
 			Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > ab_m(ab);
@@ -874,14 +875,10 @@ namespace Robots
 		}
 		else
 		{
-			//int rank;
-			//double s[6];
-			//s_dgelsd(dim, 6, 1, jac, 6, aIn_loc, 1, s, 0.000000001, &rank);
-
 			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 6, Eigen::RowMajor, 18, 6> > jac_m(jac, dim, 6);
 			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, 1, Eigen::ColMajor, 18, 1> > aIn_m(aIn_loc, dim);
 			Eigen::Map<Eigen::Matrix<double, 6, 1, Eigen::ColMajor> > ab_m(ab);
-			ab_m = jac_m.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(aIn_m);
+			ab_m = jac_m.jacobiSvd(Eigen::ComputeFullU | Eigen::ComputeFullV).solve(aIn_m);
 		}
 
 		/*先设置支撑腿的末端速度为0，之后设置其他腿的输入*/

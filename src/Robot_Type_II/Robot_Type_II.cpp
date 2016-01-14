@@ -1,10 +1,4 @@
-﻿#ifndef ROBOT_EXPORTS
-#define ROBOT_EXPORTS
-#endif
-
-#include "Platform.h"
-
-#include "Robot_Type_II.h"
+﻿#include "Robot_Type_II.h"
 #include <complex>
 #include <cmath>
 #include <ctime>

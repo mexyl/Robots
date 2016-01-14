@@ -1,4 +1,3 @@
-#include <Platform.h>
 #include "plan.h"
 #include <Aris_DynKer.h>
 
@@ -194,10 +193,10 @@ void get_dec(Aris::Plan::FastPath::Data & data)
 
 void plan_prepare()
 {
-#ifdef PLATFORM_IS_WINDOWS
+#ifdef WIN32
 	robot.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
 #endif
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 	robot.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III.xml");
 #endif
 }

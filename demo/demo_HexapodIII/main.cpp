@@ -1,4 +1,4 @@
-﻿#include <Platform.h>
+﻿
 
 #include <iostream>
 #include "Robot_Type_I.h"
@@ -13,10 +13,10 @@ int main()
 
 	RobotTypeI rbt;
 
-#ifdef PLATFORM_IS_WINDOWS
+#ifdef WIN32
 	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
 #endif
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
 #endif
 
@@ -37,9 +37,9 @@ int main()
 	/**/
 	Robots::AdjustParam param;
 	std::copy_n(pEE_G, 18, &param.targetPee[0][0]);
-	std::copy_n(bodyPE, 6, &param.targetBodyPE[0][0]);
+	std::copy_n(bodyPE, 6, &param.targetPeb[0][0]);
 
-	param.targetBodyPE[0][1] += 0.1;
+	param.targetPeb[0][1] += 0.1;
 	param.targetPee[0][15] += 0.1;
 
 	rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test", Robots::adjust, &param, 10);
@@ -48,7 +48,7 @@ int main()
 	rbt.GetFinDyn(fIn);
 	dsp(fIn, 18, 1);
 
-	param.targetBodyPE[0][1] += 0.1;
+	param.targetPeb[0][1] += 0.1;
 	param.targetPee[0][15] += 0.1;
 	rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test1", Robots::adjust, &param, 10);
 

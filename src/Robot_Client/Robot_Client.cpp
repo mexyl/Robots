@@ -1,4 +1,4 @@
-﻿#include <Platform.h>
+﻿
 
 #include <iostream>
 #include <list>
@@ -21,13 +21,13 @@ namespace Robots
 		/*需要去除命令名的路径和扩展名*/
 		std::string cmdName(argv[0]);
 		
-#ifdef PLATFORM_IS_WINDOWS
+#ifdef WIN32
 		if (cmdName.rfind('\\'))
 		{
 			cmdName = cmdName.substr(cmdName.rfind('\\') + 1, cmdName.npos);
 		}
 #endif
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 		if (cmdName.rfind('/'))
 		{
 			cmdName = cmdName.substr(cmdName.rfind('/') + 1, cmdName.npos);

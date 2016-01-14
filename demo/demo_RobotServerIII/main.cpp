@@ -1,4 +1,4 @@
-﻿#include <Platform.h>
+﻿
 #include <Robot_Server.h>
 
 int main()
@@ -7,12 +7,12 @@ int main()
 
 	//rs->CreateRobot<RobotTypeI>();
 
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 	rs->LoadXml("/usr/Robots/resource/HexapodIII/HexapodIII.xml");
 	rs->AddGait("wk", walk, parse);
 	rs->Start();
 #endif
-#ifdef PLATFORM_IS_WINDOWS
+#ifdef WIN32
 	rs->LoadXml("C:\\Robots\\resource\\HexapodIII\\HexapodIII.xml");
 	rs->AddGait("wk", Robots::walk, Robots::parseWalk);
 #endif

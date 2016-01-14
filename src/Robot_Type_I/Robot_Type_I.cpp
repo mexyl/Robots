@@ -1,6 +1,4 @@
-﻿#include "Platform.h"
-
-#include <complex>
+﻿#include <complex>
 #include <cmath>
 #include <ctime>
 #include <iostream>
@@ -329,6 +327,9 @@ namespace Robots
 		cd_m = vJvd_m*vIn_m;
 		ci_m = vJvi_m*vEE_m;
 
+		/*
+		if (is_debug)
+			dsp(*vJvi, 3, 3);*/
 	}
 
 	void LegI::_CalCdByPos()
@@ -881,43 +882,43 @@ namespace Robots
 		}
 
 		/*复制约束矩阵*/
-		s_block_cpy(6, 4, pU1->PrtCstMtxJ(), 0, 0, 4, *_C, 0, 0, 36);
-		s_block_cpy(6, 4, pU2->PrtCstMtxJ(), 0, 0, 4, *_C, 6, 4, 36);
-		s_block_cpy(6, 4, pU3->PrtCstMtxJ(), 0, 0, 4, *_C, 12, 8, 36);
-		s_block_cpy(6, 5, pP1->PrtCstMtxI(), 0, 0, 5, *_C, 18, 12, 36);
-		s_block_cpy(6, 5, pP1->PrtCstMtxJ(), 0, 0, 5, *_C, 0, 12, 36);
-		s_block_cpy(6, 5, pP2->PrtCstMtxI(), 0, 0, 5, *_C, 24, 17, 36);
-		s_block_cpy(6, 5, pP2->PrtCstMtxJ(), 0, 0, 5, *_C, 6, 17, 36);
-		s_block_cpy(6, 5, pP3->PrtCstMtxI(), 0, 0, 5, *_C, 30, 22, 36);
-		s_block_cpy(6, 5, pP3->PrtCstMtxJ(), 0, 0, 5, *_C, 12, 22, 36);
-		s_block_cpy(6, 3, pS2->PrtCstMtxI(), 0, 0, 3, *_C, 18, 27, 36);
-		s_block_cpy(6, 3, pS2->PrtCstMtxJ(), 0, 0, 3, *_C, 24, 27, 36);
-		s_block_cpy(6, 3, pS3->PrtCstMtxI(), 0, 0, 3, *_C, 18, 30, 36);
-		s_block_cpy(6, 3, pS3->PrtCstMtxJ(), 0, 0, 3, *_C, 30, 30, 36);
+		s_block_cpy(6, 4, pU1->CstMtxJ(), 0, 0, 4, *_C, 0, 0, 36);
+		s_block_cpy(6, 4, pU2->CstMtxJ(), 0, 0, 4, *_C, 6, 4, 36);
+		s_block_cpy(6, 4, pU3->CstMtxJ(), 0, 0, 4, *_C, 12, 8, 36);
+		s_block_cpy(6, 5, pP1->CstMtxI(), 0, 0, 5, *_C, 18, 12, 36);
+		s_block_cpy(6, 5, pP1->CstMtxJ(), 0, 0, 5, *_C, 0, 12, 36);
+		s_block_cpy(6, 5, pP2->CstMtxI(), 0, 0, 5, *_C, 24, 17, 36);
+		s_block_cpy(6, 5, pP2->CstMtxJ(), 0, 0, 5, *_C, 6, 17, 36);
+		s_block_cpy(6, 5, pP3->CstMtxI(), 0, 0, 5, *_C, 30, 22, 36);
+		s_block_cpy(6, 5, pP3->CstMtxJ(), 0, 0, 5, *_C, 12, 22, 36);
+		s_block_cpy(6, 3, pS2->CstMtxI(), 0, 0, 3, *_C, 18, 27, 36);
+		s_block_cpy(6, 3, pS2->CstMtxJ(), 0, 0, 3, *_C, 24, 27, 36);
+		s_block_cpy(6, 3, pS3->CstMtxI(), 0, 0, 3, *_C, 18, 30, 36);
+		s_block_cpy(6, 3, pS3->CstMtxJ(), 0, 0, 3, *_C, 30, 30, 36);
 
 		if (pSf->IsActive())
 		{
 			/*若该腿支撑，则使用Sf副约束*/
 			pSf->Update();
-			s_block_cpy(6, 3, pSf->PrtCstMtxI(), 0, 0, 3, *_C, 18, 33, 36);
+			s_block_cpy(6, 3, pSf->CstMtxI(), 0, 0, 3, *_C, 18, 33, 36);
 
 			/*更新驱动矩阵M*/
-			s_block_cpy(6, 1, pM1->PrtCstMtxI(), 0, 0, 1, *_c_M, 18, 1, 4);
-			s_block_cpy(6, 1, pM1->PrtCstMtxJ(), 0, 0, 1, *_c_M, 0, 1, 4);
-			s_block_cpy(6, 1, pM2->PrtCstMtxI(), 0, 0, 1, *_c_M, 24, 2, 4);
-			s_block_cpy(6, 1, pM2->PrtCstMtxJ(), 0, 0, 1, *_c_M, 6, 2, 4);
-			s_block_cpy(6, 1, pM3->PrtCstMtxI(), 0, 0, 1, *_c_M, 30, 3, 4);
-			s_block_cpy(6, 1, pM3->PrtCstMtxJ(), 0, 0, 1, *_c_M, 12, 3, 4);
+			s_block_cpy(6, 1, pM1->CstMtxI(), 0, 0, 1, *_c_M, 18, 1, 4);
+			s_block_cpy(6, 1, pM1->CstMtxJ(), 0, 0, 1, *_c_M, 0, 1, 4);
+			s_block_cpy(6, 1, pM2->CstMtxI(), 0, 0, 1, *_c_M, 24, 2, 4);
+			s_block_cpy(6, 1, pM2->CstMtxJ(), 0, 0, 1, *_c_M, 6, 2, 4);
+			s_block_cpy(6, 1, pM3->CstMtxI(), 0, 0, 1, *_c_M, 30, 3, 4);
+			s_block_cpy(6, 1, pM3->CstMtxJ(), 0, 0, 1, *_c_M, 12, 3, 4);
 		}
 		else
 		{
 			/*否则，更新驱动的约束矩阵*/
-			s_block_cpy(6, 1, pM1->PrtCstMtxI(), 0, 0, 1, *_C, 18, 33, 36);
-			s_block_cpy(6, 1, pM1->PrtCstMtxJ(), 0, 0, 1, *_C, 0, 33, 36);
-			s_block_cpy(6, 1, pM2->PrtCstMtxI(), 0, 0, 1, *_C, 24, 34, 36);
-			s_block_cpy(6, 1, pM2->PrtCstMtxJ(), 0, 0, 1, *_C, 6, 34, 36);
-			s_block_cpy(6, 1, pM3->PrtCstMtxI(), 0, 0, 1, *_C, 30, 35, 36);
-			s_block_cpy(6, 1, pM3->PrtCstMtxJ(), 0, 0, 1, *_C, 12, 35, 36);
+			s_block_cpy(6, 1, pM1->CstMtxI(), 0, 0, 1, *_C, 18, 33, 36);
+			s_block_cpy(6, 1, pM1->CstMtxJ(), 0, 0, 1, *_C, 0, 33, 36);
+			s_block_cpy(6, 1, pM2->CstMtxI(), 0, 0, 1, *_C, 24, 34, 36);
+			s_block_cpy(6, 1, pM2->CstMtxJ(), 0, 0, 1, *_C, 6, 34, 36);
+			s_block_cpy(6, 1, pM3->CstMtxI(), 0, 0, 1, *_C, 30, 35, 36);
+			s_block_cpy(6, 1, pM3->CstMtxJ(), 0, 0, 1, *_C, 12, 35, 36);
 		}
 
 		/*更新右侧的c_M矩阵*/
@@ -946,13 +947,7 @@ namespace Robots
 		s_dgemm(6, 1, 6, 1, *pP3b->PrtIm(), 6, pP3b->PrtAcc(), 1, 1, &_c_M[30][0], 4);
 	}
 
-	RobotTypeI::RobotTypeI()
-		: pLF{ &LF_Leg }
-		, pLM{ &LM_Leg }
-		, pLR{ &LR_Leg }
-		, pRF{ &RF_Leg }
-		, pRM{ &RM_Leg }
-		, pRR{ &RR_Leg }
+	RobotTypeI::RobotTypeI(): pLF{ &LF_Leg }, pLM{ &LM_Leg }, pLR{ &LR_Leg }, pRF{ &RF_Leg }, pRM{ &RM_Leg }, pRR{ &RR_Leg }
 	{
 		for (int i = 0; i < 6; ++i)
 		{
@@ -1075,9 +1070,9 @@ namespace Robots
 			pLegs[i]->FastDyn();
 
 			/*更新Cb*/
-			s_block_cpy(6, 4, pLegs[i]->pU1->PrtCstMtxI(), 0, 0, 4, *Cb, 0, 0, 12);
-			s_block_cpy(6, 4, pLegs[i]->pU2->PrtCstMtxI(), 0, 0, 4, *Cb, 0, 4, 12);
-			s_block_cpy(6, 4, pLegs[i]->pU3->PrtCstMtxI(), 0, 0, 4, *Cb, 0, 8, 12);
+			s_block_cpy(6, 4, pLegs[i]->pU1->CstMtxI(), 0, 0, 4, *Cb, 0, 0, 12);
+			s_block_cpy(6, 4, pLegs[i]->pU2->CstMtxI(), 0, 0, 4, *Cb, 0, 4, 12);
+			s_block_cpy(6, 4, pLegs[i]->pU3->CstMtxI(), 0, 0, 4, *Cb, 0, 8, 12);
 
 			/*复制C与c_M*/
 			if (pLegs[i]->pSf->IsActive())
@@ -1140,7 +1135,7 @@ namespace Robots
 			//x = moore_penrose_pseudo_inverse * b;
 		}
 			
-
+		/*保存结果*/
 		for (int i = 0; i < 6; ++i)
 		{
 			if (pLegs[i]->pSf->IsActive())
@@ -1168,7 +1163,7 @@ namespace Robots
 
 	void RobotTypeI::Dyn()
 	{
-		this->Aris::DynKer::Model::Dyn([](int n, const double *D, const double *b, double *x)
+		this->DynSetSolveMethod([](int n, const double *D, const double *b, double *x)
 		{
 			Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >Dm(D, n, n);
 			Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, 1> >bm(b, n);
@@ -1176,6 +1171,8 @@ namespace Robots
 
 			xm = Dm.lu().solve(bm);
 		});
+		
+		this->Aris::DynKer::Model::Dyn();
 	}
 
 	void RobotTypeI::LoadXml(const char *fileName)
@@ -1194,16 +1191,16 @@ namespace Robots
 		Model::LoadXml(doc);
 
 		/*Update Parts*/
-		pBody = GetPart("MainBody");
+		pBody = FindPart("MainBody");
 
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->pP1a = GetPart(pLegs[j]->Name() + "_P1a");
-			pLegs[j]->pP2a = GetPart(pLegs[j]->Name() + "_P2a");
-			pLegs[j]->pP3a = GetPart(pLegs[j]->Name() + "_P3a");
-			pLegs[j]->pThigh = GetPart(pLegs[j]->Name() + "_Thigh");
-			pLegs[j]->pP2b = GetPart(pLegs[j]->Name() + "_P2b");
-			pLegs[j]->pP3b = GetPart(pLegs[j]->Name() + "_P3b");
+			pLegs[j]->pP1a = FindPart(pLegs[j]->Name() + "_P1a");
+			pLegs[j]->pP2a = FindPart(pLegs[j]->Name() + "_P2a");
+			pLegs[j]->pP3a = FindPart(pLegs[j]->Name() + "_P3a");
+			pLegs[j]->pThigh = FindPart(pLegs[j]->Name() + "_Thigh");
+			pLegs[j]->pP2b = FindPart(pLegs[j]->Name() + "_P2b");
+			pLegs[j]->pP3b = FindPart(pLegs[j]->Name() + "_P3b");
 		}
 
 		/*Update Markers*/
@@ -1242,31 +1239,31 @@ namespace Robots
 		/*Update Joints*/
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->pU1 = GetJoint(pLegs[j]->Name() + "_U1");
-			pLegs[j]->pU2 = GetJoint(pLegs[j]->Name() + "_U2");
-			pLegs[j]->pU3 = GetJoint(pLegs[j]->Name() + "_U3");
-			pLegs[j]->pP1 = GetJoint(pLegs[j]->Name() + "_P1");
-			pLegs[j]->pP2 = GetJoint(pLegs[j]->Name() + "_P2");
-			pLegs[j]->pP3 = GetJoint(pLegs[j]->Name() + "_P3");
-			pLegs[j]->pSf = GetJoint(pLegs[j]->Name() + "_Sf");
-			pLegs[j]->pS2 = GetJoint(pLegs[j]->Name() + "_S2");
-			pLegs[j]->pS3 = GetJoint(pLegs[j]->Name() + "_S3");
+			pLegs[j]->pU1 = FindJoint(pLegs[j]->Name() + "_U1");
+			pLegs[j]->pU2 = FindJoint(pLegs[j]->Name() + "_U2");
+			pLegs[j]->pU3 = FindJoint(pLegs[j]->Name() + "_U3");
+			pLegs[j]->pP1 = FindJoint(pLegs[j]->Name() + "_P1");
+			pLegs[j]->pP2 = FindJoint(pLegs[j]->Name() + "_P2");
+			pLegs[j]->pP3 = FindJoint(pLegs[j]->Name() + "_P3");
+			pLegs[j]->pSf = FindJoint(pLegs[j]->Name() + "_Sf");
+			pLegs[j]->pS2 = FindJoint(pLegs[j]->Name() + "_S2");
+			pLegs[j]->pS3 = FindJoint(pLegs[j]->Name() + "_S3");
 		}
 
 		/*Update Motions*/
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->pM1 = GetMotion(pLegs[j]->Name() + "_M1");
-			pLegs[j]->pM2 = GetMotion(pLegs[j]->Name() + "_M2");
-			pLegs[j]->pM3 = GetMotion(pLegs[j]->Name() + "_M3");
+			pLegs[j]->pM1 = FindMotion(pLegs[j]->Name() + "_M1");
+			pLegs[j]->pM2 = FindMotion(pLegs[j]->Name() + "_M2");
+			pLegs[j]->pM3 = FindMotion(pLegs[j]->Name() + "_M3");
 		}
 
 		/* Update Forces */
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->pF1 = dynamic_cast<SingleComponentForce*>(GetForce(pLegs[j]->Name() + "_F1"));
-			pLegs[j]->pF2 = dynamic_cast<SingleComponentForce*>(GetForce(pLegs[j]->Name() + "_F2"));
-			pLegs[j]->pF3 = dynamic_cast<SingleComponentForce*>(GetForce(pLegs[j]->Name() + "_F3"));
+			pLegs[j]->pF1 = dynamic_cast<SingleComponentForce*>(FindForce(pLegs[j]->Name() + "_F1"));
+			pLegs[j]->pF2 = dynamic_cast<SingleComponentForce*>(FindForce(pLegs[j]->Name() + "_F2"));
+			pLegs[j]->pF3 = dynamic_cast<SingleComponentForce*>(FindForce(pLegs[j]->Name() + "_F3"));
 		}
 
 		/*Update Dimension Variables*/
@@ -1298,144 +1295,6 @@ namespace Robots
 		}
 	}
 
-	void SetAkimaAndScript(RobotTypeI *pRobot, const GaitFunc &fun, GaitParamBase *param, const SimulateScript *pScript)
-	{
-		int dt{1};
-		SimulateScript realScript;
-
-		/*设置脚本*/
-		if (pScript)
-		{
-			dt = pScript->GetDt();
-
-			realScript.SetDt(pScript->GetDt());
-			realScript.SetEndTime(pScript->GetEndTime());
-
-
-		}
-
-		std::vector<std::vector<double> > motionPos(18);
-		std::vector<std::vector<double> > motionFce(18);
-
-		/*设置motion pos的Akima函数*/
-		param->count = 0;
-		for (int isFinished = 1; isFinished != 0;)
-		{
-			isFinished = fun(pRobot, param);
-
-			if ((param->count % dt) == 0)
-			{
-				double pIn[18];
-				pRobot->GetPin(pIn);
-
-				for (int i = 0; i < 18; ++i)
-				{
-					motionPos[param->count / dt].push_back(pIn[i]);
-				}
-			}
-			param->count++;
-		}
-
-		int totalCount = param->count;
-		int akimaSize = totalCount / dt + 1;//需加上0点
-
-		/*设置时间*/
-		std::vector<double> time(akimaSize);
-		for (int i = 0; i < akimaSize; ++i)
-		{
-			time.at(i) = i*dt / 1000.0;
-		}
-
-		
-		//for (auto &mot : motionPos)
-		//{
-		//	mot.resize(akimaSize);
-		//}
-
-		/*设置起始点机器人驱动的位置*/
-		pRobot->SetPeb(param->beginBodyPE);
-		pRobot->SetPee(param->beginPee);
-		for (int j = 0; j < 18; ++j)
-		{
-			double pIn[18];
-			pRobot->GetPin(pIn);
-			motionPos.at(j).at(0) = pIn[j];
-		}
-
-		/*设置其他时间节点上机器人驱动的位置*/
-		for (int i = 1; i < akimaSize; ++i)
-		{
-			param->count = i * 10 - 1;
-			fun(pRobot, param);
-
-			double pIn[18];
-			pRobot->GetPin(pIn);
-
-			for (int j = 0; j < 18; ++j)
-			{
-				motionPos.at(j).at(i) = pIn[j];
-			}
-		}
-
-		/*设置驱动的位置akima函数*/
-		for (int i = 0; i < 18; ++i)
-		{
-			pRobot->GetMotion(i)->SetPosAkimaCurve(akimaSize, time.data(), motionPos.at(i).data());
-		}
-	}
-
-	void RobotTypeI::SimByAdams(const char *adamsFile, const GaitFunc &fun, GaitParamBase *param, const SimulateScript *pScript)
-	{
-		/*设置驱动的Akima函数*/
-		SetAkimaAndScript(this, fun, param, pScript);
-		
-		/*设置仿真脚本*/
-		if (pScript)
-		{
-			for (auto &nodePair : pScript->script)
-			{
-				for (auto &elePair : nodePair.second.elements)
-				{
-					auto jnt = dynamic_cast<JointBase *>(elePair.first);
-					if (jnt)
-					{
-						if (elePair.second)
-						{
-							if (nodePair.first == 0)
-							{
-								double peMakJ[6];
-
-								this->SetPeb(param->beginBodyPE);
-								this->SetPee(param->beginPee);
-								s_pm2pe(*jnt->MakJ().PrtPm(), peMakJ);
-								//pScript->ScriptMoveMarker(nodePair.first, jnt->GetMakJ(), peMakJ);
-							}
-							else
-							{
-								double peMakJ[6];
-								
-								param->count = nodePair.first;
-
-								fun(this, param);
-								s_pm2pe(*jnt->MakJ().PrtPm(), peMakJ);
-								//pScript->ScriptMoveMarker(nodePair.first, jnt->GetMakJ(), peMakJ);
-							}
-
-						}
-					}
-				}
-			}
-
-			param->count = 0;
-			int totalCount = fun(this, param) + 1;
-			//pScript->ScriptEndTime(totalCount);
-		}
-
-		/*将机器人当前位置设置到初始位置处*/
-		this->SetPeb(param->beginBodyPE);
-		this->SetPee(param->beginPee);
-		Model::SaveAdams(adamsFile, pScript);
-	}
 	void RobotTypeI::SimByAdams(const char *adamsFile, const GaitFunc &fun, GaitParamBase *param, int dt)
 	{
 		std::vector<std::vector<double> > motionPos(18);
@@ -1446,7 +1305,7 @@ namespace Robots
 		/*设置motion pos的Akima函数*/
 		/*起始位置*/
 		this->GetPee(param->beginPee);
-		this->GetPeb(param->beginBodyPE);
+		this->GetPeb(param->beginPeb);
 		time.push_back(0);
 		std::array<double, 6> bodyPe;
 		this->GetPeb(bodyPe.data());
@@ -1486,21 +1345,25 @@ namespace Robots
 		/*设置驱动的位置akima函数*/
 		for (int i = 0; i < 18; ++i)
 		{
-			this->GetMotion(i)->SetPosAkimaCurve(time.size(), time.data(), motionPos[i].data());
+			this->MotionAt(i).SetPosAkimaCurve(time.size(), time.data(), motionPos[i].data());
 		}
 
-		this->SetPeb(param->beginBodyPE);
+		this->SetPeb(param->beginPeb);
 		this->SetPee(param->beginPee);
 		/*使用FastDyn计算驱动力的大小*/
 		for (std::size_t i = 0; i < time.size(); ++i)
 		{
+			//更新机构拓扑
+			
+			
+			
 			double pIn[18], vIn[18], aIn[18];
 
 			for (int j = 0; j < 18; ++j)
 			{
-				pIn[j] = this->GetMotion(j)->PosAkima(time[i], '0');
-				vIn[j] = this->GetMotion(j)->PosAkima(time[i], '1');
-				aIn[j] = this->GetMotion(j)->PosAkima(time[i], '2');
+				pIn[j] = this->MotionAt(j).PosAkima(time[i], '0');
+				vIn[j] = this->MotionAt(j).PosAkima(time[i], '1');
+				aIn[j] = this->MotionAt(j).PosAkima(time[i], '2');
 			}
 
 			//double pe[6];
@@ -1524,13 +1387,13 @@ namespace Robots
 		/*设置力矩*/
 		for (int i = 0; i < 18; ++i)
 		{
-			dynamic_cast<SingleComponentForce *>(this->GetForce(i))->SetFceAkimaCurve(time.size(), time.data(), motionFce[i].data());
+			dynamic_cast<SingleComponentForce &>(this->ForceAt(i)).SetFceAkimaCurve(time.size(), time.data(), motionFce[i].data());
 		}
 
 		/*把机器人设置到开始的位置，并输出模型*/
-		this->SetPeb(param->beginBodyPE);
+		this->SetPeb(param->beginPeb);
 		this->SetPee(param->beginPee);
-		this->SaveAdams(adamsFile);
+		this->SaveAdams(adamsFile, false);
 
 		/*把机器人设置到结束的位置*/
 		SimByAdamsResultAt(endCount);
@@ -1541,13 +1404,14 @@ namespace Robots
 
 		for (int j = 0; j < 18; ++j)
 		{
-			pIn[j] = this->GetMotion(j)->PosAkima(momentTime / 1000.0, '0');
-			vIn[j] = this->GetMotion(j)->PosAkima(momentTime / 1000.0, '1');
-			aIn[j] = this->GetMotion(j)->PosAkima(momentTime / 1000.0, '2');
-			double f = this->GetForce(j)->FceAkima(momentTime / 1000.0, '0');
+			pIn[j] = this->MotionAt(j).PosAkima(momentTime / 1000.0, '0');
+			vIn[j] = this->MotionAt(j).PosAkima(momentTime / 1000.0, '1');
+			aIn[j] = this->MotionAt(j).PosAkima(momentTime / 1000.0, '2');
+			double f = this->ForceAt(j).FceAkima(momentTime / 1000.0, '0');
 
-			static_cast<Aris::DynKer::SingleComponentForce*>(this->GetForce(j))->SetFce(f);
+			static_cast<Aris::DynKer::SingleComponentForce&>(this->ForceAt(j)).SetFce(f);
 		}
+
 		double pe[6];
 		this->GetPeb(pe);
 		this->SetPinFixFeet(pIn, this->GetFixFeet(), this->GetActiveMotion(), pe);
@@ -1582,7 +1446,7 @@ namespace Robots
 
 		/*起始位置*/
 		this->GetPee(param->beginPee);
-		this->GetPeb(param->beginBodyPE);
+		this->GetPeb(param->beginPeb);
 
 		/*this->GetPeb(bodyPe.data());
 		bodyPeList.push_back(bodyPe);

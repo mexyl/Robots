@@ -1,4 +1,4 @@
-﻿#include <Platform.h>
+﻿
 
 #include <iostream>
 
@@ -56,10 +56,10 @@ Robots::RobotTypeI rbt;
 
 int main()
 {
-#ifdef PLATFORM_IS_WINDOWS
+#ifdef WIN32
 	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
 #endif
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/HexapodVIII.xml");
 #endif
 

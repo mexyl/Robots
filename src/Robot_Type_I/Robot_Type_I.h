@@ -214,7 +214,6 @@ namespace Robots
 		void Dyn();
 		
 		void SimByAdamsResultAt(int momentTime);
-		void SimByAdams(const char *adamsFile, const GaitFunc &fun, GaitParamBase *param, const Aris::DynKer::SimulateScript *script = nullptr);
 		void SimByAdams(const char *adamsFile, const GaitFunc &fun, GaitParamBase *param, int dt);
 		void SimByMatlab(const std::string &folderName, const GaitFunc &fun, GaitParamBase *param);
 	
@@ -246,110 +245,6 @@ namespace Robots
 		friend class LegI;
 	};
 
-	inline void Activate024(int time, RobotTypeI *pRobot, Aris::DynKer::SimulateScript *script)
-	{
-		script->ScriptDeactivate(time, pRobot->pLF->pSf);
-		script->ScriptActivate(time, pRobot->pLM->pSf);
-		script->ScriptDeactivate(time, pRobot->pLR->pSf);
-		script->ScriptActivate(time, pRobot->pRF->pSf);
-		script->ScriptDeactivate(time, pRobot->pRM->pSf);
-		script->ScriptActivate(time, pRobot->pRR->pSf);
-
-		script->ScriptActivate(time, pRobot->pLF->pM1);
-		script->ScriptActivate(time, pRobot->pLF->pM2);
-		script->ScriptActivate(time, pRobot->pLF->pM3);
-		script->ScriptDeactivate(time, pRobot->pLF->pF1);
-		script->ScriptDeactivate(time, pRobot->pLF->pF2);
-		script->ScriptDeactivate(time, pRobot->pLF->pF3);
-
-		script->ScriptActivate(time, pRobot->pLR->pM1);
-		script->ScriptActivate(time, pRobot->pLR->pM2);
-		script->ScriptActivate(time, pRobot->pLR->pM3);
-		script->ScriptDeactivate(time, pRobot->pLR->pF1);
-		script->ScriptDeactivate(time, pRobot->pLR->pF2);
-		script->ScriptDeactivate(time, pRobot->pLR->pF3);
-
-		script->ScriptActivate(time, pRobot->pRM->pM1);
-		script->ScriptActivate(time, pRobot->pRM->pM2);
-		script->ScriptActivate(time, pRobot->pRM->pM3);
-		script->ScriptDeactivate(time, pRobot->pRM->pF1);
-		script->ScriptDeactivate(time, pRobot->pRM->pF2);
-		script->ScriptDeactivate(time, pRobot->pRM->pF3);
-
-		script->ScriptDeactivate(time, pRobot->pLM->pM1);
-		script->ScriptActivate(time, pRobot->pLM->pM2);
-		script->ScriptActivate(time, pRobot->pLM->pM3);
-		script->ScriptActivate(time, pRobot->pLM->pF1);
-		script->ScriptDeactivate(time, pRobot->pLM->pF2);
-		script->ScriptDeactivate(time, pRobot->pLM->pF3);
-
-		script->ScriptDeactivate(time, pRobot->pRF->pM1);
-		script->ScriptActivate(time, pRobot->pRF->pM2);
-		script->ScriptActivate(time, pRobot->pRF->pM3);
-		script->ScriptActivate(time, pRobot->pRF->pF1);
-		script->ScriptDeactivate(time, pRobot->pRF->pF2);
-		script->ScriptDeactivate(time, pRobot->pRF->pF3);
-
-		script->ScriptDeactivate(time, pRobot->pRR->pM1);
-		script->ScriptActivate(time, pRobot->pRR->pM2);
-		script->ScriptActivate(time, pRobot->pRR->pM3);
-		script->ScriptActivate(time, pRobot->pRR->pF1);
-		script->ScriptDeactivate(time, pRobot->pRR->pF2);
-		script->ScriptDeactivate(time, pRobot->pRR->pF3);
-
-		
-	}
-	inline void Activate135(int time, RobotTypeI *pRobot, Aris::DynKer::SimulateScript *script)
-	{
-		script->ScriptActivate(time, pRobot->pLF->pSf);
-		script->ScriptDeactivate(time, pRobot->pLM->pSf);
-		script->ScriptActivate(time, pRobot->pLR->pSf);
-		script->ScriptDeactivate(time, pRobot->pRF->pSf);
-		script->ScriptActivate(time, pRobot->pRM->pSf);
-		script->ScriptDeactivate(time, pRobot->pRR->pSf);
-
-		script->ScriptDeactivate(time, pRobot->pLF->pM1);
-		script->ScriptActivate(time, pRobot->pLF->pM2);
-		script->ScriptActivate(time, pRobot->pLF->pM3);
-		script->ScriptActivate(time, pRobot->pLF->pF1);
-		script->ScriptDeactivate(time, pRobot->pLF->pF2);
-		script->ScriptDeactivate(time, pRobot->pLF->pF3);
-
-		script->ScriptDeactivate(time, pRobot->pLR->pM1);
-		script->ScriptActivate(time, pRobot->pLR->pM2);
-		script->ScriptActivate(time, pRobot->pLR->pM3);
-		script->ScriptActivate(time, pRobot->pLR->pF1);
-		script->ScriptDeactivate(time, pRobot->pLR->pF2);
-		script->ScriptDeactivate(time, pRobot->pLR->pF3);
-
-		script->ScriptDeactivate(time, pRobot->pRM->pM1);
-		script->ScriptActivate(time, pRobot->pRM->pM2);
-		script->ScriptActivate(time, pRobot->pRM->pM3);
-		script->ScriptActivate(time, pRobot->pRM->pF1);
-		script->ScriptDeactivate(time, pRobot->pRM->pF2);
-		script->ScriptDeactivate(time, pRobot->pRM->pF3);
-
-		script->ScriptActivate(time, pRobot->pLM->pM1);
-		script->ScriptActivate(time, pRobot->pLM->pM2);
-		script->ScriptActivate(time, pRobot->pLM->pM3);
-		script->ScriptDeactivate(time, pRobot->pLM->pF1);
-		script->ScriptDeactivate(time, pRobot->pLM->pF2);
-		script->ScriptDeactivate(time, pRobot->pLM->pF3);
-
-		script->ScriptActivate(time, pRobot->pRF->pM1);
-		script->ScriptActivate(time, pRobot->pRF->pM2);
-		script->ScriptActivate(time, pRobot->pRF->pM3);
-		script->ScriptDeactivate(time, pRobot->pRF->pF1);
-		script->ScriptDeactivate(time, pRobot->pRF->pF2);
-		script->ScriptDeactivate(time, pRobot->pRF->pF3);
-
-		script->ScriptActivate(time, pRobot->pRR->pM1);
-		script->ScriptActivate(time, pRobot->pRR->pM2);
-		script->ScriptActivate(time, pRobot->pRR->pM3);
-		script->ScriptDeactivate(time, pRobot->pRR->pF1);
-		script->ScriptDeactivate(time, pRobot->pRR->pF2);
-		script->ScriptDeactivate(time, pRobot->pRR->pF3);
-	}
 	inline void Activate024(RobotTypeI *pRobot)
 	{
 		pRobot->pLF->pSf->Activate(false);

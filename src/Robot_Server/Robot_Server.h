@@ -12,7 +12,7 @@
 
 namespace Robots
 {
-	typedef std::function<Aris::Core::Msg(const std::string &cmd, const std::map<std::string, std::string> &params)> PARSE_FUNC;
+	typedef std::function<Aris::Core::Msg(const std::string &cmd, const std::map<std::string, std::string> &params)> ParseFunc;
 
 	class RobotServer
 	{
@@ -29,7 +29,7 @@ namespace Robots
 		};
 		void LoadXml(const char *fileName);
 		void LoadXml(const Aris::Core::XmlDocument &xmlDoc);
-		void AddGait(std::string cmdName, GaitFunc gaitFunc, PARSE_FUNC parseFunc);
+		void AddGait(std::string cmdName, GaitFunc gaitFunc, ParseFunc parseFunc);
 		void Start();
 		void Stop();
 

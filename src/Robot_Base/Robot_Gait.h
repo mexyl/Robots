@@ -47,8 +47,8 @@ namespace Robots
 		const std::vector<Aris::Control::EthercatForceSensor::Data> *pForceData;
 		double beginPee[18]{0};
 		double beginVee[18]{0};
-		double beginBodyPE[6]{0};
-		double beginBodyVel[6]{0};
+		double beginPeb[6]{0};
+		double beginVb[6]{0};
 	};
 
 	struct WalkParam final:public GaitParamBase
@@ -74,7 +74,7 @@ namespace Robots
 		std::int32_t motorID[18]{ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 };
 		std::int32_t legID[6]{ 0,1,2,3,4,5 };
 		double targetPee[MAX_PERIOD_NUM][18];
-		double targetBodyPE[MAX_PERIOD_NUM][6];
+		double targetPeb[MAX_PERIOD_NUM][6];
 		std::int32_t periodCount[MAX_PERIOD_NUM]{1000};
 		std::int32_t periodNum{1};
 		char relativeCoordinate[8]{ 'G',0 };
@@ -83,7 +83,7 @@ namespace Robots
 	int adjust(RobotBase * pRobot, const GaitParamBase * pParam);
 	Aris::Core::Msg parseAdjust(const std::string &cmd, const std::map<std::string, std::string> &params);
 
-	struct FAST_WALK_PARAM :public GaitParamBase
+	struct FastWalkParam :public GaitParamBase
 	{
 		const char fileName[256]{ 0 };
 		std::int32_t accCount{ 0 };
@@ -99,15 +99,6 @@ namespace Robots
 
 	int resetOrigin(RobotBase * pRobot, const Robots::GaitParamBase *pParam);
 	Aris::Core::Msg parseResetOrigin(const std::string &cmd, const std::map<std::string, std::string> &params);
-
-	struct MOVE_PARAM :public GaitParamBase
-	{
-		double targetPee[18];
-		double targetVee[18];
-		double targetBodyVel[6];
-		double targetBodyPE[6];
-		std::int32_t totalCount;
-	};
 }
 
 #endif

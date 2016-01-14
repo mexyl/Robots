@@ -1,9 +1,9 @@
-﻿#include <Platform.h>
+﻿
 
-#ifdef PLATFORM_IS_LINUX
+#ifdef UNIX
 #include "rtdk.h"
 #endif
-#ifdef PLATFORM_IS_WINDOWS
+#ifdef WIN32
 #define rt_printf printf
 #endif
 
@@ -36,7 +36,7 @@ namespace Robots
 		int lSign = ((3 + wAxis - uAxis) % 3 == 1) ? wSign* uSign : -wSign* uSign;
 
 		double pm[4][4], pe[6];
-		s_pe2pm(pParam->beginBodyPE, *pm, "313");
+		s_pe2pm(pParam->beginPeb, *pm, "313");
 		char order[4]{0};
 		order[0] = '1' + uAxis;
 		order[1] = '1' + (1 + uAxis) % 3;
@@ -50,7 +50,7 @@ namespace Robots
 		double b = pRealParam->beta;
 
 		const double *beginPee = pRealParam->beginPee;
-		const double *beginBodyPE = pRealParam->beginBodyPE;
+		const double *beginPeb = pRealParam->beginPeb;
 
 		double pEE[18];
 		double pBodyPE[6];
@@ -62,15 +62,15 @@ namespace Robots
 		for (int i = 0; i < 18; i += 6)
 		{
 			pEE[i + wAxis] = wSign*(0.5*d / cos(b / 2)*cos(a + b * 3 / 4)*(1 - cos(s)) / 2
-				+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis]) * cos((1 - cos(s)) / 4 * b)
-				- lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis]) * sin((1 - cos(s)) / 4 * b))
-				+ beginBodyPE[wAxis];
+				+ wSign*(beginPee[i + wAxis] - beginPeb[wAxis]) * cos((1 - cos(s)) / 4 * b)
+				- lSign*(beginPee[i + lAxis] - beginPeb[lAxis]) * sin((1 - cos(s)) / 4 * b))
+				+ beginPeb[wAxis];
 			pEE[i + uAxis] = uSign*h*sin(s)
 				+ beginPee[i + uAxis];
 			pEE[i + lAxis] = lSign*(0.5*d / cos(b / 2)*sin(a + b * 3 / 4)*(1 - cos(s)) / 2
-				+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis]) * sin((1 - cos(s)) / 4 * b)
-				+ lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis]) * cos((1 - cos(s)) / 4 * b))
-				+ beginBodyPE[lAxis];
+				+ wSign*(beginPee[i + wAxis] - beginPeb[wAxis]) * sin((1 - cos(s)) / 4 * b)
+				+ lSign*(beginPee[i + lAxis] - beginPeb[lAxis]) * cos((1 - cos(s)) / 4 * b))
+				+ beginPeb[lAxis];
 		}
 		/*设置支撑腿*/
 		for (int i = 3; i < 18; i += 6)
@@ -112,7 +112,7 @@ namespace Robots
 		int lSign = ((3 + wAxis - uAxis) % 3 == 1) ? wSign* uSign : -wSign* uSign;
 
 		double pm[4][4], pe[6];
-		s_pe2pm(pParam->beginBodyPE, *pm, "313");
+		s_pe2pm(pParam->beginPeb, *pm, "313");
 		char order[4]{ 0 };
 		order[0] = '1' + uAxis;
 		order[1] = '1' + (1 + uAxis) % 3;
@@ -126,7 +126,7 @@ namespace Robots
 		double b = pRealParam->beta;
 
 		const double *beginPee = pRealParam->beginPee;
-		const double *beginBodyPE = pRealParam->beginBodyPE;
+		const double *beginPeb = pRealParam->beginPeb;
 
 		double pEE[18];
 		
@@ -140,15 +140,15 @@ namespace Robots
 			for (int i = 3; i < 18; i += 6)
 			{
 				pEE[i + wAxis] = wSign*(d *cos(a + b)*(1 - cos(s)) / 2
-					+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis]) * cos((1 - cos(s)) / 2 * b)
-					- lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis]) * sin((1 - cos(s)) / 2 * b))
-					+ beginBodyPE[wAxis];
+					+ wSign*(beginPee[i + wAxis] - beginPeb[wAxis]) * cos((1 - cos(s)) / 2 * b)
+					- lSign*(beginPee[i + lAxis] - beginPeb[lAxis]) * sin((1 - cos(s)) / 2 * b))
+					+ beginPeb[wAxis];
 				pEE[i + uAxis] = uSign*h*sin(s)
 					+ beginPee[i + uAxis];
 				pEE[i + lAxis] = lSign*(d *sin(a + b)*(1 - cos(s)) / 2
-					+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis]) * sin((1 - cos(s)) / 2 * b)
-					+ lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis]) * cos((1 - cos(s)) / 2 * b))
-					+ beginBodyPE[lAxis];
+					+ wSign*(beginPee[i + wAxis] - beginPeb[wAxis]) * sin((1 - cos(s)) / 2 * b)
+					+ lSign*(beginPee[i + lAxis] - beginPeb[lAxis]) * cos((1 - cos(s)) / 2 * b))
+					+ beginPeb[lAxis];
 			}
 			/*设置支撑腿*/
 			for (int i = 0; i < 18; i += 6)
@@ -166,29 +166,29 @@ namespace Robots
 			for (int i = 0; i < 18; i += 6)
 			{
 				pEE[i + wAxis] = wSign*(d *cos(a + b)*(1 - cos(s)) / 2
-					+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis]) * cos((1 - cos(s)) / 2 * b)
-					- lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis]) * sin((1 - cos(s)) / 2 * b))
-					+ beginBodyPE[wAxis];
+					+ wSign*(beginPee[i + wAxis] - beginPeb[wAxis]) * cos((1 - cos(s)) / 2 * b)
+					- lSign*(beginPee[i + lAxis] - beginPeb[lAxis]) * sin((1 - cos(s)) / 2 * b))
+					+ beginPeb[wAxis];
 				pEE[i + uAxis] = uSign*h*sin(s)
 					+ beginPee[i + uAxis];
 				pEE[i + lAxis] = lSign*(d *sin(a + b)*(1 - cos(s)) / 2
-					+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis]) * sin((1 - cos(s)) / 2 * b)
-					+ lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis]) * cos((1 - cos(s)) / 2 * b))
-					+ beginBodyPE[lAxis];
+					+ wSign*(beginPee[i + wAxis] - beginPeb[wAxis]) * sin((1 - cos(s)) / 2 * b)
+					+ lSign*(beginPee[i + lAxis] - beginPeb[lAxis]) * cos((1 - cos(s)) / 2 * b))
+					+ beginPeb[lAxis];
 			}
 			/*设置支撑腿*/
 			for (int i = 3; i < 18; i += 6)
 			{
 				pEE[i + wAxis] = wSign*(d *cos(a + b)
-					+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis]) * cos(b)
-					- lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis]) * sin(b))
-					+ beginBodyPE[wAxis];
+					+ wSign*(beginPee[i + wAxis] - beginPeb[wAxis]) * cos(b)
+					- lSign*(beginPee[i + lAxis] - beginPeb[lAxis]) * sin(b))
+					+ beginPeb[wAxis];
 				pEE[i + uAxis] = 0
 					+ beginPee[i + uAxis];
 				pEE[i + lAxis] = lSign*(d *sin(a + b)
-					+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis]) * sin(b)
-					+ lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis]) * cos(b))
-					+ beginBodyPE[lAxis];
+					+ wSign*(beginPee[i + wAxis] - beginPeb[wAxis]) * sin(b)
+					+ lSign*(beginPee[i + lAxis] - beginPeb[lAxis]) * cos(b))
+					+ beginPeb[lAxis];
 			}
 		}
 
@@ -232,7 +232,7 @@ namespace Robots
 		int lSign = ((3 + wAxis - uAxis) % 3 == 1) ? wSign* uSign : -wSign* uSign;
 
 		double pm[4][4], pe[6];
-		s_pe2pm(pParam->beginBodyPE, *pm, "313");
+		s_pe2pm(pParam->beginPeb, *pm, "313");
 		char order[4]{0};
 		order[0] = '1' + uAxis;
 		order[1] = '1' + (1 + uAxis) % 3;
@@ -246,7 +246,7 @@ namespace Robots
 		double b = pRealParam->beta;
 
 		const double *beginPee = pRealParam->beginPee;
-		const double *beginBodyPE = pRealParam->beginBodyPE;
+		const double *beginPeb = pRealParam->beginPeb;
 
 		double pEE[18];
 		double pBodyPE[6];
@@ -258,15 +258,15 @@ namespace Robots
 		for (int i = 3; i < 18; i += 6)
 		{
 			pEE[i + wAxis] = wSign*(0.5*d / cos(b / 2)*cos(a + b / 2)*(1 - cos(s)) / 2
-				+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis] + wSign*0.25*d / cos(b / 2)*cos(a + b / 2)) * cos((1 - cos(s)) / 4 * b)
-				- lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis] + lSign*0.25*d / cos(b / 2)*sin(a + b / 2)) * sin((1 - cos(s)) / 4 * b))
-				+ beginBodyPE[wAxis] - wSign*0.25*d / cos(b / 2)*cos(a+b/2);
+				+ wSign*(beginPee[i + wAxis] - beginPeb[wAxis] + wSign*0.25*d / cos(b / 2)*cos(a + b / 2)) * cos((1 - cos(s)) / 4 * b)
+				- lSign*(beginPee[i + lAxis] - beginPeb[lAxis] + lSign*0.25*d / cos(b / 2)*sin(a + b / 2)) * sin((1 - cos(s)) / 4 * b))
+				+ beginPeb[wAxis] - wSign*0.25*d / cos(b / 2)*cos(a+b/2);
 			pEE[i + uAxis] = uSign*h*sin(s)
 				+ beginPee[i + uAxis];
 			pEE[i + lAxis] = lSign*(0.5*d / cos(b / 2)*sin(a + b / 2)*(1 - cos(s)) / 2
-				+ wSign*(beginPee[i + wAxis] - beginBodyPE[wAxis] + wSign*0.25*d / cos(b / 2)*cos(a + b / 2)) * sin((1 - cos(s)) / 4 * b)
-				+ lSign*(beginPee[i + lAxis] - beginBodyPE[lAxis] + lSign*0.25*d / cos(b / 2)*sin(a + b / 2)) * cos((1 - cos(s)) / 4 * b))
-				+ beginBodyPE[lAxis] - lSign*0.25*d / cos(b / 2)*sin(a + b / 2);
+				+ wSign*(beginPee[i + wAxis] - beginPeb[wAxis] + wSign*0.25*d / cos(b / 2)*cos(a + b / 2)) * sin((1 - cos(s)) / 4 * b)
+				+ lSign*(beginPee[i + lAxis] - beginPeb[lAxis] + lSign*0.25*d / cos(b / 2)*sin(a + b / 2)) * cos((1 - cos(s)) / 4 * b))
+				+ beginPeb[lAxis] - lSign*0.25*d / cos(b / 2)*sin(a + b / 2);
 		}
 
 
@@ -304,7 +304,7 @@ namespace Robots
 
 		/*以下设置各个阶段的身体的真实初始位置*/
 		double beginPm[16];
-		s_pe2pm(pWP->beginBodyPE, beginPm);
+		s_pe2pm(pWP->beginPeb, beginPm);
 	
 		int wAxis = std::abs(pWP->walkDirection) - 1;
 		int uAxis = std::abs(pWP->upDirection) - 1;
@@ -357,14 +357,14 @@ namespace Robots
 		Robots::WalkParam realParam = *pWP;
 
 		realParam.count = (pWP->count - pWP->totalCount) % (2 * pWP->totalCount);
-		s_pm2pe(bodyRealBeginPm, realParam.beginBodyPE);
+		s_pm2pe(bodyRealBeginPm, realParam.beginPeb);
 		
 		/*以下计算每个腿的初始位置*/
 		double pee_G[18]{ 0 };
 		double pee_B[18]{ 0 };
 
 		double pm[4][4], pe[6];
-		s_pe2pm(pParam->beginBodyPE, *pm, "313");
+		s_pe2pm(pParam->beginPeb, *pm, "313");
 		s_pm2pe(*pm, pe, order);
 
 		for (int i = 0; i < 18; i += 3)
@@ -372,14 +372,14 @@ namespace Robots
 			if ((i/3) % 2 == 0)
 			{
 				pee_G[i + wAxis] = wSign*(0.5* pWP->d / cos(b / 2)*cos(a+ uSign*pe[3] + b * 3 / 4)
-					+ wSign*(pWP->beginPee[i + wAxis] - pWP->beginBodyPE[wAxis]) * cos(b / 2)
-					- lSign*(pWP->beginPee[i + lAxis] - pWP->beginBodyPE[lAxis]) * sin(b / 2))
-					+ pWP->beginBodyPE[wAxis];
+					+ wSign*(pWP->beginPee[i + wAxis] - pWP->beginPeb[wAxis]) * cos(b / 2)
+					- lSign*(pWP->beginPee[i + lAxis] - pWP->beginPeb[lAxis]) * sin(b / 2))
+					+ pWP->beginPeb[wAxis];
 				pee_G[i + uAxis] = pWP->beginPee[i + uAxis];
 				pee_G[i + lAxis] = lSign*(0.5*pWP->d / cos(b / 2)*sin(a + uSign*pe[3] + b * 3 / 4)
-					+ wSign*(pWP->beginPee[i + wAxis] - pWP->beginBodyPE[wAxis]) * sin(b / 2)
-					+ lSign*(pWP->beginPee[i + lAxis] - pWP->beginBodyPE[lAxis]) * cos(b / 2))
-					+ pWP->beginBodyPE[lAxis];
+					+ wSign*(pWP->beginPee[i + wAxis] - pWP->beginPeb[wAxis]) * sin(b / 2)
+					+ lSign*(pWP->beginPee[i + lAxis] - pWP->beginPeb[lAxis]) * cos(b / 2))
+					+ pWP->beginPeb[lAxis];
 			}
 			else
 			{
@@ -392,7 +392,7 @@ namespace Robots
 
 		//static double lastPee[18], lastPbody[6];
 		//std::copy_n(lastPee, 18, realParam.beginPee);
-		//std::copy_n(lastPbody, 6, realParam.beginBodyPE);
+		//std::copy_n(lastPbody, 6, realParam.beginPeb);
 
 
 		if (pParam->count < pWP->totalCount)
@@ -474,7 +474,7 @@ namespace Robots
 		/*转换末端和身体目标位置的坐标到地面坐标系下*/
 		for (int i = 0; i < pAP->periodNum; ++i)
 		{
-			pRobot->TransformCoordinatePee(pAP->beginBodyPE, pAP->relativeCoordinate, pAP->targetPee[i], "G",realTargetPee[i]);
+			pRobot->TransformCoordinatePee(pAP->beginPeb, pAP->relativeCoordinate, pAP->targetPee[i], "G",realTargetPee[i]);
 		}
 
 		switch (*(pAP->relativeBodyCoordinate))
@@ -483,13 +483,13 @@ namespace Robots
 		case 'M':
 		{
 			double beginPm[16];
-			s_pe2pm(pAP->beginBodyPE, beginPm);
+			s_pe2pm(pAP->beginPeb, beginPm);
 
 			for (int i = 0; i < pAP->periodNum; ++i)
 			{
 				double pm1[16], pm2[16];
 
-				s_pe2pm(pAP->targetBodyPE[i], pm1);
+				s_pe2pm(pAP->targetPeb[i], pm1);
 				s_pm_dot_pm(beginPm, pm1, pm2);
 				s_pm2pe(pm2, realTargetPbody[i]);
 			}
@@ -499,7 +499,7 @@ namespace Robots
 		case 'G':
 		case 'O':
 		default:
-			std::copy_n(&pAP->targetBodyPE[0][0], AdjustParam::MAX_PERIOD_NUM*6, &realTargetPbody[0][0]);
+			std::copy_n(&pAP->targetPeb[0][0], AdjustParam::MAX_PERIOD_NUM*6, &realTargetPbody[0][0]);
 			break;
 		}
 
@@ -531,7 +531,7 @@ namespace Robots
 			
 			/*以下用四元数进行插值*/
 			double pq_first[7], pq_second[7], pq[7];
-			s_pe2pq(pAP->beginBodyPE, pq_first);
+			s_pe2pq(pAP->beginPeb, pq_first);
 			s_pe2pq(realTargetPbody[pos], pq_second);
 
 			if (s_vn_dot_vn(4, &pq_first[3], &pq_second[3]) < 0)
@@ -622,9 +622,9 @@ namespace Robots
 		Robots::AdjustParam  param;
 
 		std::copy_n(firstEE, 18, param.targetPee[0]);
-		std::fill_n(param.targetBodyPE[0], 6, 0);
+		std::fill_n(param.targetPeb[0], 6, 0);
 		std::copy_n(beginEE, 18, param.targetPee[1]);
-		std::fill_n(param.targetBodyPE[1], 6, 0);
+		std::fill_n(param.targetPeb[1], 6, 0);
 
 		param.periodNum = 2;
 		param.periodCount[0] = 3000;
@@ -670,7 +670,7 @@ namespace Robots
 	
 	int fastWalk(RobotBase * pRobot, const GaitParamBase * pParam)
 	{
-		auto pFP = static_cast<const FAST_WALK_PARAM*>(pParam);
+		auto pFP = static_cast<const FastWalkParam*>(pParam);
 		
 		if (pFP->count < pFP->accCount)
 		{
@@ -691,7 +691,7 @@ namespace Robots
 	}
 	Aris::Core::Msg parseFastWalk(const std::string &cmd, const std::map<std::string, std::string> &params)
 	{
-		FAST_WALK_PARAM param;
+		FastWalkParam param;
 		for (auto &i : params)
 		{
 			if (i.first == "file")
@@ -860,16 +860,16 @@ namespace Robots
 
 		///*begin vq*/
 		//double pm1[16], pm2[16];
-		//s_pe2pm(param->beginBodyPE, pm1);
-		//s_inv_v2v(pm1, nullptr, param->beginBodyVel, relativeBeginVel);
+		//s_pe2pm(param->beginPeb, pm1);
+		//s_inv_v2v(pm1, nullptr, param->beginVb, relativeBeginVel);
 		//s_v2vq(relativeBeginPm, relativeBeginVel, relativeBeginVq);
 
 		///*end pq*/
-		//s_pe2pm(param->targetBodyPE, pm2);
+		//s_pe2pm(param->targetPeb, pm2);
 		//s_inv_pm_dot_pm(pm1, pm2, relativeEndPm);
 
 		///*end vq*/
-		//s_inv_v2v(pm1, nullptr, param->beginBodyVel, relativeEndVel);
+		//s_inv_v2v(pm1, nullptr, param->beginVb, relativeEndVel);
 		
 
 
@@ -884,7 +884,7 @@ namespace Robots
 
 
 
-		//param->beginBodyVel;
+		//param->beginVb;
 
 
 

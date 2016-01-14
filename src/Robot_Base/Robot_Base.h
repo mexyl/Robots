@@ -24,7 +24,6 @@ namespace Robots
 		const Marker& Base() const { return *pBase; };
 		Marker& Base() { return *pBase; };
 
-
 		void GetPee(double *pEE) const { GetPee(pEE, Ground()); };
 		void GetPee(double *pEE, const Marker &Mak) const;
 		void SetPee(const double *pEE) { SetPee(pEE, Ground()); };
@@ -114,7 +113,6 @@ namespace Robots
 		* \param c Cai
 		*/
 		void GetCai(double *c, const Marker &Mak) const;
-
 
 		void TransformCoordinatePee(const double *bodyPe, const char *fromMak, const double *fromPee
 			, const char *toMak, double *toPee) const;
@@ -257,25 +255,25 @@ namespace Robots
 		};
 
 		void GetPmb(double *pmb) const { GetPmb(pmb, Ground()); };
-		void GetPmb(double *pmb, const Marker &Mak) const;
+		void GetPmb(double *pmb, const Marker &mak) const;
 		void SetPmb(const double *pmb) { SetPmb(pmb, Ground()); };
-		void SetPmb(const double *pmb, const Marker &Mak);
+		void SetPmb(const double *pmb, const Marker &mak);
 		void GetPeb(double *peb, const char *eurType = "313") const { GetPeb(peb, Ground(), eurType); };
-		void GetPeb(double *peb, const Marker &Mak, const char *eurType = "313") const;
+		void GetPeb(double *peb, const Marker &mak, const char *eurType = "313") const;
 		void SetPeb(const double *peb, const char *eurType = "313") { SetPeb(peb, Ground(), eurType); };
-		void SetPeb(const double *peb, const Marker &Mak, const char *eurType = "313");
+		void SetPeb(const double *peb, const Marker &mak, const char *eurType = "313");
 		void GetPqb(double *pqb) const { GetPqb(pqb, Ground()); };
-		void GetPqb(double *pqb, const Marker &Mak) const;
+		void GetPqb(double *pqb, const Marker &mak) const;
 		void SetPqb(const double *pqb) { SetPqb(pqb, Ground()); };
-		void SetPqb(const double *pqb, const Marker &Mak);
+		void SetPqb(const double *pqb, const Marker &mak);
 		void GetVb(double *vb) const { GetVb(vb, Ground()); };
-		void GetVb(double *vb, const Marker &Mak) const;
+		void GetVb(double *vb, const Marker &mak) const;
 		void SetVb(const double *vb) { SetVb(vb, Ground()); };
-		void SetVb(const double *vb, const Marker &Mak);
+		void SetVb(const double *vb, const Marker &mak);
 		void GetAb(double *ab) const { GetAb(ab, Ground()); };
-		void GetAb(double *ab, const Marker &Mak) const;
+		void GetAb(double *ab, const Marker &mak) const;
 		void SetAb(const double *ab) { SetAb(ab, Ground()); };
-		void SetAb(const double *ab, const Marker &Mak);
+		void SetAb(const double *ab, const Marker &mak);
 
 		void GetPee(double *pEE) const { GetPee(pEE, Ground()); };
 		void GetPee(double *pEE, const Marker &Mak) const;

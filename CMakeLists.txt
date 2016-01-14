@@ -51,8 +51,11 @@ endif(UNIX)
 
 # set definitions to disable some warning
 if(WIN32)
-add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+add_definitions(-DWIN32 -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
 endif(WIN32)
+if(UNIX)
+add_definitions(-DUNIX)
+endif(UNIX)
 
 # set include and lib folders
 if(UNIX)
@@ -141,6 +144,12 @@ add_library(Robot_Type_II STATIC ${FULL_SRC} ${FULL_H})
 set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
 
 
+################################### build tests for Robots ####################################
+enable_testing()
+
+add_executable(test_simple_walk test/test_simple_walk.cpp)
+target_link_libraries(test_simple_walk ${ALL_LINK_LIB})
+add_test(NAME test_simple_walk COMMAND test_simple_walk)
 
 
 ################################### build demos ####################################
