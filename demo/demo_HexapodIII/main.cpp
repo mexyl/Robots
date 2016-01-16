@@ -42,7 +42,7 @@ int main()
 	param.targetPeb[0][1] += 0.1;
 	param.targetPee[0][15] += 0.1;
 
-	rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test", Robots::adjust, &param, 10);
+	rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test", Robots::adjust, param, 10);
 	rbt.SimByAdamsResultAt(155);
 	double fIn[18];
 	rbt.GetFinDyn(fIn);
@@ -50,7 +50,7 @@ int main()
 
 	param.targetPeb[0][1] += 0.1;
 	param.targetPee[0][15] += 0.1;
-	rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test1", Robots::adjust, &param, 10);
+	rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test1", Robots::adjust, param, 10);
 
 
 	

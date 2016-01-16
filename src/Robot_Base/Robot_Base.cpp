@@ -718,10 +718,12 @@ namespace Robots
 		}
 
 		double error = s_dnrm2(dim,vIn,1);
-
+		int compute_count = 0;
 		/*迭代计算身体的位姿*/
-		while(error>1e-11)
+		while((error>1e-10)&&(compute_count<=100))
 		{
+			++compute_count;
+
 			GetJvi(jac, supportMotor);
 			if (dim == 6)
 			{
@@ -770,6 +772,7 @@ namespace Robots
 			error = s_dnrm2(dim, vIn, 1);
 		}
 
+		if (compute_count > 100)std::cout << "iterator in SetPinFixFeet failed, with error:" << error << std::endl;
 		/*根据结果首先设置支撑腿的末端及身体位姿，随后设置其他腿的输入*/
 		s_pq2pe(pq, pe, "313");
 		this->SetPeb(pe);

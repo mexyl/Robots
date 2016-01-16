@@ -20,7 +20,7 @@ namespace Robots
 	{
 		std::int32_t cmdType{ 0 };
 		std::int32_t cmdID{ 0 };
-		std::int32_t count{ 0 };
+		mutable std::int32_t count{ 0 };
 	};
 
 	/*for enable, disable, and home*/

@@ -326,9 +326,6 @@ namespace Robots
 		void TransformCoordinatePee(const double *bodyPe, const char *fromMak, const double *fromPee
 			, const char *toMak, double *toPee) const;
 
-		virtual void LoadXml(const char *file) { this->Model::LoadXml(file); };
-		virtual void LoadXml(const Aris::Core::XmlDocument &doc) { this->Model::LoadXml(doc); };
-
 		LegBase *pLegs[6];
 
 	protected:

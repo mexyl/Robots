@@ -53,42 +53,42 @@
         </ChildMarker>
       </Ground>
       <LF_P1a Active="true" Inertia="P1aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p1a_left.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p1a_left.x_t">
         <ChildMarker>
           <P1j Pos="P1jpe" RelativeTo=""/>
           <U1j Pos="U1jpe" RelativeTo=""/>
         </ChildMarker>
       </LF_P1a>
       <LF_P2a Active="true" Inertia="P2aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23a.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23a.x_t">
         <ChildMarker>
           <P2j Pos="P2jpe" RelativeTo=""/>
           <U2j Pos="U2jpe" RelativeTo=""/>
         </ChildMarker>
       </LF_P2a>
       <LF_P2b Active="true" Inertia="P2bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23b.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23b.x_t">
         <ChildMarker>
           <P2i Pos="P2ipe" RelativeTo=""/>
           <S2j Pos="S2jpe" RelativeTo=""/>
         </ChildMarker>
       </LF_P2b>
       <LF_P3a Active="true" Inertia="P3aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23a.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23a.x_t">
         <ChildMarker>
           <P3j Pos="P3jpe" RelativeTo=""/>
           <U3j Pos="U3jpe" RelativeTo=""/>
         </ChildMarker>
       </LF_P3a>
       <LF_P3b Active="true" Inertia="P3bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23b.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23b.x_t">
         <ChildMarker>
           <P3i Pos="P3ipe" RelativeTo=""/>
           <S3j Pos="S3jpe" RelativeTo=""/>
         </ChildMarker>
       </LF_P3b>
       <LF_Thigh Active="true" Inertia="ThighGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-                Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p1b.x_t">
+                Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p1b.x_t">
         <ChildMarker>
           <P1i Pos="P1ipe" RelativeTo=""/>
           <S2i Pos="S2ipe" RelativeTo=""/>
@@ -97,42 +97,42 @@
         </ChildMarker>
       </LF_Thigh>
       <LM_P1a Active="true" Inertia="P1aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p1a_left.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p1a_left.x_t">
         <ChildMarker>
           <P1j Pos="P1jpe" RelativeTo=""/>
           <U1j Pos="U1jpe" RelativeTo=""/>
         </ChildMarker>
       </LM_P1a>
       <LM_P2a Active="true" Inertia="P2aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23a.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23a.x_t">
         <ChildMarker>
           <P2j Pos="P2jpe" RelativeTo=""/>
           <U2j Pos="U2jpe" RelativeTo=""/>
         </ChildMarker>
       </LM_P2a>
       <LM_P2b Active="true" Inertia="P2bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23b.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23b.x_t">
         <ChildMarker>
           <P2i Pos="P2ipe" RelativeTo=""/>
           <S2j Pos="S2jpe" RelativeTo=""/>
         </ChildMarker>
       </LM_P2b>
       <LM_P3a Active="true" Inertia="P3aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23a.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23a.x_t">
         <ChildMarker>
           <P3j Pos="P3jpe" RelativeTo=""/>
           <U3j Pos="U3jpe" RelativeTo=""/>
         </ChildMarker>
       </LM_P3a>
       <LM_P3b Active="true" Inertia="P3bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23b.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23b.x_t">
         <ChildMarker>
           <P3i Pos="P3ipe" RelativeTo=""/>
           <S3j Pos="S3jpe" RelativeTo=""/>
         </ChildMarker>
       </LM_P3b>
       <LM_Thigh Active="true" Inertia="ThighGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-                Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p1b.x_t">
+                Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p1b.x_t">
         <ChildMarker>
           <P1i Pos="P1ipe" RelativeTo=""/>
           <S2i Pos="S2ipe" RelativeTo=""/>
@@ -141,42 +141,42 @@
         </ChildMarker>
       </LM_Thigh>
       <LR_P1a Active="true" Inertia="P1aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-               Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p1a_left.x_t">
+               Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p1a_left.x_t">
         <ChildMarker>
           <P1j Pos="P1jpe" RelativeTo=""/>
           <U1j Pos="U1jpe" RelativeTo=""/>
         </ChildMarker>
       </LR_P1a>
       <LR_P2a Active="true" Inertia="P2aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23a.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23a.x_t">
         <ChildMarker>
           <P2j Pos="P2jpe" RelativeTo=""/>
           <U2j Pos="U2jpe" RelativeTo=""/>
         </ChildMarker>
       </LR_P2a>
       <LR_P2b Active="true" Inertia="P2bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23b.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23b.x_t">
         <ChildMarker>
           <P2i Pos="P2ipe" RelativeTo=""/>
           <S2j Pos="S2jpe" RelativeTo=""/>
         </ChildMarker>
       </LR_P2b>
       <LR_P3a Active="true" Inertia="P3aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23a.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23a.x_t">
         <ChildMarker>
           <P3j Pos="P3jpe" RelativeTo=""/>
           <U3j Pos="U3jpe" RelativeTo=""/>
         </ChildMarker>
       </LR_P3a>
       <LR_P3b Active="true" Inertia="P3bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23b.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23b.x_t">
         <ChildMarker>
           <P3i Pos="P3ipe" RelativeTo=""/>
           <S3j Pos="S3jpe" RelativeTo=""/>
         </ChildMarker>
       </LR_P3b>
       <LR_Thigh Active="true" Inertia="ThighGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-                Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p1b.x_t">
+                Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p1b.x_t">
         <ChildMarker>
           <P1i Pos="P1ipe" RelativeTo=""/>
           <S2i Pos="S2ipe" RelativeTo=""/>
@@ -186,8 +186,8 @@
       </LR_Thigh>
       <MainBody Active="true" Inertia="BodyGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
                 Graphic_File_Path=
-                "C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_body_body.x_t
-                 C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_body_head.x_t">
+                "C:\Robots\resource\Robot_Type_I\Robot_III\aligned_body_body.x_t
+                 C:\Robots\resource\Robot_Type_I\Robot_III\aligned_body_head.x_t">
         <ChildMarker>
           <BodyCenter Pos="{-0 , 0 , -0 , 0 , 0 , 0}" RelativeTo=""/>
           <LF_Base Pos="LFpe" RelativeTo=""/>
@@ -217,42 +217,42 @@
         </ChildMarker>
       </MainBody>
       <RF_P1a Active="true" Inertia="P1aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p1a_left.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p1a_left.x_t">
         <ChildMarker>
           <P1j Pos="P1jpe" RelativeTo=""/>
           <U1j Pos="U1jpe" RelativeTo=""/>
         </ChildMarker>
       </RF_P1a>
       <RF_P2a Active="true" Inertia="P2aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23a.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23a.x_t">
         <ChildMarker>
           <P2j Pos="P2jpe" RelativeTo=""/>
           <U2j Pos="U2jpe" RelativeTo=""/>
         </ChildMarker>
       </RF_P2a>
       <RF_P2b Active="true" Inertia="P2bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23b.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23b.x_t">
         <ChildMarker>
           <P2i Pos="P2ipe" RelativeTo=""/>
           <S2j Pos="S2jpe" RelativeTo=""/>
         </ChildMarker>
       </RF_P2b>
       <RF_P3a Active="true" Inertia="P3aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23a.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23a.x_t">
         <ChildMarker>
           <P3j Pos="P3jpe" RelativeTo=""/>
           <U3j Pos="U3jpe" RelativeTo=""/>
         </ChildMarker>
       </RF_P3a>
       <RF_P3b Active="true" Inertia="P3bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23b.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23b.x_t">
         <ChildMarker>
           <P3i Pos="P3ipe" RelativeTo=""/>
           <S3j Pos="S3jpe" RelativeTo=""/>
         </ChildMarker>
       </RF_P3b>
       <RF_Thigh Active="true" Inertia="ThighGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-                Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p1b.x_t">
+                Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p1b.x_t">
         <ChildMarker>
           <P1i Pos="P1ipe" RelativeTo=""/>
           <S2i Pos="S2ipe" RelativeTo=""/>
@@ -261,42 +261,42 @@
         </ChildMarker>
       </RF_Thigh>
       <RM_P1a Active="true" Inertia="P1aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p1a_left.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p1a_left.x_t">
         <ChildMarker>
           <P1j Pos="P1jpe" RelativeTo=""/>
           <U1j Pos="U1jpe" RelativeTo=""/>
         </ChildMarker>
       </RM_P1a>
       <RM_P2a Active="true" Inertia="P2aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23a.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23a.x_t">
         <ChildMarker>
           <P2j Pos="P2jpe" RelativeTo=""/>
           <U2j Pos="U2jpe" RelativeTo=""/>
         </ChildMarker>
       </RM_P2a>
       <RM_P2b Active="true" Inertia="P2bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23b.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23b.x_t">
         <ChildMarker>
           <P2i Pos="P2ipe" RelativeTo=""/>
           <S2j Pos="S2jpe" RelativeTo=""/>
         </ChildMarker>
       </RM_P2b>
       <RM_P3a Active="true" Inertia="P3aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23a.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23a.x_t">
         <ChildMarker>
           <P3j Pos="P3jpe" RelativeTo=""/>
           <U3j Pos="U3jpe" RelativeTo=""/>
         </ChildMarker>
       </RM_P3a>
       <RM_P3b Active="true" Inertia="P3bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23b.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23b.x_t">
         <ChildMarker>
           <P3i Pos="P3ipe" RelativeTo=""/>
           <S3j Pos="S3jpe" RelativeTo=""/>
         </ChildMarker>
       </RM_P3b>
       <RM_Thigh Active="true" Inertia="ThighGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-                Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p1b.x_t">
+                Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p1b.x_t">
         <ChildMarker>
           <P1i Pos="P1ipe" RelativeTo=""/>
           <S2i Pos="S2ipe" RelativeTo=""/>
@@ -305,42 +305,42 @@
         </ChildMarker>
       </RM_Thigh>
       <RR_P1a Active="true" Inertia="P1aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-                    Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p1a_left.x_t">
+                    Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p1a_left.x_t">
         <ChildMarker>
           <P1j Pos="P1jpe" RelativeTo=""/>
           <U1j Pos="U1jpe" RelativeTo=""/>
         </ChildMarker>
       </RR_P1a>
       <RR_P2a Active="true" Inertia="P2aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23a.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23a.x_t">
         <ChildMarker>
           <P2j Pos="P2jpe" RelativeTo=""/>
           <U2j Pos="U2jpe" RelativeTo=""/>
         </ChildMarker>
       </RR_P2a>
       <RR_P2b Active="true" Inertia="P2bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23b.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23b.x_t">
         <ChildMarker>
           <P2i Pos="P2ipe" RelativeTo=""/>
           <S2j Pos="S2jpe" RelativeTo=""/>
         </ChildMarker>
       </RR_P2b>
       <RR_P3a Active="true" Inertia="P3aGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23a.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23a.x_t">
         <ChildMarker>
           <P3j Pos="P3jpe" RelativeTo=""/>
           <U3j Pos="U3jpe" RelativeTo=""/>
         </ChildMarker>
       </RR_P3a>
       <RR_P3b Active="true" Inertia="P3bGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p23b.x_t">
+              Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p23b.x_t">
         <ChildMarker>
           <P3i Pos="P3ipe" RelativeTo=""/>
           <S3j Pos="S3jpe" RelativeTo=""/>
         </ChildMarker>
       </RR_P3b>
       <RR_Thigh Active="true" Inertia="ThighGamma" Pos="{0 , 0 , 0 , 0 , 0 , 0}" Vel="{0 , 0 , 0 , 0 , 0 , 0}" Acc="{0 , 0 , 0 , 0 , 0 , 0}"
-                Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III_x_t\aligned_p1b.x_t">
+                Graphic_File_Path="C:\Robots\resource\Robot_Type_I\Robot_III\aligned_p1b.x_t">
         <ChildMarker>
           <P1i Pos="P1ipe" RelativeTo=""/>
           <S2i Pos="S2ipe" RelativeTo=""/>
@@ -406,24 +406,24 @@
       <RR_U3 Active="true" Type="universal" PrtM="MainBody" PrtN="RR_P3a" MakI="RR_U3i" MakJ="U3j"/>
     </Joint>
     <Motion>
-      <LF_M1 Active="true" Type="linear" PrtM="LF_Thigh" PrtN="LF_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction"/>
-      <LF_M2 Active="true" Type="linear" PrtM="LF_P2b" PrtN="LF_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction"/>
-      <LF_M3 Active="true" Type="linear" PrtM="LF_P3b" PrtN="LF_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction"/>
-      <LM_M1 Active="true" Type="linear" PrtM="LM_Thigh" PrtN="LM_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction"/>
-      <LM_M2 Active="true" Type="linear" PrtM="LM_P2b" PrtN="LM_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction"/>
-      <LM_M3 Active="true" Type="linear" PrtM="LM_P3b" PrtN="LM_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction"/>
-      <LR_M1 Active="true" Type="linear" PrtM="LR_Thigh" PrtN="LR_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction"/>
-      <LR_M2 Active="true" Type="linear" PrtM="LR_P2b" PrtN="LR_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction"/>
-      <LR_M3 Active="true" Type="linear" PrtM="LR_P3b" PrtN="LR_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction"/>
-      <RF_M1 Active="true" Type="linear" PrtM="RF_Thigh" PrtN="RF_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction"/>
-      <RF_M2 Active="true" Type="linear" PrtM="RF_P2b" PrtN="RF_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction"/>
-      <RF_M3 Active="true" Type="linear" PrtM="RF_P3b" PrtN="RF_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction"/>
-      <RM_M1 Active="true" Type="linear" PrtM="RM_Thigh" PrtN="RM_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction"/>
-      <RM_M2 Active="true" Type="linear" PrtM="RM_P2b" PrtN="RM_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction"/>
-      <RM_M3 Active="true" Type="linear" PrtM="RM_P3b" PrtN="RM_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction"/>
-      <RR_M1 Active="true" Type="linear" PrtM="RR_Thigh" PrtN="RR_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction"/>
-      <RR_M2 Active="true" Type="linear" PrtM="RR_P2b" PrtN="RR_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction"/>
-      <RR_M3 Active="true" Type="linear" PrtM="RR_P3b" PrtN="RR_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction"/>
+      <LF_M1 Active="true" Type="single_component_motion" PrtM="LF_Thigh" PrtN="LF_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction" Component="2"/>
+      <LF_M2 Active="true" Type="single_component_motion" PrtM="LF_P2b" PrtN="LF_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction" Component="2"/>
+      <LF_M3 Active="true" Type="single_component_motion" PrtM="LF_P3b" PrtN="LF_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction" Component="2"/>
+      <LM_M1 Active="true" Type="single_component_motion" PrtM="LM_Thigh" PrtN="LM_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction" Component="2"/>
+      <LM_M2 Active="true" Type="single_component_motion" PrtM="LM_P2b" PrtN="LM_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction" Component="2"/>
+      <LM_M3 Active="true" Type="single_component_motion" PrtM="LM_P3b" PrtN="LM_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction" Component="2"/>
+      <LR_M1 Active="true" Type="single_component_motion" PrtM="LR_Thigh" PrtN="LR_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction" Component="2"/>
+      <LR_M2 Active="true" Type="single_component_motion" PrtM="LR_P2b" PrtN="LR_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction" Component="2"/>
+      <LR_M3 Active="true" Type="single_component_motion" PrtM="LR_P3b" PrtN="LR_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction" Component="2"/>
+      <RF_M1 Active="true" Type="single_component_motion" PrtM="RF_Thigh" PrtN="RF_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction" Component="2"/>
+      <RF_M2 Active="true" Type="single_component_motion" PrtM="RF_P2b" PrtN="RF_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction" Component="2"/>
+      <RF_M3 Active="true" Type="single_component_motion" PrtM="RF_P3b" PrtN="RF_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction" Component="2"/>
+      <RM_M1 Active="true" Type="single_component_motion" PrtM="RM_Thigh" PrtN="RM_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction" Component="2"/>
+      <RM_M2 Active="true" Type="single_component_motion" PrtM="RM_P2b" PrtN="RM_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction" Component="2"/>
+      <RM_M3 Active="true" Type="single_component_motion" PrtM="RM_P3b" PrtN="RM_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction" Component="2"/>
+      <RR_M1 Active="true" Type="single_component_motion" PrtM="RR_Thigh" PrtN="RR_P1a" MakI="P1i" MakJ="P1j" FrcCoe="Mot_friction" Component="2"/>
+      <RR_M2 Active="true" Type="single_component_motion" PrtM="RR_P2b" PrtN="RR_P2a" MakI="P2i" MakJ="P2j" FrcCoe="Mot_friction" Component="2"/>
+      <RR_M3 Active="true" Type="single_component_motion" PrtM="RR_P3b" PrtN="RR_P3a" MakI="P3i" MakJ="P3j" FrcCoe="Mot_friction" Component="2"/>
     </Motion>
     <Force>
       <LF_F1 Active="true" Type="single_component_force" PrtM="LF_Thigh" PrtN="LF_P1a" MakI="P1i" MakJ="P1j" Component="2"/>

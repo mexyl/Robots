@@ -185,37 +185,43 @@ namespace Robots
 	class RobotTypeI :public Robots::RobotBase
 	{
 	public:
-		struct STATE
-		{
-			double pEE[18], vEE[18], aEE[18], fIn[18];
-			double bodyPE[6], bodyVel[6], bodyAcc[6];
-			bool isMotorActive[18];
-			bool isSfActive[6];
-		};
-
 		RobotTypeI();
 		~RobotTypeI() = default;
-		virtual void LoadXml(const char *filename);
-		virtual void LoadXml(const Aris::Core::XmlDocument &doc);
-
-		void GetFin(double *fIn) const;
-		void GetFinDyn(double *fIn) const;
-		void GetFinFrc(double *fIn) const;
-
-		void GetState(RobotTypeI::STATE &state) const;
-		void SetState(const RobotTypeI::STATE &state);
-
-		void SetFixFeet(const char* fixFeet);
-		const char* GetFixFeet() const;
-		void SetActiveMotion(const char* activeMotion);
-		const char* GetActiveMotion() const;
-		void FastDyn();
-
-		void Dyn();
 		
+		virtual void LoadXml(const Aris::Core::XmlElement &xml_ele) override;
+		using Model::LoadXml;
+
+		void GetFin(double *Fin) const;
+		void GetFinDyn(double *Fin) const;
+		void GetFinFrc(double *Fin) const;
+
+		void FastDyn();
+		virtual void Dyn()override;
+
+		void SetFixFeet(const char* fix_feet);
+		const char* FixFeet() const;
+		void SetActiveMotion(const char* active_motion);
+		const char* ActiveMotion() const;
+
+		
+		
+		struct SimResultNode
+		{
+			std::array<double, 6> Peb;
+			std::array<double, 18> Pee;
+			std::array<double, 18> Pin;
+			std::array<double, 18> Fin;
+		};
+		void SimScriptClear();
+		void SimScriptSetTopologyA();
+		void SimScriptSetTopologyB();
+		void SimScriptSimulate(std::uint32_t ms_dur, std::uint32_t ms_dt = 10);
+		void SimPosCurve(const GaitFunc &fun, const GaitParamBase &param, std::list<SimResultNode> &result);
+		void SimFceCurve(std::list<SimResultNode> &result, bool using_script = false);
+		void SimMakeAkima(std::list<SimResultNode> &result, int ms_dt = 10);
+		void SimByAdams(const std::string &adams_file, const GaitFunc &fun, const GaitParamBase &param, int ms_dt = 10, bool using_script = false);
 		void SimByAdamsResultAt(int momentTime);
-		void SimByAdams(const char *adamsFile, const GaitFunc &fun, GaitParamBase *param, int dt);
-		void SimByMatlab(const std::string &folderName, const GaitFunc &fun, GaitParamBase *param);
+		void SimByMatlab(const std::string &folderName, const GaitFunc &fun, GaitParamBase &param, bool using_script = false);
 	
 	public:
 		union

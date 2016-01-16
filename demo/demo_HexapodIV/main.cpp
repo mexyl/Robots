@@ -74,7 +74,7 @@ int main()
 	param.n = 1;
 
 
-	rbt.SimByMatlab("C:\\Users\\yang\\Desktop\\Walk\\", Robots::walk, &param);
+	rbt.SimByMatlab("C:\\Users\\yang\\Desktop\\Walk\\", Robots::walk, param);
 
 
 	std::cout << "finished" << std::endl;

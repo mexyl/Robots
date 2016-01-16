@@ -11,7 +11,7 @@ Robots::RobotTypeI rbt;
 
 struct SimpleWalkParam final :public Robots::GaitParamBase
 {
-	std::int32_t totalCount{ 1000 };
+	std::int32_t totalCount{ 500 };
 	std::int32_t n{ 1 };
 	double d{ 0.5 };
 	double h{ 0.05 };
@@ -95,7 +95,7 @@ int SimpleWalk(Robots::RobotBase * pRobot, const Robots::GaitParamBase * pParam)
 int main(int argc, char *argv[])
 {
 #ifdef WIN32
-	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
+	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
 #endif
 #ifdef UNIX
 	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
@@ -113,79 +113,53 @@ int main(int argc, char *argv[])
 
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE, rbt.Body());
+	
+
 
 	SimpleWalkParam param;
-	rbt.SimByMatlab("C:\\Users\\yang\\Desktop\\test\\", SimpleWalk, &param);
+	rbt.GetPee(param.beginPee);
+	rbt.GetPeb(param.beginPeb);
+
+	rbt.SimByMatlab("C:\\Users\\yang\\Desktop\\test\\", SimpleWalk, param);
 	
-	Aris::DynKer::Element *pFirst[]
-	{
-		rbt.pLegs[0]->pM1,rbt.pLegs[1]->pF1, rbt.pLegs[2]->pM1,rbt.pLegs[3]->pF1,rbt.pLegs[4]->pM1, rbt.pLegs[5]->pF1,
-		rbt.pLegs[1]->pSf,rbt.pLegs[3]->pSf,rbt.pLegs[5]->pSf
-	};
-	Aris::DynKer::Element *pSecond[]
-	{
-		rbt.pLegs[0]->pF1,rbt.pLegs[1]->pM1, rbt.pLegs[2]->pF1,rbt.pLegs[3]->pM1,rbt.pLegs[4]->pF1, rbt.pLegs[5]->pM1,
-		rbt.pLegs[0]->pSf,rbt.pLegs[2]->pSf,rbt.pLegs[4]->pSf
-	};
-	
-	for (auto &ele : pFirst)rbt.Script().Activate(*ele, true);
-	for (auto &ele : pSecond)rbt.Script().Activate(*ele, false);
-
-	rbt.Script().Simulate(1000, 5);
-
-	for (auto &ele : pFirst)rbt.Script().Activate(*ele, false);
-	for (auto &ele : pSecond)rbt.Script().Activate(*ele, true);
-
-	rbt.Script().Simulate(1000, 5);
-
-	rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test", SimpleWalk, &param, 5);
-	//rbt.SaveAdams("C:\\Users\\yang\\Desktop\\test");
-	//rbt.Script().MoveMarker(rbt.pLF->Base(), beginPE);
-	/*
-	rbt.ForEachForce([](Aris::DynKer::ForceBase* p)
-	{
-		p->Activate(false);
-	});
-	for (auto &ele : pFirst)ele->Activate(true);
-	for (auto &ele : pSecond)ele->Activate(false);
-
+	rbt.SimScriptClear();
+	rbt.SimScriptSetTopologyA();
+	rbt.SimScriptSimulate(500, 10);
+	rbt.SimScriptSetTopologyB();
+	rbt.SimScriptSimulate(500, 10);
+	rbt.SimByAdams("C:\\Users\\yang\\Desktop\\test.cmd", SimpleWalk, param, 10, true);
 	rbt.SimByAdamsResultAt(101);
 
 	double fin[18];
 	rbt.GetFinDyn(fin);
 	Aris::DynKer::dsp(fin, 18, 1);
 
-	
-
-	rbt.ForEachMotion([](Aris::DynKer::MotionBase* p)
-	{
-		double frc[3]{ 0,0,0 };
-		p->SetFrcCoe(frc);
-	});
-
 	{
 		rbt.ClbPre();
+		rbt.ClbUpd();
 		rbt.ClbSetInverseMethod([](int n, double *A)
 		{
 			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >Am(A, n, n);
 			auto im = Am.inverse();
 			Am = im;
 		});
+		rbt.ForEachMotion([](Aris::DynKer::MotionBase *p) 
+		{
+			p->SetMotFce(p->MotFce());
+		});
+		
 		Aris::DynKer::Matrix D(rbt.ClbDimM(), rbt.ClbDimN());
 		Aris::DynKer::Matrix b(rbt.ClbDimM(), 1);
 		Aris::DynKer::Matrix x(rbt.ClbDimN(), 1);
 
-		rbt.DynUpd();
 		rbt.ClbMtx(D.Data(), b.Data());
 		rbt.ClbUkn(x.Data());
-
-		x.dsp();
 
 		auto result = D*x;
 		result.dsp();
 		b.dsp();
 	}
-	*/
+	
 	//rbt.SimByAdams()
 
 	//rbt.SetPee
