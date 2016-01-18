@@ -220,7 +220,7 @@ namespace Robots
 		void SimFceCurve(std::list<SimResultNode> &result, bool using_script = false);
 		void SimMakeAkima(std::list<SimResultNode> &result, int ms_dt = 10);
 		void SimByAdams(const std::string &adams_file, const GaitFunc &fun, const GaitParamBase &param, int ms_dt = 10, bool using_script = false);
-		void SimByAdamsResultAt(int momentTime);
+		void SimByAdamsResultAt(int ms_time);
 		void SimByMatlab(const std::string &folderName, const GaitFunc &fun, GaitParamBase &param, bool using_script = false);
 	
 	public:
