@@ -4,11 +4,11 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-#ifdef PLATFORM_IS_LINUX
-	Robots::SendRequest(argc, argv, "/usr/Robots/resource/Robot_Type_I/Robot_VIII/Robot_VIII.xml");
+#ifdef UNIX
+	Robots::SendRequest(argc, argv, "/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
 #endif
-#ifdef PLATFORM_IS_WINDOWS
-	Robots::SendRequest(argc, argv, "C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
+#ifdef WIN32
+	Robots::SendRequest(argc, argv, "C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
 #endif
 
 	return 0;
