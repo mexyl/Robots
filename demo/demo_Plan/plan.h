@@ -1,4 +1,4 @@
-#include <Aris_Plan.h>
+#include <aris_plan.h>
 
 #include "Robot_Type_I.h"
 

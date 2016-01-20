@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <Aris_Plan.h>
+#include <aris_plan.h>
 
 #include "Robot_Type_II.h"
 #include "Robot_Type_I.h"

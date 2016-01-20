@@ -491,128 +491,95 @@
       </wk>
     </Commands>
     <Connection IP="127.0.0.1" Port="5866"/>
-    <Control meter2count="1 / 0.01*3.5 * 65536">
-      <MapPhy2Abs>
-        { 15 , 17 , 16, 12 , 14 , 13 , 9 , 11 , 10 , 2 , 0, 1 , 3 , 5 , 4 , 7 , 8 , 6 }
-      </MapPhy2Abs>
-      <homePin>
-        {
-        0.675784824916295,   0.697784816196987,   0.697784816196987;
-        0.675784824916295,   0.697784816196987,   0.697784816196987;
-        0.675784824916295,   0.697784816196987,   0.697784816196987;
-        0.675784824916295,   0.697784816196987,   0.697784816196987;
-        0.675784824916295,   0.697784816196987,   0.697784816196987;
-        0.675784824916295,   0.697784816196987,   0.697784816196987;
-        }
-      </homePin>
-      <AlignPee>
-        {
-        -0.3,   -0.75,   -0.65;
-        -0.45,  -0.75,   0;
-        -0.3,   -0.75,    0.65;
-        0.3,   -0.75,    -0.65;
-        0.45,  -0.75,    0;
-        0.3,   -0.75,     0.65;
-        }
-      </AlignPee>
-      <RecoverPee>
-        {
-        -0.3,   -0.85,   -0.65;
-        -0.45,  -0.85,    0;
-        -0.3,   -0.85,    0.65;
-        0.3,   -0.85,    -0.65;
-        0.45,  -0.85,     0;
-        0.3,   -0.85,     0.65;
-        }
-      </RecoverPee>
-      <EtherCat>
-        <SlaveType>
-          <ElmoSoloWhistle productCode="0x00030924" venderID="0x0000009a" alias="0" distributedClock="0x0300">
-            <PDO>
-              <index_1605 index="0x1605" isTx="false">
-                <TargetPosition index="0x607A" subIndex="0x00" type="int32"/>
-                <TargetVelocity index="0x60FF" subIndex="0x00" type="int32"/>
-                <TargetTorque index="0x6071" subIndex="0x00" type="int16"/>
-                <MaxTorque index="0x6072" subIndex="0x00" type="int16"/>
-                <ControlWord index="0x6040" subIndex="0x00" type="uint16"/>
-                <ModeOfOperation index="0x6060" subIndex="0x00" type="uint8"/>
-              </index_1605>
-              <index_1a03 index="0x1A03" isTx="true">
-                <PositionActualValue index="0x6064" subIndex="0x00" type="int32"/>
-                <DigitalInputs index="0x60fd" subIndex="0x00" type="uint32"/>
-                <VelocityActualValue index="0x606c" subIndex="0x00" type="int32"/>
-                <StatusWord index="0x6041" subIndex="0x00" type="uint16"/>
-              </index_1a03>
-              <index_1a1f index="0x1A1F" isTx="true">
-                <CurrentActualValue index="0x6078" subIndex="0x00" type="int16"/>
-              </index_1a1f>
-              <index_1a13 index="0x1A13" isTx="true">
-                <TorqueActualValue index="0x6077" subIndex="0x00" type="int16"/>
-              </index_1a13>
-              <index_1a0b index="0x1A0B" isTx="true">
-                <ModeOfOperationDisplay index="0x6061" subIndex="0x00" type="uint8"/>
-              </index_1a0b>
-            </PDO>
-            <SDO>
-              <homeMode index="0x6098" subIndex="0" value="-1" type="int32"/>
-              <homeAcc index="0x609A" subIndex="0" value="200000" type="int32"/>
-              <homeHighSpeed index="0x6099" subIndex="1" value="200000" type="int32"/>
-              <homeLowSpeed index="0x6099" subIndex="2" value="100000" type="int32"/>
-              <RatioOfPosDivVel_Numerator index="0x6096" subIndex="1" value="1" type="int32"/>
-              <RatioOfPosDivVel_Divisor index="0x6096" subIndex="2" value="1" type="int32"/>
-              <homeTorqueLimit index="0x2020" subIndex="1" value="950" type="int32"/>
-              <p2pMaxSpeed index="0x607F" subIndex="0" value="2560" type="int32"/>
-              <p2pSpeed index="0x6081" subIndex="0" value="1792" type="int32"/>
-              <homeOffset index="0x607C" subIndex="0" value="0" type="int32"/>
-            </SDO>
-          </ElmoSoloWhistle>
-          <AtiForceSensor productCode="0x26483052" venderID="0x00000732" alias="0">
-            <PDO>
-              <index_1a00 index="0x1a00" isTx="true">
-                <Fx index="0x6000" subIndex="0x01" type="int32"/>
-                <Fy index="0x6000" subIndex="0x02" type="int32"/>
-                <Fz index="0x6000" subIndex="0x03" type="int32"/>
-                <Mx index="0x6000" subIndex="0x04" type="int32"/>
-                <My index="0x6000" subIndex="0x05" type="int32"/>
-                <Mz index="0x6000" subIndex="0x06" type="int32"/>
-                <statusCode index="0x6010" subIndex="0x00" type="int32"/>
-                <sampleCount index="0x6020" subIndex="0x00" type="int32"/>
-              </index_1a00>
-              <index_1601 index="0x1601" isTx="false">
-                <cw1 index="0x7010" subIndex="0x01" type="int32"/>
-                <cw2 index="0x7010" subIndex="0x02" type="int32"/>
-              </index_1601>
-            </PDO>
-            <SDO>
-            </SDO>
-          </AtiForceSensor>
-        </SlaveType>
-        <Slave>
-          <Motion1 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion2 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion3 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion4 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion5 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion6 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion7 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion8 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion9 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion10 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion11 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion12 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion13 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion14 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion15 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion16 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion17 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <Motion18 type="ElmoSoloWhistle" maxSpeed="5417642"/>
-          <ForceSensor type="AtiForceSensor"/>
-        </Slave>
-      </EtherCat>
-    </Control>
     <Sensors>
       <IMU active="true" type="xsens_imu" portLinux="/dev/ttyUSB0" baudRate="921600" sampleRate="400" PeImuGround2BodyGound="{0,0,0,0,-PI/2,PI}" PeImu2Body="{0,0,0,0,PI/2,0}"/>
       <Vision type="kinect2.0"/>
     </Sensors> 
   </Server>
+  <Controller>
+    <EtherCat>
+      <SlaveType>
+        <ElmoSoloWhistle productCode="0x00030924" venderID="0x0000009a" alias="0" distributedClock="0x0300">
+          <PDO>
+            <index_1605 index="0x1605" isTx="false">
+              <TargetPosition index="0x607A" subIndex="0x00" type="int32"/>
+              <TargetVelocity index="0x60FF" subIndex="0x00" type="int32"/>
+              <TargetTorque index="0x6071" subIndex="0x00" type="int16"/>
+              <MaxTorque index="0x6072" subIndex="0x00" type="int16"/>
+              <ControlWord index="0x6040" subIndex="0x00" type="uint16"/>
+              <ModeOfOperation index="0x6060" subIndex="0x00" type="uint8"/>
+            </index_1605>
+            <index_1a03 index="0x1A03" isTx="true">
+              <PositionActualValue index="0x6064" subIndex="0x00" type="int32"/>
+              <DigitalInputs index="0x60fd" subIndex="0x00" type="uint32"/>
+              <VelocityActualValue index="0x606c" subIndex="0x00" type="int32"/>
+              <StatusWord index="0x6041" subIndex="0x00" type="uint16"/>
+            </index_1a03>
+            <index_1a1f index="0x1A1F" isTx="true">
+              <CurrentActualValue index="0x6078" subIndex="0x00" type="int16"/>
+            </index_1a1f>
+            <index_1a13 index="0x1A13" isTx="true">
+              <TorqueActualValue index="0x6077" subIndex="0x00" type="int16"/>
+            </index_1a13>
+            <index_1a0b index="0x1A0B" isTx="true">
+              <ModeOfOperationDisplay index="0x6061" subIndex="0x00" type="uint8"/>
+            </index_1a0b>
+          </PDO>
+          <SDO>
+            <homeMode index="0x6098" subIndex="0" value="-1" type="int32"/>
+            <homeAcc index="0x609A" subIndex="0" value="200000" type="int32"/>
+            <homeHighSpeed index="0x6099" subIndex="1" value="200000" type="int32"/>
+            <homeLowSpeed index="0x6099" subIndex="2" value="100000" type="int32"/>
+            <RatioOfPosDivVel_Numerator index="0x6096" subIndex="1" value="1" type="int32"/>
+            <RatioOfPosDivVel_Divisor index="0x6096" subIndex="2" value="1" type="int32"/>
+            <homeTorqueLimit index="0x2020" subIndex="1" value="950" type="int32"/>
+            <p2pMaxSpeed index="0x607F" subIndex="0" value="2560" type="int32"/>
+            <p2pSpeed index="0x6081" subIndex="0" value="1792" type="int32"/>
+            <homeOffset index="0x607C" subIndex="0" value="0" type="int32"/>
+          </SDO>
+        </ElmoSoloWhistle>
+        <AtiForceSensor productCode="0x26483052" venderID="0x00000732" alias="0">
+          <PDO>
+            <index_1a00 index="0x1a00" isTx="true">
+              <Fx index="0x6000" subIndex="0x01" type="int32"/>
+              <Fy index="0x6000" subIndex="0x02" type="int32"/>
+              <Fz index="0x6000" subIndex="0x03" type="int32"/>
+              <Mx index="0x6000" subIndex="0x04" type="int32"/>
+              <My index="0x6000" subIndex="0x05" type="int32"/>
+              <Mz index="0x6000" subIndex="0x06" type="int32"/>
+              <statusCode index="0x6010" subIndex="0x00" type="int32"/>
+              <sampleCount index="0x6020" subIndex="0x00" type="int32"/>
+            </index_1a00>
+            <index_1601 index="0x1601" isTx="false">
+              <cw1 index="0x7010" subIndex="0x01" type="int32"/>
+              <cw2 index="0x7010" subIndex="0x02" type="int32"/>
+            </index_1601>
+          </PDO>
+          <SDO>
+          </SDO>
+        </AtiForceSensor>
+      </SlaveType>
+      <Slave>
+        <Motion1 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="15"/>
+        <Motion2 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="17"/>
+        <Motion3 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="16"/>
+        <Motion4 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="12"/>
+        <Motion5 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="14"/>
+        <Motion6 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="13"/>
+        <Motion7 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 9"/>
+        <Motion8 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="11"/>
+        <Motion9 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="10"/>
+        <Motion10 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 2"/>
+        <Motion11 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 0"/>
+        <Motion12 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 1"/>
+        <Motion13 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 3"/>
+        <Motion14 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 5"/>
+        <Motion15 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 4"/>
+        <Motion16 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 7"/>
+        <Motion17 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 8"/>
+        <Motion18 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 6"/>
+        <ForceSensor type="AtiForceSensor"/>
+      </Slave>
+    </EtherCat>
+  </Controller>
 </HexapodIII>

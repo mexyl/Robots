@@ -1,5 +1,5 @@
 #include "plan.h"
-#include <Aris_DynKer.h>
+#include <aris_dyn_kernel.h>
 
 Robots::RobotTypeI robot;
 Aris::Plan::FastPath tg;

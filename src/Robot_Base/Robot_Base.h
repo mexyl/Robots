@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <vector>
 
-#include "Aris_XML.h"
-#include <Aris_DynModel.h>
+#include <aris_xml.h>
+#include <aris_dyn_model.h>
 
 namespace Robots
 {

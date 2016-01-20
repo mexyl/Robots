@@ -6,8 +6,8 @@
 #include <map>
 #include <memory>
 
-#include <Aris_IMU.h>
-#include <Aris_Message.h>
+#include <aris_imu.h>
+#include <aris_message.h>
 #include <Robot_Gait.h>
 
 namespace Robots

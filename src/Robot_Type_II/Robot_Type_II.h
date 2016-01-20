@@ -1,7 +1,7 @@
 ﻿#ifndef ROBOT_IV_H
 #define ROBOT_IV_H
 
-#include <Aris_DynKer.h>
+#include <aris_dyn_kernel.h>
 #include <fstream>
 
 #include "Robot_Base.h"	

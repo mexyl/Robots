@@ -12,11 +12,11 @@
 #include <cstring>
 #include <thread>
 
-#include <Aris_Core.h>
-#include <Aris_Socket.h>
-#include <Aris_ExpCal.h>
-#include <Aris_Plan.h>
-#include <Aris_Motion.h>
+#include <aris_core.h>
+#include <aris_socket.h>
+#include <aris_exp_cal.h>
+#include <aris_plan.h>
+#include <aris_motion.h>
 #include "Robot_Base.h"
 #include "Robot_Server.h"
 

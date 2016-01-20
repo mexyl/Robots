@@ -11,8 +11,8 @@
 #include <cmath>
 #include <algorithm>
 #include <memory>
-#include <Aris_DynKer.h>
-#include <Aris_Plan.h>
+#include <aris_dyn_kernel.h>
+#include <aris_plan.h>
 
 #include "Robot_Gait.h"
 #include "Robot_Base.h"

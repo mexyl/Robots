@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <Aris_DynKer.h>
+#include <aris_dyn_kernel.h>
 
 #include "Robot_Gait.h"
 #include "Robot_Type_I.h"

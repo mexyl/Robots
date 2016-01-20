@@ -10,9 +10,9 @@
 #include <algorithm>
 #include <cstdint>
 
-#include <Aris_Socket.h>
-#include <Aris_XML.h>
-#include <Aris_Core.h>
+#include <aris_socket.h>
+#include <aris_xml.h>
+#include <aris_core.h>
 
 namespace Robots
 {

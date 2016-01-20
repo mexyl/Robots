@@ -5,9 +5,9 @@
 #include <cstdint>
 #include <map>
 
-#include <Aris_Core.h>
-#include <Aris_Motion.h>
-#include <Aris_IMU.h>
+#include <aris_core.h>
+#include <aris_motion.h>
+#include <aris_imu.h>
 #include <Robot_Base.h>
 
 namespace Robots

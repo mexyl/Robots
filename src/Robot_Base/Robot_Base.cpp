@@ -3,7 +3,7 @@
 #include <ctime>
 #include <iostream>
 
-#include <Aris_DynKer.h>
+#include <aris_dyn_kernel.h>
 
 #include "Robot_Base.h"
 

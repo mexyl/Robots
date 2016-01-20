@@ -1,9 +1,6 @@
-#include <Eigen\Eigen>
+#include <Eigen/Eigen>
 
-#include <Aris_Plan.h>
-
-
-
+#include <aris_plan.h>
 #include <Robot_Type_I.h>
 
 
@@ -216,7 +213,7 @@ int main(int argc, char *argv[])
 	
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE);
-	rbt.Model::SimByAdams("C:\\Users\\yang\\Desktop\\test.cmd", SimpleWalk_Aris, param, 10, true);
+	rbt.Model::SimToAdams("C:\\Users\\yang\\Desktop\\test.cmd", SimpleWalk_Aris, param, 10, true);
 	
 	Aris::DynKer::SimResult result;
 	rbt.SetPeb(beginPE);

@@ -1,7 +1,7 @@
 ﻿#ifndef ROBOT_III_H
 #define ROBOT_III_H
 
-#include <Aris_DynModel.h>
+#include <aris_dyn_model.h>
 #include <Robot_Base.h>
 #include <Robot_Gait.h>
 
