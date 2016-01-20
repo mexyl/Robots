@@ -92,9 +92,6 @@ int SimpleWalk_Aris(Aris::DynKer::ModelBase &model, const Aris::DynKer::PlanPara
 	return 2 * sp.n * sp.totalCount - sp.count - 1;
 }
 
-
-
-
 struct SimpleWalkParam final :public Robots::GaitParamBase
 {
 	std::int32_t totalCount{ 500 };
