@@ -1,4 +1,3 @@
-#include <Platform.h>
 #include <Robot_Client.h>
 
 using namespace std;
