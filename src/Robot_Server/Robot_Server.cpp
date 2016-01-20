@@ -560,7 +560,7 @@ namespace Robots
 		for (int i = 0; i < 18; ++i)
 		{
 #ifdef UNIX
-			pController->MotionAt(i)->WriteSdo(9, static_cast<std::int32_t>(-mat.Data()[p2a(i)] * meter2count));
+			pController->MotionAtPhy(i).WriteSdo(9, static_cast<std::int32_t>(-mat.Data()[p2a(i)] * meter2count));
 #endif
 		}
 
