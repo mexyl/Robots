@@ -203,25 +203,41 @@ namespace Robots
 		void SetActiveMotion(const char* active_motion);
 		const char* ActiveMotion() const;
 
-		
-		
-		struct SimResultNode
+		virtual void KinFromPin()override
 		{
-			std::array<double, 6> Peb;
-			std::array<double, 18> Pee;
-			std::array<double, 18> Pin;
-			std::array<double, 18> Fin;
+			double Pin[18];
+			for (int i = 0; i < 18; ++i)
+			{
+				Pin[i] = MotionAt(i).MotPos();
+			}
+
+			double pe[6];
+			this->GetPeb(pe);
+			SetPinFixFeet(Pin, FixFeet(), ActiveMotion(), pe);
 		};
+		virtual void KinFromVin()override
+		{
+			double Vin[18];
+			for (int i = 0; i < 18; ++i)
+			{
+				Vin[i] = MotionAt(i).MotVel();
+			}
+			SetVinFixFeet(Vin, FixFeet(), ActiveMotion());
+		};
+		virtual void KinFromAin()override
+		{
+			double Ain[18];
+			for (int i = 0; i < 18; ++i)
+			{
+				Ain[i] = MotionAt(i).MotAcc();
+			}
+			SetAinFixFeet(Ain, FixFeet(), ActiveMotion());
+		};
+		
 		void SimScriptClear();
 		void SimScriptSetTopologyA();
 		void SimScriptSetTopologyB();
 		void SimScriptSimulate(std::uint32_t ms_dur, std::uint32_t ms_dt = 10);
-		void SimPosCurve(const GaitFunc &fun, const GaitParamBase &param, std::list<SimResultNode> &result);
-		void SimFceCurve(std::list<SimResultNode> &result, bool using_script = false);
-		void SimMakeAkima(std::list<SimResultNode> &result, int ms_dt = 10);
-		void SimByAdams(const std::string &adams_file, const GaitFunc &fun, const GaitParamBase &param, int ms_dt = 10, bool using_script = false);
-		void SimByAdamsResultAt(int ms_time);
-		void SimByMatlab(const std::string &folderName, const GaitFunc &fun, GaitParamBase &param, bool using_script = false);
 	
 	public:
 		union

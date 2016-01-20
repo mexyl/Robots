@@ -508,6 +508,11 @@ namespace Robots
 		s_pm_dot_pm(*pP3a->Pm(), *pm, *pm1);
 		pP3b->SetPm(*pm1);
 
+		/*驱动位置*/
+		pM1->Update();
+		pM2->Update();
+		pM3->Update();
+
 		/*地面球铰的位置*/
 		pSfi->Update();
 		std::copy_n((const double*)*pSfi->Pm(), 16, const_cast<double *>(*pSfj->PrtPm()));
@@ -1164,7 +1169,7 @@ namespace Robots
 				}
 				else
 				{
-					this->pLegs[i]->fIn_dyn[j] = this->pLegs[i]->pFces[j]->GetFce();
+					this->pLegs[i]->fIn_dyn[j] = this->pLegs[i]->pFces[j]->Fce();
 				}
 			}
 		}
@@ -1338,163 +1343,5 @@ namespace Robots
 	void RobotTypeI::SimScriptSimulate(std::uint32_t ms_dur, std::uint32_t ms_dt)
 	{
 		Script().Simulate(ms_dur, ms_dt);
-	}
-	void RobotTypeI::SimPosCurve(const GaitFunc &fun, const GaitParamBase &param, std::list<SimResultNode> &result)
-	{
-		result.clear();
-
-		SimResultNode node;
-
-		//起始位置
-		this->SetPeb(param.beginPeb);
-		this->SetPee(param.beginPee);
-		this->GetPeb(node.Peb.data());
-		this->GetPee(node.Pee.data());
-		this->GetPin(node.Pin.data());
-
-		result.push_back(node);
-
-		//其他位置
-		param.count = 0;
-		for (int isFinished = 1; isFinished != 0; param.count++)
-		{
-			isFinished = fun(this, &param);
-
-			this->GetPeb(node.Peb.data());
-			this->GetPin(node.Pin.data());
-			this->GetPee(node.Pee.data());
-
-			result.push_back(node);
-		}
-	};
-	void RobotTypeI::SimFceCurve(std::list<SimResultNode> &result, bool using_script)
-	{
-		auto i = 0;
-		for (auto it = result.begin(); it != result.end(); ++it)
-		{
-			this->SetPeb(it->Peb.data());
-			this->SetPee(it->Pee.data());
-
-			if (using_script)
-			{
-				this->Script().UpdateAt(i);
-				this->Script().SetTopologyAt(i);
-			}
-
-			this->FastDyn();
-			this->GetFin(it->Fin.data());
-			++i;
-		}
-	}
-	void RobotTypeI::SimMakeAkima(std::list<SimResultNode> &result, int ms_dt)
-	{
-		//生成时间Akima
-		std::vector<double> time_vec(result.size());
-		time_vec.clear();
-		for (std::size_t j = 0; j < result.size(); ++j)
-		{
-			if ((j%ms_dt == 0) || (j == result.size() + 1))
-			{
-				time_vec.push_back(j*0.001);
-			}
-		}
-		//生成驱动Akima
-		std::vector<double> mot_vec(result.size()), fce_vec(result.size());
-		for (auto i = 0; i < 18; ++i)
-		{
-			mot_vec.clear();
-			fce_vec.clear();
-
-			auto j = 0;
-			for (auto &node : result)
-			{
-				if ((j%ms_dt == 0) || (j == result.size() + 1))
-				{
-					mot_vec.push_back(node.Pin.at(i));
-					fce_vec.push_back(node.Fin.at(i));
-				}
-
-				j++;
-			}
-
-			this->MotionAt(i).SetPosAkimaCurve(time_vec.size(), time_vec.data(), mot_vec.data());
-			this->ForceAt(i).SetFceAkimaCurve(time_vec.size(), time_vec.data(), fce_vec.data());
-		}
-	}
-	void RobotTypeI::SimByAdams(const std::string &adams_file, const GaitFunc &fun, const GaitParamBase &param, int ms_dt, bool using_script)
-	{
-		std::list<SimResultNode> result;
-		SimPosCurve(fun, param, result);
-		SimFceCurve(result, using_script);
-		SimMakeAkima(result, ms_dt);
-		this->SaveAdams(adams_file, using_script);
-	}
-	void RobotTypeI::SimByAdamsResultAt(int ms_time)
-	{
-		//更新机构拓扑
-		this->Script().SetTopologyAt(ms_time);
-		
-		double pIn[18], vIn[18], aIn[18];
-
-		for (int j = 0; j < 18; ++j)
-		{
-			pIn[j] = this->MotionAt(j).PosAkima(ms_time / 1000.0, '0');
-			vIn[j] = this->MotionAt(j).PosAkima(ms_time / 1000.0, '1');
-			aIn[j] = this->MotionAt(j).PosAkima(ms_time / 1000.0, '2');
-			double f = this->ForceAt(j).FceAkima(ms_time / 1000.0, '0');
-
-			static_cast<Aris::DynKer::SingleComponentForce&>(this->ForceAt(j)).SetFce(f);
-		}
-
-		double pe[6];
-		this->GetPeb(pe);
-		this->SetPinFixFeet(pIn, this->FixFeet(), this->ActiveMotion(), pe);
-		this->SetVinFixFeet(vIn, this->FixFeet(), this->ActiveMotion());
-		this->SetAinFixFeet(aIn, this->FixFeet(), this->ActiveMotion());
-
-		this->Dyn();
-	}
-	void RobotTypeI::SimByMatlab(const std::string &folderName, const GaitFunc &fun, GaitParamBase &param, bool using_script)
-	{
-		std::list<SimResultNode> result;
-		SimPosCurve(fun, param, result);
-		SimFceCurve(result, using_script);
-
-		/*输出数据*/
-		std::ofstream file_Pin, file_Pee, file_Peb, file_Fin;
-		
-		file_Pin.open(folderName + "Pin.txt");
-		file_Pee.open(folderName + "Pee.txt");
-		file_Peb.open(folderName + "Peb.txt");
-		file_Fin.open(folderName + "Fin.txt");
-
-		file_Pin << std::setprecision(15);
-		file_Pee << std::setprecision(15);
-		file_Peb << std::setprecision(15);
-		file_Fin << std::setprecision(15);
-
-		for (auto &node : result)
-		{
-			for (auto j : node.Pin)
-			{
-				file_Pin << j << "   ";
-			}
-			file_Pin << std::endl;
-			for (auto j : node.Pee)
-			{
-				file_Pee << j << "   ";
-			}
-			file_Pee << std::endl;
-			for (auto j : node.Peb)
-			{
-				file_Peb << j << "   ";
-			}
-			file_Peb << std::endl;
-			for (auto j : node.Fin)
-			{
-				file_Fin << j << "   ";
-			}
-			file_Fin << std::endl;
-		}
 	}
 }

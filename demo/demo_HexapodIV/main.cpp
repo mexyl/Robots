@@ -28,18 +28,6 @@ double firstEE[18] =
 	0.3,-0.75,0.65,
 };
 
-//double beginEE[18]
-//{
-//	-0.3,-0.85,-0.65,
-//	-0.45,-0.85,0,
-//	-0.3,-0.85,0.65,
-//	0.3,-0.85,-0.65,
-//	0.45,-0.85,0,
-//	0.3,-0.85,0.65,
-//};
-
-//double beginPe[6]{ 0 };
-
 double beginEE[18]
 {
 	-0.317036,-0.85,-0.670592,
@@ -74,7 +62,6 @@ int main()
 	param.n = 1;
 
 
-	rbt.SimByMatlab("C:\\Users\\yang\\Desktop\\Walk\\", Robots::walk, param);
 
 
 	std::cout << "finished" << std::endl;

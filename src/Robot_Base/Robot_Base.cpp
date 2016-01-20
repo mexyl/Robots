@@ -483,12 +483,10 @@ namespace Robots
 	}
 	void RobotBase::SetPee(const double *pEE, const Marker &mak)
 	{
-		
 		for (int i = 0; i < 6; i++)
 		{
 			pLegs[i]->SetPee(pEE + i * 3, mak);
 		}
-
 
 		calculate_jac();
 	}
