@@ -224,15 +224,6 @@ namespace Robots
 			}
 			SetVinFixFeet(Vin, FixFeet(), ActiveMotion());
 		};
-		virtual void KinFromAin()override
-		{
-			double Ain[18];
-			for (int i = 0; i < 18; ++i)
-			{
-				Ain[i] = MotionAt(i).MotAcc();
-			}
-			SetAinFixFeet(Ain, FixFeet(), ActiveMotion());
-		};
 		
 		void SimScriptClear();
 		void SimScriptSetTopologyA();
