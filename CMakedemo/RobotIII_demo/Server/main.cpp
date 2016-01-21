@@ -50,6 +50,8 @@ void ParseFunc(const std::string &cmd, const std::map<std::string, std::string> 
 			param.isMotorActive[id] = true;
 		}
 	}
+
+	msg_out.CopyStruct(param);
 }
 
 struct SimpleWalkParam final :public Aris::DynKer::PlanParamBase
