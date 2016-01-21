@@ -512,7 +512,7 @@ namespace Robots
 
 		/*begin to load controller*/
 #ifdef UNIX
-		pController->LoadXml(doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control")->FirstChildElement("EtherCat"));
+		pController->LoadXml(std::ref(*doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control")->FirstChildElement("EtherCat")));
 		pController->SetControlStrategy(tg);
 #endif
 
