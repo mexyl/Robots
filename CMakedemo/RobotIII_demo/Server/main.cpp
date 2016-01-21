@@ -22,7 +22,7 @@ using namespace Aris::Core;
 int main()
 {
 	auto &rs = Aris::ControlServer::Instance();
-	rs.CreateRobot<Robots::RobotTypeI>();
+	rs.CreateModel<Robots::RobotTypeI>();
 #ifdef WIN32
 	rs.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
 #endif
