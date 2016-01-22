@@ -190,7 +190,7 @@ int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase 
 
 	if (param.count == 0)std::copy_n(param.motion_feedback_pos->data(), 18, beginPin);
 
-	/*
+	
 	if (param.count % 100)
 	{
 		for (int i = 0; i<18; ++i)
@@ -198,7 +198,7 @@ int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase 
 			rt_printf("%f ", beginPin[i]);
 		}
 		rt_printf("\n");
-	}*/
+	}
 
 	
 	const double pe[6]{ 0 };
