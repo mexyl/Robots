@@ -195,7 +195,7 @@ int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase 
 	{
 		for (int i = 0; i<18; ++i)
 		{
-			rt_printf("%f ", beginPin[i]);
+			rt_printf("%f ", param.motion_feedback_pos->data()[i]);
 		}
 		rt_printf("\n");
 	}
@@ -252,10 +252,10 @@ int main()
 	rs.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
 #endif
 
-	rs.SetParseFunc("en", BasicParseFunc);
-	rs.SetParseFunc("ds", BasicParseFunc);
-	rs.SetParseFunc("hm", BasicParseFunc);
-	rs.AddGait("rc", Recover, ParseRecover);
+	rs.AddCmd("en", BasicParseFunc, nullptr);
+	rs.AddCmd("ds", BasicParseFunc, nullptr);
+	rs.AddCmd("hm", BasicParseFunc, nullptr);
+	rs.AddCmd("rc", ParseRecover, Recover );
 	
 
 	//rs.AddGait("wk", Robots::walk, Robots::parseWalk);
