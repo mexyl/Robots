@@ -64,7 +64,7 @@ void BasicParseFunc(const std::string &cmd, const std::map<std::string, std::str
 	msg_out.CopyStruct(param);
 }
 
-struct SimpleWalkParam final :public Aris::Dynamic::PlanParamBase
+struct SimpleWalkParam final :public Aris::GaitParamBase
 {
 	std::int32_t totalCount{ 500 };
 	std::int32_t n{ 1 };
