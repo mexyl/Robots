@@ -560,24 +560,24 @@
         </AtiForceSensor>
       </SlaveType>
       <Slave>
-        <Motion1 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="15"/>
-        <Motion2 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="17"/>
-        <Motion3 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="16"/>
-        <Motion4 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="12"/>
-        <Motion5 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="14"/>
-        <Motion6 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="13"/>
-        <Motion7 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 9"/>
-        <Motion8 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="11"/>
-        <Motion9 type="ElmoSoloWhistle"  maxSpeed="5417642" input2count="22937600" homePos="0" modelID="10"/>
-        <Motion10 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 2"/>
-        <Motion11 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 0"/>
-        <Motion12 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 1"/>
-        <Motion13 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 3"/>
-        <Motion14 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 5"/>
-        <Motion15 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 4"/>
-        <Motion16 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 7"/>
-        <Motion17 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 8"/>
-        <Motion18 type="ElmoSoloWhistle" maxSpeed="5417642" input2count="22937600" homePos="0" modelID=" 6"/>
+        <Motion1 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.676" input2count="22937600" absID="15"/>
+        <Motion2 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.698" input2count="22937600" absID="17"/>
+        <Motion3 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.698" input2count="22937600" absID="16"/>
+        <Motion4 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.676" input2count="22937600" absID="12"/>
+        <Motion5 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.698" input2count="22937600" absID="14"/>
+        <Motion6 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.698" input2count="22937600" absID="13"/>
+        <Motion7 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.676" input2count="22937600" absID=" 9"/>
+        <Motion8 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.698" input2count="22937600" absID="11"/>
+        <Motion9 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.698" input2count="22937600" absID="10"/>
+        <Motion10 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.698" input2count="22937600" absID=" 2"/>
+        <Motion11 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.676" input2count="22937600" absID=" 0"/>
+        <Motion12 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.698" input2count="22937600" absID=" 1"/>
+        <Motion13 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.676" input2count="22937600" absID=" 3"/>
+        <Motion14 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.698" input2count="22937600" absID=" 5"/>
+        <Motion15 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.698" input2count="22937600" absID=" 4"/>
+        <Motion16 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.698" input2count="22937600" absID=" 7"/>
+        <Motion17 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.698" input2count="22937600" absID=" 8"/>
+        <Motion18 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.676" input2count="22937600" absID=" 6"/>
         <ForceSensor type="AtiForceSensor"/>
       </Slave>
     </EtherCat>

@@ -159,6 +159,21 @@ struct RecoverParam final :public Aris::GaitParamBase
 {
 	std::int32_t recover_count{ 3000 };
 	std::int32_t align_count{ 3000 };
+	bool active_leg[6]{ true,true,true,true,true,true };
+	double alignPee[18]
+	{-0.3,   -0.75,   -0.65,
+	-0.45,  -0.75,   0,
+	-0.3,   -0.75,    0.65,
+	0.3,   -0.75,    -0.65,
+	0.45,  -0.75,    0,
+	0.3,   -0.75,     0.65};
+	double recoverPee[18]
+	{ -0.3,   -0.85,   -0.65,
+		-0.45,  -0.85,   0,
+		-0.3,   -0.85,    0.65,
+		0.3,   -0.85,    -0.65,
+		0.45,  -0.85,    0,
+		0.3,   -0.85,     0.65 };
 };
 void ParseRecover(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)
 {
@@ -167,75 +182,65 @@ void ParseRecover(const std::string &cmd, const std::map<std::string, std::strin
 }
 int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase & plan_param)
 {
+	auto &robot = static_cast<Robots::RobotBase &>(model);
 	auto &param = static_cast<const RecoverParam &>(plan_param);
 	
 	//写入初值
-	static double begin_Pin[18];
+	static double beginPin[18];
 
-	if (param.count == 0)std::copy_n(param.motion_feedback_pos->data(), 18, begin_Pin);
+	if (param.count == 0)std::copy_n(param.motion_feedback_pos->data(), 18, beginPin);
 
+	/*
 	if (param.count % 100)
 	{
 		for (int i = 0; i<18; ++i)
 		{
-			rt_printf("%f ", begin_Pin[i]);
+			rt_printf("%f ", beginPin[i]);
 		}
 		rt_printf("\n");
-	}
+	}*/
 
-	/*
+	
 	const double pe[6]{ 0 };
-	this->pServer->pRobot->SetPeb(pe);
+	robot.SetPeb(pe);
+	robot.SetPee(param.alignPee);
 
-	int leftCount = pParam->count < pParam->alignCount ? 0 : pParam->alignCount;
-	int rightCount = pParam->count < pParam->alignCount ? pParam->alignCount : pParam->alignCount + pParam->recoverCount;
+	double alignPin[18]{ 0 };
+	robot.GetPin(alignPin);
 
-	double s = -(PI / 2)*cos(PI * (pParam->count - leftCount + 1) / (rightCount - leftCount)) + PI / 2;
+	int leftCount = param.count < param.align_count ? 0 : param.align_count;
+	int rightCount = param.count < param.align_count ? param.align_count : param.align_count + param.recover_count;
+
+	double s = -(PI / 2)*cos(PI * (param.count - leftCount + 1) / (rightCount - leftCount)) + PI / 2;
 
 	for (int i = 0; i < 6; ++i)
 	{
-		if (pParam->isLegActive[i])
+		if (param.active_leg[i])
 		{
-			if (pParam->count < pParam->alignCount)
+			if (param.count < param.align_count)
 			{
 				double pIn[3];
 				for (int j = 0; j < 3; ++j)
 				{
-					pIn[j] = pParam->beginPin[i * 3 + j] * (cos(s) + 1) / 2 + pParam->alignPin[i * 3 + j] * (1 - cos(s)) / 2;
+					pIn[j] = beginPin[i * 3 + j] * (cos(s) + 1) / 2 + alignPin[i * 3 + j] * (1 - cos(s)) / 2;
 				}
 
-				this->pServer->pRobot->pLegs[i]->SetPin(pIn);
-
+				robot.pLegs[i]->SetPin(pIn);
 			}
 			else
 			{
 				double pEE[3];
 				for (int j = 0; j < 3; ++j)
 				{
-					pEE[j] = pParam->alignPee[i * 3 + j] * (cos(s) + 1) / 2 + pParam->recoverPee[i * 3 + j] * (1 - cos(s)) / 2;
+					pEE[j] = param.alignPee[i * 3 + j] * (cos(s) + 1) / 2 + param.recoverPee[i * 3 + j] * (1 - cos(s)) / 2;
 
 				}
 
-				this->pServer->pRobot->pLegs[i]->SetPee(pEE);
+				robot.pLegs[i]->SetPee(pEE);
 			}
-
-			double pIn[3];
-			this->pServer->pRobot->pLegs[i]->GetPin(pIn);
-			for (int j = 0; j < 3; ++j)
-			{
-				data.pMotionData->operator[](a2p(i * 3 + j)).cmd = Aris::Control::EthercatMotion::RUN;
-				data.pMotionData->operator[](a2p(i * 3 + j)).targetPos = static_cast<std::int32_t>(pIn[j] * meter2count);
-			}
-
 		}
 	}
-	*/
-
-	for (size_t i = 0; i < 18; ++i)
-	{
-		model.MotionAt(i).SetMotPos(begin_Pin[i]);
-	}
-
+	
 	//向下写入输入位置
 	return param.align_count + param.recover_count - param.count - 1;
 }
