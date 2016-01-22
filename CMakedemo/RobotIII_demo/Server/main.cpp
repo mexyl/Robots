@@ -66,8 +66,6 @@ void BasicParseFunc(const std::string &cmd, const std::map<std::string, std::str
 
 struct SimpleWalkParam final :public Aris::Dynamic::PlanParamBase
 {
-	double beginPee[18]{ 0 };
-	double beginPeb[6]{ 0 };
 	std::int32_t totalCount{ 500 };
 	std::int32_t n{ 1 };
 	double d{ 0.5 };
@@ -78,81 +76,81 @@ void ParseSimpleWalk(const std::string &cmd, const std::map<std::string, std::st
 	SimpleWalkParam param;
 	msg_out.CopyStruct(param);
 }
-int SimpleWalk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase & param)
+int SimpleWalk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase & plan_param)
 {
-	auto &sp = static_cast<const SimpleWalkParam&>(param);
+	auto &param = static_cast<const SimpleWalkParam&>(plan_param);
 	auto &robot = static_cast<Robots::RobotTypeI&>(model);
 
 	static Aris::Dynamic::FloatMarker beginBodyMak(robot.Ground(), nullptr, "313");
 	static double beginEE[18];
 
 	/*在每次脚着地时更新与身体坐标系重合的位于地面的坐标系*/
-	if ((sp.count % sp.totalCount) == 0)
+	if ((param.count % param.totalCount) == 0)
 	{
 		beginBodyMak.SetPrtPm(*robot.Body().Pm());
 		beginBodyMak.Update();
 		robot.GetPee(beginEE, beginBodyMak);
 	}
 
-	double pEE[18], pe[6]{ 0 };
-	std::copy_n(beginEE, 18, pEE);
+	double Pee[18], Peb[6]{ 0 };
+	std::copy_n(beginEE, 18, Pee);
 
 	/*当前相位的count*/
-	int count = sp.count % sp.totalCount;
+	int count = param.count % param.totalCount;
 
-	if ((sp.count / sp.totalCount) == 0)/*加速段*/
+	if ((param.count / param.totalCount) == 0)/*加速段*/
 	{
-		pe[2] = Aris::Plan::acc_even(sp.totalCount, count + 1)*0.25*sp.d;
+		Peb[2] = Aris::Plan::acc_even(param.totalCount, count + 1)*0.25*param.d;
 
-		double s = -(PI / 2)*cos(PI * (count + 1) / sp.totalCount) + PI / 2;
+		double s = -(PI / 2)*cos(PI * (count + 1) / param.totalCount) + PI / 2;
 
 		for (int i = 0; i < 18; i += 6)
 		{
-			pEE[i + 1] = sp.h*sin(s) + beginEE[i + 1];
-			pEE[i + 2] = sp.d / 2 * (1 - cos(s)) / 2 + beginEE[i + 2];
+			Pee[i + 1] = param.h*sin(s) + beginEE[i + 1];
+			Pee[i + 2] = param.d / 2 * (1 - cos(s)) / 2 + beginEE[i + 2];
 		}
 	}
-	else if ((sp.count / sp.totalCount) == (sp.n * 2 - 1))/*减速段*/
+	else if ((param.count / param.totalCount) == (param.n * 2 - 1))/*减速段*/
 	{
-		pe[2] = Aris::Plan::dec_even(sp.totalCount, count + 1)*0.25*sp.d;
+		Peb[2] = Aris::Plan::dec_even(param.totalCount, count + 1)*0.25*param.d;
 
-		double s = -(PI / 2)*cos(PI * (count + 1) / sp.totalCount) + PI / 2;
+		double s = -(PI / 2)*cos(PI * (count + 1) / param.totalCount) + PI / 2;
 
 		for (int i = 3; i < 18; i += 6)
 		{
-			pEE[i + 1] = sp.h*sin(s) + beginEE[i + 1];
-			pEE[i + 2] = sp.d / 2 * (1 - cos(s)) / 2 + beginEE[i + 2];
+			Pee[i + 1] = param.h*sin(s) + beginEE[i + 1];
+			Pee[i + 2] = param.d / 2 * (1 - cos(s)) / 2 + beginEE[i + 2];
 		}
 	}
-	else if ((sp.count / sp.totalCount) % 2 == 1)/*第一匀速段，紧接着加速段*/
+	else if ((param.count / param.totalCount) % 2 == 1)/*第一匀速段，紧接着加速段*/
 	{
-		pe[2] = Aris::Plan::even(sp.totalCount, count + 1)*0.5*sp.d;
+		Peb[2] = Aris::Plan::even(param.totalCount, count + 1)*0.5*param.d;
 
-		double s = -(PI / 2)*cos(PI * (count + 1) / sp.totalCount) + PI / 2;
+		double s = -(PI / 2)*cos(PI * (count + 1) / param.totalCount) + PI / 2;
 
 		for (int i = 3; i < 18; i += 6)
 		{
-			pEE[i + 1] = sp.h*sin(s) + beginEE[i + 1];
-			pEE[i + 2] = sp.d * (1 - cos(s)) / 2 + beginEE[i + 2];
+			Pee[i + 1] = param.h*sin(s) + beginEE[i + 1];
+			Pee[i + 2] = param.d * (1 - cos(s)) / 2 + beginEE[i + 2];
 		}
 	}
 	else/*第二匀速段，后面就是减速段*/
 	{
-		pe[2] = Aris::Plan::even(sp.totalCount, count + 1)*0.5*sp.d;
+		Peb[2] = Aris::Plan::even(param.totalCount, count + 1)*0.5*param.d;
 
-		double s = -(PI / 2)*cos(PI * (count + 1) / sp.totalCount) + PI / 2;
+		double s = -(PI / 2)*cos(PI * (count + 1) / param.totalCount) + PI / 2;
 
 		for (int i = 0; i < 18; i += 6)
 		{
-			pEE[i + 1] = sp.h*sin(s) + beginEE[i + 1];
-			pEE[i + 2] = sp.d * (1 - cos(s)) / 2 + beginEE[i + 2];
+			Pee[i + 1] = param.h*sin(s) + beginEE[i + 1];
+			Pee[i + 2] = param.d * (1 - cos(s)) / 2 + beginEE[i + 2];
 		}
 	}
 
-	robot.SetPeb(pe, beginBodyMak);
-	robot.SetPee(pEE, beginBodyMak);
+	robot.SetPeb(Peb, beginBodyMak);
+	robot.SetPee(Pee, beginBodyMak);
 
-	return 2 * sp.n * sp.totalCount - sp.count - 1;
+	return 2 * param.n * param.totalCount - param.count - 1;
 }
 
 struct RecoverParam final :public Aris::GaitParamBase
@@ -185,26 +183,12 @@ int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase 
 	auto &robot = static_cast<Robots::RobotBase &>(model);
 	auto &param = static_cast<const RecoverParam &>(plan_param);
 	
-	//写入初值
 	static double beginPin[18];
-
 	if (param.count == 0)std::copy_n(param.motion_feedback_pos->data(), 18, beginPin);
-
-	
-	if (param.count % 100)
-	{
-		for (int i = 0; i<18; ++i)
-		{
-			rt_printf("%f ", param.motion_feedback_pos->data()[i]);
-		}
-		rt_printf("\n");
-	}
-
 	
 	const double pe[6]{ 0 };
 	robot.SetPeb(pe);
 	robot.SetPee(param.alignPee);
-
 	double alignPin[18]{ 0 };
 	robot.GetPin(alignPin);
 
@@ -255,8 +239,8 @@ int main()
 	rs.AddCmd("en", BasicParseFunc, nullptr);
 	rs.AddCmd("ds", BasicParseFunc, nullptr);
 	rs.AddCmd("hm", BasicParseFunc, nullptr);
-	rs.AddCmd("rc", ParseRecover, Recover );
-	
+	rs.AddCmd("rc", ParseRecover, Recover);
+	rs.AddCmd("sw", ParseSimpleWalk, SimpleWalk);
 
 	//rs.AddGait("wk", Robots::walk, Robots::parseWalk);
 	//rs->AddGait("ad", Robots::adjust, Robots::parseAdjust);

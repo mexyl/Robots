@@ -472,11 +472,6 @@
         <second abbreviation="s"/>
         <leg abbreviation="l" type="intArray" default="0"/>
       </rc>
-      <ro/>
-      <ad>
-        <first abbreviation="f"/>
-        <second abbreviation="s"/>
-      </ad>
       <wk default="wk_param">
         <wk_param type="group">
           <totalCount abbreviation="t" type="int" default="3000"/>
@@ -489,6 +484,18 @@
           <beta abbreviation="b" type="double" default="0"/>
         </wk_param>
       </wk>
+      <sw default="wk_param">
+        <wk_param type="group">
+          <totalCount abbreviation="t" type="int" default="3000"/>
+          <n abbreviation="n" type="int" default="1"/>
+          <walkDirection abbreviation="w" type="int" default="-3"/>
+          <upDirection abbreviation="u" type="int" default="2"/>
+          <distance abbreviation="d" type="double" default="0.5"/>
+          <height abbreviation="h" type="double" default="0.05"/>
+          <alpha abbreviation="a" type="double" default="0"/>
+          <beta abbreviation="b" type="double" default="0"/>
+        </wk_param>
+      </sw>
     </Commands>
     <Connection IP="127.0.0.1" Port="5866"/>
     <Sensors>
@@ -532,7 +539,7 @@
             <homeLowSpeed index="0x6099" subIndex="2" value="100000" type="int32"/>
             <RatioOfPosDivVel_Numerator index="0x6096" subIndex="1" value="1" type="int32"/>
             <RatioOfPosDivVel_Divisor index="0x6096" subIndex="2" value="1" type="int32"/>
-            <homeTorqueLimit index="0x2020" subIndex="1" value="200" type="int32"/>
+            <homeTorqueLimit index="0x2020" subIndex="1" value="0" type="int32"/>
             <p2pMaxSpeed index="0x607F" subIndex="0" value="2560" type="int32"/>
             <p2pSpeed index="0x6081" subIndex="0" value="1792" type="int32"/>
             <homeOffset index="0x607C" subIndex="0" value="0" type="int32"/>
