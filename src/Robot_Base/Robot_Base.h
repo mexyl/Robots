@@ -11,11 +11,11 @@ namespace Robots
 {
 	class RobotBase;
 
-	class LegBase:public Aris::DynKer::Object
+	class LegBase:public Aris::Dynamic::Object
 	{
 	public:
-		using Marker = Aris::DynKer::Marker;
-		using Part = Aris::DynKer::Part;
+		using Marker = Aris::Dynamic::Marker;
+		using Part = Aris::Dynamic::Part;
 
 		const Part& Ground() const;
 		Part& Ground();
@@ -132,7 +132,7 @@ namespace Robots
 
 	protected:		
 		RobotBase *pRobot;
-		Aris::DynKer::Marker *pBase;
+		Aris::Dynamic::Marker *pBase;
 
 		union 
 		{
@@ -227,11 +227,11 @@ namespace Robots
 		friend class RobotBase;
 	};
 
-	class RobotBase:public Aris::DynKer::Model
+	class RobotBase:public Aris::Dynamic::Model
 	{
 	public:
-		using Marker = Aris::DynKer::Marker;
-		using Part = Aris::DynKer::Part;
+		using Marker = Aris::Dynamic::Marker;
+		using Part = Aris::Dynamic::Part;
 
 		RobotBase();
 		virtual ~RobotBase() = default;
@@ -329,7 +329,7 @@ namespace Robots
 		LegBase *pLegs[6];
 
 	protected:
-		Aris::DynKer::Part *pBody;
+		Aris::Dynamic::Part *pBody;
 
 	private:
 		double _BodyPm[4][4]{ {0} }, _BodyVel[6]{ 0 }, _BodyAcc[6]{ 0 };

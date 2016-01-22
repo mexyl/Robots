@@ -523,7 +523,7 @@ namespace Robots
 
 		/*motion parameter*/
 		auto pContEle = doc.RootElement()->FirstChildElement("Server")->FirstChildElement("Control");
-		Aris::DynKer::Calculator c;
+		Aris::Dynamic::Calculator c;
 		meter2count = c.CalculateExpression(pContEle->Attribute("meter2count")).ToDouble();
 
 		/*construct mapPhy2Abs and mapAbs2Phy*/
@@ -1149,8 +1149,6 @@ namespace Robots
 	}
 	int RobotServer::Imp::recover(Robots::RecoverParam *pParam, Aris::Control::EthercatController::Data data)
 	{
-			
-			
 		/*写入初值*/
 		if (pParam->count == 0)
 		{

@@ -4,7 +4,7 @@
 #include <ctime>
 #include <iostream>
 
-using namespace Aris::DynKer;
+using namespace Aris::Dynamic;
 using namespace std;
 
 namespace Robots

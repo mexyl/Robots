@@ -75,7 +75,7 @@ void get_const(Aris::Plan::FastPath::Data & data)
 	pe_const(data.time, bodyPe, bodyVel, bodyAcc);
 
 	double bodyPm[16];
-	Aris::DynKer::s_pe2pm(bodyPe, bodyPm);
+	Aris::Dynamic::s_pe2pm(bodyPe, bodyPm);
 	robot.Body().SetPm(bodyPm);
 	robot.Body().SetVel(bodyVel);
 	robot.Body().SetAcc(bodyAcc);
@@ -86,7 +86,7 @@ void get_const(Aris::Plan::FastPath::Data & data)
 	g_const(data.s, data.g);
 	h_const(data.s, data.h);
 	
-	Aris::DynKer::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
+	Aris::Dynamic::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
 
 	robot.pLegs[leg_index]->SetPee(pEE);
 	robot.pLegs[leg_index]->SetVee(vEE);
@@ -120,7 +120,7 @@ void get_acc(Aris::Plan::FastPath::Data & data)
 {
 	double bodyPe[6]{ 0,0,0.5*a*data.time*data.time,0,0,0 }, bodyVel[6]{ 0,0,a*data.time,0,0,0 }, bodyAcc[6]{ 0,0,a,0,0,0 };
 	double bodyPm[16];
-	Aris::DynKer::s_pe2pm(bodyPe, bodyPm);
+	Aris::Dynamic::s_pe2pm(bodyPe, bodyPm);
 	robot.Body().SetPm(bodyPm);
 	robot.Body().SetVel(bodyVel);
 	robot.Body().SetAcc(bodyAcc);
@@ -131,7 +131,7 @@ void get_acc(Aris::Plan::FastPath::Data & data)
 	g_acc(data.s, data.g);
 	h_acc(data.s, data.h);
 
-	Aris::DynKer::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
+	Aris::Dynamic::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
 
 	robot.pLegs[leg_index]->SetPee(pEE);
 	robot.pLegs[leg_index]->SetVee(vEE);
@@ -167,7 +167,7 @@ void get_dec(Aris::Plan::FastPath::Data & data)
 	double bodyAcc[6]{ 0,0,-a,0,0,0 };
 
 	double bodyPm[16];
-	Aris::DynKer::s_pe2pm(bodyPe, bodyPm);
+	Aris::Dynamic::s_pe2pm(bodyPe, bodyPm);
 	robot.Body().SetPm(bodyPm);
 	robot.Body().SetVel(bodyVel);
 	robot.Body().SetAcc(bodyAcc);
@@ -178,7 +178,7 @@ void get_dec(Aris::Plan::FastPath::Data & data)
 	g_dec(data.s, data.g);
 	h_dec(data.s, data.h);
 
-	Aris::DynKer::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
+	Aris::Dynamic::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
 
 	robot.pLegs[leg_index]->SetPee(pEE);
 	robot.pLegs[leg_index]->SetVee(vEE);
@@ -225,7 +225,7 @@ void plan_const(const char *fileName)
 			
 			pe_const((j + 1)*0.001, pe);
 
-			Aris::DynKer::s_pe2pm(pe, pm);
+			Aris::Dynamic::s_pe2pm(pe, pm);
 			b_const(tg.Result().at(j), pEE);
 			robot.Body().SetPm(pm);
 			robot.pLegs[leg_index]->SetPee(pEE);
@@ -243,7 +243,7 @@ void plan_const(const char *fileName)
 		}
 	}
 	
-	Aris::DynKer::dlmwrite(fileName, result);
+	Aris::Dynamic::dlmwrite(fileName, result);
 	std::cout << "finished planing const period" << std::endl;
 }
 void plan_acc(const char *fileName)
@@ -269,7 +269,7 @@ void plan_acc(const char *fileName)
 		{
 			pe[2] = 0.5*a * (j + 1)*(j + 1)*1e-6;
 			
-			Aris::DynKer::s_pe2pm(pe, pm);
+			Aris::Dynamic::s_pe2pm(pe, pm);
 			b_acc(tg.Result().at(j), pEE);
 			robot.Body().SetPm(pm);
 			robot.pLegs[leg_index]->SetPee(pEE);
@@ -280,11 +280,11 @@ void plan_acc(const char *fileName)
 			robot.pLegs[(leg_index + 3) % 6]->GetPin(&result[j][(i * 3 + 9) % 18]);
 		}
 
-		Aris::DynKer::dsp(pEE, 1, 3);
-		Aris::DynKer::dsp(pe, 1, 6);
+		Aris::Dynamic::dsp(pEE, 1, 3);
+		Aris::Dynamic::dsp(pe, 1, 6);
 	}
 
-	Aris::DynKer::dlmwrite(fileName, result);
+	Aris::Dynamic::dlmwrite(fileName, result);
 	std::cout << "finished planing acc period" << std::endl;
 }
 void plan_dec(const char *fileName)
@@ -310,7 +310,7 @@ void plan_dec(const char *fileName)
 		{
 			pe[2] = a*decTime/1000*(j + 1)*1e-3 - 0.5*a * (j + 1)*(j + 1)*1e-6;
 
-			Aris::DynKer::s_pe2pm(pe, pm);
+			Aris::Dynamic::s_pe2pm(pe, pm);
 			b_dec(tg.Result().at(j), pEE);
 			robot.Body().SetPm(pm);
 			robot.pLegs[leg_index]->SetPee(pEE);
@@ -322,11 +322,11 @@ void plan_dec(const char *fileName)
 			robot.pLegs[(leg_index + 3) % 6]->GetPin(&result[j][(i * 3 + 9) % 18]);
 		}
 
-		Aris::DynKer::dsp(pEE, 1, 3);
-		Aris::DynKer::dsp(pe, 1, 6);
+		Aris::Dynamic::dsp(pEE, 1, 3);
+		Aris::Dynamic::dsp(pe, 1, 6);
 	}
 
-	Aris::DynKer::dlmwrite(fileName, result);
+	Aris::Dynamic::dlmwrite(fileName, result);
 	std::cout << "finished planing dec period" << std::endl;
 }
 

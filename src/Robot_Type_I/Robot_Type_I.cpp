@@ -12,7 +12,7 @@
 //#define EIGEN_NO_MALLOC
 #include "Eigen/Eigen"	
 
-using namespace Aris::DynKer;
+using namespace Aris::Dynamic;
 using namespace std;
 
 namespace Robots
@@ -1156,7 +1156,7 @@ namespace Robots
 			xm = Dm.lu().solve(bm);
 		});
 		
-		this->Aris::DynKer::Model::Dyn();
+		this->Aris::Dynamic::Model::Dyn();
 
 		// 更新数据
 		for (int i = 0; i < 6; ++i)
@@ -1290,17 +1290,17 @@ namespace Robots
 	}
 	void RobotTypeI::SimScriptSetTopologyA()
 	{
-		Aris::DynKer::Element *pForces[]
+		Aris::Dynamic::Element *pForces[]
 		{
 			pLegs[0]->pF2,pLegs[1]->pF2, pLegs[2]->pF2,pLegs[3]->pF2,pLegs[4]->pF2, pLegs[5]->pF2,
 			pLegs[0]->pF3,pLegs[1]->pF3, pLegs[2]->pF3,pLegs[3]->pF3,pLegs[4]->pF3, pLegs[5]->pF3,
 		};
-		Aris::DynKer::Element *pFirst[]
+		Aris::Dynamic::Element *pFirst[]
 		{
 			pLegs[0]->pM1,pLegs[1]->pF1, pLegs[2]->pM1,pLegs[3]->pF1,pLegs[4]->pM1, pLegs[5]->pF1,
 			pLegs[1]->pSf,pLegs[3]->pSf,pLegs[5]->pSf
 		};
-		Aris::DynKer::Element *pSecond[]
+		Aris::Dynamic::Element *pSecond[]
 		{
 			pLegs[0]->pF1,pLegs[1]->pM1, pLegs[2]->pF1,pLegs[3]->pM1,pLegs[4]->pF1, pLegs[5]->pM1,
 			pLegs[0]->pSf,pLegs[2]->pSf,pLegs[4]->pSf
@@ -1316,17 +1316,17 @@ namespace Robots
 	}
 	void RobotTypeI::SimScriptSetTopologyB()
 	{
-		Aris::DynKer::Element *pForces[]
+		Aris::Dynamic::Element *pForces[]
 		{
 			pLegs[0]->pF2,pLegs[1]->pF2, pLegs[2]->pF2,pLegs[3]->pF2,pLegs[4]->pF2, pLegs[5]->pF2,
 			pLegs[0]->pF3,pLegs[1]->pF3, pLegs[2]->pF3,pLegs[3]->pF3,pLegs[4]->pF3, pLegs[5]->pF3,
 		};
-		Aris::DynKer::Element *pFirst[]
+		Aris::Dynamic::Element *pFirst[]
 		{
 			pLegs[0]->pM1,pLegs[1]->pF1, pLegs[2]->pM1,pLegs[3]->pF1,pLegs[4]->pM1, pLegs[5]->pF1,
 			pLegs[1]->pSf,pLegs[3]->pSf,pLegs[5]->pSf
 		};
-		Aris::DynKer::Element *pSecond[]
+		Aris::Dynamic::Element *pSecond[]
 		{
 			pLegs[0]->pF1,pLegs[1]->pM1, pLegs[2]->pF1,pLegs[3]->pM1,pLegs[4]->pF1, pLegs[5]->pM1,
 			pLegs[0]->pSf,pLegs[2]->pSf,pLegs[4]->pSf

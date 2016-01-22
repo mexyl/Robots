@@ -15,78 +15,78 @@ namespace Robots
 		{
 			struct
 			{
-				Aris::DynKer::Part* pP1a;/*!< \brief 指向部件P1a的指针 */
-				Aris::DynKer::Part* pP2a;/*!< \brief 指向部件P2a的指针 */
-				Aris::DynKer::Part* pP3a;/*!< \brief 指向部件P3a的指针 */
-				Aris::DynKer::Part* pThigh;/*!< \brief 指向部件Thigh的指针 */
-				Aris::DynKer::Part* pP2b;/*!< \brief 指向部件P2b的指针 */
-				Aris::DynKer::Part* pP3b;/*!< \brief 指向部件P3b的指针 */
+				Aris::Dynamic::Part* pP1a;/*!< \brief 指向部件P1a的指针 */
+				Aris::Dynamic::Part* pP2a;/*!< \brief 指向部件P2a的指针 */
+				Aris::Dynamic::Part* pP3a;/*!< \brief 指向部件P3a的指针 */
+				Aris::Dynamic::Part* pThigh;/*!< \brief 指向部件Thigh的指针 */
+				Aris::Dynamic::Part* pP2b;/*!< \brief 指向部件P2b的指针 */
+				Aris::Dynamic::Part* pP3b;/*!< \brief 指向部件P3b的指针 */
 			};
-			Aris::DynKer::Part* pPrts[6];
+			Aris::Dynamic::Part* pPrts[6];
 		};
 		union
 		{
 			struct
 			{
-				Aris::DynKer::JointBase *pU1;/*!< \brief 指向关节U1的指针 */
-				Aris::DynKer::JointBase *pU2;/*!< \brief 指向关节U2的指针 */
-				Aris::DynKer::JointBase *pU3;/*!< \brief 指向关节U3的指针 */
-				Aris::DynKer::JointBase *pP1;/*!< \brief 指向关节P1的指针 */
-				Aris::DynKer::JointBase *pP2;/*!< \brief 指向关节P2的指针 */
-				Aris::DynKer::JointBase *pP3;/*!< \brief 指向关节P3的指针 */
-				Aris::DynKer::JointBase *pS2;/*!< \brief 指向关节S2的指针 */
-				Aris::DynKer::JointBase *pS3;/*!< \brief 指向关节S3的指针 */
-				Aris::DynKer::JointBase *pSf;/*!< \brief 指向关节Sf的指针 */
+				Aris::Dynamic::JointBase *pU1;/*!< \brief 指向关节U1的指针 */
+				Aris::Dynamic::JointBase *pU2;/*!< \brief 指向关节U2的指针 */
+				Aris::Dynamic::JointBase *pU3;/*!< \brief 指向关节U3的指针 */
+				Aris::Dynamic::JointBase *pP1;/*!< \brief 指向关节P1的指针 */
+				Aris::Dynamic::JointBase *pP2;/*!< \brief 指向关节P2的指针 */
+				Aris::Dynamic::JointBase *pP3;/*!< \brief 指向关节P3的指针 */
+				Aris::Dynamic::JointBase *pS2;/*!< \brief 指向关节S2的指针 */
+				Aris::Dynamic::JointBase *pS3;/*!< \brief 指向关节S3的指针 */
+				Aris::Dynamic::JointBase *pSf;/*!< \brief 指向关节Sf的指针 */
 			};
-			Aris::DynKer::JointBase *pJnts[9];
+			Aris::Dynamic::JointBase *pJnts[9];
 		};
 		union
 		{
 			struct
 			{
-				Aris::DynKer::Marker *pBase;/*!< \brief 指向坐标系Base的指针，位于部件MainBody上 */
-				Aris::DynKer::Marker *pU1i;/*!< \brief 指向坐标系U1i的指针，位于部件MainBody上 */
-				Aris::DynKer::Marker *pU1j;/*!< \brief 指向坐标系U1j的指针，位于部件P1a上 */
-				Aris::DynKer::Marker *pU2i;/*!< \brief 指向坐标系U2i的指针，位于部件MainBody上 */
-				Aris::DynKer::Marker *pU2j;/*!< \brief 指向坐标系U2j的指针，位于部件P2a上 */
-				Aris::DynKer::Marker *pU3i;/*!< \brief 指向坐标系U3i的指针，位于部件MainBody上 */
-				Aris::DynKer::Marker *pU3j;/*!< \brief 指向坐标系U3j的指针，位于部件P3a上 */
-				Aris::DynKer::Marker *pP1i;/*!< \brief 指向坐标系P1i的指针，位于部件Thigh上 */
-				Aris::DynKer::Marker *pP1j;/*!< \brief 指向坐标系P1j的指针，位于部件P1a上 */
-				Aris::DynKer::Marker *pP2i;/*!< \brief 指向坐标系P2i的指针，位于部件P2b上 */
-				Aris::DynKer::Marker *pP2j;/*!< \brief 指向坐标系P2j的指针，位于部件P2a上 */
-				Aris::DynKer::Marker *pP3i;/*!< \brief 指向坐标系P3i的指针，位于部件P3b上 */
-				Aris::DynKer::Marker *pP3j;/*!< \brief 指向坐标系P3i的指针，位于部件P3a上 */
-				Aris::DynKer::Marker *pS2i;/*!< \brief 指向坐标系S2i的指针，位于部件Thigh上 */
-				Aris::DynKer::Marker *pS2j;/*!< \brief 指向坐标系S2j的指针，位于部件P2b上 */
-				Aris::DynKer::Marker *pS3i;/*!< \brief 指向坐标系S3i的指针，位于部件Thigh上 */
-				Aris::DynKer::Marker *pS3j;/*!< \brief 指向坐标系S3j的指针，位于部件P3b上 */
-				Aris::DynKer::Marker *pSfi;/*!< \brief 指向坐标系Sfi的指针，位于部件Thigh上 */
-				Aris::DynKer::Marker *pSfj;/*!< \brief 指向坐标系Sfj的指针，位于部件Ground上 */
+				Aris::Dynamic::Marker *pBase;/*!< \brief 指向坐标系Base的指针，位于部件MainBody上 */
+				Aris::Dynamic::Marker *pU1i;/*!< \brief 指向坐标系U1i的指针，位于部件MainBody上 */
+				Aris::Dynamic::Marker *pU1j;/*!< \brief 指向坐标系U1j的指针，位于部件P1a上 */
+				Aris::Dynamic::Marker *pU2i;/*!< \brief 指向坐标系U2i的指针，位于部件MainBody上 */
+				Aris::Dynamic::Marker *pU2j;/*!< \brief 指向坐标系U2j的指针，位于部件P2a上 */
+				Aris::Dynamic::Marker *pU3i;/*!< \brief 指向坐标系U3i的指针，位于部件MainBody上 */
+				Aris::Dynamic::Marker *pU3j;/*!< \brief 指向坐标系U3j的指针，位于部件P3a上 */
+				Aris::Dynamic::Marker *pP1i;/*!< \brief 指向坐标系P1i的指针，位于部件Thigh上 */
+				Aris::Dynamic::Marker *pP1j;/*!< \brief 指向坐标系P1j的指针，位于部件P1a上 */
+				Aris::Dynamic::Marker *pP2i;/*!< \brief 指向坐标系P2i的指针，位于部件P2b上 */
+				Aris::Dynamic::Marker *pP2j;/*!< \brief 指向坐标系P2j的指针，位于部件P2a上 */
+				Aris::Dynamic::Marker *pP3i;/*!< \brief 指向坐标系P3i的指针，位于部件P3b上 */
+				Aris::Dynamic::Marker *pP3j;/*!< \brief 指向坐标系P3i的指针，位于部件P3a上 */
+				Aris::Dynamic::Marker *pS2i;/*!< \brief 指向坐标系S2i的指针，位于部件Thigh上 */
+				Aris::Dynamic::Marker *pS2j;/*!< \brief 指向坐标系S2j的指针，位于部件P2b上 */
+				Aris::Dynamic::Marker *pS3i;/*!< \brief 指向坐标系S3i的指针，位于部件Thigh上 */
+				Aris::Dynamic::Marker *pS3j;/*!< \brief 指向坐标系S3j的指针，位于部件P3b上 */
+				Aris::Dynamic::Marker *pSfi;/*!< \brief 指向坐标系Sfi的指针，位于部件Thigh上 */
+				Aris::Dynamic::Marker *pSfj;/*!< \brief 指向坐标系Sfj的指针，位于部件Ground上 */
 			};
-			Aris::DynKer::Marker *pMaks[19];
+			Aris::Dynamic::Marker *pMaks[19];
 		};
 		union
 		{
 			struct
 			{
-				Aris::DynKer::MotionBase *pM1;/*!< \brief 指向驱动M1的指针 */
-				Aris::DynKer::MotionBase *pM2;/*!< \brief 指向驱动M2的指针 */
-				Aris::DynKer::MotionBase *pM3;/*!< \brief 指向驱动M3的指针 */
+				Aris::Dynamic::MotionBase *pM1;/*!< \brief 指向驱动M1的指针 */
+				Aris::Dynamic::MotionBase *pM2;/*!< \brief 指向驱动M2的指针 */
+				Aris::Dynamic::MotionBase *pM3;/*!< \brief 指向驱动M3的指针 */
 			};
 
-			Aris::DynKer::MotionBase *pMots[3];
+			Aris::Dynamic::MotionBase *pMots[3];
 		};
 		union
 		{
 			struct
 			{
-				Aris::DynKer::SingleComponentForce *pF1;/*!< \brief 指向驱动M1的指针 */
-				Aris::DynKer::SingleComponentForce *pF2;/*!< \brief 指向驱动M2的指针 */
-				Aris::DynKer::SingleComponentForce *pF3;/*!< \brief 指向驱动M3的指针 */
+				Aris::Dynamic::SingleComponentForce *pF1;/*!< \brief 指向驱动M1的指针 */
+				Aris::Dynamic::SingleComponentForce *pF2;/*!< \brief 指向驱动M2的指针 */
+				Aris::Dynamic::SingleComponentForce *pF3;/*!< \brief 指向驱动M3的指针 */
 			};
 
-			Aris::DynKer::SingleComponentForce *pFces[3];
+			Aris::Dynamic::SingleComponentForce *pFces[3];
 		};
 		
 	public:
@@ -245,7 +245,7 @@ namespace Robots
 			LegI *const pLegs[6];
 		};
 
-		Aris::DynKer::Marker* pBodyCenter;
+		Aris::Dynamic::Marker* pBodyCenter;
 
 	private:
 		LegI LF_Leg{ "LF", this };

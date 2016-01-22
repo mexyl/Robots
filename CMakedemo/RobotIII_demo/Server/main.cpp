@@ -13,13 +13,23 @@ using namespace std;
 #include <aris_imu.h>
 #include <aris_plan.h>
 #include <aris_control_server.h>
+#include <aris_motion.h>
 #include <Robot_Server.h>
 #include <Robot_Gait.h>
 #include <Robot_Type_I.h>
 
+#ifdef WIN32
+#define rt_printf printf
+#endif
+#ifdef UNIX
+#include "rtdk.h"
+#include "unistd.h"
+#endif
+
+
 using namespace Aris::Core;
 
-void ParseFunc(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out) 
+void BasicParseFunc(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out) 
 {
 	Aris::BasicFunctionParam param;
 	
@@ -27,34 +37,34 @@ void ParseFunc(const std::string &cmd, const std::map<std::string, std::string> 
 	{
 		if (i.first == "all")
 		{
-			std::fill_n(param.isMotorActive, 18, true);
+			std::fill_n(param.active_motor, 18, true);
 		}
 		else if (i.first == "first")
 		{
-			std::fill_n(param.isMotorActive, 18, false);
-			std::fill_n(param.isMotorActive + 0, 3, true);
-			std::fill_n(param.isMotorActive + 6, 3, true);
-			std::fill_n(param.isMotorActive + 12, 3, true);
+			std::fill_n(param.active_motor, 18, false);
+			std::fill_n(param.active_motor + 0, 3, true);
+			std::fill_n(param.active_motor + 6, 3, true);
+			std::fill_n(param.active_motor + 12, 3, true);
 		}
 		else if (i.first == "second")
 		{
-			std::fill_n(param.isMotorActive, 18, false);
-			std::fill_n(param.isMotorActive + 3, 3, true);
-			std::fill_n(param.isMotorActive + 9, 3, true);
-			std::fill_n(param.isMotorActive + 15, 3, true);
+			std::fill_n(param.active_motor, 18, false);
+			std::fill_n(param.active_motor + 3, 3, true);
+			std::fill_n(param.active_motor + 9, 3, true);
+			std::fill_n(param.active_motor + 15, 3, true);
 		}
 		else if (i.first == "motor")
 		{
-			std::fill_n(param.isMotorActive, 18, false);
+			std::fill_n(param.active_motor, 18, false);
 			int id = { stoi(i.second) };
-			param.isMotorActive[id] = true;
+			param.active_motor[id] = true;
 		}
 	}
 
 	msg_out.CopyStruct(param);
 }
 
-struct SimpleWalkParam final :public Aris::DynKer::PlanParamBase
+struct SimpleWalkParam final :public Aris::Dynamic::PlanParamBase
 {
 	double beginPee[18]{ 0 };
 	double beginPeb[6]{ 0 };
@@ -68,12 +78,12 @@ void ParseSimpleWalk(const std::string &cmd, const std::map<std::string, std::st
 	SimpleWalkParam param;
 	msg_out.CopyStruct(param);
 }
-int SimpleWalk(Aris::DynKer::ModelBase &model, const Aris::DynKer::PlanParamBase & param)
+int SimpleWalk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase & param)
 {
 	auto &sp = static_cast<const SimpleWalkParam&>(param);
 	auto &robot = static_cast<Robots::RobotTypeI&>(model);
 
-	static Aris::DynKer::FloatMarker beginBodyMak(robot.Ground(), nullptr, "313");
+	static Aris::Dynamic::FloatMarker beginBodyMak(robot.Ground(), nullptr, "313");
 	static double beginEE[18];
 
 	/*在每次脚着地时更新与身体坐标系重合的位于地面的坐标系*/
@@ -145,15 +155,90 @@ int SimpleWalk(Aris::DynKer::ModelBase &model, const Aris::DynKer::PlanParamBase
 	return 2 * sp.n * sp.totalCount - sp.count - 1;
 }
 
-struct RecoverParam final :public Aris::DynKer::PlanParamBase
+struct RecoverParam final :public Aris::GaitParamBase
 {
-	double beginPee[18]{ 0 };
-	double beginPeb[6]{ 0 };
-	std::int32_t totalCount{ 500 };
-	std::int32_t n{ 1 };
-	double d{ 0.5 };
-	double h{ 0.05 };
+	std::int32_t recover_count{ 3000 };
+	std::int32_t align_count{ 3000 };
 };
+void ParseRecover(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)
+{
+	RecoverParam param;
+	msg_out.CopyStruct(param);
+}
+int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase & plan_param)
+{
+	auto &param = static_cast<const RecoverParam &>(plan_param);
+	
+	//写入初值
+	static double begin_Pin[18];
+
+	if (param.count == 0)std::copy_n(param.motion_feedback_pos->data(), 18, begin_Pin);
+
+	if (param.count % 100)
+	{
+		for (int i = 0; i<18; ++i)
+		{
+			rt_printf("%f ", begin_Pin[i]);
+		}
+		rt_printf("\n");
+	}
+
+	/*
+	const double pe[6]{ 0 };
+	this->pServer->pRobot->SetPeb(pe);
+
+	int leftCount = pParam->count < pParam->alignCount ? 0 : pParam->alignCount;
+	int rightCount = pParam->count < pParam->alignCount ? pParam->alignCount : pParam->alignCount + pParam->recoverCount;
+
+	double s = -(PI / 2)*cos(PI * (pParam->count - leftCount + 1) / (rightCount - leftCount)) + PI / 2;
+
+	for (int i = 0; i < 6; ++i)
+	{
+		if (pParam->isLegActive[i])
+		{
+			if (pParam->count < pParam->alignCount)
+			{
+				double pIn[3];
+				for (int j = 0; j < 3; ++j)
+				{
+					pIn[j] = pParam->beginPin[i * 3 + j] * (cos(s) + 1) / 2 + pParam->alignPin[i * 3 + j] * (1 - cos(s)) / 2;
+				}
+
+				this->pServer->pRobot->pLegs[i]->SetPin(pIn);
+
+			}
+			else
+			{
+				double pEE[3];
+				for (int j = 0; j < 3; ++j)
+				{
+					pEE[j] = pParam->alignPee[i * 3 + j] * (cos(s) + 1) / 2 + pParam->recoverPee[i * 3 + j] * (1 - cos(s)) / 2;
+
+				}
+
+				this->pServer->pRobot->pLegs[i]->SetPee(pEE);
+			}
+
+			double pIn[3];
+			this->pServer->pRobot->pLegs[i]->GetPin(pIn);
+			for (int j = 0; j < 3; ++j)
+			{
+				data.pMotionData->operator[](a2p(i * 3 + j)).cmd = Aris::Control::EthercatMotion::RUN;
+				data.pMotionData->operator[](a2p(i * 3 + j)).targetPos = static_cast<std::int32_t>(pIn[j] * meter2count);
+			}
+
+		}
+	}
+	*/
+
+	for (size_t i = 0; i < 18; ++i)
+	{
+		model.MotionAt(i).SetMotPos(begin_Pin[i]);
+	}
+
+	//向下写入输入位置
+	return param.align_count + param.recover_count - param.count - 1;
+}
 
 int main()
 {
@@ -166,10 +251,10 @@ int main()
 	rs.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
 #endif
 
-	rs.SetParseFunc("en", ParseFunc);
-	rs.SetParseFunc("ds", ParseFunc);
-	rs.SetParseFunc("hm", ParseFunc);
-	
+	rs.SetParseFunc("en", BasicParseFunc);
+	rs.SetParseFunc("ds", BasicParseFunc);
+	rs.SetParseFunc("hm", BasicParseFunc);
+	rs.AddGait("rc", Recover, ParseRecover);
 	
 
 	//rs.AddGait("wk", Robots::walk, Robots::parseWalk);

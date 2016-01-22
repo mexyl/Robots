@@ -19,7 +19,7 @@
 
 
 using namespace Aris::Plan;
-using namespace Aris::DynKer;
+using namespace Aris::Dynamic;
 
 namespace Robots
 {
@@ -547,7 +547,7 @@ namespace Robots
 				pq[i] = pq_first[i] * (cos(s) + 1) / 2 + pq_second[i] * (1 - cos(s)) / 2;
 			}
 
-			double nrm = Aris::DynKer::s_dnrm2(4, &pq[3], 1);
+			double nrm = Aris::Dynamic::s_dnrm2(4, &pq[3], 1);
 			for (int i = 3; i < 7; ++i)pq[i] /= nrm;
 
 			s_pq2pe(pq, pBody);
@@ -578,7 +578,7 @@ namespace Robots
 				pq[i] = pq_first[i] * (cos(s) + 1) / 2 + pq_second[i] * (1 - cos(s)) / 2;
 			}
 			
-			double nrm = Aris::DynKer::s_dnrm2(4, &pq[3], 1);
+			double nrm = Aris::Dynamic::s_dnrm2(4, &pq[3], 1);
 			for (int i = 3; i < 7; ++i)pq[i] /= nrm;
 
 			s_pq2pe(pq, pBody);
@@ -876,7 +876,7 @@ namespace Robots
 
 
 		//s_v2v(nullptr,nullptr);
-		//Aris::DynKer::s_pm2pq();
+		//Aris::Dynamic::s_pm2pq();
 
 
 

@@ -5,7 +5,7 @@
 
 using namespace std;
 using namespace Robots;
-using namespace Aris::DynKer;
+using namespace Aris::Dynamic;
 
 
 int main()
@@ -124,7 +124,7 @@ int main()
 	
 	rbt.Dyn();
 
-	rbt.ForEachMotion([](Aris::DynKer::MotionBase *mot)
+	rbt.ForEachMotion([](Aris::Dynamic::MotionBase *mot)
 	{
 		cout << mot->GetMotFceDyn() << endl;
 	});

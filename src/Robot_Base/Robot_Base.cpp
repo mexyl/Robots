@@ -10,22 +10,22 @@
 #define EIGEN_NO_MALLOC
 #include <Eigen/Eigen>
 
-using namespace Aris::DynKer;
+using namespace Aris::Dynamic;
 using namespace std;
 
 namespace Robots
 {
 	LegBase::LegBase(RobotBase* pRobot, const char *Name)
-		: Object(static_cast<Aris::DynKer::Model &>(*pRobot), Name)
+		: Object(static_cast<Aris::Dynamic::Model &>(*pRobot), Name)
 		, pRobot(pRobot)
 	{
 		pBase = pRobot->pBody->AddMarker(std::string(Name) + "_Base");
 	}
 	
-	const Aris::DynKer::Part& LegBase::Ground() const { return pRobot->Ground(); };
-	Aris::DynKer::Part& LegBase::Ground() { return pRobot->Ground(); };
-	const Aris::DynKer::Part& LegBase::Body() const { return pRobot->Body(); };
-	Aris::DynKer::Part& LegBase::Body() { return pRobot->Body(); };
+	const Aris::Dynamic::Part& LegBase::Ground() const { return pRobot->Ground(); };
+	Aris::Dynamic::Part& LegBase::Ground() { return pRobot->Ground(); };
+	const Aris::Dynamic::Part& LegBase::Body() const { return pRobot->Body(); };
+	Aris::Dynamic::Part& LegBase::Body() { return pRobot->Body(); };
 	
 	void LegBase::GetPee(double *pEE, const Marker &mak) const
 	{
@@ -704,7 +704,7 @@ namespace Robots
 		double pEE_G[18];
 
 		this->GetPee(pEE_G);
-		Aris::DynKer::s_pe2pq(initBodyPE, pq, "313");
+		Aris::Dynamic::s_pe2pq(initBodyPE, pq, "313");
 		s_pq2pe(pq, pe, "313");
 		this->SetPeb(pe);
 		this->SetPee(pEE_G);
