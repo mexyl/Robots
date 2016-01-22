@@ -219,13 +219,10 @@ int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase 
 		{
 			if (param.count < param.align_count)
 			{
-				double pIn[3];
 				for (int j = 0; j < 3; ++j)
 				{
-					pIn[j] = beginPin[i * 3 + j] * (cos(s) + 1) / 2 + alignPin[i * 3 + j] * (1 - cos(s)) / 2;
+					robot.MotionAt(i * 3 + j).SetMotPos(beginPin[i * 3 + j] * (cos(s) + 1) / 2 + alignPin[i * 3 + j] * (1 - cos(s)) / 2);
 				}
-
-				robot.pLegs[i]->SetPin(pIn);
 			}
 			else
 			{
@@ -233,7 +230,6 @@ int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase 
 				for (int j = 0; j < 3; ++j)
 				{
 					pEE[j] = param.alignPee[i * 3 + j] * (cos(s) + 1) / 2 + param.recoverPee[i * 3 + j] * (1 - cos(s)) / 2;
-
 				}
 
 				robot.pLegs[i]->SetPee(pEE);

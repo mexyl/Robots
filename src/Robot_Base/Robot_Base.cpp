@@ -112,8 +112,6 @@ namespace Robots
 		std::copy_n(pIn, 3, this->pIn);
 		calculate_from_pIn();
 		calculate_jac();
-
-		std::copy_n(pIn, 3, this->pIn);
 	}
 	void LegBase::GetVin(double *vIn) const
 	{
@@ -518,7 +516,6 @@ namespace Robots
 	}
 	void RobotBase::SetAee(const double *aEE, const Marker &mak)
 	{
-		
 		for (int i = 0; i < 6; i++)
 		{
 			pLegs[i]->SetAee(aEE + i * 3, mak);
