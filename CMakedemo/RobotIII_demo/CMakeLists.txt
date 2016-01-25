@@ -115,8 +115,8 @@ add_executable(Server ${FULL_SRC})
 target_link_libraries(Server ${ALL_LINK_LIB})
 
 ################################### build client ####################################
-add_executable(Client Client/client.cpp)
-target_link_libraries(Client ${ALL_LINK_LIB})
+add_executable(rbt Client/client.cpp)
+target_link_libraries(rbt ${ALL_LINK_LIB})
 
 ################################### install ####################################
 if(UNIX)
@@ -126,7 +126,7 @@ if(WIN32)
 	set(CMAKE_INSTALL_PREFIX "C:/Robots/CMakeDemo/")
 endif(WIN32)
 
-install(TARGETS Server Client RUNTIME DESTINATION bin)
+install(TARGETS Server rbt RUNTIME DESTINATION bin)
 
 
 
