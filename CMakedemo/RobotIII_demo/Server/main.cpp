@@ -8,13 +8,7 @@
 
 using namespace std;
 
-#include <aris_core.h>
-#include <aris_message.h>
-#include <aris_imu.h>
-#include <aris_plan.h>
-#include <aris_control_server.h>
-#include <aris_motion.h>
-#include <Robot_Server.h>
+#include <aris.h>
 #include <Robot_Gait.h>
 #include <Robot_Type_I.h>
 
@@ -31,7 +25,7 @@ using namespace Aris::Core;
 
 void BasicParseFunc(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out) 
 {
-	Aris::BasicFunctionParam param;
+	Aris::Server::BasicFunctionParam param;
 	
 	for (auto &i : params)
 	{
@@ -61,10 +55,10 @@ void BasicParseFunc(const std::string &cmd, const std::map<std::string, std::str
 		}
 	}
 
-	msg_out.CopyStruct(param);
+	msg_out.copyStruct(param);
 }
 
-struct SimpleWalkParam final :public Aris::GaitParamBase
+struct SimpleWalkParam final :public Aris::Server::GaitParamBase
 {
 	std::int32_t totalCount{ 500 };
 	std::int32_t n{ 1 };
@@ -74,7 +68,7 @@ struct SimpleWalkParam final :public Aris::GaitParamBase
 void ParseSimpleWalk(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)
 {
 	SimpleWalkParam param;
-	msg_out.CopyStruct(param);
+	msg_out.copyStruct(param);
 }
 int SimpleWalk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase & plan_param)
 {
@@ -87,8 +81,8 @@ int SimpleWalk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBa
 	/*在每次脚着地时更新与身体坐标系重合的位于地面的坐标系*/
 	if ((param.count % param.totalCount) == 0)
 	{
-		beginBodyMak.SetPrtPm(*robot.Body().Pm());
-		beginBodyMak.Update();
+		beginBodyMak.setPrtPm(*robot.Body().pm());
+		beginBodyMak.update();
 		robot.GetPee(beginEE, beginBodyMak);
 	}
 
@@ -100,7 +94,7 @@ int SimpleWalk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBa
 
 	if ((param.count / param.totalCount) == 0)/*加速段*/
 	{
-		Peb[2] = Aris::Plan::acc_even(param.totalCount, count + 1)*0.25*param.d;
+		Peb[2] = Aris::Dynamic::acc_even(param.totalCount, count + 1)*0.25*param.d;
 
 		double s = -(PI / 2)*cos(PI * (count + 1) / param.totalCount) + PI / 2;
 
@@ -112,7 +106,7 @@ int SimpleWalk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBa
 	}
 	else if ((param.count / param.totalCount) == (param.n * 2 - 1))/*减速段*/
 	{
-		Peb[2] = Aris::Plan::dec_even(param.totalCount, count + 1)*0.25*param.d;
+		Peb[2] = Aris::Dynamic::dec_even(param.totalCount, count + 1)*0.25*param.d;
 
 		double s = -(PI / 2)*cos(PI * (count + 1) / param.totalCount) + PI / 2;
 
@@ -124,7 +118,7 @@ int SimpleWalk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBa
 	}
 	else if ((param.count / param.totalCount) % 2 == 1)/*第一匀速段，紧接着加速段*/
 	{
-		Peb[2] = Aris::Plan::even(param.totalCount, count + 1)*0.5*param.d;
+		Peb[2] = Aris::Dynamic::even(param.totalCount, count + 1)*0.5*param.d;
 
 		double s = -(PI / 2)*cos(PI * (count + 1) / param.totalCount) + PI / 2;
 
@@ -136,7 +130,7 @@ int SimpleWalk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBa
 	}
 	else/*第二匀速段，后面就是减速段*/
 	{
-		Peb[2] = Aris::Plan::even(param.totalCount, count + 1)*0.5*param.d;
+		Peb[2] = Aris::Dynamic::even(param.totalCount, count + 1)*0.5*param.d;
 
 		double s = -(PI / 2)*cos(PI * (count + 1) / param.totalCount) + PI / 2;
 
@@ -153,7 +147,7 @@ int SimpleWalk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBa
 	return 2 * param.n * param.totalCount - param.count - 1;
 }
 
-struct RecoverParam final :public Aris::GaitParamBase
+struct RecoverParam final :public Aris::Server::GaitParamBase
 {
 	std::int32_t recover_count{ 3000 };
 	std::int32_t align_count{ 3000 };
@@ -176,7 +170,7 @@ struct RecoverParam final :public Aris::GaitParamBase
 void ParseRecover(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)
 {
 	RecoverParam param;
-	msg_out.CopyStruct(param);
+	msg_out.copyStruct(param);
 }
 int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase & plan_param)
 {
@@ -205,7 +199,7 @@ int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase 
 			{
 				for (int j = 0; j < 3; ++j)
 				{
-					robot.MotionAt(i * 3 + j).SetMotPos(beginPin[i * 3 + j] * (cos(s) + 1) / 2 + alignPin[i * 3 + j] * (1 - cos(s)) / 2);
+					robot.motionAt(i * 3 + j).setMotPos(beginPin[i * 3 + j] * (cos(s) + 1) / 2 + alignPin[i * 3 + j] * (1 - cos(s)) / 2);
 				}
 			}
 			else
@@ -227,31 +221,32 @@ int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase 
 
 int main()
 {
-	auto &rs = Aris::ControlServer::Instance();
-	rs.CreateModel<Robots::RobotTypeI>();
+	auto &rs = Aris::Server::ControlServer::instance();
+	
+	rs.createModel<Robots::RobotTypeI>();
 #ifdef WIN32
-	rs.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
+	rs.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
 #endif
 #ifdef UNIX
-	rs.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
+	rs.loadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
 #endif
 
-	rs.AddCmd("en", BasicParseFunc, nullptr);
-	rs.AddCmd("ds", BasicParseFunc, nullptr);
-	rs.AddCmd("hm", BasicParseFunc, nullptr);
-	rs.AddCmd("rc", ParseRecover, Recover);
-	rs.AddCmd("sw", ParseSimpleWalk, SimpleWalk);
+	rs.addCmd("en", BasicParseFunc, nullptr);
+	rs.addCmd("ds", BasicParseFunc, nullptr);
+	rs.addCmd("hm", BasicParseFunc, nullptr);
+	rs.addCmd("rc", ParseRecover, Recover);
+	rs.addCmd("sw", ParseSimpleWalk, SimpleWalk);
 
 	//rs.AddGait("wk", Robots::walk, Robots::parseWalk);
 	//rs->AddGait("ad", Robots::adjust, Robots::parseAdjust);
 	//rs->AddGait("fw", Robots::fastWalk, Robots::parseFastWalk);
 	//rs->AddGait("ro", Robots::resetOrigin, Robots::parseResetOrigin);
-	rs.Start();
+	rs.start();
 	std::cout<<"started"<<std::endl;
 
 	
 	
-	Aris::Core::RunMsgLoop();
+	Aris::Core::runMsgLoop();
 
 	return 0;
 }

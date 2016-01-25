@@ -20,7 +20,7 @@ int main()
 	//	double pe[6]{ 0, 0, v * (i+1)*0.001, 0, 0, 0 };
 	//	double pm[16];
 	//	s_pe2pm(pe, pm);
-	//	robot.pBody->SetPm(pm);
+	//	robot.pBody->setPm(pm);
 	//	robot.pLegs[leg_index]->SetPee(pEE_all[i]);
 	//	robot.pLegs[leg_index]->GetPin(pIn_all[i]);
 	//}

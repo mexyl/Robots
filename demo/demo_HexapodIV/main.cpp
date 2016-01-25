@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <aris_plan.h>
+#include <aris.h>
 
 #include "Robot_Type_II.h"
 #include "Robot_Type_I.h"
@@ -45,10 +45,10 @@ Robots::RobotTypeI rbt;
 int main()
 {
 #ifdef WIN32
-	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
+	rbt.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
 #endif
 #ifdef UNIX
-	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/HexapodVIII.xml");
+	rbt.loadXml("/usr/Robots/resource/Robot_Type_I/HexapodVIII.xml");
 #endif
 
 	rbt.SetPeb(beginPe);

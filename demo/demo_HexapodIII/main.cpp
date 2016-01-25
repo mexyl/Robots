@@ -14,10 +14,10 @@ int main()
 	RobotTypeI rbt;
 
 #ifdef WIN32
-	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
+	rbt.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
 #endif
 #ifdef UNIX
-	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
+	rbt.loadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
 #endif
 
 	double pEE_G[18] =
@@ -122,7 +122,7 @@ int main()
 	rbt.GetFinDyn(fIn);
 	dsp(fIn, 18, 1);
 	
-	rbt.Dyn();
+	rbt.dyn();
 
 	rbt.ForEachMotion([](Aris::Dynamic::MotionBase *mot)
 	{

@@ -11,14 +11,13 @@
 #include <cmath>
 #include <algorithm>
 #include <memory>
-#include <aris_dyn_kernel.h>
-#include <aris_plan.h>
+
+#include <aris.h>
 
 #include "Robot_Gait.h"
 #include "Robot_Base.h"
 
 
-using namespace Aris::Plan;
 using namespace Aris::Dynamic;
 
 namespace Robots
@@ -458,7 +457,7 @@ namespace Robots
 
 		Aris::Core::Msg msg;
 
-		msg.CopyStruct(param);
+		msg.copyStruct(param);
 
 		return msg;
 	}
@@ -663,7 +662,7 @@ namespace Robots
 
 		Aris::Core::Msg msg;
 
-		msg.CopyStruct(param);
+		msg.copyStruct(param);
 
 		return msg;
 	}
@@ -785,7 +784,7 @@ namespace Robots
 		
 		Aris::Core::Msg msg;
 
-		msg.CopyStruct(param);
+		msg.copyStruct(param);
 
 		return msg;
 		
@@ -796,7 +795,7 @@ namespace Robots
 		if (pParam->imuData)
 		{
 			double eul[3];
-			pParam->imuData->ToEulBody2Ground(eul,PI,"321");			
+			pParam->imuData->toEulBody2Ground(eul,PI,"321");			
 			rt_printf("imu eul321: %f,%f,%f\n", eul[0], eul[1], eul[2]);
 		}
 		else
@@ -838,7 +837,7 @@ namespace Robots
 	{
 		Robots::GaitParamBase param;
 		Aris::Core::Msg msg;
-		msg.CopyStruct(param);
+		msg.copyStruct(param);
 		return msg;
 	}
 

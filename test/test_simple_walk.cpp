@@ -1,6 +1,6 @@
 #include <Eigen/Eigen>
 
-#include <aris_plan.h>
+#include <aris.h>
 #include <Robot_Type_I.h>
 
 
@@ -26,8 +26,8 @@ int SimpleWalk_Aris(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanPa
 	/*在每次脚着地时更新与身体坐标系重合的位于地面的坐标系*/
 	if ((sp.count % sp.totalCount) == 0)
 	{
-		beginBodyMak.SetPrtPm(*robot.Body().Pm());
-		beginBodyMak.Update();
+		beginBodyMak.setPrtPm(*robot.Body().pm());
+		beginBodyMak.update();
 		robot.GetPee(beginEE, beginBodyMak);
 	}
 
@@ -39,7 +39,7 @@ int SimpleWalk_Aris(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanPa
 
 	if ((sp.count / sp.totalCount) == 0)/*加速段*/
 	{
-		pe[2] = Aris::Plan::acc_even(sp.totalCount, count + 1)*0.25*sp.d;
+		pe[2] = Aris::Dynamic::acc_even(sp.totalCount, count + 1)*0.25*sp.d;
 
 		double s = -(PI / 2)*cos(PI * (count + 1) / sp.totalCount) + PI / 2;
 
@@ -51,7 +51,7 @@ int SimpleWalk_Aris(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanPa
 	}
 	else if ((sp.count / sp.totalCount) == (sp.n * 2 - 1))/*减速段*/
 	{
-		pe[2] = Aris::Plan::dec_even(sp.totalCount, count + 1)*0.25*sp.d;
+		pe[2] = Aris::Dynamic::dec_even(sp.totalCount, count + 1)*0.25*sp.d;
 
 		double s = -(PI / 2)*cos(PI * (count + 1) / sp.totalCount) + PI / 2;
 
@@ -63,7 +63,7 @@ int SimpleWalk_Aris(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanPa
 	}
 	else if ((sp.count / sp.totalCount) % 2 == 1)/*第一匀速段，紧接着加速段*/
 	{
-		pe[2] = Aris::Plan::even(sp.totalCount, count + 1)*0.5*sp.d;
+		pe[2] = Aris::Dynamic::even(sp.totalCount, count + 1)*0.5*sp.d;
 
 		double s = -(PI / 2)*cos(PI * (count + 1) / sp.totalCount) + PI / 2;
 
@@ -75,7 +75,7 @@ int SimpleWalk_Aris(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanPa
 	}
 	else/*第二匀速段，后面就是减速段*/
 	{
-		pe[2] = Aris::Plan::even(sp.totalCount, count + 1)*0.5*sp.d;
+		pe[2] = Aris::Dynamic::even(sp.totalCount, count + 1)*0.5*sp.d;
 
 		double s = -(PI / 2)*cos(PI * (count + 1) / sp.totalCount) + PI / 2;
 
@@ -109,8 +109,8 @@ int SimpleWalk(Robots::RobotBase * pRobot, const Robots::GaitParamBase * pParam)
 	/*在每次脚着地时更新与身体坐标系重合的位于地面的坐标系*/
 	if ((pSP->count % pSP->totalCount) == 0)
 	{
-		beginBodyMak.SetPrtPm(*pRobot->Body().Pm());
-		beginBodyMak.Update();
+		beginBodyMak.setPrtPm(*pRobot->Body().pm());
+		beginBodyMak.update();
 		pRobot->GetPee(beginEE, beginBodyMak);
 	}
 
@@ -122,7 +122,7 @@ int SimpleWalk(Robots::RobotBase * pRobot, const Robots::GaitParamBase * pParam)
 
 	if ((pSP->count / pSP->totalCount) == 0)/*加速段*/
 	{
-		pe[2] = Aris::Plan::acc_even(pSP->totalCount, count + 1)*0.25*pSP->d;
+		pe[2] = Aris::Dynamic::acc_even(pSP->totalCount, count + 1)*0.25*pSP->d;
 
 		double s = -(PI / 2)*cos(PI * (count + 1) / pSP->totalCount) + PI / 2;
 
@@ -134,7 +134,7 @@ int SimpleWalk(Robots::RobotBase * pRobot, const Robots::GaitParamBase * pParam)
 	}
 	else if ((pSP->count / pSP->totalCount) == (pSP->n * 2 - 1))/*减速段*/
 	{
-		pe[2] = Aris::Plan::dec_even(pSP->totalCount, count + 1)*0.25*pSP->d;
+		pe[2] = Aris::Dynamic::dec_even(pSP->totalCount, count + 1)*0.25*pSP->d;
 
 		double s = -(PI / 2)*cos(PI * (count + 1) / pSP->totalCount) + PI / 2;
 
@@ -146,7 +146,7 @@ int SimpleWalk(Robots::RobotBase * pRobot, const Robots::GaitParamBase * pParam)
 	}
 	else if ((pSP->count / pSP->totalCount) % 2 == 1)/*第一匀速段，紧接着加速段*/
 	{
-		pe[2] = Aris::Plan::even(pSP->totalCount, count + 1)*0.5*pSP->d;
+		pe[2] = Aris::Dynamic::even(pSP->totalCount, count + 1)*0.5*pSP->d;
 
 		double s = -(PI / 2)*cos(PI * (count + 1) / pSP->totalCount) + PI / 2;
 
@@ -158,7 +158,7 @@ int SimpleWalk(Robots::RobotBase * pRobot, const Robots::GaitParamBase * pParam)
 	}
 	else/*第二匀速段，后面就是减速段*/
 	{
-		pe[2] = Aris::Plan::even(pSP->totalCount, count + 1)*0.5*pSP->d;
+		pe[2] = Aris::Dynamic::even(pSP->totalCount, count + 1)*0.5*pSP->d;
 
 		double s = -(PI / 2)*cos(PI * (count + 1) / pSP->totalCount) + PI / 2;
 
@@ -178,10 +178,10 @@ int SimpleWalk(Robots::RobotBase * pRobot, const Robots::GaitParamBase * pParam)
 int main(int argc, char *argv[])
 {
 #ifdef WIN32
-	rbt.LoadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
+	rbt.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
 #endif
 #ifdef UNIX
-	rbt.LoadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
+	rbt.loadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
 #endif
 
 	const double beginEE[]{
@@ -210,23 +210,13 @@ int main(int argc, char *argv[])
 	
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE);
-	//rbt.Model::SimToAdams("C:\\Users\\yang\\Desktop\\test.cmd", SimpleWalk_Aris, param, 10, true);
+	rbt.Model::simToAdams("C:\\Users\\yang\\Desktop\\test.cmd", SimpleWalk_Aris, param, 10, true);
 	
 	Aris::Dynamic::SimResult result;
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE);
-	//rbt.Model::SimDynAkima(SimpleWalk_Aris, param, result, 10, true);
-	//result.SaveToFile("C:\\Users\\yang\\Desktop\\test");
-
-
-	double Pin[18] = { 0.676,0.698,0.698,0.676,0.698,0.698, 0.676,0.698,0.698, 0.676,0.698,0.698, 0.676,0.698,0.698, 0.676,0.698,0.698 };
-	double Peb[6]{ 0,0,0,0,0,0 };
-	rbt.SetPeb(Peb);
-	rbt.SetPin(Pin);
-
-	rbt.GetPee(Pin);
-
-	Aris::Dynamic::dsp(Pin, 6, 3);
+	rbt.Model::simDynAkima(SimpleWalk_Aris, param, result, 10, true);
+	result.saveToTxt("C:\\Users\\yang\\Desktop\\test");
 
 
 

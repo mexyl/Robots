@@ -1,7 +1,7 @@
 ﻿#ifndef ROBOT_III_H
 #define ROBOT_III_H
 
-#include <aris_dyn_model.h>
+#include <aris.h>
 #include <Robot_Base.h>
 #include <Robot_Gait.h>
 
@@ -188,39 +188,39 @@ namespace Robots
 		RobotTypeI();
 		~RobotTypeI() = default;
 		
-		virtual void LoadXml(const Aris::Core::XmlElement &xml_ele) override;
-		using Model::LoadXml;
+		virtual void loadXml(const Aris::Core::XmlElement &xml_ele) override;
+		using Model::loadXml;
 
 		void GetFin(double *Fin) const;
 		void GetFinDyn(double *Fin) const;
 		void GetFinFrc(double *Fin) const;
 
 		void FastDyn();
-		virtual void Dyn()override;
+		virtual void dyn()override;
 
 		void SetFixFeet(const char* fix_feet);
 		const char* FixFeet() const;
 		void SetActiveMotion(const char* active_motion);
 		const char* ActiveMotion() const;
 
-		virtual void KinFromPin()override
+		virtual void kinFromPin()override
 		{
 			double Pin[18];
 			for (int i = 0; i < 18; ++i)
 			{
-				Pin[i] = MotionAt(i).MotPos();
+				Pin[i] = motionAt(i).motPos();
 			}
 
 			double pe[6];
 			this->GetPeb(pe);
 			SetPinFixFeet(Pin, FixFeet(), ActiveMotion(), pe);
 		};
-		virtual void KinFromVin()override
+		virtual void kinFromVin()override
 		{
 			double Vin[18];
 			for (int i = 0; i < 18; ++i)
 			{
-				Vin[i] = MotionAt(i).MotVel();
+				Vin[i] = motionAt(i).motVel();
 			}
 			SetVinFixFeet(Vin, FixFeet(), ActiveMotion());
 		};
@@ -260,103 +260,103 @@ namespace Robots
 
 	inline void Activate024(RobotTypeI *pRobot)
 	{
-		pRobot->pLF->pSf->Activate(false);
-		pRobot->pLF->pM1->Activate(true);
-		pRobot->pLF->pM2->Activate(true);
-		pRobot->pLF->pM3->Activate(true);
-		pRobot->pLF->pF1->Activate(false);
-		pRobot->pLF->pF2->Activate(false);
-		pRobot->pLF->pF3->Activate(false);
+		pRobot->pLF->pSf->activate(false);
+		pRobot->pLF->pM1->activate(true);
+		pRobot->pLF->pM2->activate(true);
+		pRobot->pLF->pM3->activate(true);
+		pRobot->pLF->pF1->activate(false);
+		pRobot->pLF->pF2->activate(false);
+		pRobot->pLF->pF3->activate(false);
 
-		pRobot->pLR->pSf->Activate(false);
-		pRobot->pLR->pM1->Activate(true);
-		pRobot->pLR->pM2->Activate(true);
-		pRobot->pLR->pM3->Activate(true);
-		pRobot->pLR->pF1->Activate(false);
-		pRobot->pLR->pF2->Activate(false);
-		pRobot->pLR->pF3->Activate(false);
+		pRobot->pLR->pSf->activate(false);
+		pRobot->pLR->pM1->activate(true);
+		pRobot->pLR->pM2->activate(true);
+		pRobot->pLR->pM3->activate(true);
+		pRobot->pLR->pF1->activate(false);
+		pRobot->pLR->pF2->activate(false);
+		pRobot->pLR->pF3->activate(false);
 
-		pRobot->pRM->pSf->Activate(false);
-		pRobot->pRM->pM1->Activate(true);
-		pRobot->pRM->pM2->Activate(true);
-		pRobot->pRM->pM3->Activate(true);
-		pRobot->pRM->pF1->Activate(false);
-		pRobot->pRM->pF2->Activate(false);
-		pRobot->pRM->pF3->Activate(false);
+		pRobot->pRM->pSf->activate(false);
+		pRobot->pRM->pM1->activate(true);
+		pRobot->pRM->pM2->activate(true);
+		pRobot->pRM->pM3->activate(true);
+		pRobot->pRM->pF1->activate(false);
+		pRobot->pRM->pF2->activate(false);
+		pRobot->pRM->pF3->activate(false);
 
-		pRobot->pLM->pSf->Activate(true);
-		pRobot->pLM->pM1->Activate(false);
-		pRobot->pLM->pM2->Activate(true);
-		pRobot->pLM->pM3->Activate(true);
-		pRobot->pLM->pF1->Activate(true);
-		pRobot->pLM->pF2->Activate(false);
-		pRobot->pLM->pF3->Activate(false);
+		pRobot->pLM->pSf->activate(true);
+		pRobot->pLM->pM1->activate(false);
+		pRobot->pLM->pM2->activate(true);
+		pRobot->pLM->pM3->activate(true);
+		pRobot->pLM->pF1->activate(true);
+		pRobot->pLM->pF2->activate(false);
+		pRobot->pLM->pF3->activate(false);
 
-		pRobot->pRF->pSf->Activate(true);
-		pRobot->pRF->pM1->Activate(false);
-		pRobot->pRF->pM2->Activate(true);
-		pRobot->pRF->pM3->Activate(true);
-		pRobot->pRF->pF1->Activate(true);
-		pRobot->pRF->pF2->Activate(false);
-		pRobot->pRF->pF3->Activate(false);
+		pRobot->pRF->pSf->activate(true);
+		pRobot->pRF->pM1->activate(false);
+		pRobot->pRF->pM2->activate(true);
+		pRobot->pRF->pM3->activate(true);
+		pRobot->pRF->pF1->activate(true);
+		pRobot->pRF->pF2->activate(false);
+		pRobot->pRF->pF3->activate(false);
 
-		pRobot->pRR->pSf->Activate(true);
-		pRobot->pRR->pM1->Activate(false);
-		pRobot->pRR->pM2->Activate(true);
-		pRobot->pRR->pM3->Activate(true);
-		pRobot->pRR->pF1->Activate(true);
-		pRobot->pRR->pF2->Activate(false);
-		pRobot->pRR->pF3->Activate(false);
+		pRobot->pRR->pSf->activate(true);
+		pRobot->pRR->pM1->activate(false);
+		pRobot->pRR->pM2->activate(true);
+		pRobot->pRR->pM3->activate(true);
+		pRobot->pRR->pF1->activate(true);
+		pRobot->pRR->pF2->activate(false);
+		pRobot->pRR->pF3->activate(false);
 	}
 	inline void Activate135(RobotTypeI *pRobot)
 	{
-		pRobot->pLF->pSf->Activate(true);
-		pRobot->pLF->pM1->Activate(false);
-		pRobot->pLF->pM2->Activate(true);
-		pRobot->pLF->pM3->Activate(true);
-		pRobot->pLF->pF1->Activate(true);
-		pRobot->pLF->pF2->Activate(false);
-		pRobot->pLF->pF3->Activate(false);
+		pRobot->pLF->pSf->activate(true);
+		pRobot->pLF->pM1->activate(false);
+		pRobot->pLF->pM2->activate(true);
+		pRobot->pLF->pM3->activate(true);
+		pRobot->pLF->pF1->activate(true);
+		pRobot->pLF->pF2->activate(false);
+		pRobot->pLF->pF3->activate(false);
 
-		pRobot->pLR->pSf->Activate(true);
-		pRobot->pLR->pM1->Activate(false);
-		pRobot->pLR->pM2->Activate(true);
-		pRobot->pLR->pM3->Activate(true);
-		pRobot->pLR->pF1->Activate(true);
-		pRobot->pLR->pF2->Activate(false);
-		pRobot->pLR->pF3->Activate(false);
+		pRobot->pLR->pSf->activate(true);
+		pRobot->pLR->pM1->activate(false);
+		pRobot->pLR->pM2->activate(true);
+		pRobot->pLR->pM3->activate(true);
+		pRobot->pLR->pF1->activate(true);
+		pRobot->pLR->pF2->activate(false);
+		pRobot->pLR->pF3->activate(false);
 
-		pRobot->pRM->pSf->Activate(true);
-		pRobot->pRM->pM1->Activate(false);
-		pRobot->pRM->pM2->Activate(true);
-		pRobot->pRM->pM3->Activate(true);
-		pRobot->pRM->pF1->Activate(true);
-		pRobot->pRM->pF2->Activate(false);
-		pRobot->pRM->pF3->Activate(false);
+		pRobot->pRM->pSf->activate(true);
+		pRobot->pRM->pM1->activate(false);
+		pRobot->pRM->pM2->activate(true);
+		pRobot->pRM->pM3->activate(true);
+		pRobot->pRM->pF1->activate(true);
+		pRobot->pRM->pF2->activate(false);
+		pRobot->pRM->pF3->activate(false);
 
-		pRobot->pLM->pSf->Activate(false);
-		pRobot->pLM->pM1->Activate(true);
-		pRobot->pLM->pM2->Activate(true);
-		pRobot->pLM->pM3->Activate(true);
-		pRobot->pLM->pF1->Activate(false);
-		pRobot->pLM->pF2->Activate(false);
-		pRobot->pLM->pF3->Activate(false);
+		pRobot->pLM->pSf->activate(false);
+		pRobot->pLM->pM1->activate(true);
+		pRobot->pLM->pM2->activate(true);
+		pRobot->pLM->pM3->activate(true);
+		pRobot->pLM->pF1->activate(false);
+		pRobot->pLM->pF2->activate(false);
+		pRobot->pLM->pF3->activate(false);
 
-		pRobot->pRF->pSf->Activate(false);
-		pRobot->pRF->pM1->Activate(true);
-		pRobot->pRF->pM2->Activate(true);
-		pRobot->pRF->pM3->Activate(true);
-		pRobot->pRF->pF1->Activate(false);
-		pRobot->pRF->pF2->Activate(false);
-		pRobot->pRF->pF3->Activate(false);
+		pRobot->pRF->pSf->activate(false);
+		pRobot->pRF->pM1->activate(true);
+		pRobot->pRF->pM2->activate(true);
+		pRobot->pRF->pM3->activate(true);
+		pRobot->pRF->pF1->activate(false);
+		pRobot->pRF->pF2->activate(false);
+		pRobot->pRF->pF3->activate(false);
 
-		pRobot->pRR->pSf->Activate(false);
-		pRobot->pRR->pM1->Activate(true);
-		pRobot->pRR->pM2->Activate(true);
-		pRobot->pRR->pM3->Activate(true);
-		pRobot->pRR->pF1->Activate(false);
-		pRobot->pRR->pF2->Activate(false);
-		pRobot->pRR->pF3->Activate(false);
+		pRobot->pRR->pSf->activate(false);
+		pRobot->pRR->pM1->activate(true);
+		pRobot->pRR->pM2->activate(true);
+		pRobot->pRR->pM3->activate(true);
+		pRobot->pRR->pF1->activate(false);
+		pRobot->pRR->pF2->activate(false);
+		pRobot->pRR->pF3->activate(false);
 	}
 
 }

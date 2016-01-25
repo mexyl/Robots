@@ -78,9 +78,9 @@ set(OPENNI_LINK_DIR "/usr/lib")
 set(OPENNI_LINK_LIB OpenNI)
 set(ARIS_INCL_DIR "/usr/Aris/include")
 set(ARIS_LINK_DIR "/usr/Aris/lib")
-set(ARIS_LINK_LIB aris_control aris_plan aris_sensor aris_dyn aris_exp_cal aris_core)
-set(ROBOTS_INCL_DIR "src/Robot_Type_I" "src/Robot_Type_II" "src/Robot_Base" "src/Robot_Server" "src/Robot_Client")
-set(ROBOTS_LINK_LIB Robot_Type_I Robot_Type_II Robot_Base Robot_Server Robot_Client)
+set(ARIS_LINK_LIB aris_server aris_sensor aris_dynamic aris_control aris_core)
+set(ROBOTS_INCL_DIR "src/Robot_Type_I" "src/Robot_Type_II" "src/Robot_Base")
+set(ROBOTS_LINK_LIB Robot_Type_I Robot_Type_II Robot_Base)
 
 set(ALL_INCL_DIR ${ROBOTS_INCL_DIR} ${ARIS_INCL_DIR} ${OPENNI_INCL_DIR} ${XNNITE_INCL_DIR} ${XSENS_INCL_DIR} ${ETHERLAB_INCL_DIR} ${XENOMAI_INCL_DIR} ${GENERAL_INCL_DIR})
 set(ALL_LINK_DIR ${ROBOTS_LINK_DIR} ${ARIS_LINK_DIR} ${OPENNI_LINK_DIR} ${XNNITE_LINK_DIR} ${XSENS_LINK_DIR} ${ETHERLAB_LINK_DIR} ${XENOMAI_LINK_DIR})
@@ -94,9 +94,9 @@ set(XSENS_LINK_DIR "C:/Aris_Dependent/xsens/lib")
 set(XSENS_LINK_LIB xdeviceclass)
 set(ARIS_INCL_DIR "C:/Aris/include")
 set(ARIS_LINK_DIR "C:/Aris/lib")
-set(ARIS_LINK_LIB aris_plan aris_sensor aris_dyn aris_exp_cal aris_core)
-set(ROBOTS_INCL_DIR "src/Robot_Type_I" "src/Robot_Type_II" "src/Robot_Base" "src/Robot_Server" "src/Robot_Client")
-set(ROBOTS_LINK_LIB Robot_Type_I Robot_Type_II Robot_Base Robot_Server Robot_Client)
+set(ARIS_LINK_LIB aris_server aris_sensor aris_dynamic aris_control aris_core)
+set(ROBOTS_INCL_DIR "src/Robot_Type_I" "src/Robot_Type_II" "src/Robot_Base")
+set(ROBOTS_LINK_LIB Robot_Type_I Robot_Type_II Robot_Base)
 
 
 
@@ -113,20 +113,6 @@ set(SOURCE Robot_Base Robot_Gait)
 PREPEND_CPP(FULL_SRC src/Robot_Base ${SOURCE})
 PREPEND_H(FULL_H src/Robot_Base ${SOURCE})
 add_library(Robot_Base STATIC ${FULL_SRC} ${FULL_H})
-set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
-
-# build Robot_Server lib
-set(SOURCE Robot_Server)
-PREPEND_CPP(FULL_SRC src/Robot_Server ${SOURCE})
-PREPEND_H(FULL_H src/Robot_Server ${SOURCE})
-add_library(Robot_Server STATIC ${FULL_SRC} ${FULL_H})
-set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
-
-# build Robot_Server lib
-set(SOURCE Robot_Client)
-PREPEND_CPP(FULL_SRC src/Robot_Client ${SOURCE})
-PREPEND_H(FULL_H src/Robot_Client ${SOURCE})
-add_library(Robot_Client STATIC ${FULL_SRC} ${FULL_H})
 set(INCLUDE_HEADER_FILES ${INCLUDE_HEADER_FILES} ${FULL_H})
 
 # build Robot_Type_I lib
@@ -192,7 +178,7 @@ if(WIN32)
 	set(CMAKE_INSTALL_PREFIX "C:/Robots")
 endif(WIN32)
 
-install(TARGETS Robot_Type_I Robot_Type_II Robot_Client Robot_Base Robot_Server ARCHIVE DESTINATION lib)
+install(TARGETS Robot_Type_I Robot_Type_II Robot_Base ARCHIVE DESTINATION lib)
 install(FILES ${INCLUDE_HEADER_FILES} DESTINATION include)
 install(DIRECTORY src/Robot_Type_I/resource/ DESTINATION resource/Robot_Type_I)
 
