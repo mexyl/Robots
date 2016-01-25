@@ -297,123 +297,41 @@ namespace Robots
 		pRobot->SetPee(pEE);
 		return totalCount - count - 1;
 	}
-	int walk(RobotBase * pRobot, const GaitParamBase * pParam)
+	int walk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase &param_in)
 	{
-		const Robots::WalkParam *pWP = static_cast<const Robots::WalkParam *>(pParam);
+		auto &robot = static_cast<Robots::RobotBase &>(model);
+		auto &param = static_cast<const Robots::WalkParam &>(param_in);
 
-		/*以下设置各个阶段的身体的真实初始位置*/
-		double beginPm[16];
-		s_pe2pm(pWP->beginPeb, beginPm);
-	
-		int wAxis = std::abs(pWP->walkDirection) - 1;
-		int uAxis = std::abs(pWP->upDirection) - 1;
+		/*初始化*/
+		static Aris::Dynamic::FloatMarker beginMak{ robot.Ground() };
+		static double beginPee[18];
+		if (param.count%param.totalCount == 0) 
+		{ 
+			beginMak.setPrtPm(*robot.Body().pm());
+			beginMak.update();
+			robot.GetPee(beginPee, beginMak); 
+		}
+
+		int wAxis = std::abs(param.walkDirection) - 1;
+		int uAxis = std::abs(param.upDirection) - 1;
 		int lAxis = 3 - wAxis - uAxis;
-		int wSign = pWP->walkDirection / std::abs(pWP->walkDirection);
-		int uSign = pWP->upDirection / std::abs(pWP->upDirection);
+		int wSign = param.walkDirection / std::abs(param.walkDirection);
+		int uSign = param.upDirection / std::abs(param.upDirection);
 		int lSign = ((3 + wAxis - uAxis) % 3 == 1) ? wSign* uSign : -wSign* uSign;
 
-		const double a = pWP->alpha;
-		const double b = pWP->beta;
+
+		/*以下设置各个阶段的身体的真实初始位置*/
+		const double a = param.alpha;
+		const double b = param.beta;
 
 		char order[4];
 		order[0] = '1' + uAxis;
 		order[1] = '1' + (1 + uAxis) % 3;
 		order[2] = '1' + (2 + uAxis) % 3;
 
-		double peFirstStep[6]{ 0,0,0,uSign*b / 4,0,0 };
-		peFirstStep[wAxis] =
-			wSign *pWP->d / cos(b / 2) / 4 * cos(b * 3 / 4 + a);
-		peFirstStep[lAxis] =
-			lSign *pWP->d / cos(b / 2) / 4 * sin(b * 3 / 4 + a);
-		double pmFirst[16];
-		s_pe2pm(peFirstStep, pmFirst, order);
-
-
-		int stepCount = (pParam->count - pWP->totalCount) / (2 * pWP->totalCount);
-		double theta = stepCount*b;
-		double peConstStep[6]{ 0,0,0,uSign*theta,0,0 };
-		if (std::abs(b) > 1e-10)
-		{
-			double r = pWP->d / sin(b / 2) / 2;
-			peConstStep[wAxis] =
-				wSign *(-r*sin(b / 2 + a) + r * sin(theta + b / 2 + a));
-			peConstStep[lAxis] =
-				+lSign *(r*cos(b / 2 + a) - r * cos(theta + b / 2 + a));
-		}
-		else
-		{
-			peConstStep[wAxis] = wSign * pWP->d * stepCount * cos(a);
-			peConstStep[lAxis] = lSign * pWP->d * stepCount * sin(a);
-		}
-		double pmConst[16];
-		s_pe2pm(peConstStep, pmConst, order);
-
-		double pm1[16], bodyRealBeginPm[16];
-		s_pm_dot_pm(beginPm, pmFirst, pm1);
-		s_pm_dot_pm(pm1, pmConst, bodyRealBeginPm);
-
-		/*将身体初始位置写入参数*/
-		Robots::WalkParam realParam = *pWP;
-
-		realParam.count = (pWP->count - pWP->totalCount) % (2 * pWP->totalCount);
-		s_pm2pe(bodyRealBeginPm, realParam.beginPeb);
 		
-		/*以下计算每个腿的初始位置*/
-		double pee_G[18]{ 0 };
-		double pee_B[18]{ 0 };
 
-		double pm[4][4], pe[6];
-		s_pe2pm(pParam->beginPeb, *pm, "313");
-		s_pm2pe(*pm, pe, order);
-
-		for (int i = 0; i < 18; i += 3)
-		{
-			if ((i/3) % 2 == 0)
-			{
-				pee_G[i + wAxis] = wSign*(0.5* pWP->d / cos(b / 2)*cos(a+ uSign*pe[3] + b * 3 / 4)
-					+ wSign*(pWP->beginPee[i + wAxis] - pWP->beginPeb[wAxis]) * cos(b / 2)
-					- lSign*(pWP->beginPee[i + lAxis] - pWP->beginPeb[lAxis]) * sin(b / 2))
-					+ pWP->beginPeb[wAxis];
-				pee_G[i + uAxis] = pWP->beginPee[i + uAxis];
-				pee_G[i + lAxis] = lSign*(0.5*pWP->d / cos(b / 2)*sin(a + uSign*pe[3] + b * 3 / 4)
-					+ wSign*(pWP->beginPee[i + wAxis] - pWP->beginPeb[wAxis]) * sin(b / 2)
-					+ lSign*(pWP->beginPee[i + lAxis] - pWP->beginPeb[lAxis]) * cos(b / 2))
-					+ pWP->beginPeb[lAxis];
-			}
-			else
-			{
-				std::copy_n(pWP->beginPee + i, 3, pee_G + i);
-			}
-
-			s_inv_pm_dot_pnt(pm1, pee_G + i, pee_B + i);
-			s_pm_dot_pnt(bodyRealBeginPm, pee_B + i, realParam.beginPee + i);
-		}
-
-		//static double lastPee[18], lastPbody[6];
-		//std::copy_n(lastPee, 18, realParam.beginPee);
-		//std::copy_n(lastPbody, 6, realParam.beginPeb);
-
-
-		if (pParam->count < pWP->totalCount)
-		{
-			walkAcc(pRobot, pParam);
-		}
-		else if (pParam->count < (pWP->n*2-1) * pWP->totalCount)
-		{
-			walkConst(pRobot, &realParam);
-		}
-		else
-		{
-			walkDec(pRobot, &realParam);
-		}
-
-		/*if ((pParam->count + pWP->totalCount + 1) %(2*pWP->totalCount)==0 )
-		{
-			pRobot->GetPee(lastPee);
-			pRobot->GetBodyPe(lastPbody);
-		}*/
-
-		return 2 * pWP->n * pWP->totalCount - pWP->count - 1;
+		return 2 * param.n * param.totalCount - param.count - 1;
 	}
 	Aris::Core::Msg parseWalk(const std::string &cmd, const std::map<std::string, std::string> &params)
 	{
@@ -462,211 +380,6 @@ namespace Robots
 		return msg;
 	}
 
-	int adjust(RobotBase * pRobot, const GaitParamBase * pParam)
-	{
-		auto pAP = static_cast<const AdjustParam*>(pParam);
-
-		int pos{0}, periodBeginCount{0}, periodEndCount{0};
-		double realTargetPee[AdjustParam::MAX_PERIOD_NUM][18];
-		double realTargetPbody[AdjustParam::MAX_PERIOD_NUM][6];
-
-		/*转换末端和身体目标位置的坐标到地面坐标系下*/
-		for (int i = 0; i < pAP->periodNum; ++i)
-		{
-			pRobot->TransformCoordinatePee(pAP->beginPeb, pAP->relativeCoordinate, pAP->targetPee[i], "G",realTargetPee[i]);
-		}
-
-		switch (*(pAP->relativeBodyCoordinate))
-		{
-		case 'B':
-		case 'M':
-		{
-			double beginPm[16];
-			s_pe2pm(pAP->beginPeb, beginPm);
-
-			for (int i = 0; i < pAP->periodNum; ++i)
-			{
-				double pm1[16], pm2[16];
-
-				s_pe2pm(pAP->targetPeb[i], pm1);
-				s_pm_dot_pm(beginPm, pm1, pm2);
-				s_pm2pe(pm2, realTargetPbody[i]);
-			}
-			break;
-		}
-			
-		case 'G':
-		case 'O':
-		default:
-			std::copy_n(&pAP->targetPeb[0][0], AdjustParam::MAX_PERIOD_NUM*6, &realTargetPbody[0][0]);
-			break;
-		}
-
-		/*判断当前所处的周期*/
-		for (int i = 0; i < pAP->periodNum; ++i)
-		{
-			periodEndCount += pAP->periodCount[i];
-			
-			if ((pAP->count < periodEndCount) && (pAP->count >= periodBeginCount))
-			{
-				pos = i;
-				break;
-			}
-			
-			periodBeginCount = periodEndCount;
-		}
-
-		double s = -(PI / 2)*cos(PI * (pAP->count - periodBeginCount + 1) / (periodEndCount- periodBeginCount)) + PI / 2;
-		
-		/*插值当前的末端和身体位置*/
-		double pEE[18], pBody[6];
-
-		if (pos == 0)
-		{
-			for (int i = 0; i < 18; ++i)
-			{
-				pEE[i] = pAP->beginPee[i] * (cos(s) + 1) / 2 + realTargetPee[pos][i] * (1 - cos(s)) / 2;
-			}
-			
-			/*以下用四元数进行插值*/
-			double pq_first[7], pq_second[7], pq[7];
-			s_pe2pq(pAP->beginPeb, pq_first);
-			s_pe2pq(realTargetPbody[pos], pq_second);
-
-			if (s_vn_dot_vn(4, &pq_first[3], &pq_second[3]) < 0)
-			{
-				for (int i = 3; i < 7; ++i)
-				{
-					pq_second[i] = -pq_second[i];
-				}
-			}
-
-			for (int i = 0; i < 7; ++i)
-			{
-				pq[i] = pq_first[i] * (cos(s) + 1) / 2 + pq_second[i] * (1 - cos(s)) / 2;
-			}
-
-			double nrm = Aris::Dynamic::s_dnrm2(4, &pq[3], 1);
-			for (int i = 3; i < 7; ++i)pq[i] /= nrm;
-
-			s_pq2pe(pq, pBody);
-		}
-		else
-		{
-			for (int i = 0; i < 18; ++i)
-			{
-				pEE[i] = realTargetPee[pos-1][i] * (cos(s) + 1) / 2 + realTargetPee[pos][i] * (1 - cos(s)) / 2;
-				
-			}
-
-			/*以下用四元数进行插值*/
-			double pq_first[7], pq_second[7], pq[7];
-			s_pe2pq(realTargetPbody[pos - 1], pq_first);
-			s_pe2pq(realTargetPbody[pos], pq_second);
-
-			if (s_vn_dot_vn(4, &pq_first[3], &pq_second[3]) < 0)
-			{
-				for (int i = 3; i < 7; ++i)
-				{
-					pq_second[i] = -pq_second[i];
-				}
-			}
-
-			for (int i = 0; i < 7; ++i)
-			{
-				pq[i] = pq_first[i] * (cos(s) + 1) / 2 + pq_second[i] * (1 - cos(s)) / 2;
-			}
-			
-			double nrm = Aris::Dynamic::s_dnrm2(4, &pq[3], 1);
-			for (int i = 3; i < 7; ++i)pq[i] /= nrm;
-
-			s_pq2pe(pq, pBody);
-		}
-
-		pRobot->SetPeb(pBody);
-		pRobot->SetPee(pEE);
-
-		/*计算总共所需要花的时间，以便返回剩余的count数*/
-		int totalCount{ 0 };
-		for (int i = 0; i < pAP->periodNum; ++i)
-		{
-			totalCount += pAP->periodCount[i];
-		}
-
-
-		return totalCount - pAP->count - 1;
-	}
-	Aris::Core::Msg parseAdjust(const std::string &cmd, const std::map<std::string, std::string> &params)
-	{
-		double firstEE[18] =
-		{
-			-0.3,-0.75,-0.65,
-			-0.45,-0.75,0,
-			-0.3,-0.75,0.65,
-			0.3,-0.75,-0.65,
-			0.45,-0.75,0,
-			0.3,-0.75,0.65,
-		};
-
-		double beginEE[18]
-		{
-			-0.3,-0.85,-0.65,
-			-0.45,-0.85,0,
-			-0.3,-0.85,0.65,
-			0.3,-0.85,-0.65,
-			0.45,-0.85,0,
-			0.3,-0.85,0.65,
-		};
-
-		Robots::AdjustParam  param;
-
-		std::copy_n(firstEE, 18, param.targetPee[0]);
-		std::fill_n(param.targetPeb[0], 6, 0);
-		std::copy_n(beginEE, 18, param.targetPee[1]);
-		std::fill_n(param.targetPeb[1], 6, 0);
-
-		param.periodNum = 2;
-		param.periodCount[0] = 3000;
-		param.periodCount[1] = 3000;
-
-		std::strcpy(param.relativeCoordinate, "B");
-		std::strcpy(param.relativeBodyCoordinate, "B");
-
-		for (auto &i : params)
-		{
-			if (i.first == "first")
-			{
-				param.legNum = 3;
-				param.motorNum = 9;
-
-				param.legID[0] = 0;
-				param.legID[1] = 2;
-				param.legID[2] = 4;
-
-				int motors[9] = { 0,1,2,6,7,8,12,13,14 };
-				std::copy_n(motors, 9, param.motorID);
-			}
-			else if (i.first == "second")
-			{
-				param.legNum = 3;
-				param.motorNum = 9;
-
-				param.legID[0] = 1;
-				param.legID[1] = 3;
-				param.legID[2] = 5;
-
-				int motors[9] = { 3,4,5,9,10,11,15,16,17 };
-				std::copy_n(motors, 9, param.motorID);
-			}
-		}
-
-		Aris::Core::Msg msg;
-
-		msg.copyStruct(param);
-
-		return msg;
-	}
-	
 	int fastWalk(RobotBase * pRobot, const GaitParamBase * pParam)
 	{
 		auto pFP = static_cast<const FastWalkParam*>(pParam);
@@ -832,64 +545,11 @@ namespace Robots
 
 		return 0;
 	}
-
 	Aris::Core::Msg parseResetOrigin(const std::string &cmd, const std::map<std::string, std::string> &params)
 	{
 		Robots::GaitParamBase param;
 		Aris::Core::Msg msg;
 		msg.copyStruct(param);
 		return msg;
-	}
-
-
-	int move(RobotBase * pRobot, const GaitParamBase * pParam)
-	{
-		//const Robots::MOVE_PARAM *param = static_cast<const Robots::MOVE_PARAM *>(pParam);
-
-		//double beginPq[7], beginVq[7], endPq[7], endVq[7];
-		//
-		///*计算末端位置和速度在初始位置下的相对值*/
-		//double relativeBeginPm[16], relativeBeginPq[7]{0,0,0,0,0,0,1};
-		//double relativeBeginVel[6], relativeBeginVq[6];
-		//double relativeEndPm[16], relativeEndPq[7];
-		//double relativeEndVel[6], relativeEndVq[6];
-
-		///*begin pm and pq*/
-		//s_pq2pm(relativeBeginPq, relativeBeginPm);
-
-		///*begin vq*/
-		//double pm1[16], pm2[16];
-		//s_pe2pm(param->beginPeb, pm1);
-		//s_inv_v2v(pm1, nullptr, param->beginVb, relativeBeginVel);
-		//s_v2vq(relativeBeginPm, relativeBeginVel, relativeBeginVq);
-
-		///*end pq*/
-		//s_pe2pm(param->targetPeb, pm2);
-		//s_inv_pm_dot_pm(pm1, pm2, relativeEndPm);
-
-		///*end vq*/
-		//s_inv_v2v(pm1, nullptr, param->beginVb, relativeEndVel);
-		
-
-
-
-
-		//s_v2v(nullptr,nullptr);
-		//Aris::Dynamic::s_pm2pq();
-
-
-
-		
-
-
-
-		//param->beginVb;
-
-
-
-
-
-
-		return 0;
 	}
 }
