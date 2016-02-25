@@ -15,33 +15,34 @@ using namespace std;
 
 namespace Robots
 {
-	LegBase::LegBase(RobotBase* pRobot, const char *Name)
-		: Object(static_cast<Aris::Dynamic::Model &>(*pRobot), Name)
+	LegBase::LegBase(RobotBase* pRobot, const char *name)
+		: Object(static_cast<Aris::Dynamic::Model &>(*pRobot), name)
 		, pRobot(pRobot)
 	{
-		pBase = pRobot->pBody->addMarker(std::string(Name) + "_Base");
+		base_mak_id_ = &pRobot->Body().markerPool().add<Marker>(std::string(name) + "_Base");
 	}
 	
-	const Aris::Dynamic::Part& LegBase::Ground() const { return pRobot->Ground(); };
-	Aris::Dynamic::Part& LegBase::Ground() { return pRobot->Ground(); };
+	const Aris::Dynamic::Part& LegBase::ground() const { return pRobot->ground(); };
+	Aris::Dynamic::Part& LegBase::ground() { return pRobot->ground(); };
 	const Aris::Dynamic::Part& LegBase::Body() const { return pRobot->Body(); };
 	Aris::Dynamic::Part& LegBase::Body() { return pRobot->Body(); };
-	
+	const Aris::Dynamic::Marker& LegBase::Base() const { return *base_mak_id_; };
+	Aris::Dynamic::Marker& LegBase::Base() { return *base_mak_id_; };
 	void LegBase::GetPee(double *pEE, const Marker &mak) const
 	{
 		double pEE_G[3];
 		
-		s_pp2pp(*pBase->pm(), this->pEE, pEE_G);
+		s_pp2pp(*Base().pm(), this->pEE, pEE_G);
 		s_inv_pp2pp(*mak.pm(), pEE_G, pEE);
 	}
 	void LegBase::SetPee(const double *pEE, const Marker &mak)
 	{
-		pBase->update();
+		Base().update();
 
 		double pEE_G[3];
 		
 		s_pp2pp(*mak.pm(), pEE, pEE_G);
-		s_inv_pp2pp(*pBase->pm(), pEE_G, this->pEE);
+		s_inv_pp2pp(*Base().pm(), pEE_G, this->pEE);
 
 		calculate_from_pEE();
 		calculate_jac();
@@ -50,7 +51,7 @@ namespace Robots
 	{
 		double pEE_G[3], vEE_G[3];
 		
-		s_vp2vp(*pBase->pm(), pBase->vel(), this->pEE, this->vEE, vEE_G, pEE_G);
+		s_vp2vp(*Base().pm(), Base().vel(), this->pEE, this->vEE, vEE_G, pEE_G);
 		s_inv_vp2vp(*mak.pm(), mak.vel(), pEE_G, vEE_G, vEE);
 	}
 	void LegBase::SetVee(const double *vEE, const Marker &mak)
@@ -61,7 +62,7 @@ namespace Robots
 		double pEE_G[3], vEE_G[3];
 		
 		s_vp2vp(*mak.pm(), mak.vel(), pEE, vEE, vEE_G, pEE_G);
-		s_inv_vp2vp(*pBase->pm(), pBase->vel(), pEE_G, vEE_G, this->vEE);
+		s_inv_vp2vp(*Base().pm(), Base().vel(), pEE_G, vEE_G, this->vEE);
 
 		calculate_from_vEE();
 		calculate_diff_jac();
@@ -70,7 +71,7 @@ namespace Robots
 	{
 		double pEE_G[3], vEE_G[3], aEE_G[3];
 		
-		s_ap2ap(*pBase->pm(), pBase->vel(), pBase->acc(), this->pEE, this->vEE, this->aEE, aEE_G, vEE_G, pEE_G);
+		s_ap2ap(*Base().pm(), Base().vel(), Base().acc(), this->pEE, this->vEE, this->aEE, aEE_G, vEE_G, pEE_G);
 		s_inv_ap2ap(*mak.pm(), mak.vel(), mak.acc(), pEE_G, vEE_G, aEE_G, aEE);
 	}
 	void LegBase::SetAee(const double *aEE, const Marker &mak)
@@ -82,7 +83,7 @@ namespace Robots
 		double pEE_G[3], vEE_G[3], aEE_G[3];
 		
 		s_ap2ap(*mak.pm(), mak.vel(), mak.acc(), pEE, vEE, aEE, aEE_G, vEE_G, pEE_G);
-		s_inv_ap2ap(*pBase->pm(), pBase->vel(),pBase->acc(), pEE_G, vEE_G,aEE_G, this->aEE);
+		s_inv_ap2ap(*Base().pm(), Base().vel(),Base().acc(), pEE_G, vEE_G,aEE_G, this->aEE);
 
 		calculate_from_aEE();
 	}
@@ -90,7 +91,7 @@ namespace Robots
 	{
 		double f_G[3];
 		
-		s_pm_dot_v3(*pBase->pm(), this->fEE_sta, f_G);
+		s_pm_dot_v3(*Base().pm(), this->fEE_sta, f_G);
 		s_inv_pm_dot_v3(*mak.pm(), f_G, fEE_sta);
 	}
 	void LegBase::SetFeeSta(const double *fEE_sta, const Marker &mak)
@@ -99,7 +100,7 @@ namespace Robots
 		double f_G[3];
 		
 		s_pm_dot_v3(*mak.pm(), fEE_sta, f_G);
-		s_inv_pm_dot_v3(*pBase->pm(), f_G, this->fEE_sta);
+		s_inv_pm_dot_v3(*Base().pm(), f_G, this->fEE_sta);
 	}
 	void LegBase::GetPin(double *pIn) const
 	{
@@ -107,7 +108,7 @@ namespace Robots
 	}
 	void LegBase::SetPin(const double *pIn)
 	{
-		pBase->update();
+		Base().update();
 
 		std::copy_n(pIn, 3, this->pIn);
 		calculate_from_pIn();
@@ -168,7 +169,7 @@ namespace Robots
 		
 		double relativePm[16];
 		
-		s_inv_pm_dot_pm(*mak.pm(), *pBase->pm(), relativePm);
+		s_inv_pm_dot_pm(*mak.pm(), *Base().pm(), relativePm);
 		s_dgemm(3, 3, 3, 1, relativePm, 4, *Jvd, 3, 0, jac, 3);
 	}
 	void LegBase::GetJvi(double *jac, const Marker &mak) const
@@ -177,7 +178,7 @@ namespace Robots
 		
 		double relativePm[16];
 		
-		s_inv_pm_dot_pm(*mak.pm(), *pBase->pm(), relativePm);
+		s_inv_pm_dot_pm(*mak.pm(), *Base().pm(), relativePm);
 		s_dgemmNT(3, 3, 3, 1, *Jvi, 3, relativePm, 4, 0, jac, 3);
 	}
 	void LegBase::GetDifJfd(double *dJac, const Marker &mak) const
@@ -206,8 +207,8 @@ namespace Robots
 		
 		double relativePm[16], relativeV[6];
 		
-		s_inv_pm_dot_pm(*mak.pm(), *pBase->pm(), relativePm);
-		s_inv_v2v(*mak.pm(), mak.vel(), pBase->vel(), relativeV);
+		s_inv_pm_dot_pm(*mak.pm(), *Base().pm(), relativePm);
+		s_inv_v2v(*mak.pm(), mak.vel(), Base().vel(), relativeV);
 		
 		double dR[4][4];
 		s_v_cro_pm(relativeV, relativePm, *dR);
@@ -221,8 +222,8 @@ namespace Robots
 		
 		double relativePm[16], relativeV[6];
 
-		s_inv_pm_dot_pm(*mak.pm(), *pBase->pm(), relativePm);
-		s_inv_v2v(*mak.pm(), mak.vel(), pBase->vel(), relativeV);
+		s_inv_pm_dot_pm(*mak.pm(), *Base().pm(), relativePm);
+		s_inv_v2v(*mak.pm(), mak.vel(), Base().vel(), relativeV);
 
 		double dR[4][4];
 		s_v_cro_pm(relativeV, relativePm, *dR);
@@ -236,8 +237,8 @@ namespace Robots
 		
 		double relativePm[16], relativeV[6];
 		
-		s_inv_pm_dot_pm(*mak.pm(), *pBase->pm(), relativePm);
-		s_inv_v2v(*mak.pm(), mak.vel(), pBase->vel(), relativeV);
+		s_inv_pm_dot_pm(*mak.pm(), *Base().pm(), relativePm);
+		s_inv_v2v(*mak.pm(), mak.vel(), Base().vel(), relativeV);
 		
 		s_vp2vp(relativePm, relativeV, this->pEE, 0, c);
 	}
@@ -247,12 +248,12 @@ namespace Robots
 		
 		double relativePm[16], relativeV[6];
 		
-		s_inv_pm_dot_pm(*mak.pm(), *pBase->pm(), relativePm);
-		s_inv_v2v(*mak.pm(), mak.vel(), pBase->vel(), relativeV);
+		s_inv_pm_dot_pm(*mak.pm(), *Base().pm(), relativePm);
+		s_inv_v2v(*mak.pm(), mak.vel(), Base().vel(), relativeV);
 
 		double tem[3];
 		s_vp2vp(relativePm, relativeV, this->pEE, nullptr, c);
-		s_dgemmTN(3, 1, 3, 1, *pBase->pm(), 4, c, 1, 0, tem, 1);
+		s_dgemmTN(3, 1, 3, 1, *Base().pm(), 4, c, 1, 0, tem, 1);
 		s_dgemm(3, 1, 3, -1, *Jvi, 3, tem, 1, 0, c, 1);
 	}
 	void LegBase::GetCad(double *c, const Marker &mak) const
@@ -261,7 +262,7 @@ namespace Robots
 		
 		double relativeV[6], relativeA[6];
 		
-		s_inv_a2a(*mak.pm(), mak.vel(), mak.acc(), pBase->vel(), pBase->acc(), relativeA, relativeV);
+		s_inv_a2a(*mak.pm(), mak.vel(), mak.acc(), Base().vel(), Base().acc(), relativeA, relativeV);
 		
 		/*推导如下*/
 		//Vee_G = R_L2G * Vee_L + Vb + Wb x Pee_G = R_L2G * Jvd_L * Vin + Vb + Wb x Pee_G
@@ -285,7 +286,7 @@ namespace Robots
 		
 		double relativeV[6], relativeA[6];
 		
-		s_inv_a2a(*mak.pm(), mak.vel(), mak.acc(), pBase->vel(), pBase->acc(), relativeA, relativeV);
+		s_inv_a2a(*mak.pm(), mak.vel(), mak.acc(), Base().vel(), Base().acc(), relativeA, relativeV);
 		/*推导如下*/
 		//Vee_G = R_L2G * Vee_L + Vb + Wb x Pee_G
 		//Vee_L = R_G2L * (Vee_G - Vb - Wb x Pee_G)
@@ -338,7 +339,7 @@ namespace Robots
 			case 'B':
 			case 'M':
 			{
-				s_pm_dot_pnt(*pBase->prtPm(), fromPee, toPee);
+				s_pm_dot_pnt(*Base().prtPm(), fromPee, toPee);
 				return;
 			}
 			case 'G':
@@ -347,7 +348,7 @@ namespace Robots
 			{
 				double bodyPm[16], pnt[3];
 				s_pe2pm(bodyPe, bodyPm);
-				s_pm_dot_pnt(*pBase->prtPm(), fromPee, pnt);
+				s_pm_dot_pnt(*Base().prtPm(), fromPee, pnt);
 				s_pm_dot_pnt(bodyPm, pnt, toPee);
 				return;
 			}
@@ -360,7 +361,7 @@ namespace Robots
 			{
 			case 'L':
 			{
-				s_inv_pm_dot_pnt(*pBase->prtPm(), fromPee, toPee);
+				s_inv_pm_dot_pnt(*Base().prtPm(), fromPee, toPee);
 				return;
 			}
 			case 'B':
@@ -392,7 +393,7 @@ namespace Robots
 				double pnt[3];
 				s_pe2pm(bodyPe, bodyPm);
 				s_inv_pm_dot_pnt(bodyPm, fromPee, pnt);
-				s_inv_pm_dot_pnt(*pBase->prtPm(), pnt, toPee);
+				s_inv_pm_dot_pnt(*Base().prtPm(), pnt, toPee);
 				return;
 			}
 			case 'B':
@@ -417,16 +418,16 @@ namespace Robots
 
 	RobotBase::RobotBase()
 	{
-		pBody = addPart("MainBody");
+		body_id_ = &partPool().add<Part>("MainBody");
 	}
 
 	void RobotBase::GetPmb(double *pmb, const Marker &mak) const
 	{
-		s_inv_pm_dot_pm(*mak.pm(), *pBody->pm(), pmb);
+		s_inv_pm_dot_pm(*mak.pm(), *Body().pm(), pmb);
 	}
 	void RobotBase::SetPmb(const double *pmb, const Marker &mak)
 	{
-		s_pm_dot_pm(*mak.pm(), pmb, *pBody->pm());
+		s_pm_dot_pm(*mak.pm(), pmb, *Body().pm());
 	}
 	void RobotBase::GetPeb(double *peb, const Marker &mak, const char *eurType) const
 	{
@@ -454,21 +455,21 @@ namespace Robots
 	}
 	void RobotBase::GetVb(double *vb, const Marker &mak) const
 	{
-		s_inv_v2v(*mak.pm(), mak.vel(), pBody->vel(), vb);
+		s_inv_v2v(*mak.pm(), mak.vel(), Body().vel(), vb);
 	}
 	void RobotBase::SetVb(const double *vb, const Marker &mak)
 	{
-		s_v2v(*mak.pm(), mak.vel(), vb, pBody->vel());
+		s_v2v(*mak.pm(), mak.vel(), vb, Body().vel());
 	}
 	void RobotBase::GetAb(double *ab, const Marker &mak) const
 	{
-		s_inv_a2a(*mak.pm(), mak.vel(), mak.acc(), pBody->vel(), pBody->acc(), ab);
+		s_inv_a2a(*mak.pm(), mak.vel(), mak.acc(), Body().vel(), Body().acc(), ab);
 	}
 	void RobotBase::SetAb(const double *ab, const Marker &mak)
 	{
 		double vb[6];
-		s_inv_v2v(*mak.pm(), mak.vel(), pBody->vel(), vb);
-		s_a2a(*mak.pm(), mak.vel(), mak.acc(), vb, ab, pBody->acc());
+		s_inv_v2v(*mak.pm(), mak.vel(), Body().vel(), vb);
+		s_a2a(*mak.pm(), mak.vel(), mak.acc(), vb, ab, Body().acc());
 	}
 
 	void RobotBase::GetPee(double *pEE, const Marker &mak) const
@@ -860,7 +861,7 @@ namespace Robots
 		double jac[18 * 6], dJac[18 * 6];
 		GetJvi(jac, supportMotor);
 		GetDifJvi(dJac, supportMotor);
-		s_dgemm(dim, 1, 6, -1, dJac, 6, this->pBody->vel(), 1, 1, aIn_loc, 1);
+		s_dgemm(dim, 1, 6, -1, dJac, 6, this->Body().vel(), 1, 1, aIn_loc, 1);
 
 		
 

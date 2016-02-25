@@ -15,12 +15,12 @@ struct SimpleWalkParam_Aris final :public Aris::Dynamic::PlanParamBase
 	double d{ 0.5 };
 	double h{ 0.05 };
 };
-int SimpleWalk_Aris(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase & param)
+int SimpleWalk_Aris(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & param)
 {
 	auto &sp = static_cast<const SimpleWalkParam_Aris&>(param);
 	auto &robot = static_cast<Robots::RobotBase&>(model);
 
-	static Aris::Dynamic::FloatMarker beginBodyMak(robot.Ground(), nullptr, "313");
+	static Aris::Dynamic::FloatMarker beginBodyMak(robot.ground(), nullptr, "313");
 	static double beginEE[18];
 
 	/*在每次脚着地时更新与身体坐标系重合的位于地面的坐标系*/
@@ -103,7 +103,7 @@ int SimpleWalk(Robots::RobotBase * pRobot, const Robots::GaitParamBase * pParam)
 {
 	auto pSP = static_cast<const SimpleWalkParam*>(pParam);
 
-	static Aris::Dynamic::FloatMarker beginBodyMak(pRobot->Ground(), nullptr, "313");
+	static Aris::Dynamic::FloatMarker beginBodyMak(pRobot->ground(), nullptr, "313");
 	static double beginEE[18];
 
 	/*在每次脚着地时更新与身体坐标系重合的位于地面的坐标系*/
@@ -175,50 +175,121 @@ int SimpleWalk(Robots::RobotBase * pRobot, const Robots::GaitParamBase * pParam)
 	return 2 * pSP->n * pSP->totalCount - pSP->count - 1;
 }
 
+int main_test(int argc, char *argv[]);
 int main(int argc, char *argv[])
 {
+	try
+	{
+		main_test(argc, argv);
+	}
+	catch (std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
+
+
+	std::cout << "finished" << std::endl;
+
+	char aaa;
+	std::cin >> aaa;
+	return 0;
+}
+
+int main_test(int argc, char *argv[])
+{
+	Aris::Dynamic::ElementPool<Aris::Dynamic::Part>::registerType<Aris::Dynamic::Part>();
+	Aris::Dynamic::ElementPool<Aris::Dynamic::Marker>::registerType<Aris::Dynamic::Marker>();
+
+	Aris::Dynamic::Model::registerJointType<Aris::Dynamic::RevoluteJoint>();
+	Aris::Dynamic::Model::registerJointType<Aris::Dynamic::TranslationalJoint>();
+	Aris::Dynamic::Model::registerJointType<Aris::Dynamic::UniversalJoint>();
+	Aris::Dynamic::Model::registerJointType<Aris::Dynamic::SphericalJoint>();
+
+	Aris::Dynamic::Model::registerMotionType<Aris::Dynamic::SingleComponentMotion>();
+
+	Aris::Dynamic::Model::registerForceType<Aris::Dynamic::SingleComponentForce>();
+
 #ifdef WIN32
 	rbt.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
 #endif
 #ifdef UNIX
 	rbt.loadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
 #endif
-
+	
 	const double beginEE[]{
-		-0.3, -0.75, -0.65,
-		-0.45, -0.75, 0,
-		-0.3, -0.75, 0.65,
-		0.3, -0.75, -0.65,
-		0.45, -0.75, 0,
-		0.3, -0.75, 0.65 };
+		-0.3, -0.85, -0.65,
+		-0.45, -0.85, 0,
+		-0.3, -0.85, 0.65,
+		0.3, -0.85, -0.65,
+		0.45, -0.85, 0,
+		0.3, -0.85, 0.65 };
 
-	double beginPE[6]{0};
+	double beginPE[6]{ 0 };
 
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE, rbt.Body());
-	
+
 	SimpleWalkParam_Aris param;
 	rbt.GetPee(param.beginPee);
 	rbt.GetPeb(param.beginPeb);
 
 	rbt.SimScriptClear();
 	rbt.SimScriptSetTopologyA();
-	rbt.SimScriptSimulate(500, 10);
+	rbt.SimScriptSimulate(200, 10);
 	rbt.SimScriptSetTopologyB();
-	rbt.SimScriptSimulate(500, 10);
+	rbt.SimScriptSimulate(200, 10);
+	rbt.SimScriptSetTopologyA();
+	rbt.SimScriptSimulate(200, 10);
+	rbt.SimScriptSetTopologyB();
+	rbt.SimScriptSimulate(200, 10);
+	rbt.SimScriptSetTopologyA();
+	rbt.SimScriptSimulate(200, 10);
+	rbt.SimScriptSetTopologyB();
+	rbt.SimScriptSimulate(200, 10);
+	//rbt.SimScriptSetTopologyA();
+	//rbt.SimScriptSimulate(1000, 10);
+	//rbt.SimScriptSetTopologyB();
+	//rbt.SimScriptSimulate(1000, 10);
+	
+	Robots::WalkParam wk_param;
+	wk_param.totalCount = 200;
+	wk_param.n = 1;
+	wk_param.beta = 0.3;
+	wk_param.d = 0.5;
 
 	
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE);
-	rbt.Model::simToAdams("C:\\Users\\yang\\Desktop\\test.cmd", SimpleWalk_Aris, param, 10, true);
-	
+
+	rbt.simToAdams("C:\\Users\\yang\\Desktop\\test.cmd", Robots::walk, wk_param, 10, true);
 	Aris::Dynamic::SimResult result;
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE);
-	rbt.Model::simDynAkima(SimpleWalk_Aris, param, result, 10, true);
+	rbt.simDynAkima(Robots::walk, wk_param, result, 10, true);
+	result.saveToTxt("C:\\Users\\yang\\Desktop\\test");
+
+	
+	/*
+	Robots::WalkParam wk_param;
+	wk_param.totalCount = 2000;
+	wk_param.n = 3;
+	wk_param.beta = 0.3;
+	wk_param.d = 0.5;
+	Aris::Dynamic::SimResult result;
+	rbt.SetPeb(beginPE);
+	rbt.SetPee(beginEE);
+	rbt.simKin(Robots::walk, wk_param, result, true);
 	result.saveToTxt("C:\\Users\\yang\\Desktop\\test");
 
 
+	auto d = 0.5;
+
+	double s[1000];
+
+	for (int i = 0; i < 1000;++i)
+	s[i]=Aris::Dynamic::s_interp(1000, i + 1, 0, d/2, 0, d/1000);
+
+	Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\s.txt",s, 1, 1000);
 
 	/*
 	SimpleWalkParam param;
@@ -226,7 +297,7 @@ int main(int argc, char *argv[])
 	rbt.GetPeb(param.beginPeb);
 
 	rbt.SimByMatlab("C:\\Users\\yang\\Desktop\\test\\", SimpleWalk, param);
-	
+
 	rbt.SimScriptClear();
 	rbt.SimScriptSetTopologyA();
 	rbt.SimScriptSimulate(500, 10);
@@ -240,35 +311,31 @@ int main(int argc, char *argv[])
 	Aris::Dynamic::dsp(fin, 18, 1);
 
 	{
-		rbt.ClbPre();
-		rbt.ClbUpd();
-		rbt.ClbSetInverseMethod([](int n, double *A)
-		{
-			Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >Am(A, n, n);
-			auto im = Am.inverse();
-			Am = im;
-		});
-		rbt.ForEachMotion([](Aris::Dynamic::MotionBase *p) 
-		{
-			p->SetMotFce(p->MotFce());
-		});
-		
-		Aris::Dynamic::Matrix D(rbt.ClbDimM(), rbt.ClbDimN());
-		Aris::Dynamic::Matrix b(rbt.ClbDimM(), 1);
-		Aris::Dynamic::Matrix x(rbt.ClbDimN(), 1);
+	rbt.ClbPre();
+	rbt.ClbUpd();
+	rbt.ClbSetInverseMethod([](int n, double *A)
+	{
+	Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >Am(A, n, n);
+	auto im = Am.inverse();
+	Am = im;
+	});
+	rbt.ForEachMotion([](Aris::Dynamic::Motion *p)
+	{
+	p->SetMotFce(p->MotFce());
+	});
 
-		rbt.ClbMtx(D.Data(), b.Data());
-		rbt.ClbUkn(x.Data());
+	Aris::Dynamic::Matrix D(rbt.ClbDimM(), rbt.ClbDimN());
+	Aris::Dynamic::Matrix b(rbt.ClbDimM(), 1);
+	Aris::Dynamic::Matrix x(rbt.ClbDimN(), 1);
 
-		auto result = D*x;
-		result.dsp();
-		b.dsp();
+	rbt.ClbMtx(D.Data(), b.Data());
+	rbt.ClbUkn(x.Data());
+
+	auto result = D*x;
+	result.dsp();
+	b.dsp();
 	}
-	
-	*/
-	std::cout << "finished" << std::endl;
 
-	char aaa;
-	std::cin >> aaa;
+	*/
 	return 0;
 }

@@ -16,28 +16,28 @@ namespace Robots
 		using Marker = Aris::Dynamic::Marker;
 		using Part = Aris::Dynamic::Part;
 
-		const Part& Ground() const;
-		Part& Ground();
+		const Part& ground() const;
+		Part& ground();
 		const Part& Body() const;
 		Part& Body();
-		const Marker& Base() const { return *pBase; };
-		Marker& Base() { return *pBase; };
+		const Marker& Base() const;
+		Marker& Base();
 
-		void GetPee(double *pEE) const { GetPee(pEE, Ground()); };
+		void GetPee(double *pEE) const { GetPee(pEE, ground()); };
 		void GetPee(double *pEE, const Marker &Mak) const;
-		void SetPee(const double *pEE) { SetPee(pEE, Ground()); };
+		void SetPee(const double *pEE) { SetPee(pEE, ground()); };
 		void SetPee(const double *pEE, const Marker &Mak);
-		void GetVee(double *vEE) const { GetVee(vEE, Ground()); };
+		void GetVee(double *vEE) const { GetVee(vEE, ground()); };
 		void GetVee(double *vEE, const Marker &Mak) const;
-		void SetVee(const double *vEE) { SetVee(vEE, Ground()); };
+		void SetVee(const double *vEE) { SetVee(vEE, ground()); };
 		void SetVee(const double *vEE, const Marker &Mak);
-		void GetAee(double *aEE) const { GetAee(aEE, Ground()); };
+		void GetAee(double *aEE) const { GetAee(aEE, ground()); };
 		void GetAee(double *aEE, const Marker &Mak) const;
-		void SetAee(const double *aEE) { SetAee(aEE, Ground()); };
+		void SetAee(const double *aEE) { SetAee(aEE, ground()); };
 		void SetAee(const double *aEE, const Marker &Mak);
-		void GetFeeSta(double *fEE_sta) const { GetFeeSta(fEE_sta, Ground()); };
+		void GetFeeSta(double *fEE_sta) const { GetFeeSta(fEE_sta, ground()); };
 		void GetFeeSta(double *fEE_sta, const Marker &Mak) const;
-		void SetFeeSta(const double *fEE_sta) { SetFeeSta(fEE_sta, Ground()); };
+		void SetFeeSta(const double *fEE_sta) { SetFeeSta(fEE_sta, ground()); };
 		void SetFeeSta(const double *fEE_sta, const Marker &Mak);
 		/*!
 		* \brief Get the position of inputs
@@ -80,33 +80,33 @@ namespace Robots
 		*/
 		void SetFinSta(const double *fIn_sta);
 
-		void GetJfd(double *jac) const { GetJfd(jac, Ground()); };
+		void GetJfd(double *jac) const { GetJfd(jac, ground()); };
 		void GetJfd(double *jac, const Marker &Mak) const;
-		void GetJfi(double *jac) const { GetJfi(jac, Ground()); };
+		void GetJfi(double *jac) const { GetJfi(jac, ground()); };
 		void GetJfi(double *jac, const Marker &Mak) const;
-		void GetJvd(double *jac) const { GetJvd(jac, Ground()); };
+		void GetJvd(double *jac) const { GetJvd(jac, ground()); };
 		void GetJvd(double *jac, const Marker &Mak) const;
-		void GetJvi(double *jac) const { GetJvi(jac, Ground()); };
+		void GetJvi(double *jac) const { GetJvi(jac, ground()); };
 		void GetJvi(double *jac, const Marker &Mak) const;
-		void GetDifJfd(double *dJac) const { GetDifJfd(dJac, Ground()); };
+		void GetDifJfd(double *dJac) const { GetDifJfd(dJac, ground()); };
 		void GetDifJfd(double *dJac, const Marker &Mak) const;
-		void GetDifJfi(double *dJac) const { GetDifJfi(dJac, Ground()); };
+		void GetDifJfi(double *dJac) const { GetDifJfi(dJac, ground()); };
 		void GetDifJfi(double *dJac, const Marker &Mak) const;
-		void GetDifJvd(double *dJac) const { GetDifJvd(dJac, Ground()); };
+		void GetDifJvd(double *dJac) const { GetDifJvd(dJac, ground()); };
 		void GetDifJvd(double *dJac, const Marker &Mak) const;
-		void GetDifJvi(double *dJac) const { GetDifJvi(dJac, Ground()); };
+		void GetDifJvi(double *dJac) const { GetDifJvi(dJac, ground()); };
 		void GetDifJvi(double *dJac, const Marker &Mak) const;
-		void GetCvd(double *c) const { GetCvd(c, Ground()); };
+		void GetCvd(double *c) const { GetCvd(c, ground()); };
 		void GetCvd(double *c, const Marker &Mak) const;
-		void GetCvi(double *c) const { GetCvi(c, Ground()); };
+		void GetCvi(double *c) const { GetCvi(c, ground()); };
 		void GetCvi(double *c, const Marker &Mak) const;
-		void GetCad(double *c) const { GetCad(c, Ground()); };
+		void GetCad(double *c) const { GetCad(c, ground()); };
 		/*!
 		* \brief follow equation: Aee = Jvd * Ain + dJvd * Vin + Cad
 		* \param c Cad
 		*/
 		void GetCad(double *c, const Marker &Mak) const;
-		void GetCai(double *c) const { GetCai(c, Ground()); };
+		void GetCai(double *c) const { GetCai(c, ground()); };
 		/*!
 		* \brief follow equation: Ain = Jvi * Aee + dJvi * Vee + Cai
 		* \param c Cai
@@ -131,7 +131,7 @@ namespace Robots
 
 	protected:		
 		RobotBase *pRobot;
-		Aris::Dynamic::Marker *pBase;
+		Aris::Dynamic::Marker *base_mak_id_;
 
 		union 
 		{
@@ -235,60 +235,58 @@ namespace Robots
 		RobotBase();
 		virtual ~RobotBase() = default;
 
-		const Part& Ground() const { return *pGround; };
-		Part& Ground() { return *pGround; };
-		const Part& Body() const { return *pBody; };
-		Part& Body() { return *pBody; };
+		const Part& Body() const { return *body_id_; };
+		Part& Body() { return *body_id_;};
 		const Marker * const * const LegBases() const
 		{ 
-			static const Marker * const pBases[6]
+			static Marker *pBases[6]
 			{
-				pLegs[0]->pBase,
-				pLegs[1]->pBase,
-				pLegs[2]->pBase,
-				pLegs[3]->pBase,
-				pLegs[4]->pBase,
-				pLegs[5]->pBase,
+				&pLegs[0]->Base(),
+				&pLegs[1]->Base(),
+				&pLegs[2]->Base(),
+				&pLegs[3]->Base(),
+				&pLegs[4]->Base(),
+				&pLegs[5]->Base(),
 			};
 			return pBases;
 		};
 
-		void GetPmb(double *pmb) const { GetPmb(pmb, Ground()); };
+		void GetPmb(double *pmb) const { GetPmb(pmb, ground()); };
 		void GetPmb(double *pmb, const Marker &mak) const;
-		void SetPmb(const double *pmb) { SetPmb(pmb, Ground()); };
+		void SetPmb(const double *pmb) { SetPmb(pmb, ground()); };
 		void SetPmb(const double *pmb, const Marker &mak);
-		void GetPeb(double *peb, const char *eurType = "313") const { GetPeb(peb, Ground(), eurType); };
+		void GetPeb(double *peb, const char *eurType = "313") const { GetPeb(peb, ground(), eurType); };
 		void GetPeb(double *peb, const Marker &mak, const char *eurType = "313") const;
-		void SetPeb(const double *peb, const char *eurType = "313") { SetPeb(peb, Ground(), eurType); };
+		void SetPeb(const double *peb, const char *eurType = "313") { SetPeb(peb, ground(), eurType); };
 		void SetPeb(const double *peb, const Marker &mak, const char *eurType = "313");
-		void GetPqb(double *pqb) const { GetPqb(pqb, Ground()); };
+		void GetPqb(double *pqb) const { GetPqb(pqb, ground()); };
 		void GetPqb(double *pqb, const Marker &mak) const;
-		void SetPqb(const double *pqb) { SetPqb(pqb, Ground()); };
+		void SetPqb(const double *pqb) { SetPqb(pqb, ground()); };
 		void SetPqb(const double *pqb, const Marker &mak);
-		void GetVb(double *vb) const { GetVb(vb, Ground()); };
+		void GetVb(double *vb) const { GetVb(vb, ground()); };
 		void GetVb(double *vb, const Marker &mak) const;
-		void SetVb(const double *vb) { SetVb(vb, Ground()); };
+		void SetVb(const double *vb) { SetVb(vb, ground()); };
 		void SetVb(const double *vb, const Marker &mak);
-		void GetAb(double *ab) const { GetAb(ab, Ground()); };
+		void GetAb(double *ab) const { GetAb(ab, ground()); };
 		void GetAb(double *ab, const Marker &mak) const;
-		void SetAb(const double *ab) { SetAb(ab, Ground()); };
+		void SetAb(const double *ab) { SetAb(ab, ground()); };
 		void SetAb(const double *ab, const Marker &mak);
 
-		void GetPee(double *pEE) const { GetPee(pEE, Ground()); };
+		void GetPee(double *pEE) const { GetPee(pEE, ground()); };
 		void GetPee(double *pEE, const Marker &Mak) const;
-		void SetPee(const double *pEE) { SetPee(pEE, Ground()); };
+		void SetPee(const double *pEE) { SetPee(pEE, ground()); };
 		void SetPee(const double *pEE, const Marker &Mak);
-		void GetVee(double *vEE) const { GetVee(vEE, Ground()); };
+		void GetVee(double *vEE) const { GetVee(vEE, ground()); };
 		void GetVee(double *vEE, const Marker &Mak) const;
-		void SetVee(const double *vEE) { SetVee(vEE, Ground()); };
+		void SetVee(const double *vEE) { SetVee(vEE, ground()); };
 		void SetVee(const double *vEE, const Marker &Mak);
-		void GetAee(double *aEE) const { GetAee(aEE, Ground()); };
+		void GetAee(double *aEE) const { GetAee(aEE, ground()); };
 		void GetAee(double *aEE, const Marker &Mak) const;
-		void SetAee(const double *aEE) { SetAee(aEE, Ground()); };
+		void SetAee(const double *aEE) { SetAee(aEE, ground()); };
 		void SetAee(const double *aEE, const Marker &Mak);
-		void GetFeeSta(double *fEE_sta) const { GetFeeSta(fEE_sta, Ground()); };
+		void GetFeeSta(double *fEE_sta) const { GetFeeSta(fEE_sta, ground()); };
 		void GetFeeSta(double *fEE_sta, const Marker &Mak) const;
-		void SetFeeSta(const double *fEE_sta) { SetFeeSta(fEE_sta, Ground()); };
+		void SetFeeSta(const double *fEE_sta) { SetFeeSta(fEE_sta, ground()); };
 		void SetFeeSta(const double *fEE_sta, const Marker &Mak);
 		
 		void GetPee(double *pEE, const Marker* const pMaks[]) const;
@@ -328,7 +326,7 @@ namespace Robots
 		LegBase *pLegs[6];
 
 	protected:
-		Aris::Dynamic::Part *pBody;
+		Aris::Dynamic::Part *body_id_;
 
 	private:
 		double _BodyPm[4][4]{ {0} }, _BodyVel[6]{ 0 }, _BodyAcc[6]{ 0 };

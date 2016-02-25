@@ -34,18 +34,14 @@ namespace Robots
 	struct WalkParam final:public Aris::Server::GaitParamBase
 	{
 		std::int32_t totalCount{3000};
-		std::int32_t n{1};
-		std::int32_t walkDirection{-3};// 1 means positive x axis; while -3 means negative z axis
-		std::int32_t upDirection{2};
+		std::int32_t n{2};
 		double d{0.5};
 		double h{0.05};
 		double alpha{0};
-		double beta{0};
+		double beta{0.3};
 	};
-	Aris::Dynamic::PlanFunc;
-	int walk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase &param);
 
-	int walk(RobotBase * pRobot, const GaitParamBase * pParam);
+	int walk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param);
 	Aris::Core::Msg parseWalk(const std::string &cmd, const std::map<std::string, std::string> &params);
 	
 	struct FastWalkParam :public GaitParamBase

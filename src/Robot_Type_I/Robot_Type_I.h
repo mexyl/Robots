@@ -11,86 +11,60 @@ namespace Robots
 	class LegI :public Robots::LegBase
 	{
 	public:
-		union
-		{
-			struct
-			{
-				Aris::Dynamic::Part* pP1a;/*!< \brief 指向部件P1a的指针 */
-				Aris::Dynamic::Part* pP2a;/*!< \brief 指向部件P2a的指针 */
-				Aris::Dynamic::Part* pP3a;/*!< \brief 指向部件P3a的指针 */
-				Aris::Dynamic::Part* pThigh;/*!< \brief 指向部件Thigh的指针 */
-				Aris::Dynamic::Part* pP2b;/*!< \brief 指向部件P2b的指针 */
-				Aris::Dynamic::Part* pP3b;/*!< \brief 指向部件P3b的指针 */
-			};
-			Aris::Dynamic::Part* pPrts[6];
-		};
-		union
-		{
-			struct
-			{
-				Aris::Dynamic::JointBase *pU1;/*!< \brief 指向关节U1的指针 */
-				Aris::Dynamic::JointBase *pU2;/*!< \brief 指向关节U2的指针 */
-				Aris::Dynamic::JointBase *pU3;/*!< \brief 指向关节U3的指针 */
-				Aris::Dynamic::JointBase *pP1;/*!< \brief 指向关节P1的指针 */
-				Aris::Dynamic::JointBase *pP2;/*!< \brief 指向关节P2的指针 */
-				Aris::Dynamic::JointBase *pP3;/*!< \brief 指向关节P3的指针 */
-				Aris::Dynamic::JointBase *pS2;/*!< \brief 指向关节S2的指针 */
-				Aris::Dynamic::JointBase *pS3;/*!< \brief 指向关节S3的指针 */
-				Aris::Dynamic::JointBase *pSf;/*!< \brief 指向关节Sf的指针 */
-			};
-			Aris::Dynamic::JointBase *pJnts[9];
-		};
-		union
-		{
-			struct
-			{
-				Aris::Dynamic::Marker *pBase;/*!< \brief 指向坐标系Base的指针，位于部件MainBody上 */
-				Aris::Dynamic::Marker *pU1i;/*!< \brief 指向坐标系U1i的指针，位于部件MainBody上 */
-				Aris::Dynamic::Marker *pU1j;/*!< \brief 指向坐标系U1j的指针，位于部件P1a上 */
-				Aris::Dynamic::Marker *pU2i;/*!< \brief 指向坐标系U2i的指针，位于部件MainBody上 */
-				Aris::Dynamic::Marker *pU2j;/*!< \brief 指向坐标系U2j的指针，位于部件P2a上 */
-				Aris::Dynamic::Marker *pU3i;/*!< \brief 指向坐标系U3i的指针，位于部件MainBody上 */
-				Aris::Dynamic::Marker *pU3j;/*!< \brief 指向坐标系U3j的指针，位于部件P3a上 */
-				Aris::Dynamic::Marker *pP1i;/*!< \brief 指向坐标系P1i的指针，位于部件Thigh上 */
-				Aris::Dynamic::Marker *pP1j;/*!< \brief 指向坐标系P1j的指针，位于部件P1a上 */
-				Aris::Dynamic::Marker *pP2i;/*!< \brief 指向坐标系P2i的指针，位于部件P2b上 */
-				Aris::Dynamic::Marker *pP2j;/*!< \brief 指向坐标系P2j的指针，位于部件P2a上 */
-				Aris::Dynamic::Marker *pP3i;/*!< \brief 指向坐标系P3i的指针，位于部件P3b上 */
-				Aris::Dynamic::Marker *pP3j;/*!< \brief 指向坐标系P3i的指针，位于部件P3a上 */
-				Aris::Dynamic::Marker *pS2i;/*!< \brief 指向坐标系S2i的指针，位于部件Thigh上 */
-				Aris::Dynamic::Marker *pS2j;/*!< \brief 指向坐标系S2j的指针，位于部件P2b上 */
-				Aris::Dynamic::Marker *pS3i;/*!< \brief 指向坐标系S3i的指针，位于部件Thigh上 */
-				Aris::Dynamic::Marker *pS3j;/*!< \brief 指向坐标系S3j的指针，位于部件P3b上 */
-				Aris::Dynamic::Marker *pSfi;/*!< \brief 指向坐标系Sfi的指针，位于部件Thigh上 */
-				Aris::Dynamic::Marker *pSfj;/*!< \brief 指向坐标系Sfj的指针，位于部件Ground上 */
-			};
-			Aris::Dynamic::Marker *pMaks[19];
-		};
-		union
-		{
-			struct
-			{
-				Aris::Dynamic::MotionBase *pM1;/*!< \brief 指向驱动M1的指针 */
-				Aris::Dynamic::MotionBase *pM2;/*!< \brief 指向驱动M2的指针 */
-				Aris::Dynamic::MotionBase *pM3;/*!< \brief 指向驱动M3的指针 */
-			};
+		Aris::Dynamic::Part& partAt(std::size_t id) { return *prt_id_array_[id]; };
+		Aris::Dynamic::Marker& markerAt(std::size_t id) { return *mak_id_array_[id]; };
+		Aris::Dynamic::Joint& jointAt(std::size_t id) { return *jnt_id_array_[id]; };
+		Aris::Dynamic::Motion& motionAt(std::size_t id) { return *mot_id_array_[id];};
+		Aris::Dynamic::SingleComponentForce& forceAt(std::size_t id) { return static_cast<Aris::Dynamic::SingleComponentForce&>(*fce_id_array_[id]); };
 
-			Aris::Dynamic::MotionBase *pMots[3];
-		};
-		union
-		{
-			struct
-			{
-				Aris::Dynamic::SingleComponentForce *pF1;/*!< \brief 指向驱动M1的指针 */
-				Aris::Dynamic::SingleComponentForce *pF2;/*!< \brief 指向驱动M2的指针 */
-				Aris::Dynamic::SingleComponentForce *pF3;/*!< \brief 指向驱动M3的指针 */
-			};
+		Aris::Dynamic::Part& p1a() { return static_cast<Aris::Dynamic::Part&>(*p1a_id_); };
+		Aris::Dynamic::Part& p2a() { return static_cast<Aris::Dynamic::Part&>(*p2a_id_); };
+		Aris::Dynamic::Part& p3a() { return static_cast<Aris::Dynamic::Part&>(*p3a_id_); };
+		Aris::Dynamic::Part& thigh() { return static_cast<Aris::Dynamic::Part&>(*thigh_id_); };
+		Aris::Dynamic::Part& p2b() { return static_cast<Aris::Dynamic::Part&>(*p2b_id_); };
+		Aris::Dynamic::Part& p3b() { return static_cast<Aris::Dynamic::Part&>(*p3b_id_); };
 
-			Aris::Dynamic::SingleComponentForce *pFces[3];
-		};
+		Aris::Dynamic::Marker& u1i() { return static_cast<Aris::Dynamic::Marker&>(*u1i_id_); };
+		Aris::Dynamic::Marker& u1j() { return static_cast<Aris::Dynamic::Marker&>(*u1j_id_); };
+		Aris::Dynamic::Marker& u2i() { return static_cast<Aris::Dynamic::Marker&>(*u2i_id_); };
+		Aris::Dynamic::Marker& u2j() { return static_cast<Aris::Dynamic::Marker&>(*u2j_id_); };
+		Aris::Dynamic::Marker& u3i() { return static_cast<Aris::Dynamic::Marker&>(*u3i_id_); };
+		Aris::Dynamic::Marker& u3j() { return static_cast<Aris::Dynamic::Marker&>(*u3j_id_); };
+		Aris::Dynamic::Marker& p1i() { return static_cast<Aris::Dynamic::Marker&>(*p1i_id_); };
+		Aris::Dynamic::Marker& p1j() { return static_cast<Aris::Dynamic::Marker&>(*p1j_id_); };
+		Aris::Dynamic::Marker& p2i() { return static_cast<Aris::Dynamic::Marker&>(*p2i_id_); };
+		Aris::Dynamic::Marker& p2j() { return static_cast<Aris::Dynamic::Marker&>(*p2j_id_); };
+		Aris::Dynamic::Marker& p3i() { return static_cast<Aris::Dynamic::Marker&>(*p3i_id_); };
+		Aris::Dynamic::Marker& p3j() { return static_cast<Aris::Dynamic::Marker&>(*p3j_id_); };
+		Aris::Dynamic::Marker& sfi() { return static_cast<Aris::Dynamic::Marker&>(*sfi_id_); };
+		Aris::Dynamic::Marker& sfj() { return static_cast<Aris::Dynamic::Marker&>(*sfj_id_); };
+		Aris::Dynamic::Marker& s2i() { return static_cast<Aris::Dynamic::Marker&>(*s2i_id_); };
+		Aris::Dynamic::Marker& s2j() { return static_cast<Aris::Dynamic::Marker&>(*s2j_id_); };
+		Aris::Dynamic::Marker& s3i() { return static_cast<Aris::Dynamic::Marker&>(*s3i_id_); };
+		Aris::Dynamic::Marker& s3j() { return static_cast<Aris::Dynamic::Marker&>(*s3j_id_); };
 		
-	public:
+		Aris::Dynamic::UniversalJoint& u1() { return static_cast<Aris::Dynamic::UniversalJoint&>(*u1_id_); };
+		Aris::Dynamic::UniversalJoint& u2() { return static_cast<Aris::Dynamic::UniversalJoint&>(*u2_id_); };
+		Aris::Dynamic::UniversalJoint& u3() { return static_cast<Aris::Dynamic::UniversalJoint&>(*u3_id_); };
+		Aris::Dynamic::TranslationalJoint& p1() { return static_cast<Aris::Dynamic::TranslationalJoint&>(*p1_id_); };
+		Aris::Dynamic::TranslationalJoint& p2() { return static_cast<Aris::Dynamic::TranslationalJoint&>(*p2_id_); };
+		Aris::Dynamic::TranslationalJoint& p3() { return static_cast<Aris::Dynamic::TranslationalJoint&>(*p3_id_); };
+		Aris::Dynamic::SphericalJoint& sf() { return static_cast<Aris::Dynamic::SphericalJoint&>(*sf_id_); };
+		Aris::Dynamic::SphericalJoint& s2() { return static_cast<Aris::Dynamic::SphericalJoint&>(*s2_id_); };
+		Aris::Dynamic::SphericalJoint& s3() { return static_cast<Aris::Dynamic::SphericalJoint&>(*s3_id_); };
+		Aris::Dynamic::SingleComponentMotion& m1() { return static_cast<Aris::Dynamic::SingleComponentMotion&>(*m1_id_); };
+		Aris::Dynamic::SingleComponentMotion& m2() { return static_cast<Aris::Dynamic::SingleComponentMotion&>(*m2_id_); };
+		Aris::Dynamic::SingleComponentMotion& m3() { return static_cast<Aris::Dynamic::SingleComponentMotion&>(*m3_id_); };
+		Aris::Dynamic::SingleComponentForce& f1() { return static_cast<Aris::Dynamic::SingleComponentForce&>(*f1_id_); };
+		Aris::Dynamic::SingleComponentForce& f2() { return static_cast<Aris::Dynamic::SingleComponentForce&>(*f2_id_); };
+		Aris::Dynamic::SingleComponentForce& f3() { return static_cast<Aris::Dynamic::SingleComponentForce&>(*f3_id_); };
+		
+		
 		void GetdJacOverPee(double *dJi_x, double *dJi_y, double *dJi_z, const char *relativeCoordinate="G")const;
+
+
+
+
 
 	private:
 		LegI(const char *Name, RobotTypeI* pRobot);
@@ -129,6 +103,56 @@ namespace Robots
 		void _CalApartByAvar();
 
 	private:
+		typedef Aris::Dynamic::Part* PartPtr;
+		union
+		{
+			PartPtr prt_id_array_[6];
+			struct
+			{
+				PartPtr p1a_id_, p2a_id_, p3a_id_, thigh_id_, p2b_id_, p3b_id_;
+			};
+		};
+		typedef Aris::Dynamic::Marker* MarkerPtr;
+		union
+		{
+			MarkerPtr mak_id_array_[18];
+			struct
+			{
+				MarkerPtr u1i_id_, u1j_id_, u2i_id_, u2j_id_, u3i_id_, u3j_id_;
+				MarkerPtr p1i_id_, p1j_id_, p2i_id_, p2j_id_, p3i_id_, p3j_id_;
+				MarkerPtr sfi_id_, sfj_id_, s2i_id_, s2j_id_, s3i_id_, s3j_id_;
+			};
+		};
+
+		typedef Aris::Dynamic::Joint* JointPtr;
+		union
+		{
+			JointPtr jnt_id_array_[9];
+			struct
+			{
+				JointPtr u1_id_, u2_id_, u3_id_, p1_id_, p2_id_, p3_id_, sf_id_, s2_id_, s3_id_;
+			};
+		};
+		typedef Aris::Dynamic::Motion* MotionPtr;
+		union
+		{
+			MotionPtr mot_id_array_[3];
+			struct
+			{
+				MotionPtr m1_id_, m2_id_, m3_id_;
+			};
+		};
+		typedef Aris::Dynamic::Force* ForcePtr;
+		union
+		{
+			ForcePtr fce_id_array_[3];
+			struct
+			{
+				ForcePtr f1_id_, f2_id_, f3_id_;
+			};
+		};
+		
+		
 		union
 		{
 			double fIn_dyn[3];
@@ -208,7 +232,7 @@ namespace Robots
 			double Pin[18];
 			for (int i = 0; i < 18; ++i)
 			{
-				Pin[i] = motionAt(i).motPos();
+				Pin[i] = motionPool().at(i).motPos();
 			}
 
 			double pe[6];
@@ -220,7 +244,7 @@ namespace Robots
 			double Vin[18];
 			for (int i = 0; i < 18; ++i)
 			{
-				Vin[i] = motionAt(i).motVel();
+				Vin[i] = motionPool().at(i).motVel();
 			}
 			SetVinFixFeet(Vin, FixFeet(), ActiveMotion());
 		};
@@ -245,8 +269,6 @@ namespace Robots
 			LegI *const pLegs[6];
 		};
 
-		Aris::Dynamic::Marker* pBodyCenter;
-
 	private:
 		LegI LF_Leg{ "LF", this };
 		LegI LM_Leg{ "LM", this };
@@ -260,103 +282,103 @@ namespace Robots
 
 	inline void Activate024(RobotTypeI *pRobot)
 	{
-		pRobot->pLF->pSf->activate(false);
-		pRobot->pLF->pM1->activate(true);
-		pRobot->pLF->pM2->activate(true);
-		pRobot->pLF->pM3->activate(true);
-		pRobot->pLF->pF1->activate(false);
-		pRobot->pLF->pF2->activate(false);
-		pRobot->pLF->pF3->activate(false);
+		pRobot->pLF->sf().activate(false);
+		pRobot->pLF->m1().activate(true);
+		pRobot->pLF->m2().activate(true);
+		pRobot->pLF->m3().activate(true);
+		pRobot->pLF->f1().activate(false);
+		pRobot->pLF->f2().activate(false);
+		pRobot->pLF->f3().activate(false);
 
-		pRobot->pLR->pSf->activate(false);
-		pRobot->pLR->pM1->activate(true);
-		pRobot->pLR->pM2->activate(true);
-		pRobot->pLR->pM3->activate(true);
-		pRobot->pLR->pF1->activate(false);
-		pRobot->pLR->pF2->activate(false);
-		pRobot->pLR->pF3->activate(false);
+		pRobot->pLR->sf().activate(false);
+		pRobot->pLR->m1().activate(true);
+		pRobot->pLR->m2().activate(true);
+		pRobot->pLR->m3().activate(true);
+		pRobot->pLR->f1().activate(false);
+		pRobot->pLR->f2().activate(false);
+		pRobot->pLR->f3().activate(false);
 
-		pRobot->pRM->pSf->activate(false);
-		pRobot->pRM->pM1->activate(true);
-		pRobot->pRM->pM2->activate(true);
-		pRobot->pRM->pM3->activate(true);
-		pRobot->pRM->pF1->activate(false);
-		pRobot->pRM->pF2->activate(false);
-		pRobot->pRM->pF3->activate(false);
+		pRobot->pRM->sf().activate(false);
+		pRobot->pRM->m1().activate(true);
+		pRobot->pRM->m2().activate(true);
+		pRobot->pRM->m3().activate(true);
+		pRobot->pRM->f1().activate(false);
+		pRobot->pRM->f2().activate(false);
+		pRobot->pRM->f3().activate(false);
 
-		pRobot->pLM->pSf->activate(true);
-		pRobot->pLM->pM1->activate(false);
-		pRobot->pLM->pM2->activate(true);
-		pRobot->pLM->pM3->activate(true);
-		pRobot->pLM->pF1->activate(true);
-		pRobot->pLM->pF2->activate(false);
-		pRobot->pLM->pF3->activate(false);
+		pRobot->pLM->sf().activate(true);
+		pRobot->pLM->m1().activate(false);
+		pRobot->pLM->m2().activate(true);
+		pRobot->pLM->m3().activate(true);
+		pRobot->pLM->f1().activate(true);
+		pRobot->pLM->f2().activate(false);
+		pRobot->pLM->f3().activate(false);
 
-		pRobot->pRF->pSf->activate(true);
-		pRobot->pRF->pM1->activate(false);
-		pRobot->pRF->pM2->activate(true);
-		pRobot->pRF->pM3->activate(true);
-		pRobot->pRF->pF1->activate(true);
-		pRobot->pRF->pF2->activate(false);
-		pRobot->pRF->pF3->activate(false);
+		pRobot->pRF->sf().activate(true);
+		pRobot->pRF->m1().activate(false);
+		pRobot->pRF->m2().activate(true);
+		pRobot->pRF->m3().activate(true);
+		pRobot->pRF->f1().activate(true);
+		pRobot->pRF->f2().activate(false);
+		pRobot->pRF->f3().activate(false);
 
-		pRobot->pRR->pSf->activate(true);
-		pRobot->pRR->pM1->activate(false);
-		pRobot->pRR->pM2->activate(true);
-		pRobot->pRR->pM3->activate(true);
-		pRobot->pRR->pF1->activate(true);
-		pRobot->pRR->pF2->activate(false);
-		pRobot->pRR->pF3->activate(false);
+		pRobot->pRR->sf().activate(true);
+		pRobot->pRR->m1().activate(false);
+		pRobot->pRR->m2().activate(true);
+		pRobot->pRR->m3().activate(true);
+		pRobot->pRR->f1().activate(true);
+		pRobot->pRR->f2().activate(false);
+		pRobot->pRR->f3().activate(false);
 	}
 	inline void Activate135(RobotTypeI *pRobot)
 	{
-		pRobot->pLF->pSf->activate(true);
-		pRobot->pLF->pM1->activate(false);
-		pRobot->pLF->pM2->activate(true);
-		pRobot->pLF->pM3->activate(true);
-		pRobot->pLF->pF1->activate(true);
-		pRobot->pLF->pF2->activate(false);
-		pRobot->pLF->pF3->activate(false);
+		pRobot->pLF->sf().activate(true);
+		pRobot->pLF->m1().activate(false);
+		pRobot->pLF->m2().activate(true);
+		pRobot->pLF->m3().activate(true);
+		pRobot->pLF->f1().activate(true);
+		pRobot->pLF->f2().activate(false);
+		pRobot->pLF->f3().activate(false);
 
-		pRobot->pLR->pSf->activate(true);
-		pRobot->pLR->pM1->activate(false);
-		pRobot->pLR->pM2->activate(true);
-		pRobot->pLR->pM3->activate(true);
-		pRobot->pLR->pF1->activate(true);
-		pRobot->pLR->pF2->activate(false);
-		pRobot->pLR->pF3->activate(false);
+		pRobot->pLR->sf().activate(true);
+		pRobot->pLR->m1().activate(false);
+		pRobot->pLR->m2().activate(true);
+		pRobot->pLR->m3().activate(true);
+		pRobot->pLR->f1().activate(true);
+		pRobot->pLR->f2().activate(false);
+		pRobot->pLR->f3().activate(false);
 
-		pRobot->pRM->pSf->activate(true);
-		pRobot->pRM->pM1->activate(false);
-		pRobot->pRM->pM2->activate(true);
-		pRobot->pRM->pM3->activate(true);
-		pRobot->pRM->pF1->activate(true);
-		pRobot->pRM->pF2->activate(false);
-		pRobot->pRM->pF3->activate(false);
+		pRobot->pRM->sf().activate(true);
+		pRobot->pRM->m1().activate(false);
+		pRobot->pRM->m2().activate(true);
+		pRobot->pRM->m3().activate(true);
+		pRobot->pRM->f1().activate(true);
+		pRobot->pRM->f2().activate(false);
+		pRobot->pRM->f3().activate(false);
 
-		pRobot->pLM->pSf->activate(false);
-		pRobot->pLM->pM1->activate(true);
-		pRobot->pLM->pM2->activate(true);
-		pRobot->pLM->pM3->activate(true);
-		pRobot->pLM->pF1->activate(false);
-		pRobot->pLM->pF2->activate(false);
-		pRobot->pLM->pF3->activate(false);
+		pRobot->pLM->sf().activate(false);
+		pRobot->pLM->m1().activate(true);
+		pRobot->pLM->m2().activate(true);
+		pRobot->pLM->m3().activate(true);
+		pRobot->pLM->f1().activate(false);
+		pRobot->pLM->f2().activate(false);
+		pRobot->pLM->f3().activate(false);
 
-		pRobot->pRF->pSf->activate(false);
-		pRobot->pRF->pM1->activate(true);
-		pRobot->pRF->pM2->activate(true);
-		pRobot->pRF->pM3->activate(true);
-		pRobot->pRF->pF1->activate(false);
-		pRobot->pRF->pF2->activate(false);
-		pRobot->pRF->pF3->activate(false);
+		pRobot->pRF->sf().activate(false);
+		pRobot->pRF->m1().activate(true);
+		pRobot->pRF->m2().activate(true);
+		pRobot->pRF->m3().activate(true);
+		pRobot->pRF->f1().activate(false);
+		pRobot->pRF->f2().activate(false);
+		pRobot->pRF->f3().activate(false);
 
-		pRobot->pRR->pSf->activate(false);
-		pRobot->pRR->pM1->activate(true);
-		pRobot->pRR->pM2->activate(true);
-		pRobot->pRR->pM3->activate(true);
-		pRobot->pRR->pF1->activate(false);
-		pRobot->pRR->pF2->activate(false);
-		pRobot->pRR->pF3->activate(false);
+		pRobot->pRR->sf().activate(false);
+		pRobot->pRR->m1().activate(true);
+		pRobot->pRR->m2().activate(true);
+		pRobot->pRR->m3().activate(true);
+		pRobot->pRR->f1().activate(false);
+		pRobot->pRR->f2().activate(false);
+		pRobot->pRR->f3().activate(false);
 	}
 
 }

@@ -22,9 +22,10 @@ using namespace Aris::Dynamic;
 
 namespace Robots
 {
+	/*
 	int walkAcc(RobotBase * pRobot, const GaitParamBase * pParam)
 	{
-		/*初始化参数*/
+		//初始化参数
 		const WalkParam *pRealParam = static_cast<const WalkParam *>(pParam);
 
 		int wAxis = std::abs(pRealParam->walkDirection) - 1;
@@ -54,10 +55,10 @@ namespace Robots
 		double pEE[18];
 		double pBodyPE[6];
 
-		/*初始化完毕，开始计算*/
+		//初始化完毕，开始计算
 		int count = pRealParam->count;
 		double s = -(PI / 2)*cos(PI * (count + 1) / totalCount) + PI / 2;
-		/*设置移动腿*/
+		//设置移动腿
 		for (int i = 0; i < 18; i += 6)
 		{
 			pEE[i + wAxis] = wSign*(0.5*d / cos(b / 2)*cos(a + b * 3 / 4)*(1 - cos(s)) / 2
@@ -71,7 +72,7 @@ namespace Robots
 				+ lSign*(beginPee[i + lAxis] - beginPeb[lAxis]) * cos((1 - cos(s)) / 4 * b))
 				+ beginPeb[lAxis];
 		}
-		/*设置支撑腿*/
+		//设置支撑腿
 		for (int i = 3; i < 18; i += 6)
 		{
 			pEE[i + wAxis] = beginPee[i + wAxis];
@@ -79,28 +80,29 @@ namespace Robots
 			pEE[i + lAxis] = beginPee[i + lAxis];
 		}
 
-		/*设置身体*/
+		//设置身体
 		double t = count + 1;
 		double T = totalCount * 2;
 
-		/*以下计算角度，需要在313和不同的欧拉角中间转来转去*/
+		//以下计算角度，需要在313和不同的欧拉角中间转来转去
 		pe[3]+= uSign*b / 4 * acc_even(totalCount, count + 1);
 		s_pe2pm(pe, *pm, order);
 		s_pm2pe(*pm, pBodyPE);
 
-		/*以下计算位置*/
+		//以下计算位置
 		pBodyPE[wAxis] += wSign*0.25*d / cos(b / 2)*cos(a + b * 3 / 4)*(acc_even(totalCount, count + 1));
 		pBodyPE[uAxis] += 0;
 		pBodyPE[lAxis] += lSign*0.25*d / cos(b / 2)*sin(a + b * 3 / 4)*(acc_even(totalCount, count + 1));
 
-		/*计算完毕，更新pRobot*/
+		//计算完毕，更新pRobot
 		pRobot->SetPeb(pBodyPE);
 		pRobot->SetPee(pEE);
 		return totalCount - count - 1;
-	}
+	}*/
+	/*
 	int walkConst(RobotBase * pRobot, const GaitParamBase * pParam)
 	{
-		/*初始化参数*/
+		//初始化参数
 		const WalkParam *pRealParam = static_cast<const WalkParam *>(pParam);
 
 		int wAxis = std::abs(pRealParam->walkDirection) - 1;
@@ -130,12 +132,12 @@ namespace Robots
 		double pEE[18];
 		
 
-		/*初始化完毕，开始计算*/
+		//初始化完毕，开始计算
 		if (pRealParam->count < pRealParam->totalCount)
 		{
 			int count = pRealParam->count;
 			double s = -(PI / 2)*cos(PI * (count + 1) / totalCount) + PI / 2;
-			/*设置移动腿*/
+			//设置移动腿
 			for (int i = 3; i < 18; i += 6)
 			{
 				pEE[i + wAxis] = wSign*(d *cos(a + b)*(1 - cos(s)) / 2
@@ -149,7 +151,7 @@ namespace Robots
 					+ lSign*(beginPee[i + lAxis] - beginPeb[lAxis]) * cos((1 - cos(s)) / 2 * b))
 					+ beginPeb[lAxis];
 			}
-			/*设置支撑腿*/
+			//设置支撑腿
 			for (int i = 0; i < 18; i += 6)
 			{
 				pEE[i + wAxis] = beginPee[i + wAxis];
@@ -161,7 +163,7 @@ namespace Robots
 		{
 			int count = pRealParam->count - pRealParam->totalCount;
 			double s = -(PI / 2)*cos(PI * (count + 1) / totalCount) + PI / 2;
-			/*设置移动腿*/
+			//设置移动腿
 			for (int i = 0; i < 18; i += 6)
 			{
 				pEE[i + wAxis] = wSign*(d *cos(a + b)*(1 - cos(s)) / 2
@@ -175,7 +177,7 @@ namespace Robots
 					+ lSign*(beginPee[i + lAxis] - beginPeb[lAxis]) * cos((1 - cos(s)) / 2 * b))
 					+ beginPeb[lAxis];
 			}
-			/*设置支撑腿*/
+			//设置支撑腿
 			for (int i = 3; i < 18; i += 6)
 			{
 				pEE[i + wAxis] = wSign*(d *cos(a + b)
@@ -194,17 +196,17 @@ namespace Robots
 		
 
 
-		/*设置身体*/
+		//设置身体
 		double t = pRealParam->count + 1;
 		double T = totalCount * 2;
 
-		/*以下计算角度，需要在313和不同的欧拉角中间转来转去*/
+		//以下计算角度，需要在313和不同的欧拉角中间转来转去
 		double pBodyPE[6];
 		pe[3] += uSign*b * even(totalCount * 2, pRealParam->count + 1);
 		s_pe2pm(pe, *pm, order);
 		s_pm2pe(*pm, pBodyPE);
 
-		/*以下计算位置*/
+		//以下计算位置
 		
 		double s = even(totalCount * 2, pRealParam->count + 1);
 
@@ -213,14 +215,15 @@ namespace Robots
 		pBodyPE[lAxis] += lSign*(d *s*sin(a + b) - tan(b / 2) * d  * cos(a + b) * (s - s*s));
 
 
-		/*计算完毕，更新pRobot*/
+		//计算完毕，更新pRobot
 		pRobot->SetPeb(pBodyPE);
 		pRobot->SetPee(pEE);
 		return 2 * totalCount - pRealParam->count - 1;
-	}
+	}*/
+	/*
 	int walkDec(RobotBase * pRobot, const GaitParamBase * pParam)
 	{
-		/*初始化参数*/
+		//初始化参数
 		const WalkParam *pRealParam = static_cast<const WalkParam *>(pParam);
 
 		int wAxis = std::abs(pRealParam->walkDirection) - 1;
@@ -250,10 +253,10 @@ namespace Robots
 		double pEE[18];
 		double pBodyPE[6];
 
-		/*初始化完毕，开始计算*/
+		//初始化完毕，开始计算
 		int count = pRealParam->count;
 		double s = -(PI / 2)*cos(PI * (count + 1) / totalCount) + PI / 2;
-		/*设置移动腿*/
+		//设置移动腿
 		for (int i = 3; i < 18; i += 6)
 		{
 			pEE[i + wAxis] = wSign*(0.5*d / cos(b / 2)*cos(a + b / 2)*(1 - cos(s)) / 2
@@ -270,7 +273,7 @@ namespace Robots
 
 
 
-		/*设置支撑腿*/
+		//设置支撑腿
 		for (int i = 0; i < 18; i += 6)
 		{
 			pEE[i + wAxis] = beginPee[i + wAxis];
@@ -278,33 +281,34 @@ namespace Robots
 			pEE[i + lAxis] = beginPee[i + lAxis];
 		}
 
-		/*设置身体*/
+		//设置身体
 		double t = count + 1;
 		double T = totalCount * 2;
 
-		/*以下计算角度，需要在313和321的欧拉角中间转来转去*/
+		//以下计算角度，需要在313和321的欧拉角中间转来转去
 		pe[3] += uSign*b / 4 * dec_even(totalCount, count + 1);
 		s_pe2pm(pe, *pm, order);
 		s_pm2pe(*pm, pBodyPE);
 
-		/*以下计算位置*/
+		//以下计算位置
 		pBodyPE[wAxis] += wSign*0.25*d / cos(b / 2)*cos(a + b / 2)*(dec_even(totalCount, count + 1));
 		pBodyPE[uAxis] += 0;
 		pBodyPE[lAxis] += lSign*0.25*d / cos(b / 2)*sin(a + b / 2)*(dec_even(totalCount, count + 1));
 
-		/*计算完毕，更新pRobot*/
+		//计算完毕，更新pRobot
 		pRobot->SetPeb(pBodyPE);
 		pRobot->SetPee(pEE);
 		return totalCount - count - 1;
-	}
-	int walk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase &param_in)
+	}*/
+	int walk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param_in)
 	{
 		auto &robot = static_cast<Robots::RobotBase &>(model);
 		auto &param = static_cast<const Robots::WalkParam &>(param_in);
 
 		/*初始化*/
-		static Aris::Dynamic::FloatMarker beginMak{ robot.Ground() };
+		static Aris::Dynamic::FloatMarker beginMak{ robot.ground() };
 		static double beginPee[18];
+
 		if (param.count%param.totalCount == 0) 
 		{ 
 			beginMak.setPrtPm(*robot.Body().pm());
@@ -312,24 +316,186 @@ namespace Robots
 			robot.GetPee(beginPee, beginMak); 
 		}
 
-		int wAxis = std::abs(param.walkDirection) - 1;
-		int uAxis = std::abs(param.upDirection) - 1;
-		int lAxis = 3 - wAxis - uAxis;
-		int wSign = param.walkDirection / std::abs(param.walkDirection);
-		int uSign = param.upDirection / std::abs(param.upDirection);
-		int lSign = ((3 + wAxis - uAxis) % 3 == 1) ? wSign* uSign : -wSign* uSign;
+		double front[3]{ 0,0,-1 };
+		double left[3]{ -1,0,0 };
+		double up[3]{ 0,1,0 };
 
 
 		/*以下设置各个阶段的身体的真实初始位置*/
 		const double a = param.alpha;
 		const double b = param.beta;
+		const double d = param.d;
+		const double h = param.h;
 
-		char order[4];
-		order[0] = '1' + uAxis;
-		order[1] = '1' + (1 + uAxis) % 3;
-		order[2] = '1' + (2 + uAxis) % 3;
+		const double r = d / 2 / std::sin(b / 2);
 
+		int period_count = param.count%param.totalCount;
+		const double s = -(PI / 2)*cos(PI * (period_count + 1) / param.totalCount) + PI / 2;//s 从0到PI. 
+
+		double Peb[6], Pee[18];
+		std::fill(Peb, Peb + 6, 0);
+		std::copy(beginPee, beginPee + 18, Pee);
+
+
+		double pq_b[7]{ 0,0,0,std::sin(b / 2)*up[0],std::sin(b / 2)*up[1],std::sin(b / 2)*up[2],std::cos(b / 2) };
+		double pq_b_half[7]{ 0,0,0,std::sin(b / 4)*up[0],std::sin(b / 4)*up[1],std::sin(b / 4)*up[2],std::cos(b / 4) };
+		double pq_b_quad[7]{ 0,0,0,std::sin(b / 8)*up[0],std::sin(b / 8)*up[1],std::sin(b / 8)*up[2],std::cos(b / 8) };
+		double pq_b_eighth[7]{ 0,0,0,std::sin(b / 16)*up[0],std::sin(b / 16)*up[1],std::sin(b / 16)*up[2],std::cos(b / 16) };
+		double pm_b[16], pm_b_half[16], pm_b_quad[16], pm_b_eighth[16];
 		
+		s_pq2pm(pq_b, pm_b);
+		s_pq2pm(pq_b_half, pm_b_half);
+		s_pq2pm(pq_b_quad, pm_b_quad);
+		s_pq2pm(pq_b_eighth, pm_b_eighth);
+
+		const int leg_begin_id = (param.count / param.totalCount) % 2 == 1 ? 3 : 0;
+
+		if ((param.count / param.totalCount) == 0)//加速段
+		{
+			//规划腿
+			for (int i = leg_begin_id; i < 18; i += 6)
+			{
+				//单腿运动需要分解成延圆周的直线运动，还有延自身的转动
+				double leg_forward_dir[3], forward_d[3];
+				s_pm_dot_v3(pm_b_quad, front, leg_forward_dir);
+
+				s_pm_dot_v3(pm_b_half, beginPee + i, forward_d);
+				s_daxpy(3, -1, beginPee + i, 1, forward_d, 1);
+				s_daxpy(3, d/2, leg_forward_dir, 1, forward_d, 1);
+
+				for (int j = 0; j < 3; ++j)
+				{
+					Pee[i + j] = beginPee[i + j] + (1 - std::cos(s)) / 2 * forward_d[j] + h * up[j] * std::sin(s);
+				}
+			}
+
+			//规划身体位置
+			double body_forward_dir[3], body_left_dir[3];
+			s_pm_dot_v3(pm_b_eighth, front, body_forward_dir);
+			s_pm_dot_v3(pm_b_eighth, left, body_left_dir);
+
+			for (int i = 0; i < 3; ++i)
+			{
+				Peb[i] = left[i] * s_interp(param.totalCount, period_count+1, 0, d*std::tan(b / 8) / 4 / std::cos(b / 8), 0, d / 2 / param.totalCount / std::cos(b / 2)*std::sin(b / 4))
+					+ front[i] * s_interp(param.totalCount, period_count + 1, 0, d / 4 / std::cos(b / 4), 0, d / 2 / param.totalCount / std::cos(b / 2)*std::cos(b / 4));
+			}
+
+			//规划身体姿态
+			double s_acc = Aris::Dynamic::acc_even(param.totalCount, period_count + 1);
+			double pq[7] = { 0,0,0,std::sin(s_acc*b / 8)*up[0],std::sin(s_acc*b / 8)*up[1] ,std::sin(s_acc*b / 8)*up[2],std::cos(s_acc*b / 8) };
+			double pe[6];
+			s_pq2pe(pq, pe);
+			std::copy(pe + 3, pe + 6, Peb + 3);
+		}
+		else if ((param.count / param.totalCount) == (param.n * 2 - 1))//减速段
+		{
+			//规划腿
+			for (int i = leg_begin_id; i < 18; i += 6)
+			{
+				//单腿运动需要分解成延圆周的直线运动，还有延自身的转动
+				double leg_forward_dir[3], forward_d[3];
+				s_pm_dot_v3(pm_b_quad, front, leg_forward_dir);
+
+				s_pm_dot_v3(pm_b_half, beginPee + i, forward_d);
+				s_daxpy(3, -1, beginPee + i, 1, forward_d, 1);
+				s_daxpy(3, d / 2, leg_forward_dir, 1, forward_d, 1);
+
+				for (int j = 0; j < 3; ++j)
+				{
+					Pee[i + j] = beginPee[i + j] + (1 - std::cos(s)) / 2 * forward_d[j] + h * up[j] * std::sin(s);
+				}
+			}
+
+			//规划身体位置
+			double body_forward_dir[3], body_left_dir[3];
+			s_pm_dot_v3(pm_b_eighth, front, body_forward_dir);
+			s_pm_dot_v3(pm_b_eighth, left, body_left_dir);
+
+			for (int i = 0; i < 3; ++i)
+			{
+				Peb[i] = left[i] * s_interp(param.totalCount, period_count+1, 0, d*std::tan(b / 8) / 4 / std::cos(b / 8), 0, 0)
+					+ front[i] * s_interp(param.totalCount, period_count+1, 0, d / 4 / std::cos(b / 4), d/2 / param.totalCount / std::cos(b / 2),0);
+			}
+
+			//规划身体姿态
+			double s_dec = Aris::Dynamic::dec_even(param.totalCount, period_count + 1);
+			double pq[7] = { 0,0,0,std::sin(s_dec*b / 8)*up[0],std::sin(s_dec*b / 8)*up[1] ,std::sin(s_dec*b / 8)*up[2],std::cos(s_dec*b / 8) };
+			double pe[6];
+			s_pq2pe(pq, pe);
+			std::copy(pe + 3, pe + 6, Peb + 3);
+		}
+		else//匀速段
+		{
+			//规划腿
+			for (int i = leg_begin_id; i < 18; i += 6)
+			{
+				//单腿运动需要分解成延圆周的直线运动，还有延自身的转动
+				double leg_forward_dir[3], forward_d[3];
+				s_pm_dot_v3(pm_b_half, front, leg_forward_dir);
+				
+				s_pm_dot_v3(pm_b, beginPee + i, forward_d);
+				s_daxpy(3, -1, beginPee + i, 1, forward_d, 1);
+				s_daxpy(3, d, leg_forward_dir, 1, forward_d, 1);
+				
+				for (int j = 0; j < 3; ++j)
+				{
+					Pee[i + j] = beginPee[i + j] + (1 - std::cos(s)) / 2 * forward_d[j] + h * up[j] * std::sin(s);
+				}
+			}
+
+			//规划身体位置
+			/*double body_forward_dir[3], body_left_dir[3];
+			s_pm_dot_v3(pm_b_quad, front, body_forward_dir);
+			s_pm_dot_v3(pm_b_quad, left, body_left_dir);
+
+			double s2 = even(param.totalCount, period_count + 1);
+			double d2 = d / 2 / std::cos(b / 4);
+
+			for (int i = 0; i < 3; ++i)
+			{
+				Peb[i] = d2*s2*body_forward_dir[i] + tan(b / 4)*d2*(s2*s2 - s2)*body_left_dir[i];
+			}*/
+			double d2 = d / 2 / std::cos(b / 4);
+			for (int i = 0; i < 3; ++i)
+			{
+				Peb[i] = left[i] * s_interp(param.totalCount, period_count + 1, 0, d2*std::sin(b / 4), 0, d / 2 / param.totalCount / std::cos(b / 2)*std::sin(b / 2))
+					+ front[i] * s_interp(param.totalCount, period_count + 1, 0, d/2, d / 2 / param.totalCount / std::cos(b / 2), d / 2 / param.totalCount / std::cos(b / 2)*std::cos(b/2));
+			}
+
+			//规划身体姿态
+			double s_even = even(param.totalCount, period_count + 1);
+			double pq[7] = { 0,0,0,std::sin(s_even*b / 4)*up[0],std::sin(s_even*b / 4)*up[1] ,std::sin(s_even*b / 4)*up[2],std::cos(s_even*b / 4) };
+			double pe[6];
+			s_pq2pe(pq, pe);
+			std::copy(pe + 3, pe + 6, Peb + 3);
+		}
+
+		robot.SetPeb(Peb, beginMak);
+		robot.SetPee(Pee, beginMak);
+
+		static std::list<std::array<double, 6> > PebList;
+		static std::list<std::array<double, 18> > PeeList, PinList;
+
+		std::array<double, 6> Peb_data;
+		std::array<double, 18> Pee_data, Pin_data;
+		std::copy(Peb, Peb + 6, Peb_data.data());
+
+		robot.GetPeb(Peb_data.data());
+		robot.GetPin(Pin_data.data());
+		robot.GetPee(Pee_data.data());
+
+		PebList.push_back(Peb_data);
+		PeeList.push_back(Pee_data);
+		PinList.push_back(Pin_data);
+
+
+		if (2 * param.n * param.totalCount - param.count - 1 == 0)
+		{
+			Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\Peb.txt", PebList);
+			Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\Pee.txt", PeeList);
+			Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\Pin.txt", PinList);
+		}
+			
 
 		return 2 * param.n * param.totalCount - param.count - 1;
 	}
@@ -346,14 +512,6 @@ namespace Robots
 			else if (i.first == "n")
 			{
 				param.n = stoi(i.second);
-			}
-			else if (i.first == "walkDirection")
-			{
-				param.walkDirection = stoi(i.second);
-			}
-			else if (i.first == "upDirection")
-			{
-				param.upDirection = stoi(i.second);
 			}
 			else if (i.first == "distance")
 			{

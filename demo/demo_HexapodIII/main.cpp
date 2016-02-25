@@ -20,37 +20,7 @@ int main()
 	rbt.loadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
 #endif
 
-	double pEE_G[18] =
-	{
-		-0.4, -0.75, -0.7,
-		-0.5, -0.75, 0,
-		-0.4, -0.75, 0.7,
-		 0.4, -0.75, -0.7,
-		 0.5, -0.75, 0,
-		 0.4, -0.75, 0.7
-	};
-	double bodyPE[6]{ 0,0,0,0,0,0 };
-	rbt.SetPeb(bodyPE);
-	rbt.SetPee(pEE_G);
-	rbt.SetFixFeet("101010");
-	rbt.SetActiveMotion("011111011111011111");
-	/**/
-	Robots::AdjustParam param;
-	std::copy_n(pEE_G, 18, &param.targetPee[0][0]);
-	std::copy_n(bodyPE, 6, &param.targetPeb[0][0]);
 
-	param.targetPeb[0][1] += 0.1;
-	param.targetPee[0][15] += 0.1;
-
-	double fIn[18];
-	rbt.GetFinDyn(fIn);
-	dsp(fIn, 18, 1);
-
-	param.targetPeb[0][1] += 0.1;
-	param.targetPee[0][15] += 0.1;
-
-
-	
 	/*Compute inverse position kinematics in Ground coordinates*/
 	
 	
@@ -124,7 +94,7 @@ int main()
 	
 	rbt.dyn();
 
-	rbt.ForEachMotion([](Aris::Dynamic::MotionBase *mot)
+	rbt.ForEachMotion([](Aris::Dynamic::Motion *mot)
 	{
 		cout << mot->GetMotFceDyn() << endl;
 	});

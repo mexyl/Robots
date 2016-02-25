@@ -150,17 +150,17 @@ namespace Robots
 			std::fill_n(dJi_y, 9, 0);
 			std::fill_n(dJi_z, 9, 0);
 
-			s_daxpy(9, pBase->prtPm()[0][0], dJi_x_L, 1, dJi_x, 1);
-			s_daxpy(9, pBase->prtPm()[0][1], dJi_y_L, 1, dJi_x, 1);
-			s_daxpy(9, pBase->prtPm()[0][2], dJi_z_L, 1, dJi_x, 1);
+			s_daxpy(9, Base().prtPm()[0][0], dJi_x_L, 1, dJi_x, 1);
+			s_daxpy(9, Base().prtPm()[0][1], dJi_y_L, 1, dJi_x, 1);
+			s_daxpy(9, Base().prtPm()[0][2], dJi_z_L, 1, dJi_x, 1);
 
-			s_daxpy(9, pBase->prtPm()[1][0], dJi_x_L, 1, dJi_y, 1);
-			s_daxpy(9, pBase->prtPm()[1][1], dJi_y_L, 1, dJi_y, 1);
-			s_daxpy(9, pBase->prtPm()[1][2], dJi_z_L, 1, dJi_y, 1);
+			s_daxpy(9, Base().prtPm()[1][0], dJi_x_L, 1, dJi_y, 1);
+			s_daxpy(9, Base().prtPm()[1][1], dJi_y_L, 1, dJi_y, 1);
+			s_daxpy(9, Base().prtPm()[1][2], dJi_z_L, 1, dJi_y, 1);
 
-			s_daxpy(9, pBase->prtPm()[2][0], dJi_x_L, 1, dJi_z, 1);
-			s_daxpy(9, pBase->prtPm()[2][1], dJi_y_L, 1, dJi_z, 1);
-			s_daxpy(9, pBase->prtPm()[2][2], dJi_z_L, 1, dJi_z, 1);
+			s_daxpy(9, Base().prtPm()[2][0], dJi_x_L, 1, dJi_z, 1);
+			s_daxpy(9, Base().prtPm()[2][1], dJi_y_L, 1, dJi_z, 1);
+			s_daxpy(9, Base().prtPm()[2][2], dJi_z_L, 1, dJi_z, 1);
 
 			break;
 		case 'G':
@@ -170,31 +170,31 @@ namespace Robots
 			std::fill_n(dJi_y, 9, 0);
 			std::fill_n(dJi_z, 9, 0);
 
-			dsp(*pBase->pm(), 4, 4);
+			dsp(*Base().pm(), 4, 4);
 
-			s_daxpy(9, *pBase->pm()[0], dJi_x_L, 1, dJi_x, 1);
-			s_daxpy(9, *pBase->pm()[1], dJi_y_L, 1, dJi_x, 1);
-			s_daxpy(9, *pBase->pm()[2], dJi_z_L, 1, dJi_x, 1);
+			s_daxpy(9, *Base().pm()[0], dJi_x_L, 1, dJi_x, 1);
+			s_daxpy(9, *Base().pm()[1], dJi_y_L, 1, dJi_x, 1);
+			s_daxpy(9, *Base().pm()[2], dJi_z_L, 1, dJi_x, 1);
 
-			s_daxpy(9, *pBase->pm()[4], dJi_x_L, 1, dJi_y, 1);
-			s_daxpy(9, *pBase->pm()[5], dJi_y_L, 1, dJi_y, 1);
-			s_daxpy(9, *pBase->pm()[6], dJi_z_L, 1, dJi_y, 1);
+			s_daxpy(9, *Base().pm()[4], dJi_x_L, 1, dJi_y, 1);
+			s_daxpy(9, *Base().pm()[5], dJi_y_L, 1, dJi_y, 1);
+			s_daxpy(9, *Base().pm()[6], dJi_z_L, 1, dJi_y, 1);
 
-			s_daxpy(9, *pBase->pm()[8], dJi_x_L, 1, dJi_z, 1);
-			s_daxpy(9, *pBase->pm()[9], dJi_y_L, 1, dJi_z, 1);
-			s_daxpy(9, *pBase->pm()[10], dJi_z_L, 1, dJi_z, 1);
+			s_daxpy(9, *Base().pm()[8], dJi_x_L, 1, dJi_z, 1);
+			s_daxpy(9, *Base().pm()[9], dJi_y_L, 1, dJi_z, 1);
+			s_daxpy(9, *Base().pm()[10], dJi_z_L, 1, dJi_z, 1);
 
-			//s_daxpy(9, *pBase->pm()[0], dJi_x_L, 1, dJi_x, 1);
-			//s_daxpy(9, *pBase->pm()[4], dJi_y_L, 1, dJi_x, 1);
-			//s_daxpy(9, *pBase->pm()[8], dJi_z_L, 1, dJi_x, 1);
+			//s_daxpy(9, *Base().pm()[0], dJi_x_L, 1, dJi_x, 1);
+			//s_daxpy(9, *Base().pm()[4], dJi_y_L, 1, dJi_x, 1);
+			//s_daxpy(9, *Base().pm()[8], dJi_z_L, 1, dJi_x, 1);
 
-			//s_daxpy(9, *pBase->pm()[1], dJi_x_L, 1, dJi_y, 1);
-			//s_daxpy(9, *pBase->pm()[5], dJi_y_L, 1, dJi_y, 1);
-			//s_daxpy(9, *pBase->pm()[9], dJi_z_L, 1, dJi_y, 1);
+			//s_daxpy(9, *Base().pm()[1], dJi_x_L, 1, dJi_y, 1);
+			//s_daxpy(9, *Base().pm()[5], dJi_y_L, 1, dJi_y, 1);
+			//s_daxpy(9, *Base().pm()[9], dJi_z_L, 1, dJi_y, 1);
 
-			//s_daxpy(9, *pBase->pm()[2], dJi_x_L, 1, dJi_z, 1);
-			//s_daxpy(9, *pBase->pm()[6], dJi_y_L, 1, dJi_z, 1);
-			//s_daxpy(9, *pBase->pm()[10], dJi_z_L, 1, dJi_z, 1);
+			//s_daxpy(9, *Base().pm()[2], dJi_x_L, 1, dJi_z, 1);
+			//s_daxpy(9, *Base().pm()[6], dJi_y_L, 1, dJi_z, 1);
+			//s_daxpy(9, *Base().pm()[10], dJi_z_L, 1, dJi_z, 1);
 
 			break;
 		}
@@ -208,7 +208,7 @@ namespace Robots
 		/*end*/
 		
 		
-		//s_pm_dot_v3(*pBase->pm(), vEE_L, vEE);
+		//s_pm_dot_v3(*Base().pm(), vEE_L, vEE);
 
 		s_daxpy(9, vEE[0], dJi_x, 1, dJi, 1);
 		s_daxpy(9, vEE[1], dJi_y, 1, dJi, 1);
@@ -476,46 +476,46 @@ namespace Robots
 	{
 		double pm[4][4], pm1[4][4];
 
-		pBase->update();
+		Base().update();
 
 		double pe[6] = { 0, 0, 0, PI / 2, a1, -PI / 2 + b1 };
 		s_pe2pm(pe, *pm);
-		s_pm_dot_pm(*pBase->pm(), *pm, *pm1);
-		pP1a->setPm(*pm1);
+		s_pm_dot_pm(*Base().pm(), *pm, *pm1);
+		p1a().setPm(*pm1);
 
 		double pe1[6] = { l1, 0, 0, 0, 0, 0 };
 		s_pe2pm(pe1, *pm);
-		s_pm_dot_pm(*pP1a->pm(), *pm, *pm1);
-		pThigh->setPm(*pm1);
+		s_pm_dot_pm(*p1a().pm(), *pm, *pm1);
+		thigh().setPm(*pm1);
 
 		double pe2[6] = { U2x, U2y, U2z, PI / 2, a2, -PI / 2 + b2 };
 		s_pe2pm(pe2, *pm);
-		s_pm_dot_pm(*pBase->pm(), *pm, *pm1);
-		pP2a->setPm(*pm1);
+		s_pm_dot_pm(*Base().pm(), *pm, *pm1);
+		p2a().setPm(*pm1);
 
 		double pe3[6] = { l2, 0, 0, 0, 0, 0 };
 		s_pe2pm(pe3, *pm);
-		s_pm_dot_pm(*pP2a->pm(), *pm, *pm1);
-		pP2b->setPm(*pm1);
+		s_pm_dot_pm(*p2a().pm(), *pm, *pm1);
+		p2b().setPm(*pm1);
 
 		double pe4[6] = { U3x, U3y, U3z, PI / 2, a3, -PI / 2 + b3 };
 		s_pe2pm(pe4, *pm);
-		s_pm_dot_pm(*pBase->pm(), *pm, *pm1);
-		pP3a->setPm(*pm1);
+		s_pm_dot_pm(*Base().pm(), *pm, *pm1);
+		p3a().setPm(*pm1);
 
 		double pe5[6] = { l3, 0, 0, 0, 0, 0 };
 		s_pe2pm(pe5, *pm);
-		s_pm_dot_pm(*pP3a->pm(), *pm, *pm1);
-		pP3b->setPm(*pm1);
+		s_pm_dot_pm(*p3a().pm(), *pm, *pm1);
+		p3b().setPm(*pm1);
 
 		/*驱动位置*/
-		pM1->update();
-		pM2->update();
-		pM3->update();
+		m1().update();
+		m2().update();
+		m3().update();
 
 		/*地面球铰的位置*/
-		pSfi->update();
-		std::copy_n((const double*)*pSfi->pm(), 16, const_cast<double *>(*pSfj->prtPm()));
+		sfi().update();
+		std::copy_n((const double*)*sfi().pm(), 16, const_cast<double *>(*sfj().prtPm()));
 	}
 	void LegI::_CalVcdByVpos()
 	{
@@ -624,16 +624,16 @@ namespace Robots
 		v_L[4] = va1;
 		v_L[5] = ca1*vb1;
 
-		s_v2v(*pBase->pm(), pBase->vel(), v_L, v_G);
-		pP1a->setVel(v_G);
+		s_v2v(*Base().pm(), Base().vel(), v_L, v_G);
+		p1a().setVel(v_G);
 
 		/*thigh*/
 		v_L[0] += ca1*cb1*vl1;
 		v_L[1] += sb1*vl1;
 		v_L[2] += -sa1*cb1*vl1;
 
-		s_v2v(*pBase->pm(), pBase->vel(), v_L, v_G);
-		pThigh->setVel(v_G);
+		s_v2v(*Base().pm(), Base().vel(), v_L, v_G);
+		thigh().setVel(v_G);
 
 		/*p2a*/
 		v_L[0] = -U2z*va2 + U2y*ca2*vb2;
@@ -643,16 +643,16 @@ namespace Robots
 		v_L[4] = va2;
 		v_L[5] = ca2*vb2;
 
-		s_v2v(*pBase->pm(), pBase->vel(), v_L, v_G);
-		pP2a->setVel(v_G);
+		s_v2v(*Base().pm(), Base().vel(), v_L, v_G);
+		p2a().setVel(v_G);
 
 		/*p2b*/
 		v_L[0] += ca2*cb2*vl2;
 		v_L[1] += sb2*vl2;
 		v_L[2] += -sa2*cb2*vl2;
 
-		s_v2v(*pBase->pm(), pBase->vel(), v_L, v_G);
-		pP2b->setVel(v_G);
+		s_v2v(*Base().pm(), Base().vel(), v_L, v_G);
+		p2b().setVel(v_G);
 
 		/*p3a*/
 		v_L[0] = -U3z*va3 + U3y*ca3*vb3;
@@ -662,16 +662,16 @@ namespace Robots
 		v_L[4] = va3;
 		v_L[5] = ca3*vb3;
 
-		s_v2v(*pBase->pm(), pBase->vel(), v_L, v_G);
-		pP3a->setVel(v_G);
+		s_v2v(*Base().pm(), Base().vel(), v_L, v_G);
+		p3a().setVel(v_G);
 
 		/*p3b*/
 		v_L[0] += ca3*cb3*vl3;
 		v_L[1] += sb3*vl3;
 		v_L[2] += -sa3*cb3*vl3;
 
-		s_v2v(*pBase->pm(), pBase->vel(), v_L, v_G);
-		pP3b->setVel(v_G);
+		s_v2v(*Base().pm(), Base().vel(), v_L, v_G);
+		p3b().setVel(v_G);
 	}
 	void LegI::_CalAcdByApos()
 	{
@@ -754,8 +754,8 @@ namespace Robots
 		a_L[4] = aa1;
 		a_L[5] = qa1*vb1 + ca1*ab1;
 
-		s_a2a(*pBase->pm(), pBase->vel(), pBase->acc(), v_L, a_L, a_G, v_G);
-		pP1a->setAcc(a_G);
+		s_a2a(*Base().pm(), Base().vel(), Base().acc(), v_L, a_L, a_G, v_G);
+		p1a().setAcc(a_G);
 
 		/* Thigh */
 		v_L[0] += ca1*cb1*vl1;
@@ -766,9 +766,9 @@ namespace Robots
 		a_L[1] = cb1*vb1*vl1 + sb1*al1;
 		a_L[2] = -H12*vl1 - sa1*cb1*al1;
 
-		s_a2a(*pBase->pm(), pBase->vel(), pBase->acc(), v_L, a_L, a_G, v_G);
+		s_a2a(*Base().pm(), Base().vel(), Base().acc(), v_L, a_L, a_G, v_G);
 
-		pThigh->setAcc(a_G);
+		thigh().setAcc(a_G);
 
 		/* P2a */
 		v_L[0] = -U2z*va2 + U2y*ca2*vb2;
@@ -785,8 +785,8 @@ namespace Robots
 		a_L[4] = aa2;
 		a_L[5] = qa2*vb2 + ca2*ab2;
 
-		s_a2a(*pBase->pm(), pBase->vel(), pBase->acc(), v_L, a_L, a_G, v_G);
-		pP2a->setAcc(a_G);
+		s_a2a(*Base().pm(), Base().vel(), Base().acc(), v_L, a_L, a_G, v_G);
+		p2a().setAcc(a_G);
 		/* P2b */
 		v_L[0] += ca2*cb2*vl2;
 		v_L[1] += sb2*vl2;
@@ -796,8 +796,8 @@ namespace Robots
 		a_L[1] += pb2*vl2 + sb2*al2;
 		a_L[2] += -pa2*cb2*vl2 - sa2*qb2*vl2 - sa2*cb2*al2;
 
-		s_a2a(*pBase->pm(), pBase->vel(), pBase->acc(), v_L, a_L, a_G, v_G);
-		pP2b->setAcc(a_G);
+		s_a2a(*Base().pm(), Base().vel(), Base().acc(), v_L, a_L, a_G, v_G);
+		p2b().setAcc(a_G);
 		/* P3a */
 		v_L[0] = -U3z*va3 + U3y*ca3*vb3;
 		v_L[1] = +U3z*sa3*vb3 - U3x*ca3*vb3;
@@ -813,8 +813,8 @@ namespace Robots
 		a_L[4] = aa3;
 		a_L[5] = qa3*vb3 + ca3*ab3;
 
-		s_a2a(*pBase->pm(), pBase->vel(), pBase->acc(), v_L, a_L, a_G, v_G);
-		pP3a->setAcc(a_G);
+		s_a2a(*Base().pm(), Base().vel(), Base().acc(), v_L, a_L, a_G, v_G);
+		p3a().setAcc(a_G);
 		/* P3b */
 		v_L[0] += ca3*cb3*vl3;
 		v_L[1] += sb3*vl3;
@@ -824,12 +824,12 @@ namespace Robots
 		a_L[1] += pb3*vl3 + sb3*al3;
 		a_L[2] += -pa3*cb3*vl3 - sa3*qb3*vl3 - sa3*cb3*al3;
 
-		s_a2a(*pBase->pm(), pBase->vel(), pBase->acc(), v_L, a_L, a_G, v_G);
-		pP3b->setAcc(a_G);
+		s_a2a(*Base().pm(), Base().vel(), Base().acc(), v_L, a_L, a_G, v_G);
+		p3b().setAcc(a_G);
 
-		pM1->setMotAcc(al1);
-		pM2->setMotAcc(al2);
-		pM3->setMotAcc(al3);
+		m1().setMotAcc(al1);
+		m2().setMotAcc(al2);
+		m3().setMotAcc(al3);
 	}
 
 	void LegI::FastDyn()
@@ -852,84 +852,84 @@ namespace Robots
 		*/
 
 		/*更新每个元素*/
-		pRobot->pBody->update();
+		pRobot->Body().update();
 
-		for (auto &i : pPrts)
+		for (auto i : prt_id_array_)
 		{
 			i->update();
 		}
-		for (auto &i : pJnts)
+		for (auto i : jnt_id_array_)
 		{
 			i->update();
 		}
-		for (auto &i : pMots)
+		for (auto i : mot_id_array_)
 		{
 			i->update();
 		}
 
 		/*复制约束矩阵*/
-		s_block_cpy(6, 4, pU1->cstMtxJ(), 0, 0, 4, *_C, 0, 0, 36);
-		s_block_cpy(6, 4, pU2->cstMtxJ(), 0, 0, 4, *_C, 6, 4, 36);
-		s_block_cpy(6, 4, pU3->cstMtxJ(), 0, 0, 4, *_C, 12, 8, 36);
-		s_block_cpy(6, 5, pP1->cstMtxI(), 0, 0, 5, *_C, 18, 12, 36);
-		s_block_cpy(6, 5, pP1->cstMtxJ(), 0, 0, 5, *_C, 0, 12, 36);
-		s_block_cpy(6, 5, pP2->cstMtxI(), 0, 0, 5, *_C, 24, 17, 36);
-		s_block_cpy(6, 5, pP2->cstMtxJ(), 0, 0, 5, *_C, 6, 17, 36);
-		s_block_cpy(6, 5, pP3->cstMtxI(), 0, 0, 5, *_C, 30, 22, 36);
-		s_block_cpy(6, 5, pP3->cstMtxJ(), 0, 0, 5, *_C, 12, 22, 36);
-		s_block_cpy(6, 3, pS2->cstMtxI(), 0, 0, 3, *_C, 18, 27, 36);
-		s_block_cpy(6, 3, pS2->cstMtxJ(), 0, 0, 3, *_C, 24, 27, 36);
-		s_block_cpy(6, 3, pS3->cstMtxI(), 0, 0, 3, *_C, 18, 30, 36);
-		s_block_cpy(6, 3, pS3->cstMtxJ(), 0, 0, 3, *_C, 30, 30, 36);
+		s_block_cpy(6, 4, u1().cstMtxJ(), 0, 0, 4, *_C, 0, 0, 36);
+		s_block_cpy(6, 4, u2().cstMtxJ(), 0, 0, 4, *_C, 6, 4, 36);
+		s_block_cpy(6, 4, u3().cstMtxJ(), 0, 0, 4, *_C, 12, 8, 36);
+		s_block_cpy(6, 5, p1().cstMtxI(), 0, 0, 5, *_C, 18, 12, 36);
+		s_block_cpy(6, 5, p1().cstMtxJ(), 0, 0, 5, *_C, 0, 12, 36);
+		s_block_cpy(6, 5, p2().cstMtxI(), 0, 0, 5, *_C, 24, 17, 36);
+		s_block_cpy(6, 5, p2().cstMtxJ(), 0, 0, 5, *_C, 6, 17, 36);
+		s_block_cpy(6, 5, p3().cstMtxI(), 0, 0, 5, *_C, 30, 22, 36);
+		s_block_cpy(6, 5, p3().cstMtxJ(), 0, 0, 5, *_C, 12, 22, 36);
+		s_block_cpy(6, 3, s2().cstMtxI(), 0, 0, 3, *_C, 18, 27, 36);
+		s_block_cpy(6, 3, s2().cstMtxJ(), 0, 0, 3, *_C, 24, 27, 36);
+		s_block_cpy(6, 3, s3().cstMtxI(), 0, 0, 3, *_C, 18, 30, 36);
+		s_block_cpy(6, 3, s3().cstMtxJ(), 0, 0, 3, *_C, 30, 30, 36);
 
-		if (pSf->isActive())
+		if (sf().isActive())
 		{
 			/*若该腿支撑，则使用Sf副约束*/
-			s_block_cpy(6, 3, pSf->cstMtxI(), 0, 0, 3, *_C, 18, 33, 36);
+			s_block_cpy(6, 3, sf().cstMtxI(), 0, 0, 3, *_C, 18, 33, 36);
 
 			/*更新驱动矩阵M*/
-			s_block_cpy(6, 1, pM1->cstMtxI(), 0, 0, 1, *_c_M, 18, 1, 4);
-			s_block_cpy(6, 1, pM1->cstMtxJ(), 0, 0, 1, *_c_M, 0, 1, 4);
-			s_block_cpy(6, 1, pM2->cstMtxI(), 0, 0, 1, *_c_M, 24, 2, 4);
-			s_block_cpy(6, 1, pM2->cstMtxJ(), 0, 0, 1, *_c_M, 6, 2, 4);
-			s_block_cpy(6, 1, pM3->cstMtxI(), 0, 0, 1, *_c_M, 30, 3, 4);
-			s_block_cpy(6, 1, pM3->cstMtxJ(), 0, 0, 1, *_c_M, 12, 3, 4);
+			s_block_cpy(6, 1, m1().cstMtxI(), 0, 0, 1, *_c_M, 18, 1, 4);
+			s_block_cpy(6, 1, m1().cstMtxJ(), 0, 0, 1, *_c_M, 0, 1, 4);
+			s_block_cpy(6, 1, m2().cstMtxI(), 0, 0, 1, *_c_M, 24, 2, 4);
+			s_block_cpy(6, 1, m2().cstMtxJ(), 0, 0, 1, *_c_M, 6, 2, 4);
+			s_block_cpy(6, 1, m3().cstMtxI(), 0, 0, 1, *_c_M, 30, 3, 4);
+			s_block_cpy(6, 1, m3().cstMtxJ(), 0, 0, 1, *_c_M, 12, 3, 4);
 		}
 		else
 		{
 			/*否则，更新驱动的约束矩阵*/
-			s_block_cpy(6, 1, pM1->cstMtxI(), 0, 0, 1, *_C, 18, 33, 36);
-			s_block_cpy(6, 1, pM1->cstMtxJ(), 0, 0, 1, *_C, 0, 33, 36);
-			s_block_cpy(6, 1, pM2->cstMtxI(), 0, 0, 1, *_C, 24, 34, 36);
-			s_block_cpy(6, 1, pM2->cstMtxJ(), 0, 0, 1, *_C, 6, 34, 36);
-			s_block_cpy(6, 1, pM3->cstMtxI(), 0, 0, 1, *_C, 30, 35, 36);
-			s_block_cpy(6, 1, pM3->cstMtxJ(), 0, 0, 1, *_C, 12, 35, 36);
+			s_block_cpy(6, 1, m1().cstMtxI(), 0, 0, 1, *_C, 18, 33, 36);
+			s_block_cpy(6, 1, m1().cstMtxJ(), 0, 0, 1, *_C, 0, 33, 36);
+			s_block_cpy(6, 1, m2().cstMtxI(), 0, 0, 1, *_C, 24, 34, 36);
+			s_block_cpy(6, 1, m2().cstMtxJ(), 0, 0, 1, *_C, 6, 34, 36);
+			s_block_cpy(6, 1, m3().cstMtxI(), 0, 0, 1, *_C, 30, 35, 36);
+			s_block_cpy(6, 1, m3().cstMtxJ(), 0, 0, 1, *_C, 12, 35, 36);
 		}
 
 		/*更新右侧的c_M矩阵*/
-		s_daxpy(6, -1, pP1a->prtFg(), 1, &_c_M[0][0], 4);
-		s_daxpy(6, 1, pP1a->prtFv(), 1, &_c_M[0][0], 4);
-		s_dgemm(6, 1, 6, 1, *pP1a->prtIm(), 6, pP1a->prtAcc(), 1, 1, &_c_M[0][0], 4);
+		s_daxpy(6, -1, p1a().prtFg(), 1, &_c_M[0][0], 4);
+		s_daxpy(6, 1, p1a().prtFv(), 1, &_c_M[0][0], 4);
+		s_dgemm(6, 1, 6, 1, *p1a().prtIm(), 6, p1a().prtAcc(), 1, 1, &_c_M[0][0], 4);
 
-		s_daxpy(6, -1, pP2a->prtFg(), 1, &_c_M[6][0], 4);
-		s_daxpy(6, 1, pP2a->prtFv(), 1, &_c_M[6][0], 4);
-		s_dgemm(6, 1, 6, 1, *pP2a->prtIm(), 6, pP2a->prtAcc(), 1, 1, &_c_M[6][0], 4);
+		s_daxpy(6, -1, p2a().prtFg(), 1, &_c_M[6][0], 4);
+		s_daxpy(6, 1, p2a().prtFv(), 1, &_c_M[6][0], 4);
+		s_dgemm(6, 1, 6, 1, *p2a().prtIm(), 6, p2a().prtAcc(), 1, 1, &_c_M[6][0], 4);
 
-		s_daxpy(6, -1, pP3a->prtFg(), 1, &_c_M[12][0], 4);
-		s_daxpy(6, 1, pP3a->prtFv(), 1, &_c_M[12][0], 4);
-		s_dgemm(6, 1, 6, 1, *pP3a->prtIm(), 6, pP3a->prtAcc(), 1, 1, &_c_M[12][0], 4);
+		s_daxpy(6, -1, p3a().prtFg(), 1, &_c_M[12][0], 4);
+		s_daxpy(6, 1, p3a().prtFv(), 1, &_c_M[12][0], 4);
+		s_dgemm(6, 1, 6, 1, *p3a().prtIm(), 6, p3a().prtAcc(), 1, 1, &_c_M[12][0], 4);
 
-		s_daxpy(6, -1, pThigh->prtFg(), 1, &_c_M[18][0], 4);
-		s_daxpy(6, 1, pThigh->prtFv(), 1, &_c_M[18][0], 4);
-		s_dgemm(6, 1, 6, 1, *pThigh->prtIm(), 6, pThigh->prtAcc(), 1, 1, &_c_M[18][0], 4);
+		s_daxpy(6, -1, thigh().prtFg(), 1, &_c_M[18][0], 4);
+		s_daxpy(6, 1, thigh().prtFv(), 1, &_c_M[18][0], 4);
+		s_dgemm(6, 1, 6, 1, *thigh().prtIm(), 6, thigh().prtAcc(), 1, 1, &_c_M[18][0], 4);
 
-		s_daxpy(6, -1, pP2b->prtFg(), 1, &_c_M[24][0], 4);
-		s_daxpy(6, 1, pP2b->prtFv(), 1, &_c_M[24][0], 4);
-		s_dgemm(6, 1, 6, 1, *pP2b->prtIm(), 6, pP2b->prtAcc(), 1, 1, &_c_M[24][0], 4);
+		s_daxpy(6, -1, p2b().prtFg(), 1, &_c_M[24][0], 4);
+		s_daxpy(6, 1, p2b().prtFv(), 1, &_c_M[24][0], 4);
+		s_dgemm(6, 1, 6, 1, *p2b().prtIm(), 6, p2b().prtAcc(), 1, 1, &_c_M[24][0], 4);
 
-		s_daxpy(6, -1, pP3b->prtFg(), 1, &_c_M[30][0], 4);
-		s_daxpy(6, 1, pP3b->prtFv(), 1, &_c_M[30][0], 4);
-		s_dgemm(6, 1, 6, 1, *pP3b->prtIm(), 6, pP3b->prtAcc(), 1, 1, &_c_M[30][0], 4);
+		s_daxpy(6, -1, p3b().prtFg(), 1, &_c_M[30][0], 4);
+		s_daxpy(6, 1, p3b().prtFv(), 1, &_c_M[30][0], 4);
+		s_dgemm(6, 1, 6, 1, *p3b().prtIm(), 6, p3b().prtAcc(), 1, 1, &_c_M[30][0], 4);
 	}
 
 	RobotTypeI::RobotTypeI(): pLF{ &LF_Leg }, pLM{ &LM_Leg }, pLR{ &LR_Leg }, pRF{ &RF_Leg }, pRM{ &RM_Leg }, pRR{ &RR_Leg }
@@ -967,11 +967,11 @@ namespace Robots
 		{
 			if (fixFeet[i] == '0')
 			{
-				pLegs[i]->pSf->activate(false);
+				pLegs[i]->sf().activate(false);
 			}
 			else
 			{
-				pLegs[i]->pSf->activate();
+				pLegs[i]->sf().activate();
 			}
 		}
 	}
@@ -981,7 +981,7 @@ namespace Robots
 
 		for (int i = 0; i < 6; ++i)
 		{
-			if (pLegs[i]->pSf->isActive())
+			if (pLegs[i]->sf().isActive())
 			{
 				fixFeet[i] = '1';
 			}
@@ -1001,13 +1001,13 @@ namespace Robots
 			{
 				if (activeMotion[i * 3 + j] == '0')
 				{
-					pLegs[i]->pMots[j]->activate(false);
-					pLegs[i]->pFces[j]->activate();
+					pLegs[i]->motionAt(j).activate(false);
+					pLegs[i]->forceAt(j).activate();
 				}
 				else
 				{
-					pLegs[i]->pMots[j]->activate();
-					pLegs[i]->pFces[j]->activate(false);
+					pLegs[i]->motionAt(j).activate();
+					pLegs[i]->forceAt(j).activate(false);
 				}
 			}
 		}
@@ -1021,7 +1021,7 @@ namespace Robots
 		{
 			for (int j = 0; j < 3; ++j)
 			{
-				if (pLegs[i]->pMots[j]->isActive())
+				if (pLegs[i]->motionAt(j).isActive())
 				{
 					activeMotion[i * 3 + j] = '1';
 				}
@@ -1042,12 +1042,12 @@ namespace Robots
 
 		int supported_Leg_Num{ 0 }, supported_id[6]{ 0 };
 
-		pBody->update();
+		Body().update();
 		
 		/*更新h，机身只有重力和惯性力*/
-		s_daxpy(6, -1, pBody->prtFg(), 1, h, 1);
-		s_daxpy(6, 1, pBody->prtFv(), 1, h, 1);
-		s_dgemm(6, 1, 6, 1, *pBody->prtIm(), 6, pBody->prtAcc(), 1, 1, h, 1);
+		s_daxpy(6, -1, Body().prtFg(), 1, h, 1);
+		s_daxpy(6, 1, Body().prtFv(), 1, h, 1);
+		s_dgemm(6, 1, 6, 1, *Body().prtIm(), 6, Body().prtAcc(), 1, 1, h, 1);
 
 		/*对每条腿操作*/
 		for (int i = 0; i < 6; ++i)
@@ -1055,12 +1055,12 @@ namespace Robots
 			pLegs[i]->FastDyn();
 
 			/*更新Cb*/
-			s_block_cpy(6, 4, pLegs[i]->pU1->cstMtxI(), 0, 0, 4, *Cb, 0, 0, 12);
-			s_block_cpy(6, 4, pLegs[i]->pU2->cstMtxI(), 0, 0, 4, *Cb, 0, 4, 12);
-			s_block_cpy(6, 4, pLegs[i]->pU3->cstMtxI(), 0, 0, 4, *Cb, 0, 8, 12);
+			s_block_cpy(6, 4, pLegs[i]->u1().cstMtxI(), 0, 0, 4, *Cb, 0, 0, 12);
+			s_block_cpy(6, 4, pLegs[i]->u2().cstMtxI(), 0, 0, 4, *Cb, 0, 4, 12);
+			s_block_cpy(6, 4, pLegs[i]->u3().cstMtxI(), 0, 0, 4, *Cb, 0, 8, 12);
 
 			/*复制C与c_M*/
-			if (pLegs[i]->pSf->isActive())
+			if (pLegs[i]->sf().isActive())
 			{
 				/*更新支撑腿数量与id*/
 				supported_id[i] = supported_Leg_Num;
@@ -1123,14 +1123,14 @@ namespace Robots
 		/*保存结果*/
 		for (int i = 0; i < 6; ++i)
 		{
-			if (pLegs[i]->pSf->isActive())
+			if (pLegs[i]->sf().isActive())
 			{
 				/*以下输入动力学计算，并补偿摩擦力*/
 				for (int j = 0; j < 3; ++j)
 				{
 					pLegs[i]->fIn_dyn[j] = h[supported_id[i] * 3 + j];
-					pLegs[i]->fIn_frc[j] = pLegs[i]->pMots[j]->motFceFrc();
-					pLegs[i]->pFces[j]->setFce(h[supported_id[i] * 3 + j]);
+					pLegs[i]->fIn_frc[j] = pLegs[i]->motionAt(j).motFceFrc();
+					pLegs[i]->forceAt(j).setFce(h[supported_id[i] * 3 + j]);
 				}
 			}
 			else
@@ -1139,8 +1139,8 @@ namespace Robots
 				for (int j = 0; j < 3; ++j)
 				{
 					pLegs[i]->fIn_dyn[j] = pLegs[i]->_c_M[33 + j][0];
-					pLegs[i]->fIn_frc[j] = pLegs[i]->pMots[j]->motFceFrc();
-					pLegs[i]->pFces[j]->setFce(pLegs[i]->_c_M[33 + j][0]);
+					pLegs[i]->fIn_frc[j] = pLegs[i]->motionAt(j).motFceFrc();
+					pLegs[i]->forceAt(j).setFce(pLegs[i]->_c_M[33 + j][0]);
 				}
 			}
 		}
@@ -1163,13 +1163,13 @@ namespace Robots
 		{
 			for (int j = 0; j < 3; ++j)
 			{
-				if (this->pLegs[i]->pMots[j]->isActive())
+				if (this->pLegs[i]->motionAt(j).isActive())
 				{
-					this->pLegs[i]->fIn_dyn[j] = this->pLegs[i]->pMots[j]->motFceDyn();
+					this->pLegs[i]->fIn_dyn[j] = this->pLegs[i]->motionAt(j).motFceDyn();
 				}
 				else
 				{
-					this->pLegs[i]->fIn_dyn[j] = this->pLegs[i]->pFces[j]->fce();
+					this->pLegs[i]->fIn_dyn[j] = this->pLegs[i]->forceAt(j).fce();
 				}
 			}
 		}
@@ -1180,107 +1180,106 @@ namespace Robots
 		Model::loadXml(ele);
 
 		/*Update Parts*/
-		pBody = findPart("MainBody");
+		body_id_ = partPool().find("MainBody");
 
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->pP1a = findPart(pLegs[j]->name() + "_P1a");
-			pLegs[j]->pP2a = findPart(pLegs[j]->name() + "_P2a");
-			pLegs[j]->pP3a = findPart(pLegs[j]->name() + "_P3a");
-			pLegs[j]->pThigh = findPart(pLegs[j]->name() + "_Thigh");
-			pLegs[j]->pP2b = findPart(pLegs[j]->name() + "_P2b");
-			pLegs[j]->pP3b = findPart(pLegs[j]->name() + "_P3b");
+			pLegs[j]->p1a_id_ = partPool().find(pLegs[j]->name() + "_P1a");
+			pLegs[j]->p2a_id_ = partPool().find(pLegs[j]->name() + "_P2a");
+			pLegs[j]->p3a_id_ = partPool().find(pLegs[j]->name() + "_P3a");
+			pLegs[j]->thigh_id_ = partPool().find(pLegs[j]->name() + "_Thigh");
+			pLegs[j]->p2b_id_ = partPool().find(pLegs[j]->name() + "_P2b");
+			pLegs[j]->p3b_id_ = partPool().find(pLegs[j]->name() + "_P3b");
 		}
 
 		/*Update Markers*/
-		pBodyCenter = pBody->findMarker("BodyCenter");
+		//pBodyCenter = Body().findMarker("BodyCenter");
 
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->pBase = pBody->findMarker(pLegs[j]->name() + "_Base");
-			pLegs[j]->LegBase::pBase = pLegs[j]->pBase;
+			pLegs[j]->base_mak_id_ = Body().markerPool().find(pLegs[j]->name() + "_Base");
 
-			pLegs[j]->pU1i = pBody->findMarker(pLegs[j]->name() + "_U1i");
-			pLegs[j]->pU2i = pBody->findMarker(pLegs[j]->name() + "_U2i");
-			pLegs[j]->pU3i = pBody->findMarker(pLegs[j]->name() + "_U3i");
+			pLegs[j]->u1i_id_ = Body().markerPool().find(pLegs[j]->name() + "_U1i");
+			pLegs[j]->u2i_id_ = Body().markerPool().find(pLegs[j]->name() + "_U2i");
+			pLegs[j]->u3i_id_ = Body().markerPool().find(pLegs[j]->name() + "_U3i");
 
-			pLegs[j]->pU1j = pLegs[j]->pP1a->findMarker("U1j");
-			pLegs[j]->pU2j = pLegs[j]->pP2a->findMarker("U2j");
-			pLegs[j]->pU3j = pLegs[j]->pP3a->findMarker("U3j");
+			pLegs[j]->u1j_id_ = pLegs[j]->p1a().markerPool().find("U1j");
+			pLegs[j]->u2j_id_ = pLegs[j]->p2a().markerPool().find("U2j");
+			pLegs[j]->u3j_id_ = pLegs[j]->p3a().markerPool().find("U3j");
 
-			pLegs[j]->pP1i = pLegs[j]->pThigh->findMarker("P1i");
-			pLegs[j]->pP2i = pLegs[j]->pP2b->findMarker("P2i");
-			pLegs[j]->pP3i = pLegs[j]->pP3b->findMarker("P3i");
+			pLegs[j]->p1i_id_ = pLegs[j]->thigh().markerPool().find("P1i");
+			pLegs[j]->p2i_id_ = pLegs[j]->p2b().markerPool().find("P2i");
+			pLegs[j]->p3i_id_ = pLegs[j]->p3b().markerPool().find("P3i");
 
-			pLegs[j]->pP1j = pLegs[j]->pP1a->findMarker("P1j");
-			pLegs[j]->pP2j = pLegs[j]->pP2a->findMarker("P2j");
-			pLegs[j]->pP3j = pLegs[j]->pP3a->findMarker("P3j");
+			pLegs[j]->p1j_id_ = pLegs[j]->p1a().markerPool().find("P1j");
+			pLegs[j]->p2j_id_ = pLegs[j]->p2a().markerPool().find("P2j");
+			pLegs[j]->p3j_id_ = pLegs[j]->p3a().markerPool().find("P3j");
 
-			pLegs[j]->pSfi = pLegs[j]->pThigh->findMarker("Sfi");
-			pLegs[j]->pS2i = pLegs[j]->pThigh->findMarker("S2i");
-			pLegs[j]->pS3i = pLegs[j]->pThigh->findMarker("S3i");
+			pLegs[j]->sfi_id_ = pLegs[j]->thigh().markerPool().find("Sfi");
+			pLegs[j]->s2i_id_ = pLegs[j]->thigh().markerPool().find("S2i");
+			pLegs[j]->s3i_id_ = pLegs[j]->thigh().markerPool().find("S3i");
 
-			pLegs[j]->pS2j = pLegs[j]->pP2b->findMarker("S2j");
-			pLegs[j]->pS3j = pLegs[j]->pP3b->findMarker("S3j");
-			pLegs[j]->pSfj = pGround->findMarker(pLegs[j]->name() + "_Sfj");
+			pLegs[j]->s2j_id_ = pLegs[j]->p2b().markerPool().find("S2j");
+			pLegs[j]->s3j_id_ = pLegs[j]->p3b().markerPool().find("S3j");
+			pLegs[j]->sfj_id_ = ground().markerPool().find(pLegs[j]->name() + "_Sfj");
 		}
 
 		/*Update Joints*/
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->pU1 = findJoint(pLegs[j]->name() + "_U1");
-			pLegs[j]->pU2 = findJoint(pLegs[j]->name() + "_U2");
-			pLegs[j]->pU3 = findJoint(pLegs[j]->name() + "_U3");
-			pLegs[j]->pP1 = findJoint(pLegs[j]->name() + "_P1");
-			pLegs[j]->pP2 = findJoint(pLegs[j]->name() + "_P2");
-			pLegs[j]->pP3 = findJoint(pLegs[j]->name() + "_P3");
-			pLegs[j]->pSf = findJoint(pLegs[j]->name() + "_Sf");
-			pLegs[j]->pS2 = findJoint(pLegs[j]->name() + "_S2");
-			pLegs[j]->pS3 = findJoint(pLegs[j]->name() + "_S3");
+			pLegs[j]->u1_id_ = jointPool().find(pLegs[j]->name() + "_U1");
+			pLegs[j]->u2_id_ = jointPool().find(pLegs[j]->name() + "_U2");
+			pLegs[j]->u3_id_ = jointPool().find(pLegs[j]->name() + "_U3");
+			pLegs[j]->p1_id_ = jointPool().find(pLegs[j]->name() + "_P1");
+			pLegs[j]->p2_id_ = jointPool().find(pLegs[j]->name() + "_P2");
+			pLegs[j]->p3_id_ = jointPool().find(pLegs[j]->name() + "_P3");
+			pLegs[j]->sf_id_ = jointPool().find(pLegs[j]->name() + "_Sf");
+			pLegs[j]->s2_id_ = jointPool().find(pLegs[j]->name() + "_S2");
+			pLegs[j]->s3_id_ = jointPool().find(pLegs[j]->name() + "_S3");
 		}
 
 		/*Update Motions*/
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->pM1 = findMotion(pLegs[j]->name() + "_M1");
-			pLegs[j]->pM2 = findMotion(pLegs[j]->name() + "_M2");
-			pLegs[j]->pM3 = findMotion(pLegs[j]->name() + "_M3");
+			pLegs[j]->m1_id_ = motionPool().find(pLegs[j]->name() + "_M1");
+			pLegs[j]->m2_id_ = motionPool().find(pLegs[j]->name() + "_M2");
+			pLegs[j]->m3_id_ = motionPool().find(pLegs[j]->name() + "_M3");
 		}
 
 		/* Update Forces */
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->pF1 = dynamic_cast<SingleComponentForce*>(findForce(pLegs[j]->name() + "_F1"));
-			pLegs[j]->pF2 = dynamic_cast<SingleComponentForce*>(findForce(pLegs[j]->name() + "_F2"));
-			pLegs[j]->pF3 = dynamic_cast<SingleComponentForce*>(findForce(pLegs[j]->name() + "_F3"));
+			pLegs[j]->f1_id_ = forcePool().find(pLegs[j]->name() + "_F1");
+			pLegs[j]->f2_id_ = forcePool().find(pLegs[j]->name() + "_F2");
+			pLegs[j]->f3_id_ = forcePool().find(pLegs[j]->name() + "_F3");
 		}
 
 		/*Update Dimension Variables*/
 		for (int i = 0; i < 6; ++i)
 		{
 			double pm[4][4];
-			s_inv_pm_dot_pm(*pLegs[i]->pBase->prtPm(), *pLegs[i]->pU2i->prtPm(), *pm);
+			s_inv_pm_dot_pm(*pLegs[i]->Base().prtPm(), *pLegs[i]->u2i().prtPm(), *pm);
 			*const_cast<double *>(&pLegs[i]->U2x) = pm[0][3];
 			*const_cast<double *>(&pLegs[i]->U2y) = pm[1][3];
 			*const_cast<double *>(&pLegs[i]->U2z) = pm[2][3];
-			s_inv_pm_dot_pm(*pLegs[i]->pBase->prtPm(), *pLegs[i]->pU3i->prtPm(), *pm);
+			s_inv_pm_dot_pm(*pLegs[i]->Base().prtPm(), *pLegs[i]->u3i().prtPm(), *pm);
 			*const_cast<double *>(&pLegs[i]->U3x) = pm[0][3];
 			*const_cast<double *>(&pLegs[i]->U3y) = pm[1][3];
 			*const_cast<double *>(&pLegs[i]->U3z) = pm[2][3];
-			*const_cast<double *>(&pLegs[i]->S2x) = pLegs[i]->pS2i->prtPm()[0][3];
-			*const_cast<double *>(&pLegs[i]->S2y) = pLegs[i]->pS2i->prtPm()[1][3];
-			*const_cast<double *>(&pLegs[i]->S2z) = pLegs[i]->pS2i->prtPm()[2][3];
-			*const_cast<double *>(&pLegs[i]->S3x) = pLegs[i]->pS3i->prtPm()[0][3];
-			*const_cast<double *>(&pLegs[i]->S3y) = pLegs[i]->pS3i->prtPm()[1][3];
-			*const_cast<double *>(&pLegs[i]->S3z) = pLegs[i]->pS3i->prtPm()[2][3];
-			*const_cast<double *>(&pLegs[i]->Sfx) = pLegs[i]->pSfi->prtPm()[0][3];
-			*const_cast<double *>(&pLegs[i]->Sfy) = pLegs[i]->pSfi->prtPm()[1][3];
-			*const_cast<double *>(&pLegs[i]->Sfz) = pLegs[i]->pSfi->prtPm()[2][3];
+			*const_cast<double *>(&pLegs[i]->S2x) = pLegs[i]->s2i().prtPm()[0][3];
+			*const_cast<double *>(&pLegs[i]->S2y) = pLegs[i]->s2i().prtPm()[1][3];
+			*const_cast<double *>(&pLegs[i]->S2z) = pLegs[i]->s2i().prtPm()[2][3];
+			*const_cast<double *>(&pLegs[i]->S3x) = pLegs[i]->s3i().prtPm()[0][3];
+			*const_cast<double *>(&pLegs[i]->S3y) = pLegs[i]->s3i().prtPm()[1][3];
+			*const_cast<double *>(&pLegs[i]->S3z) = pLegs[i]->s3i().prtPm()[2][3];
+			*const_cast<double *>(&pLegs[i]->Sfx) = pLegs[i]->sfi().prtPm()[0][3];
+			*const_cast<double *>(&pLegs[i]->Sfy) = pLegs[i]->sfi().prtPm()[1][3];
+			*const_cast<double *>(&pLegs[i]->Sfz) = pLegs[i]->sfi().prtPm()[2][3];
 
 			*const_cast<double *>(&pLegs[i]->D1) = pLegs[i]->U2z;
 			*const_cast<double *>(&pLegs[i]->H1) = pLegs[i]->U2y;
-			*const_cast<double *>(&pLegs[i]->D2) = pLegs[i]->pS2i->prtPm()[2][3];
-			*const_cast<double *>(&pLegs[i]->H2) = pLegs[i]->pS2i->prtPm()[1][3];
+			*const_cast<double *>(&pLegs[i]->D2) = pLegs[i]->s2i().prtPm()[2][3];
+			*const_cast<double *>(&pLegs[i]->H2) = pLegs[i]->s2i().prtPm()[1][3];
 		}
 	}
 	
@@ -1292,23 +1291,23 @@ namespace Robots
 	{
 		Aris::Dynamic::Element *pForces[]
 		{
-			pLegs[0]->pF2,pLegs[1]->pF2, pLegs[2]->pF2,pLegs[3]->pF2,pLegs[4]->pF2, pLegs[5]->pF2,
-			pLegs[0]->pF3,pLegs[1]->pF3, pLegs[2]->pF3,pLegs[3]->pF3,pLegs[4]->pF3, pLegs[5]->pF3,
+			&pLegs[0]->f2(),&pLegs[1]->f2(), &pLegs[2]->f2(),&pLegs[3]->f2(),&pLegs[4]->f2(), &pLegs[5]->f2(),
+			&pLegs[0]->f3(),&pLegs[1]->f3(), &pLegs[2]->f3(),&pLegs[3]->f3(),&pLegs[4]->f3(), &pLegs[5]->f3(),
 		};
 		Aris::Dynamic::Element *pFirst[]
 		{
-			pLegs[0]->pM1,pLegs[1]->pF1, pLegs[2]->pM1,pLegs[3]->pF1,pLegs[4]->pM1, pLegs[5]->pF1,
-			pLegs[1]->pSf,pLegs[3]->pSf,pLegs[5]->pSf
+			&pLegs[0]->m1(),&pLegs[1]->f1(), &pLegs[2]->m1(),&pLegs[3]->f1(),&pLegs[4]->m1(), &pLegs[5]->f1(),
+			&pLegs[1]->sf(),&pLegs[3]->sf(),&pLegs[5]->sf()
 		};
 		Aris::Dynamic::Element *pSecond[]
 		{
-			pLegs[0]->pF1,pLegs[1]->pM1, pLegs[2]->pF1,pLegs[3]->pM1,pLegs[4]->pF1, pLegs[5]->pM1,
-			pLegs[0]->pSf,pLegs[2]->pSf,pLegs[4]->pSf
+			&pLegs[0]->f1(),&pLegs[1]->m1(), &pLegs[2]->f1(),&pLegs[3]->m1(),&pLegs[4]->f1(), &pLegs[5]->m1(),
+			&pLegs[0]->sf(),&pLegs[2]->sf(),&pLegs[4]->sf()
 		};
 
-		script().alignMarker(pLegs[1]->pSf->makJ(), pLegs[1]->pSf->makI());
-		script().alignMarker(pLegs[3]->pSf->makJ(), pLegs[3]->pSf->makI());
-		script().alignMarker(pLegs[5]->pSf->makJ(), pLegs[5]->pSf->makI());
+		script().alignMarker(pLegs[1]->sf().makJ(), pLegs[1]->sf().makI());
+		script().alignMarker(pLegs[3]->sf().makJ(), pLegs[3]->sf().makI());
+		script().alignMarker(pLegs[5]->sf().makJ(), pLegs[5]->sf().makI());
 
 		for (auto &ele : pForces)script().activate(*ele, false);
 		for (auto &ele : pFirst)script().activate(*ele, true);
@@ -1318,23 +1317,23 @@ namespace Robots
 	{
 		Aris::Dynamic::Element *pForces[]
 		{
-			pLegs[0]->pF2,pLegs[1]->pF2, pLegs[2]->pF2,pLegs[3]->pF2,pLegs[4]->pF2, pLegs[5]->pF2,
-			pLegs[0]->pF3,pLegs[1]->pF3, pLegs[2]->pF3,pLegs[3]->pF3,pLegs[4]->pF3, pLegs[5]->pF3,
+			&pLegs[0]->f2(),&pLegs[1]->f2(), &pLegs[2]->f2(),&pLegs[3]->f2(),&pLegs[4]->f2(), &pLegs[5]->f2(),
+			&pLegs[0]->f3(),&pLegs[1]->f3(), &pLegs[2]->f3(),&pLegs[3]->f3(),&pLegs[4]->f3(), &pLegs[5]->f3(),
 		};
 		Aris::Dynamic::Element *pFirst[]
 		{
-			pLegs[0]->pM1,pLegs[1]->pF1, pLegs[2]->pM1,pLegs[3]->pF1,pLegs[4]->pM1, pLegs[5]->pF1,
-			pLegs[1]->pSf,pLegs[3]->pSf,pLegs[5]->pSf
+			&pLegs[0]->m1(),&pLegs[1]->f1(), &pLegs[2]->m1(),&pLegs[3]->f1(),&pLegs[4]->m1(), &pLegs[5]->f1(),
+			&pLegs[1]->sf(),&pLegs[3]->sf(),&pLegs[5]->sf()
 		};
 		Aris::Dynamic::Element *pSecond[]
 		{
-			pLegs[0]->pF1,pLegs[1]->pM1, pLegs[2]->pF1,pLegs[3]->pM1,pLegs[4]->pF1, pLegs[5]->pM1,
-			pLegs[0]->pSf,pLegs[2]->pSf,pLegs[4]->pSf
+			&pLegs[0]->f1(),&pLegs[1]->m1(), &pLegs[2]->f1(),&pLegs[3]->m1(),&pLegs[4]->f1(), &pLegs[5]->m1(),
+			&pLegs[0]->sf(),&pLegs[2]->sf(),&pLegs[4]->sf()
 		};
 
-		script().alignMarker(pLegs[0]->pSf->makJ(), pLegs[0]->pSf->makI());
-		script().alignMarker(pLegs[2]->pSf->makJ(), pLegs[2]->pSf->makI());
-		script().alignMarker(pLegs[4]->pSf->makJ(), pLegs[4]->pSf->makI());
+		script().alignMarker(pLegs[0]->sf().makJ(), pLegs[0]->sf().makI());
+		script().alignMarker(pLegs[2]->sf().makJ(), pLegs[2]->sf().makI());
+		script().alignMarker(pLegs[4]->sf().makJ(), pLegs[4]->sf().makI());
 
 		for (auto &ele : pForces)script().activate(*ele, false);
 		for (auto &ele : pFirst)script().activate(*ele, false);
