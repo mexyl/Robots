@@ -197,20 +197,10 @@ int main(int argc, char *argv[])
 
 int main_test(int argc, char *argv[])
 {
-	Aris::Dynamic::ElementPool<Aris::Dynamic::Part>::registerType<Aris::Dynamic::Part>();
-	Aris::Dynamic::ElementPool<Aris::Dynamic::Marker>::registerType<Aris::Dynamic::Marker>();
-
-	Aris::Dynamic::Model::registerJointType<Aris::Dynamic::RevoluteJoint>();
-	Aris::Dynamic::Model::registerJointType<Aris::Dynamic::TranslationalJoint>();
-	Aris::Dynamic::Model::registerJointType<Aris::Dynamic::UniversalJoint>();
-	Aris::Dynamic::Model::registerJointType<Aris::Dynamic::SphericalJoint>();
-
-	Aris::Dynamic::Model::registerMotionType<Aris::Dynamic::SingleComponentMotion>();
-
-	Aris::Dynamic::Model::registerForceType<Aris::Dynamic::SingleComponentForce>();
-
 #ifdef WIN32
-	rbt.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
+	//rbt.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
+	rbt.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
+	//rbt.loadXml("C:\\Users\\yang\\Desktop\\test.xml");
 #endif
 #ifdef UNIX
 	rbt.loadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
@@ -228,6 +218,8 @@ int main_test(int argc, char *argv[])
 
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE, rbt.Body());
+
+	rbt.saveXml("C:\\Users\\yang\\Desktop\\test.xml");
 
 	SimpleWalkParam_Aris param;
 	rbt.GetPee(param.beginPee);

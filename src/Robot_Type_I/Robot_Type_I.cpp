@@ -172,17 +172,19 @@ namespace Robots
 
 			dsp(*Base().pm(), 4, 4);
 
-			s_daxpy(9, *Base().pm()[0], dJi_x_L, 1, dJi_x, 1);
-			s_daxpy(9, *Base().pm()[1], dJi_y_L, 1, dJi_x, 1);
-			s_daxpy(9, *Base().pm()[2], dJi_z_L, 1, dJi_x, 1);
+			const double *a = &(Base().pm()[0][0]);
 
-			s_daxpy(9, *Base().pm()[4], dJi_x_L, 1, dJi_y, 1);
-			s_daxpy(9, *Base().pm()[5], dJi_y_L, 1, dJi_y, 1);
-			s_daxpy(9, *Base().pm()[6], dJi_z_L, 1, dJi_y, 1);
+			s_daxpy(9, Base().pm()[0][0], dJi_x_L, 1, dJi_x, 1);
+			s_daxpy(9, Base().pm()[0][1], dJi_y_L, 1, dJi_x, 1);
+			s_daxpy(9, Base().pm()[0][2], dJi_z_L, 1, dJi_x, 1);
 
-			s_daxpy(9, *Base().pm()[8], dJi_x_L, 1, dJi_z, 1);
-			s_daxpy(9, *Base().pm()[9], dJi_y_L, 1, dJi_z, 1);
-			s_daxpy(9, *Base().pm()[10], dJi_z_L, 1, dJi_z, 1);
+			s_daxpy(9, Base().pm()[1][0], dJi_x_L, 1, dJi_y, 1);
+			s_daxpy(9, Base().pm()[1][1], dJi_y_L, 1, dJi_y, 1);
+			s_daxpy(9, Base().pm()[1][2], dJi_z_L, 1, dJi_y, 1);
+
+			s_daxpy(9, Base().pm()[2][0], dJi_x_L, 1, dJi_z, 1);
+			s_daxpy(9, Base().pm()[2][1], dJi_y_L, 1, dJi_z, 1);
+			s_daxpy(9, Base().pm()[2][2], dJi_z_L, 1, dJi_z, 1);
 
 			//s_daxpy(9, *Base().pm()[0], dJi_x_L, 1, dJi_x, 1);
 			//s_daxpy(9, *Base().pm()[4], dJi_y_L, 1, dJi_x, 1);
