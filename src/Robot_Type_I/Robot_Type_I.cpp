@@ -884,7 +884,7 @@ namespace Robots
 		s_block_cpy(6, 3, s3().cstMtxI(), 0, 0, 3, *_C, 18, 30, 36);
 		s_block_cpy(6, 3, s3().cstMtxJ(), 0, 0, 3, *_C, 30, 30, 36);
 
-		if (sf().isActive())
+		if (sf().active())
 		{
 			/*若该腿支撑，则使用Sf副约束*/
 			s_block_cpy(6, 3, sf().cstMtxI(), 0, 0, 3, *_C, 18, 33, 36);
@@ -940,6 +940,8 @@ namespace Robots
 		{
 			Robots::RobotBase::pLegs[i] = static_cast<Robots::LegBase *>(pLegs[i]);
 		}
+
+		this->scriptPool().add<Aris::Dynamic::Script>("default_script");
 	}
 	void RobotTypeI::GetFin(double *fIn) const
 	{
@@ -983,7 +985,7 @@ namespace Robots
 
 		for (int i = 0; i < 6; ++i)
 		{
-			if (pLegs[i]->sf().isActive())
+			if (pLegs[i]->sf().active())
 			{
 				fixFeet[i] = '1';
 			}
@@ -1023,7 +1025,7 @@ namespace Robots
 		{
 			for (int j = 0; j < 3; ++j)
 			{
-				if (pLegs[i]->motionAt(j).isActive())
+				if (pLegs[i]->motionAt(j).active())
 				{
 					activeMotion[i * 3 + j] = '1';
 				}
@@ -1062,7 +1064,7 @@ namespace Robots
 			s_block_cpy(6, 4, pLegs[i]->u3().cstMtxI(), 0, 0, 4, *Cb, 0, 8, 12);
 
 			/*复制C与c_M*/
-			if (pLegs[i]->sf().isActive())
+			if (pLegs[i]->sf().active())
 			{
 				/*更新支撑腿数量与id*/
 				supported_id[i] = supported_Leg_Num;
@@ -1125,7 +1127,7 @@ namespace Robots
 		/*保存结果*/
 		for (int i = 0; i < 6; ++i)
 		{
-			if (pLegs[i]->sf().isActive())
+			if (pLegs[i]->sf().active())
 			{
 				/*以下输入动力学计算，并补偿摩擦力*/
 				for (int j = 0; j < 3; ++j)
@@ -1165,7 +1167,7 @@ namespace Robots
 		{
 			for (int j = 0; j < 3; ++j)
 			{
-				if (this->pLegs[i]->motionAt(j).isActive())
+				if (this->pLegs[i]->motionAt(j).active())
 				{
 					this->pLegs[i]->fIn_dyn[j] = this->pLegs[i]->motionAt(j).motFceDyn();
 				}
@@ -1177,7 +1179,7 @@ namespace Robots
 		}
 	}
 
-	void RobotTypeI::loadXml(const Aris::Core::XmlElement &ele)
+	auto RobotTypeI::loadXml(const Aris::Core::XmlElement &ele)->void
 	{
 		Model::loadXml(ele);
 
@@ -1284,65 +1286,258 @@ namespace Robots
 			*const_cast<double *>(&pLegs[i]->H2) = pLegs[i]->s2i().prtPm()[1][3];
 		}
 	}
-	
-	void RobotTypeI::SimScriptClear()
+	auto RobotTypeI::saveXml(Aris::Core::XmlElement &xml_ele)const->void
 	{
-		script().clear();
-	}
-	void RobotTypeI::SimScriptSetTopologyA()
+		Model::saveXml(xml_ele);
+
+		auto prt_xml_ele = xml_ele.FirstChildElement("Part");
+
+		std::vector<std::string> leg_name_vec{"LF", "LM", "LR", "RF", "RM", "RR"};
+
+		for (auto &name : leg_name_vec)
+		{
+			prt_xml_ele->FirstChildElement((name+"_P1a").c_str())->SetAttribute("inertia", "P1aGamma");
+			prt_xml_ele->FirstChildElement((name+"_P1a").c_str())->SetAttribute("graphic_file_path", "${P1a_graphic}");
+			prt_xml_ele->FirstChildElement((name+"_P1a").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("P1j")->SetAttribute("pe", "P1jpe");
+			prt_xml_ele->FirstChildElement((name+"_P1a").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("U1j")->SetAttribute("pe", "U1jpe");
+			prt_xml_ele->FirstChildElement((name+"_P2a").c_str())->SetAttribute("inertia", "P2aGamma");
+			prt_xml_ele->FirstChildElement((name+"_P2a").c_str())->SetAttribute("graphic_file_path", "${P23a_graphic}");
+			prt_xml_ele->FirstChildElement((name+"_P2a").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("P2j")->SetAttribute("pe", "P2jpe");
+			prt_xml_ele->FirstChildElement((name+"_P2a").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("U2j")->SetAttribute("pe", "U2jpe");
+			prt_xml_ele->FirstChildElement((name+"_P2b").c_str())->SetAttribute("inertia", "P2bGamma");
+			prt_xml_ele->FirstChildElement((name+"_P2b").c_str())->SetAttribute("graphic_file_path", "${P23b_graphic}");
+			prt_xml_ele->FirstChildElement((name+"_P2b").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("P2i")->SetAttribute("pe", "P2ipe");
+			prt_xml_ele->FirstChildElement((name+"_P2b").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("S2j")->SetAttribute("pe", "S2jpe");
+			prt_xml_ele->FirstChildElement((name+"_P3a").c_str())->SetAttribute("inertia", "P3aGamma");
+			prt_xml_ele->FirstChildElement((name+"_P3a").c_str())->SetAttribute("graphic_file_path", "${P23a_graphic}");
+			prt_xml_ele->FirstChildElement((name+"_P3a").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("P3j")->SetAttribute("pe", "P3jpe");
+			prt_xml_ele->FirstChildElement((name+"_P3a").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("U3j")->SetAttribute("pe", "U3jpe");
+			prt_xml_ele->FirstChildElement((name+"_P3b").c_str())->SetAttribute("inertia", "P3bGamma");
+			prt_xml_ele->FirstChildElement((name+"_P3b").c_str())->SetAttribute("graphic_file_path", "${P23b_graphic}");
+			prt_xml_ele->FirstChildElement((name+"_P3b").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("P3i")->SetAttribute("pe", "P3ipe");
+			prt_xml_ele->FirstChildElement((name+"_P3b").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("S3j")->SetAttribute("pe", "S3jpe");
+			prt_xml_ele->FirstChildElement((name+"_Thigh").c_str())->SetAttribute("inertia", "ThighGamma");
+			prt_xml_ele->FirstChildElement((name+"_Thigh").c_str())->SetAttribute("graphic_file_path", "${P1b_graphic}");
+			prt_xml_ele->FirstChildElement((name+"_Thigh").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("P1i")->SetAttribute("pe", "P1ipe");
+			prt_xml_ele->FirstChildElement((name+"_Thigh").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("S2i")->SetAttribute("pe", "S2ipe");
+			prt_xml_ele->FirstChildElement((name+"_Thigh").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("S3i")->SetAttribute("pe", "S3ipe");
+			prt_xml_ele->FirstChildElement((name+"_Thigh").c_str())->FirstChildElement("ChildMarker")->FirstChildElement("Sfi")->SetAttribute("pe", "Sfipe");
+
+			prt_xml_ele->FirstChildElement("MainBody")->FirstChildElement("ChildMarker")->FirstChildElement((name + "_Base").c_str())->SetAttribute("pe", (name + "pe").c_str());
+			prt_xml_ele->FirstChildElement("MainBody")->FirstChildElement("ChildMarker")->FirstChildElement((name + "_U1i").c_str())->SetAttribute("pe", "U1ipe");
+			prt_xml_ele->FirstChildElement("MainBody")->FirstChildElement("ChildMarker")->FirstChildElement((name + "_U2i").c_str())->SetAttribute("pe", "U2ipe");
+			prt_xml_ele->FirstChildElement("MainBody")->FirstChildElement("ChildMarker")->FirstChildElement((name + "_U3i").c_str())->SetAttribute("pe", "U3ipe");
+			prt_xml_ele->FirstChildElement("MainBody")->FirstChildElement("ChildMarker")->FirstChildElement((name + "_U1i").c_str())->SetAttribute("relative_to", (name + "_Base").c_str());
+			prt_xml_ele->FirstChildElement("MainBody")->FirstChildElement("ChildMarker")->FirstChildElement((name + "_U2i").c_str())->SetAttribute("relative_to", (name + "_Base").c_str());
+			prt_xml_ele->FirstChildElement("MainBody")->FirstChildElement("ChildMarker")->FirstChildElement((name + "_U3i").c_str())->SetAttribute("relative_to", (name + "_Base").c_str());
+		}
+		
+		prt_xml_ele->FirstChildElement("MainBody")->SetAttribute("inertia", "BodyGamma");
+		prt_xml_ele->FirstChildElement("MainBody")->SetAttribute("graphic_file_path", "${Body_graphic}");
+
+		
+
+	};
+
+	auto RobotTypeI::simToAdams(const std::string &adams_file, const Aris::Dynamic::PlanFunc &func, const Aris::Dynamic::PlanParamBase &param, int ms_dt)->Aris::Dynamic::SimResult
 	{
-		Aris::Dynamic::Element *pForces[]
-		{
-			&pLegs[0]->f2(),&pLegs[1]->f2(), &pLegs[2]->f2(),&pLegs[3]->f2(),&pLegs[4]->f2(), &pLegs[5]->f2(),
-			&pLegs[0]->f3(),&pLegs[1]->f3(), &pLegs[2]->f3(),&pLegs[3]->f3(),&pLegs[4]->f3(), &pLegs[5]->f3(),
-		};
-		Aris::Dynamic::Element *pFirst[]
-		{
-			&pLegs[0]->m1(),&pLegs[1]->f1(), &pLegs[2]->m1(),&pLegs[3]->f1(),&pLegs[4]->m1(), &pLegs[5]->f1(),
-			&pLegs[1]->sf(),&pLegs[3]->sf(),&pLegs[5]->sf()
-		};
-		Aris::Dynamic::Element *pSecond[]
-		{
-			&pLegs[0]->f1(),&pLegs[1]->m1(), &pLegs[2]->f1(),&pLegs[3]->m1(),&pLegs[4]->f1(), &pLegs[5]->m1(),
-			&pLegs[0]->sf(),&pLegs[2]->sf(),&pLegs[4]->sf()
-		};
+		double begin_pee[18], begin_peb[6];
+		this->GetPee(begin_pee);
+		this->GetPeb(begin_peb);
+		this->saveDynEle("before_robotTypeI_simToAdams");
+		
 
-		script().alignMarker(pLegs[1]->sf().makJ(), pLegs[1]->sf().makI());
-		script().alignMarker(pLegs[3]->sf().makJ(), pLegs[3]->sf().makI());
-		script().alignMarker(pLegs[5]->sf().makJ(), pLegs[5]->sf().makI());
 
-		for (auto &ele : pForces)script().activate(*ele, false);
-		for (auto &ele : pFirst)script().activate(*ele, true);
-		for (auto &ele : pSecond)script().activate(*ele, false);
-	}
-	void RobotTypeI::SimScriptSetTopologyB()
-	{
-		Aris::Dynamic::Element *pForces[]
+		enum STATE { STAND, SUSPEND, MOVE,} last_state[6], this_state[6];
+		std::int32_t sim_time{ 0 };
+		double last_Pee[6][3];
+		
+		scriptPool().at(0).clear();
+		
+		auto getState = [&]()->void
 		{
-			&pLegs[0]->f2(),&pLegs[1]->f2(), &pLegs[2]->f2(),&pLegs[3]->f2(),&pLegs[4]->f2(), &pLegs[5]->f2(),
-			&pLegs[0]->f3(),&pLegs[1]->f3(), &pLegs[2]->f3(),&pLegs[3]->f3(),&pLegs[4]->f3(), &pLegs[5]->f3(),
-		};
-		Aris::Dynamic::Element *pFirst[]
-		{
-			&pLegs[0]->m1(),&pLegs[1]->f1(), &pLegs[2]->m1(),&pLegs[3]->f1(),&pLegs[4]->m1(), &pLegs[5]->f1(),
-			&pLegs[1]->sf(),&pLegs[3]->sf(),&pLegs[5]->sf()
-		};
-		Aris::Dynamic::Element *pSecond[]
-		{
-			&pLegs[0]->f1(),&pLegs[1]->m1(), &pLegs[2]->f1(),&pLegs[3]->m1(),&pLegs[4]->f1(), &pLegs[5]->m1(),
-			&pLegs[0]->sf(),&pLegs[2]->sf(),&pLegs[4]->sf()
-		};
+			int stand_num = 0;
+			for (auto i = 0; i < 6; ++i)
+			{
+				double Pee_loc[3];
+				pLegs[i]->GetPee(Pee_loc);
 
-		script().alignMarker(pLegs[0]->sf().makJ(), pLegs[0]->sf().makI());
-		script().alignMarker(pLegs[2]->sf().makJ(), pLegs[2]->sf().makI());
-		script().alignMarker(pLegs[4]->sf().makJ(), pLegs[4]->sf().makI());
+				bool is_equal = Aris::Dynamic::s_is_equal(3, last_Pee[i], Pee_loc, 1e-10);
 
-		for (auto &ele : pForces)script().activate(*ele, false);
-		for (auto &ele : pFirst)script().activate(*ele, false);
-		for (auto &ele : pSecond)script().activate(*ele, true);
-	}
-	void RobotTypeI::SimScriptSimulate(std::uint32_t ms_dur, std::uint32_t ms_dt)
-	{
-		script().simulate(ms_dur, ms_dt);
+				if ((is_equal) && (stand_num<3))
+				{
+					this_state[i] = STAND;
+					stand_num++;
+				}
+				else if (is_equal)
+				{
+					this_state[i] = SUSPEND;
+					stand_num++;
+				}
+				else
+				{
+					this_state[i] = MOVE;
+				}
+
+				pLegs[i]->GetPee(last_Pee[i]);
+			}
+
+			if (stand_num < 3)throw std::runtime_error("can't sim gait because at some time the stand leg num is less than 3");
+		};
+		
+		//起始位置
+		this->GetPee(*last_Pee);
+
+		param.count = 0;
+		func(*this, param);
+
+		getState();
+		
+		for (auto i = 0; i < 6; ++i)
+		{
+			switch (this_state[i])
+			{
+			case STAND:
+			{
+				Aris::Dynamic::DynEle *ele_group[]{ &pLegs[i]->m1(),&pLegs[i]->f2(),&pLegs[i]->f3() };
+				for (auto &ele : ele_group)scriptPool().at(0).act(*ele, false);
+				break;
+			}
+			case SUSPEND:
+			{
+				Aris::Dynamic::DynEle *ele_group[]{ &pLegs[i]->m1(),&pLegs[i]->m2(),&pLegs[i]->m3() };
+				for (auto &ele : ele_group)scriptPool().at(0).act(*ele, false);
+				break;
+			}
+			case MOVE:
+			{
+				Aris::Dynamic::DynEle *ele_group[]{ &pLegs[i]->sf(),&pLegs[i]->f1(),&pLegs[i]->f2(),&pLegs[i]->f3() };
+				for (auto &ele : ele_group)scriptPool().at(0).act(*ele, false);
+				break;
+			}
+			}
+		}
+		std::copy_n(this_state, 6, last_state);
+		sim_time++;
+
+		//其他位置
+		
+		for (param.count = 1; true; ++param.count)
+		{
+			auto is_sim = func(*this, param);
+
+			getState();
+
+			bool is_change_topology = false;
+			for (auto i = 0; i < 6; ++i) if (last_state[i] != this_state[i]) is_change_topology = true;
+
+			if (is_change_topology)
+			{
+				scriptPool().at(0).sim(sim_time, ms_dt);
+				sim_time = 0;
+			}
+			
+			for (auto i = 0; i < 6; ++i)
+			{
+				switch (last_state[i])
+				{
+				case STAND:
+				{
+					switch (this_state[i])
+					{
+					case STAND: break;
+					case SUSPEND:
+					{
+						scriptPool().at(0).act(pLegs[i]->m2(), false);
+						scriptPool().at(0).act(pLegs[i]->m3(), false);
+						scriptPool().at(0).act(pLegs[i]->f2(), true);
+						scriptPool().at(0).act(pLegs[i]->f3(), true);
+						break;
+					}
+					case MOVE:
+					{
+						scriptPool().at(0).act(pLegs[i]->sf(), false);
+						scriptPool().at(0).act(pLegs[i]->m1(), true);
+						scriptPool().at(0).act(pLegs[i]->f1(), false);
+						break;
+					}
+					}
+					break;
+				}
+				case SUSPEND:
+				{
+					switch (this_state[i])
+					{
+					case STAND: 
+					{
+						scriptPool().at(0).act(pLegs[i]->m2(), true);
+						scriptPool().at(0).act(pLegs[i]->m3(), true);
+						scriptPool().at(0).act(pLegs[i]->f2(), false);
+						scriptPool().at(0).act(pLegs[i]->f3(), false);
+						break;
+					}
+					case SUSPEND:break;
+					case MOVE:
+					{
+						scriptPool().at(0).act(pLegs[i]->sf(), false);
+						scriptPool().at(0).act(pLegs[i]->m1(), true);
+						scriptPool().at(0).act(pLegs[i]->f1(), false);
+						scriptPool().at(0).act(pLegs[i]->m2(), true);
+						scriptPool().at(0).act(pLegs[i]->f2(), false);
+						scriptPool().at(0).act(pLegs[i]->m3(), true);
+						scriptPool().at(0).act(pLegs[i]->f3(), false);
+						break;
+					}
+					}
+					break;
+				}
+				case MOVE:
+				{
+					switch (this_state[i])
+					{
+					case STAND: 
+					{
+						scriptPool().at(0).act(pLegs[i]->sf(), true);
+						scriptPool().at(0).act(pLegs[i]->m1(), false);
+						scriptPool().at(0).act(pLegs[i]->f1(), true);
+						scriptPool().at(0).aln(pLegs[i]->sfj(), pLegs[i]->sfi());
+						break;
+					}
+					case SUSPEND:
+					{
+						scriptPool().at(0).act(pLegs[i]->sf(), true);
+						scriptPool().at(0).act(pLegs[i]->m1(), false);
+						scriptPool().at(0).act(pLegs[i]->f1(), true);
+						scriptPool().at(0).act(pLegs[i]->m2(), false);
+						scriptPool().at(0).act(pLegs[i]->f2(), true);
+						scriptPool().at(0).act(pLegs[i]->m3(), false);
+						scriptPool().at(0).act(pLegs[i]->f3(), true);
+						scriptPool().at(0).aln(pLegs[i]->sfj(), pLegs[i]->sfi());
+						break;
+					}
+					case MOVE:break;
+					}
+					break;
+				}
+					
+				}
+			}
+
+			std::copy_n(this_state, 6, last_state);
+
+			sim_time++;
+
+			if (!is_sim) 
+			{
+				scriptPool().at(0).sim(sim_time, ms_dt);
+				break;
+			}
+		}
+
+		this->loadDynEle("before_robotTypeI_simToAdams");
+		this->SetPee(begin_pee);
+		this->SetPeb(begin_peb);
+
+		return this->Aris::Dynamic::Model::simToAdams(adams_file, func, param, ms_dt, &scriptPool().at(0));
 	}
 }

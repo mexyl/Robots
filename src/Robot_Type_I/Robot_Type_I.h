@@ -213,7 +213,9 @@ namespace Robots
 		~RobotTypeI() = default;
 		
 		virtual void loadXml(const Aris::Core::XmlElement &xml_ele) override;
+		virtual auto saveXml(Aris::Core::XmlElement &xml_ele)const->void override;
 		using Model::loadXml;
+		using Model::saveXml;
 
 		void GetFin(double *Fin) const;
 		void GetFinDyn(double *Fin) const;
@@ -248,11 +250,7 @@ namespace Robots
 			}
 			SetVinFixFeet(Vin, FixFeet(), ActiveMotion());
 		};
-		
-		void SimScriptClear();
-		void SimScriptSetTopologyA();
-		void SimScriptSetTopologyB();
-		void SimScriptSimulate(std::uint32_t ms_dur, std::uint32_t ms_dt = 10);
+		auto simToAdams(const std::string &adams_file, const Aris::Dynamic::PlanFunc &fun, const Aris::Dynamic::PlanParamBase &param, int ms_dt)->Aris::Dynamic::SimResult;
 	
 	public:
 		union
@@ -280,106 +278,6 @@ namespace Robots
 		friend class LegI;
 	};
 
-	inline void Activate024(RobotTypeI *pRobot)
-	{
-		pRobot->pLF->sf().activate(false);
-		pRobot->pLF->m1().activate(true);
-		pRobot->pLF->m2().activate(true);
-		pRobot->pLF->m3().activate(true);
-		pRobot->pLF->f1().activate(false);
-		pRobot->pLF->f2().activate(false);
-		pRobot->pLF->f3().activate(false);
-
-		pRobot->pLR->sf().activate(false);
-		pRobot->pLR->m1().activate(true);
-		pRobot->pLR->m2().activate(true);
-		pRobot->pLR->m3().activate(true);
-		pRobot->pLR->f1().activate(false);
-		pRobot->pLR->f2().activate(false);
-		pRobot->pLR->f3().activate(false);
-
-		pRobot->pRM->sf().activate(false);
-		pRobot->pRM->m1().activate(true);
-		pRobot->pRM->m2().activate(true);
-		pRobot->pRM->m3().activate(true);
-		pRobot->pRM->f1().activate(false);
-		pRobot->pRM->f2().activate(false);
-		pRobot->pRM->f3().activate(false);
-
-		pRobot->pLM->sf().activate(true);
-		pRobot->pLM->m1().activate(false);
-		pRobot->pLM->m2().activate(true);
-		pRobot->pLM->m3().activate(true);
-		pRobot->pLM->f1().activate(true);
-		pRobot->pLM->f2().activate(false);
-		pRobot->pLM->f3().activate(false);
-
-		pRobot->pRF->sf().activate(true);
-		pRobot->pRF->m1().activate(false);
-		pRobot->pRF->m2().activate(true);
-		pRobot->pRF->m3().activate(true);
-		pRobot->pRF->f1().activate(true);
-		pRobot->pRF->f2().activate(false);
-		pRobot->pRF->f3().activate(false);
-
-		pRobot->pRR->sf().activate(true);
-		pRobot->pRR->m1().activate(false);
-		pRobot->pRR->m2().activate(true);
-		pRobot->pRR->m3().activate(true);
-		pRobot->pRR->f1().activate(true);
-		pRobot->pRR->f2().activate(false);
-		pRobot->pRR->f3().activate(false);
-	}
-	inline void Activate135(RobotTypeI *pRobot)
-	{
-		pRobot->pLF->sf().activate(true);
-		pRobot->pLF->m1().activate(false);
-		pRobot->pLF->m2().activate(true);
-		pRobot->pLF->m3().activate(true);
-		pRobot->pLF->f1().activate(true);
-		pRobot->pLF->f2().activate(false);
-		pRobot->pLF->f3().activate(false);
-
-		pRobot->pLR->sf().activate(true);
-		pRobot->pLR->m1().activate(false);
-		pRobot->pLR->m2().activate(true);
-		pRobot->pLR->m3().activate(true);
-		pRobot->pLR->f1().activate(true);
-		pRobot->pLR->f2().activate(false);
-		pRobot->pLR->f3().activate(false);
-
-		pRobot->pRM->sf().activate(true);
-		pRobot->pRM->m1().activate(false);
-		pRobot->pRM->m2().activate(true);
-		pRobot->pRM->m3().activate(true);
-		pRobot->pRM->f1().activate(true);
-		pRobot->pRM->f2().activate(false);
-		pRobot->pRM->f3().activate(false);
-
-		pRobot->pLM->sf().activate(false);
-		pRobot->pLM->m1().activate(true);
-		pRobot->pLM->m2().activate(true);
-		pRobot->pLM->m3().activate(true);
-		pRobot->pLM->f1().activate(false);
-		pRobot->pLM->f2().activate(false);
-		pRobot->pLM->f3().activate(false);
-
-		pRobot->pRF->sf().activate(false);
-		pRobot->pRF->m1().activate(true);
-		pRobot->pRF->m2().activate(true);
-		pRobot->pRF->m3().activate(true);
-		pRobot->pRF->f1().activate(false);
-		pRobot->pRF->f2().activate(false);
-		pRobot->pRF->f3().activate(false);
-
-		pRobot->pRR->sf().activate(false);
-		pRobot->pRR->m1().activate(true);
-		pRobot->pRR->m2().activate(true);
-		pRobot->pRR->m3().activate(true);
-		pRobot->pRR->f1().activate(false);
-		pRobot->pRR->f2().activate(false);
-		pRobot->pRR->f3().activate(false);
-	}
 
 }
 
