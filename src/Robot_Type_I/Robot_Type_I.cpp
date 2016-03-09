@@ -1335,7 +1335,12 @@ namespace Robots
 		prt_xml_ele->FirstChildElement("MainBody")->SetAttribute("inertia", "BodyGamma");
 		prt_xml_ele->FirstChildElement("MainBody")->SetAttribute("graphic_file_path", "${Body_graphic}");
 
-		
+		auto mot_xml_ele = xml_ele.FirstChildElement("Motion");
+		for (auto i = mot_xml_ele->FirstChildElement(); i != nullptr; i = i->NextSiblingElement())
+		{
+			i->SetAttribute("frc_coe", "Mot_friction");
+		}
+
 
 	};
 

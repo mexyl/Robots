@@ -199,8 +199,8 @@ int main_test(int argc, char *argv[])
 {
 #ifdef WIN32
 	//rbt.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
-	//rbt.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
-	rbt.loadXml("C:\\Users\\yang\\Desktop\\test.xml");
+	rbt.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
+	//rbt.loadXml("C:\\Users\\yang\\Desktop\\test.xml");
 	rbt.saveAdams("C:\\Users\\yang\\Desktop\\test2.cmd");
 #endif
 #ifdef UNIX
@@ -227,19 +227,19 @@ int main_test(int argc, char *argv[])
 	rbt.GetPeb(param.beginPeb);
 
 	Robots::WalkParam wk_param;
-	wk_param.totalCount = 200;
-	wk_param.n = 2;
+	wk_param.totalCount = 2000;
+	wk_param.n = 1;
 	wk_param.beta = 0.3;
 	wk_param.d = 0.5;
 
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE);
-	rbt.simToAdams("C:\\Users\\yang\\Desktop\\test.cmd", Robots::walk, wk_param, 10);
+	auto result = rbt.simToAdams("C:\\Users\\yang\\Desktop\\test.cmd", Robots::walk, wk_param, 50);
 	//rbt.SetPeb(beginPE);
 	//rbt.SetPee(beginEE);
 	//auto result = rbt.simDyn(Robots::walk, wk_param, 10, &rbt.scriptPool().at(0));
 	
-	//result.saveToTxt("C:\\Users\\yang\\Desktop\\test");
+	result.saveToTxt("C:\\Users\\yang\\Desktop\\test");
 
 	rbt.saveXml("C:\\Users\\yang\\Desktop\\test.xml");
 	

@@ -70,12 +70,12 @@ void ParseSimpleWalk(const std::string &cmd, const std::map<std::string, std::st
 	SimpleWalkParam param;
 	msg_out.copyStruct(param);
 }
-int SimpleWalk(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase & plan_param)
+int SimpleWalk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)
 {
 	auto &param = static_cast<const SimpleWalkParam&>(plan_param);
 	auto &robot = static_cast<Robots::RobotTypeI&>(model);
 
-	static Aris::Dynamic::FloatMarker beginBodyMak(robot.Ground(), nullptr, "313");
+	static Aris::Dynamic::FloatMarker beginBodyMak(robot.ground(), nullptr, "313");
 	static double beginEE[18];
 
 	/*在每次脚着地时更新与身体坐标系重合的位于地面的坐标系*/
@@ -172,7 +172,7 @@ void ParseRecover(const std::string &cmd, const std::map<std::string, std::strin
 	RecoverParam param;
 	msg_out.copyStruct(param);
 }
-int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase & plan_param)
+int Recover(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)
 {
 	auto &robot = static_cast<Robots::RobotBase &>(model);
 	auto &param = static_cast<const RecoverParam &>(plan_param);
@@ -199,7 +199,7 @@ int Recover(Aris::Dynamic::ModelBase &model, const Aris::Dynamic::PlanParamBase 
 			{
 				for (int j = 0; j < 3; ++j)
 				{
-					robot.motionAt(i * 3 + j).setMotPos(beginPin[i * 3 + j] * (cos(s) + 1) / 2 + alignPin[i * 3 + j] * (1 - cos(s)) / 2);
+					robot.motionPool().at(i * 3 + j).setMotPos(beginPin[i * 3 + j] * (cos(s) + 1) / 2 + alignPin[i * 3 + j] * (1 - cos(s)) / 2);
 				}
 			}
 			else
