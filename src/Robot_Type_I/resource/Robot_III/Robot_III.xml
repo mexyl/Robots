@@ -599,24 +599,24 @@
                 </AtiForceSensor>
             </SlaveType>
             <Slave>
-                <Motion1 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.676" input2count="22937600" absID="15"/>
-                <Motion2 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.698" input2count="22937600" absID="17"/>
-                <Motion3 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.698" input2count="22937600" absID="16"/>
-                <Motion4 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.676" input2count="22937600" absID="12"/>
-                <Motion5 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.698" input2count="22937600" absID="14"/>
-                <Motion6 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.698" input2count="22937600" absID="13"/>
-                <Motion7 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.676" input2count="22937600" absID=" 9"/>
-                <Motion8 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.698" input2count="22937600" absID="11"/>
-                <Motion9 type="ElmoSoloWhistle"  maxVel="0.2362" homePos="0.698" input2count="22937600" absID="10"/>
-                <Motion10 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.698" input2count="22937600" absID=" 2"/>
-                <Motion11 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.676" input2count="22937600" absID=" 0"/>
-                <Motion12 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.698" input2count="22937600" absID=" 1"/>
-                <Motion13 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.676" input2count="22937600" absID=" 3"/>
-                <Motion14 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.698" input2count="22937600" absID=" 5"/>
-                <Motion15 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.698" input2count="22937600" absID=" 4"/>
-                <Motion16 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.698" input2count="22937600" absID=" 7"/>
-                <Motion17 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.698" input2count="22937600" absID=" 8"/>
-                <Motion18 type="ElmoSoloWhistle" maxVel="0.2362" homePos="0.676" input2count="22937600" absID=" 6"/>
+                <Motion1 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id="15"/>
+                <Motion2 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="17"/>
+                <Motion3 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="16"/>
+                <Motion4 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id="12"/>
+                <Motion5 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="14"/>
+                <Motion6 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="13"/>
+                <Motion7 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id=" 9"/>
+                <Motion8 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="11"/>
+                <Motion9 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="10"/>
+                <Motion10 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 2"/>
+                <Motion11 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id=" 0"/>
+                <Motion12 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 1"/>
+                <Motion13 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id=" 3"/>
+                <Motion14 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 5"/>
+                <Motion15 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 4"/>
+                <Motion16 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 7"/>
+                <Motion17 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 8"/>
+                <Motion18 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id=" 6"/>
                 <ForceSensor type="AtiForceSensor"/>
             </Slave>
         </EtherCat>
