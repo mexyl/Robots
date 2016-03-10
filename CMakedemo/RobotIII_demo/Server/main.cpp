@@ -223,11 +223,17 @@ int main()
 	auto &rs = Aris::Server::ControlServer::instance();
 	
 	rs.createModel<Robots::RobotTypeI>();
+//#ifdef WIN32
+//	rs.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
+//#endif
+//#ifdef UNIX
+//	rs.loadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
+//#endif
 #ifdef WIN32
-	rs.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
+	rs.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
 #endif
 #ifdef UNIX
-	rs.loadXml("/usr/Robots/resource/Robot_Type_I/Robot_III/Robot_III.xml");
+	rs.loadXml("/usr/Robots/resource/Robot_Type_I/Robot_VIII/Robot_VIII.xml");
 #endif
 
 	rs.addCmd("en", BasicParseFunc, nullptr);
