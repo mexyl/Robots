@@ -214,8 +214,7 @@ int Recover(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & pl
 			}
 		}
 	}
-	
-	//向下写入输入位置
+
 	return param.align_count + param.recover_count - param.count - 1;
 }
 
@@ -236,12 +235,14 @@ int main()
 	rs.addCmd("hm", BasicParseFunc, nullptr);
 	rs.addCmd("rc", ParseRecover, Recover);
 	rs.addCmd("sw", ParseSimpleWalk, SimpleWalk);
+	rs.addCmd("wk", Robots::parseWalk, Robots::walk);
 
 	rs.open();
 
 	rs.setOnExit([]() {Aris::Core::stopMsgLoop(); });
-
 	Aris::Core::runMsgLoop();
+
+	
 
 	return 0;
 }
