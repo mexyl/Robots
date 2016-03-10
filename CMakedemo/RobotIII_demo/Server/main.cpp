@@ -235,7 +235,7 @@ int main()
 	rs.addCmd("hm", BasicParseFunc, nullptr);
 	rs.addCmd("rc", ParseRecover, Recover);
 	rs.addCmd("sw", ParseSimpleWalk, SimpleWalk);
-	rs.addCmd("wk", Robots::parseWalk, Robots::walk);
+	//rs.addCmd("wk", Robots::parseWalk, Robots::walk);
 
 	rs.open();
 
