@@ -60,7 +60,7 @@ void BasicParseFunc(const std::string &cmd, const std::map<std::string, std::str
 
 struct SimpleWalkParam final :public Aris::Server::GaitParamBase
 {
-	std::int32_t totalCount{ 500 };
+	std::int32_t totalCount{ 2000 };
 	std::int32_t n{ 1 };
 	double d{ 0.5 };
 	double h{ 0.05 };
@@ -237,15 +237,8 @@ int main()
 	rs.addCmd("rc", ParseRecover, Recover);
 	rs.addCmd("sw", ParseSimpleWalk, SimpleWalk);
 
-	//rs.AddGait("wk", Robots::walk, Robots::parseWalk);
-	//rs->AddGait("ad", Robots::adjust, Robots::parseAdjust);
-	//rs->AddGait("fw", Robots::fastWalk, Robots::parseFastWalk);
-	//rs->AddGait("ro", Robots::resetOrigin, Robots::parseResetOrigin);
-	rs.start();
+	rs.open();
 	std::cout<<"started"<<std::endl;
-
-	
-	
 	Aris::Core::runMsgLoop();
 
 	return 0;

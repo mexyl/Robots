@@ -480,6 +480,9 @@
     </Model>
     <Server>
         <Commands>
+            <start/>
+            <stop/>
+            <exit/>
             <en default="all">
                 <all abbreviation="a"/>
                 <first abbreviation="f"/>
