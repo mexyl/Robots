@@ -238,7 +238,9 @@ int main()
 	rs.addCmd("sw", ParseSimpleWalk, SimpleWalk);
 
 	rs.open();
-	std::cout<<"started"<<std::endl;
+
+	rs.setOnExit([]() {Aris::Core::stopMsgLoop(); });
+
 	Aris::Core::runMsgLoop();
 
 	return 0;
