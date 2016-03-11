@@ -181,11 +181,11 @@ namespace Robots
 
 
 
-		s_pe2pm(ep0, const_cast<double * const>(*leg0.Base().prtPm()));
-		s_pe2pm(ep1, const_cast<double * const>(*leg1.Base().prtPm()));
-		s_pe2pm(ep2, const_cast<double * const>(*leg2.Base().prtPm()));
-		s_pe2pm(ep3, const_cast<double * const>(*leg3.Base().prtPm()));
-		s_pe2pm(ep4, const_cast<double * const>(*leg4.Base().prtPm()));
-		s_pe2pm(ep5, const_cast<double * const>(*leg5.Base().prtPm()));
+		s_pe2pm(ep0, const_cast<double * const>(*leg0.base().prtPm()));
+		s_pe2pm(ep1, const_cast<double * const>(*leg1.base().prtPm()));
+		s_pe2pm(ep2, const_cast<double * const>(*leg2.base().prtPm()));
+		s_pe2pm(ep3, const_cast<double * const>(*leg3.base().prtPm()));
+		s_pe2pm(ep4, const_cast<double * const>(*leg4.base().prtPm()));
+		s_pe2pm(ep5, const_cast<double * const>(*leg5.base().prtPm()));
 	}
 }

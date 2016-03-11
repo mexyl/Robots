@@ -19,10 +19,10 @@ namespace Robots
 
 		const Part& ground() const;
 		Part& ground();
-		const Part& Body() const;
-		Part& Body();
-		const Marker& Base() const;
-		Marker& Base();
+		const Part& body() const;
+		Part& body();
+		const Marker& base() const;
+		Marker& base();
 
 		void GetPee(double *pEE) const { GetPee(pEE, ground()); };
 		void GetPee(double *pEE, const Coordinate &Mak) const;
@@ -236,18 +236,18 @@ namespace Robots
 		RobotBase();
 		virtual ~RobotBase() = default;
 
-		const Part& Body() const { return *body_id_; };
-		Part& Body() { return *body_id_;};
+		const Part& body() const { return *body_id_; };
+		Part& body() { return *body_id_;};
 		const Coordinate * const * const LegBases() const
 		{ 
 			static Coordinate *pBases[6]
 			{
-				&pLegs[0]->Base(),
-				&pLegs[1]->Base(),
-				&pLegs[2]->Base(),
-				&pLegs[3]->Base(),
-				&pLegs[4]->Base(),
-				&pLegs[5]->Base(),
+				&pLegs[0]->base(),
+				&pLegs[1]->base(),
+				&pLegs[2]->base(),
+				&pLegs[3]->base(),
+				&pLegs[4]->base(),
+				&pLegs[5]->base(),
 			};
 			return pBases;
 		};

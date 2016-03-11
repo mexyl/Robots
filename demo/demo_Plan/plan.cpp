@@ -76,9 +76,9 @@ void get_const(Aris::Dynamic::FastPath::Data & data)
 
 	double bodyPm[16];
 	Aris::Dynamic::s_pe2pm(bodyPe, bodyPm);
-	robot.Body().setPm(bodyPm);
-	robot.Body().setVel(bodyVel);
-	robot.Body().setAcc(bodyAcc);
+	robot.body().setPm(bodyPm);
+	robot.body().setVel(bodyVel);
+	robot.body().setAcc(bodyAcc);
 
 	double pEE[3]{ 0 }, vEE[3]{ 0 };
 	
@@ -121,9 +121,9 @@ void get_acc(Aris::Dynamic::FastPath::Data & data)
 	double bodyPe[6]{ 0,0,0.5*a*data.time*data.time,0,0,0 }, bodyVel[6]{ 0,0,a*data.time,0,0,0 }, bodyAcc[6]{ 0,0,a,0,0,0 };
 	double bodyPm[16];
 	Aris::Dynamic::s_pe2pm(bodyPe, bodyPm);
-	robot.Body().setPm(bodyPm);
-	robot.Body().setVel(bodyVel);
-	robot.Body().setAcc(bodyAcc);
+	robot.body().setPm(bodyPm);
+	robot.body().setVel(bodyVel);
+	robot.body().setAcc(bodyAcc);
 
 	double pEE[3]{ 0 }, vEE[3]{ 0 };
 
@@ -168,9 +168,9 @@ void get_dec(Aris::Dynamic::FastPath::Data & data)
 
 	double bodyPm[16];
 	Aris::Dynamic::s_pe2pm(bodyPe, bodyPm);
-	robot.Body().setPm(bodyPm);
-	robot.Body().setVel(bodyVel);
-	robot.Body().setAcc(bodyAcc);
+	robot.body().setPm(bodyPm);
+	robot.body().setVel(bodyVel);
+	robot.body().setAcc(bodyAcc);
 
 	double pEE[3]{ 0 }, vEE[3]{ 0 };
 
@@ -227,7 +227,7 @@ void plan_const(const char *fileName)
 
 			Aris::Dynamic::s_pe2pm(pe, pm);
 			b_const(tg.result().at(j), pEE);
-			robot.Body().setPm(pm);
+			robot.body().setPm(pm);
 			robot.pLegs[leg_index]->SetPee(pEE);
 			robot.pLegs[leg_index]->GetPin(&result[j][i * 3]);
 			robot.pLegs[leg_index]->GetPin(&result[j + NUM][(i * 3 + 9) % 18]);
@@ -271,7 +271,7 @@ void plan_acc(const char *fileName)
 			
 			Aris::Dynamic::s_pe2pm(pe, pm);
 			b_acc(tg.result().at(j), pEE);
-			robot.Body().setPm(pm);
+			robot.body().setPm(pm);
 			robot.pLegs[leg_index]->SetPee(pEE);
 			robot.pLegs[leg_index]->GetPin(&result[j][i * 3]);
 
@@ -312,7 +312,7 @@ void plan_dec(const char *fileName)
 
 			Aris::Dynamic::s_pe2pm(pe, pm);
 			b_dec(tg.result().at(j), pEE);
-			robot.Body().setPm(pm);
+			robot.body().setPm(pm);
 			robot.pLegs[leg_index]->SetPee(pEE);
 			robot.pLegs[leg_index]->GetPin(&result[j][i * 3]);
 

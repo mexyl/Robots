@@ -105,14 +105,14 @@ int main()
 	double pEE[18];
 	rbt.GetPee(pEE,"B");
 	dsp(pEE, 6, 3);
-	rbt.GetPee(pEE, &rbt.Body());
+	rbt.GetPee(pEE, &rbt.body());
 	dsp(pEE, 6, 3);
 
 	std::cout << "-----------" << std::endl;
 	rbt.SetPee(zeros, nullptr, "G");
 
-	rbt.SetPee(pEE, &rbt.Body());
-	rbt.GetPee(pEE, &rbt.Body());
+	rbt.SetPee(pEE, &rbt.body());
+	rbt.GetPee(pEE, &rbt.body());
 	dsp(pEE, 6, 3);
 
 
@@ -120,7 +120,7 @@ int main()
 	double vEE[18];
 	rbt.GetVee(vEE, "B");
 	dsp(vEE, 6, 3);
-	rbt.GetVee(vEE, &rbt.Body());
+	rbt.GetVee(vEE, &rbt.body());
 	dsp(vEE, 6, 3);
 
 	std::cout << "-----------" << std::endl;
@@ -134,13 +134,13 @@ int main()
 	double aEE[3];
 	rbt.pLM->GetAee(aEE, "B");
 	dsp(aEE, 3, 1);
-	rbt.pLM->GetAee(aEE, &rbt.Body());
+	rbt.pLM->GetAee(aEE, &rbt.body());
 	dsp(aEE, 3, 1);
 
 	std::cout << "-----------" << std::endl;
 	rbt.pLM->SetAee(zeros, "G");
 
-	rbt.pLM->SetAee(aEE, &rbt.Body());
+	rbt.pLM->SetAee(aEE, &rbt.body());
 	rbt.pLM->GetAee(aEE, "B");
 	dsp(aEE, 3, 1);
 
@@ -148,7 +148,7 @@ int main()
 	double fEE[3]{0,1,0.2};
 	rbt.pLM->SetFeeSta(fEE, "L");
 	//dsp(fEE, 3, 1);
-	rbt.pLM->GetFeeSta(fEE, &rbt.Body());
+	rbt.pLM->GetFeeSta(fEE, &rbt.body());
 	dsp(fEE, 3, 1);
 	rbt.pLM->GetFeeSta(fEE, "B");
 	dsp(fEE, 3, 1);
@@ -156,19 +156,19 @@ int main()
 	std::cout << "-----------" << std::endl;
 	rbt.pLM->SetFeeSta(zeros, "G");
 
-	rbt.pLM->SetFeeSta(fEE, &rbt.Body());
+	rbt.pLM->SetFeeSta(fEE, &rbt.body());
 	rbt.pLM->GetFeeSta(fEE, "B");
 	dsp(fEE, 3, 1);
 
 	std::cout << "*****************  Jacobian  ********************" << std::endl;
 	double J[9];
-	rbt.pLM->GetJfd(J, &rbt.Body());
+	rbt.pLM->GetJfd(J, &rbt.body());
 	dsp(J, 3, 3);
 	rbt.pLM->GetJfd(J, "B");
 	dsp(J, 3, 3);
 
 	std::cout << "-----------" << std::endl;
-	rbt.pLM->GetJfi(J, &rbt.Body());
+	rbt.pLM->GetJfi(J, &rbt.body());
 	dsp(J, 3, 3);
 	rbt.pLM->GetJfi(J, "B");
 	dsp(J, 3, 3);
@@ -189,7 +189,7 @@ int main()
 
 	std::cout << "*****************  cv  ********************" << std::endl;
 	double c[3];
-	rbt.pLM->GetCvd(c, &rbt.Body());
+	rbt.pLM->GetCvd(c, &rbt.body());
 	dsp(c, 3, 1);
 	rbt.pLM->GetCvd(c, "B");
 	dsp(c, 3, 1);

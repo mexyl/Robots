@@ -23,40 +23,7 @@ using namespace std;
 
 using namespace Aris::Core;
 
-void BasicParseFunc(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out) 
-{
-	Aris::Server::BasicFunctionParam param;
-	
-	for (auto &i : params)
-	{
-		if (i.first == "all")
-		{
-			std::fill_n(param.active_motor, 18, true);
-		}
-		else if (i.first == "first")
-		{
-			std::fill_n(param.active_motor, 18, false);
-			std::fill_n(param.active_motor + 0, 3, true);
-			std::fill_n(param.active_motor + 6, 3, true);
-			std::fill_n(param.active_motor + 12, 3, true);
-		}
-		else if (i.first == "second")
-		{
-			std::fill_n(param.active_motor, 18, false);
-			std::fill_n(param.active_motor + 3, 3, true);
-			std::fill_n(param.active_motor + 9, 3, true);
-			std::fill_n(param.active_motor + 15, 3, true);
-		}
-		else if (i.first == "motor")
-		{
-			std::fill_n(param.active_motor, 18, false);
-			int id = { stoi(i.second) };
-			param.active_motor[id] = true;
-		}
-	}
 
-	msg_out.copyStruct(param);
-}
 
 struct SimpleWalkParam final :public Aris::Server::GaitParamBase
 {
@@ -147,76 +114,7 @@ int SimpleWalk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &
 	return 2 * param.n * param.totalCount - param.count - 1;
 }
 
-struct RecoverParam final :public Aris::Server::GaitParamBase
-{
-	std::int32_t recover_count{ 3000 };
-	std::int32_t align_count{ 3000 };
-	bool active_leg[6]{ true,true,true,true,true,true };
-	double alignPee[18]
-	{-0.3,   -0.75,   -0.65,
-	-0.45,  -0.75,   0,
-	-0.3,   -0.75,    0.65,
-	0.3,   -0.75,    -0.65,
-	0.45,  -0.75,    0,
-	0.3,   -0.75,     0.65};
-	double recoverPee[18]
-	{ -0.3,   -0.85,   -0.65,
-		-0.45,  -0.85,   0,
-		-0.3,   -0.85,    0.65,
-		0.3,   -0.85,    -0.65,
-		0.45,  -0.85,    0,
-		0.3,   -0.85,     0.65 };
-};
-void ParseRecover(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)
-{
-	RecoverParam param;
-	msg_out.copyStruct(param);
-}
-int Recover(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)
-{
-	auto &robot = static_cast<Robots::RobotBase &>(model);
-	auto &param = static_cast<const RecoverParam &>(plan_param);
-	
-	static double beginPin[18];
-	if (param.count == 0)std::copy_n(param.motion_feedback_pos->data(), 18, beginPin);
-	
-	const double pe[6]{ 0 };
-	robot.SetPeb(pe);
-	robot.SetPee(param.alignPee);
-	double alignPin[18]{ 0 };
-	robot.GetPin(alignPin);
 
-	int leftCount = param.count < param.align_count ? 0 : param.align_count;
-	int rightCount = param.count < param.align_count ? param.align_count : param.align_count + param.recover_count;
-
-	double s = -(PI / 2)*cos(PI * (param.count - leftCount + 1) / (rightCount - leftCount)) + PI / 2;
-
-	for (int i = 0; i < 6; ++i)
-	{
-		if (param.active_leg[i])
-		{
-			if (param.count < param.align_count)
-			{
-				for (int j = 0; j < 3; ++j)
-				{
-					robot.motionPool().at(i * 3 + j).setMotPos(beginPin[i * 3 + j] * (cos(s) + 1) / 2 + alignPin[i * 3 + j] * (1 - cos(s)) / 2);
-				}
-			}
-			else
-			{
-				double pEE[3];
-				for (int j = 0; j < 3; ++j)
-				{
-					pEE[j] = param.alignPee[i * 3 + j] * (cos(s) + 1) / 2 + param.recoverPee[i * 3 + j] * (1 - cos(s)) / 2;
-				}
-
-				robot.pLegs[i]->SetPee(pEE);
-			}
-		}
-	}
-
-	return param.align_count + param.recover_count - param.count - 1;
-}
 
 int main()
 {
@@ -236,10 +134,10 @@ int main()
 	rs.loadXml("/usr/Robots/resource/Robot_Type_I/Robot_VIII/Robot_VIII.xml");
 #endif
 
-	rs.addCmd("en", BasicParseFunc, nullptr);
-	rs.addCmd("ds", BasicParseFunc, nullptr);
-	rs.addCmd("hm", BasicParseFunc, nullptr);
-	rs.addCmd("rc", ParseRecover, Recover);
+	rs.addCmd("en", Robots::basicParseFunc, nullptr);
+	rs.addCmd("ds", Robots::basicParseFunc, nullptr);
+	rs.addCmd("hm", Robots::basicParseFunc, nullptr);
+	rs.addCmd("rc", Robots::parseRecover, Robots::recover);
 	rs.addCmd("sw", ParseSimpleWalk, SimpleWalk);
 	rs.addCmd("wk", Robots::parseWalk, Robots::walk);
 

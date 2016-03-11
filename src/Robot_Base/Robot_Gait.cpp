@@ -22,33 +22,190 @@ using namespace Aris::Dynamic;
 
 namespace Robots
 {
-	int walk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param_in)
+	auto basicParseFunc(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void
+	{
+		Aris::Server::BasicFunctionParam param;
+
+		for (auto &i : params)
+		{
+			if (i.first == "all")
+			{
+				std::fill_n(param.active_motor, 18, true);
+			}
+			else if (i.first == "first")
+			{
+				std::fill_n(param.active_motor, 18, false);
+				std::fill_n(param.active_motor + 0, 3, true);
+				std::fill_n(param.active_motor + 6, 3, true);
+				std::fill_n(param.active_motor + 12, 3, true);
+			}
+			else if (i.first == "second")
+			{
+				std::fill_n(param.active_motor, 18, false);
+				std::fill_n(param.active_motor + 3, 3, true);
+				std::fill_n(param.active_motor + 9, 3, true);
+				std::fill_n(param.active_motor + 15, 3, true);
+			}
+			else if (i.first == "motor")
+			{
+				std::fill_n(param.active_motor, 18, false);
+				int id = { stoi(i.second) };
+				param.active_motor[id] = true;
+			}
+		}
+
+		msg_out.copyStruct(param);
+	}
+
+	auto parseRecover(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void
+	{
+		RecoverParam param;
+
+		for (auto &i : params)
+		{
+			if (i.first == "all")
+			{
+				std::fill_n(param.active_leg, 6, true);
+			}
+			else if (i.first == "first")
+			{
+				param.active_leg[0] = true;
+				param.active_leg[1] = false;
+				param.active_leg[2] = true;
+				param.active_leg[3] = false;
+				param.active_leg[4] = true;
+				param.active_leg[5] = false;
+			}
+			else if (i.first == "second")
+			{
+				param.active_leg[0] = false;
+				param.active_leg[1] = true;
+				param.active_leg[2] = false;
+				param.active_leg[3] = true;
+				param.active_leg[4] = false;
+				param.active_leg[5] = true;
+			}
+			else if(i.first == "leg")
+			{
+				auto leg_id = std::stoi(i.second);
+
+				if (leg_id<0 || leg_id>5)throw std::runtime_error("invalide param in parseRecover func");
+
+				std::fill_n(param.active_leg, 6, false);
+				param.active_leg[leg_id] = true;
+			}
+			else
+			{
+				throw std::runtime_error("unknown param in parseRecover func");
+			}
+		}
+
+		msg_out.copyStruct(param);
+	}
+	auto recover(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)->int
+	{
+		auto &robot = static_cast<Robots::RobotBase &>(model);
+		auto &param = static_cast<const RecoverParam &>(plan_param);
+
+		static double beginPin[18];
+		if (param.count == 0)std::copy_n(param.motion_feedback_pos->data(), 18, beginPin);
+
+		const double pe[6]{ 0 };
+		robot.SetPeb(pe);
+		robot.SetPee(param.alignPee);
+		double alignPin[18]{ 0 };
+		robot.GetPin(alignPin);
+
+		int leftCount = param.count < param.align_count ? 0 : param.align_count;
+		int rightCount = param.count < param.align_count ? param.align_count : param.align_count + param.recover_count;
+
+		double s = -(PI / 2)*cos(PI * (param.count - leftCount + 1) / (rightCount - leftCount)) + PI / 2;
+
+		for (int i = 0; i < 6; ++i)
+		{
+			if (param.active_leg[i])
+			{
+				if (param.count < param.align_count)
+				{
+					for (int j = 0; j < 3; ++j)
+					{
+						robot.motionPool().at(i * 3 + j).setMotPos(beginPin[i * 3 + j] * (cos(s) + 1) / 2 + alignPin[i * 3 + j] * (1 - cos(s)) / 2);
+					}
+				}
+				else
+				{
+					double pEE[3];
+					for (int j = 0; j < 3; ++j)
+					{
+						pEE[j] = param.alignPee[i * 3 + j] * (cos(s) + 1) / 2 + param.recoverPee[i * 3 + j] * (1 - cos(s)) / 2;
+					}
+
+					robot.pLegs[i]->SetPee(pEE);
+				}
+			}
+		}
+
+		return param.align_count + param.recover_count - param.count - 1;
+	}
+
+	auto parseWalk(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)->void
+	{
+		Robots::WalkParam param;
+
+		for (auto &i : params)
+		{
+			if (i.first == "totalCount")
+			{
+				param.totalCount = std::stoi(i.second);
+			}
+			else if (i.first == "n")
+			{
+				param.n = stoi(i.second);
+			}
+			else if (i.first == "distance")
+			{
+				param.d = stod(i.second);
+			}
+			else if (i.first == "height")
+			{
+				param.h = stod(i.second);
+			}
+			else if (i.first == "alpha")
+			{
+				param.alpha = stod(i.second);
+			}
+			else if (i.first == "beta")
+			{
+				param.beta = stod(i.second);
+			}
+		}
+		msg.copyStruct(param);
+	}
+	auto walk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param_in)->int
 	{
 		auto &robot = static_cast<Robots::RobotBase &>(model);
 		auto &param = static_cast<const Robots::WalkParam &>(param_in);
 
-		/*初始化*/
+		//初始化
 		static Aris::Dynamic::FloatMarker beginMak{ robot.ground() };
 		static double beginPee[18];
 
 		if (param.count%param.totalCount == 0)
 		{
-			beginMak.setPrtPm(*robot.Body().pm());
+			beginMak.setPrtPm(*robot.body().pm());
 			beginMak.update();
 			robot.GetPee(beginPee, beginMak);
 		}
-
-		double front[3]{ 0,0,-1 };
-		double left[3]{ -1,0,0 };
-		double up[3]{ 0,1,0 };
-
-		/*以下设置各个阶段的身体的真实初始位置*/
+		
+		//以下设置各个阶段的身体的真实初始位置
 		const double a = param.alpha;
 		const double b = param.beta;
 		const double d = param.d;
 		const double h = param.h;
 
-		const double r = d / 2 / std::sin(b / 2);
+		const double front[3]{ -std::sin(a),0,-std::cos(a) };
+		const double left[3]{ -std::cos(a),0,std::sin(a) };
+		const double up[3]{ 0,1,0 };
 
 		int period_count = param.count%param.totalCount;
 		const double s = -(PI / 2)*cos(PI * (period_count + 1) / param.totalCount) + PI / 2;//s 从0到PI. 
@@ -209,39 +366,4 @@ namespace Robots
 
 		return 2 * param.n * param.totalCount - param.count - 1;
 	}
-	void parseWalk(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)
-	{
-		Robots::WalkParam param;
-
-		for (auto &i : params)
-		{
-			if (i.first == "totalCount")
-			{
-				param.totalCount = std::stoi(i.second);
-			}
-			else if (i.first == "n")
-			{
-				param.n = stoi(i.second);
-			}
-			else if (i.first == "distance")
-			{
-				param.d = stod(i.second);
-			}
-			else if (i.first == "height")
-			{
-				param.h = stod(i.second);
-			}
-			else if (i.first == "alpha")
-			{
-				param.alpha = stod(i.second);
-			}
-			else if (i.first == "beta")
-			{
-				param.beta = stod(i.second);
-			}
-		}
-		msg.copyStruct(param);
-	}
-
-
 }

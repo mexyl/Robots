@@ -89,21 +89,21 @@
                 activate/joint, id=6
                 deactivate/motion, id=1
                 activate/sforce, id=1
-                marker/1 , QP = -0.412519,-0.849999,-0.846463 , REULER =2.00181,2.59107,4.02157
+                marker/1 , QP = -0.412518650455251,-0.849998580477897,-0.846463371429507 , REULER =2.00180921858028,2.59107277731869,4.02156825681859
                 deactivate/joint, id=15
                 activate/motion, id=4
                 deactivate/sforce, id=4
                 activate/joint, id=24
                 deactivate/motion, id=7
                 activate/sforce, id=7
-                marker/3 , QP = -0.218249,-0.849999,0.43894 , REULER =4.87814,2.51029,0.457857
+                marker/3 , QP = -0.218248839743012,-0.849998623802925,0.438939683519262 , REULER =4.87813628419867,2.51028768387854,0.457857432579678
                 deactivate/joint, id=33
                 activate/motion, id=10
                 deactivate/sforce, id=10
                 activate/joint, id=42
                 deactivate/motion, id=13
                 activate/sforce, id=13
-                marker/5 , QP = 0.426194,-0.849998,-0.31584 , REULER =0.618598,0.205028,4.46788
+                marker/5 , QP = 0.426194160708213,-0.849997841213599,-0.315840477893413 , REULER =0.618598025331767,0.20502843221467,4.46788143100944
                 deactivate/joint, id=51
                 activate/motion, id=16
                 deactivate/sforce, id=16
@@ -476,7 +476,7 @@
             <RR_F2 type="single_component_force" active="true" prt_m="RR_P2b" prt_n="RR_P2a" mak_i="P2i" mak_j="P2j" component="2"/>
             <RR_F3 type="single_component_force" active="true" prt_m="RR_P3b" prt_n="RR_P3a" mak_i="P3i" mak_j="P3j" component="2"/>
         </Force>
-  </Model>
+    </Model>
     <Server>
         <Commands>
             <start/>
@@ -510,8 +510,6 @@
                 <wk_param type="group">
                     <totalCount abbreviation="t" type="int" default="3000"/>
                     <n abbreviation="n" type="int" default="1"/>
-                    <walkDirection abbreviation="w" type="int" default="-3"/>
-                    <upDirection abbreviation="u" type="int" default="2"/>
                     <distance abbreviation="d" type="double" default="0.5"/>
                     <height abbreviation="h" type="double" default="0.05"/>
                     <alpha abbreviation="a" type="double" default="0"/>

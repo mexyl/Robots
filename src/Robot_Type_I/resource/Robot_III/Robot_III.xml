@@ -90,21 +90,21 @@
                 activate/joint, id=6
                 deactivate/motion, id=1
                 activate/sforce, id=1
-                marker/1 , QP = -0.412518,-0.849999,-0.846463 , REULER =1.94817,2.58907,3.95273
+                marker/1 , QP = -0.412518432053048,-0.849998658459979,-0.84646335019251 , REULER =1.94816893014055,2.58907049259981,3.95272596567057
                 deactivate/joint, id=15
                 activate/motion, id=4
                 deactivate/sforce, id=4
                 activate/joint, id=24
                 deactivate/motion, id=7
                 activate/sforce, id=7
-                marker/3 , QP = -0.218249,-0.849999,0.43894 , REULER =4.84379,2.51073,0.402738
+                marker/3 , QP = -0.218248883772188,-0.849998646311605,0.438939851871386 , REULER =4.84378872027625,2.5107332898603,0.402738080740367
                 deactivate/joint, id=33
                 activate/motion, id=10
                 deactivate/sforce, id=10
                 activate/joint, id=42
                 deactivate/motion, id=13
                 activate/sforce, id=13
-                marker/5 , QP = 0.426194,-0.849998,-0.31584 , REULER =0.686474,0.210403,4.38031
+                marker/5 , QP = 0.426194241688821,-0.849997824669124,-0.315840446772197 , REULER =0.686473782669598,0.21040260258656,4.38031017520195
                 deactivate/joint, id=51
                 activate/motion, id=16
                 deactivate/sforce, id=16
@@ -511,8 +511,6 @@
                 <wk_param type="group">
                   <totalCount abbreviation="t" type="int" default="3000"/>
                   <n abbreviation="n" type="int" default="1"/>
-                  <walkDirection abbreviation="w" type="int" default="-3"/>
-                  <upDirection abbreviation="u" type="int" default="2"/>
                   <distance abbreviation="d" type="double" default="0.5"/>
                   <height abbreviation="h" type="double" default="0.05"/>
                   <alpha abbreviation="a" type="double" default="0"/>
