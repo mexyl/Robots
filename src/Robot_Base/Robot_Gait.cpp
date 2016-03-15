@@ -70,6 +70,8 @@ namespace Robots
 		auto &controller = Aris::Server::ControlServer::instance().controller();
 		for (auto i = 0; i < robot.motionPool().size(); ++i)
 		{
+			robot.motionPool().at(i).update();
+			
 			controller.motionAtAbs(i).setPosOffset(static_cast<std::int32_t>(
 				robot.motionPool().at(i).motPos()*controller.motionAtAbs(i).pos2countRatio() - param.motion_raw_data->at(i).feedback_pos
 				));
