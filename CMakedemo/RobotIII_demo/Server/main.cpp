@@ -48,7 +48,7 @@ int SimpleWalk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &
 	/*在每次脚着地时更新与身体坐标系重合的位于地面的坐标系*/
 	if ((param.count % param.totalCount) == 0)
 	{
-		beginBodyMak.setPrtPm(*robot.Body().pm());
+		beginBodyMak.setPrtPm(*robot.body().pm());
 		beginBodyMak.update();
 		robot.GetPee(beginEE, beginBodyMak);
 	}
