@@ -500,6 +500,7 @@
                 <second abbreviation="s"/>
                 <motor abbreviation="m" type="intArray" default="0"/>
             </hm>
+            <fake_home/>
             <rc default="all">
                 <all abbreviation="a"/>
                 <first abbreviation="f"/>
