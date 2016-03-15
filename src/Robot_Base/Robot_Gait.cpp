@@ -75,9 +75,49 @@ namespace Robots
 			controller.motionAtAbs(i).setPosOffset(static_cast<std::int32_t>(
 				robot.motionPool().at(i).motPos()*controller.motionAtAbs(i).pos2countRatio() - param.motion_raw_data->at(i).feedback_pos
 				));
+
+			
 		}
 
-		param.motion_raw_data->at(0).feedback_pos;
+		rt_printf("%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d"
+			, param.motion_raw_data->at(0).feedback_pos
+			, param.motion_raw_data->at(1).feedback_pos
+			, param.motion_raw_data->at(2).feedback_pos
+			, param.motion_raw_data->at(3).feedback_pos
+			, param.motion_raw_data->at(4).feedback_pos
+			, param.motion_raw_data->at(5).feedback_pos
+			, param.motion_raw_data->at(6).feedback_pos
+			, param.motion_raw_data->at(7).feedback_pos
+			, param.motion_raw_data->at(8).feedback_pos
+			, param.motion_raw_data->at(9).feedback_pos
+			, param.motion_raw_data->at(10).feedback_pos
+			, param.motion_raw_data->at(11).feedback_pos
+			, param.motion_raw_data->at(12).feedback_pos
+			, param.motion_raw_data->at(13).feedback_pos
+			, param.motion_raw_data->at(14).feedback_pos
+			, param.motion_raw_data->at(15).feedback_pos
+			, param.motion_raw_data->at(16).feedback_pos
+			, param.motion_raw_data->at(17).feedback_pos);
+
+		rt_printf("%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d"
+			, controller.motionAtAbs(0).posOffset()
+			, controller.motionAtAbs(1).posOffset()
+			, controller.motionAtAbs(2).posOffset()
+			, controller.motionAtAbs(3).posOffset()
+			, controller.motionAtAbs(4).posOffset()
+			, controller.motionAtAbs(5).posOffset()
+			, controller.motionAtAbs(6).posOffset()
+			, controller.motionAtAbs(7).posOffset()
+			, controller.motionAtAbs(8).posOffset()
+			, controller.motionAtAbs(9).posOffset()
+			, controller.motionAtAbs(10).posOffset()
+			, controller.motionAtAbs(11).posOffset()
+			, controller.motionAtAbs(12).posOffset()
+			, controller.motionAtAbs(13).posOffset()
+			, controller.motionAtAbs(14).posOffset()
+			, controller.motionAtAbs(15).posOffset()
+			, controller.motionAtAbs(16).posOffset()
+			, controller.motionAtAbs(17).posOffset());
 
 		return 0;
 	}
