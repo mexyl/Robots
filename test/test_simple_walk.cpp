@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
 
 int main_test(int argc, char *argv[])
 {
+	
 #ifdef WIN32
 	rbt.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_III\\Robot_III.xml");
 	//rbt.loadXml("C:\\Robots\\resource\\Robot_Type_I\\Robot_VIII\\Robot_VIII.xml");
@@ -45,7 +46,7 @@ int main_test(int argc, char *argv[])
 		0.3, -0.85, 0.65 };
 
 	double beginPE[6]{ 0 };
-
+	
 	Robots::WalkParam wk_param;
 	wk_param.totalCount = 2000;
 	wk_param.n = 1;
@@ -55,7 +56,8 @@ int main_test(int argc, char *argv[])
 
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE);
-	auto result = rbt.simToAdams("C:\\Users\\yang\\Desktop\\test.cmd", Robots::walk, wk_param, 50);
+	
+	auto result = rbt.simToAdams("C:\\Users\\yang\\Desktop\\test.cmd", Robots::walkGait, wk_param, 50);
 	
 	result.saveToTxt("C:\\Users\\yang\\Desktop\\test");
 

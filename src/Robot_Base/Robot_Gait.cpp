@@ -22,7 +22,7 @@ using namespace Aris::Dynamic;
 
 namespace Robots
 {
-	auto basicParseFunc(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void
+	auto basicParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void
 	{
 		Aris::Server::BasicFunctionParam param;
 
@@ -57,7 +57,30 @@ namespace Robots
 		msg_out.copyStruct(param);
 	}
 
-	auto parseRecover(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void
+	auto fakeHomeParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void
+	{
+		FakeHomeParam param;
+		msg_out.copyStruct(param);
+	}
+	auto fakeHomeGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)->int
+	{
+		auto &param = static_cast<const FakeHomeParam&>(plan_param);
+		auto &robot = static_cast<Robots::RobotBase&>(model);
+
+		auto &controller = Aris::Server::ControlServer::instance().controller();
+		for (auto i = 0; i < robot.motionPool().size(); ++i)
+		{
+			controller.motionAtAbs(i).setPosOffset(static_cast<std::int32_t>(
+				robot.motionPool().at(i).motPos()*controller.motionAtAbs(i).pos2countRatio() - param.motion_raw_data->at(i).feedback_pos
+				));
+		}
+
+		param.motion_raw_data->at(0).feedback_pos;
+
+		return 0;
+	}
+
+	auto recoverParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void
 	{
 		RecoverParam param;
 
@@ -102,7 +125,7 @@ namespace Robots
 
 		msg_out.copyStruct(param);
 	}
-	auto recover(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)->int
+	auto recoverGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)->int
 	{
 		auto &robot = static_cast<Robots::RobotBase &>(model);
 		auto &param = static_cast<const RecoverParam &>(plan_param);
@@ -148,7 +171,7 @@ namespace Robots
 		return param.align_count + param.recover_count - param.count - 1;
 	}
 
-	auto parseWalk(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)->void
+	auto walkParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)->void
 	{
 		Robots::WalkParam param;
 
@@ -181,11 +204,11 @@ namespace Robots
 		}
 		msg.copyStruct(param);
 	}
-	auto walk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param_in)->int
+	auto walkGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param_in)->int
 	{
 		auto &robot = static_cast<Robots::RobotBase &>(model);
 		auto &param = static_cast<const Robots::WalkParam &>(param_in);
-
+		
 		//初始化
 		static Aris::Dynamic::FloatMarker beginMak{ robot.ground() };
 		static double beginPee[18];
@@ -339,31 +362,7 @@ namespace Robots
 
 		robot.SetPeb(Peb, beginMak);
 		robot.SetPee(Pee, beginMak);
-
-		//static std::list<std::array<double, 6> > PebList;
-		//static std::list<std::array<double, 18> > PeeList, PinList;
-
-		//std::array<double, 6> Peb_data;
-		//std::array<double, 18> Pee_data, Pin_data;
-		//std::copy(Peb, Peb + 6, Peb_data.data());
-
-		//robot.GetPeb(Peb_data.data());
-		//robot.GetPin(Pin_data.data());
-		//robot.GetPee(Pee_data.data());
-
-		//PebList.push_back(Peb_data);
-		//PeeList.push_back(Pee_data);
-		//PinList.push_back(Pin_data);
-
 		
-		//if (2 * param.n * param.totalCount - param.count - 1 == 0)
-		//{
-		//	Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\Peb.txt", PebList);
-		//	Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\Pee.txt", PeeList);
-		//	Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\Pin.txt", PinList);
-		//}
-			
-
 		return 2 * param.n * param.totalCount - param.count - 1;
 	}
 }

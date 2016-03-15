@@ -10,8 +10,12 @@
 
 namespace Robots
 {
-	auto basicParseFunc(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void;
+	auto basicParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void;
 	
+	struct FakeHomeParam final :public Aris::Server::GaitParamBase {};
+	auto fakeHomeParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void;
+	auto fakeHomeGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)->int;
+
 	struct RecoverParam final :public Aris::Server::GaitParamBase
 	{
 		std::int32_t recover_count{ 3000 };
@@ -32,8 +36,8 @@ namespace Robots
 			0.45,  -0.85,    0,
 			0.3,   -0.85,     0.65 };
 	};
-	auto parseRecover(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void;
-	auto recover(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)->int;
+	auto recoverParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void;
+	auto recoverGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)->int;
 	
 	struct WalkParam final:public Aris::Server::GaitParamBase
 	{
@@ -44,8 +48,8 @@ namespace Robots
 		double alpha{ 0.3 };
 		double beta{ 0.3 };
 	};
-	auto parseWalk(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)->void;
-	auto walk(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param)->int;
+	auto walkParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)->void;
+	auto walkGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param)->int;
 }
 
 #endif

@@ -575,8 +575,6 @@
                         <p2pMaxSpeed index="0x607F" subindex="0" value="2560" type="int32"/>
                         <p2pSpeed index="0x6081" subindex="0" value="1792" type="int32"/>
                         <homeOffset index="0x607C" subindex="0" value="0" type="int32"/>
-                        <positionOffset index="0x6063" subindex="0" value="1200000" type="int32"/>
-                        <positionOffset index="0x6064" subindex="0" value="1200000" type="int32"/>
                     </SDO>
                 </ElmoSoloWhistle>
                 <AtiForceSensor product_code="0x26483052" vender_id="0x00000732" alias="0">
