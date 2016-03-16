@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
 	rs.addCmd("en", Robots::basicParse, nullptr);
 	rs.addCmd("ds", Robots::basicParse, nullptr);
 	rs.addCmd("hm", Robots::basicParse, nullptr);
-	rs.addCmd("fake_home", Robots::fakeHomeParse, Robots::fakeHomeGait);
 	rs.addCmd("rc", Robots::recoverParse, Robots::recoverGait);
 	rs.addCmd("wk", Robots::walkParse, Robots::walkGait);
 
