@@ -75,11 +75,9 @@ namespace Robots
 			controller.motionAtAbs(i).setPosOffset(static_cast<std::int32_t>(
 				robot.motionPool().at(i).motPos()*controller.motionAtAbs(i).pos2countRatio() - param.motion_raw_data->at(i).feedback_pos
 				));
-
-			
 		}
 
-		rt_printf("%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d"
+		rt_printf("feedback:\n%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n"
 			, param.motion_raw_data->at(0).feedback_pos
 			, param.motion_raw_data->at(1).feedback_pos
 			, param.motion_raw_data->at(2).feedback_pos
@@ -99,7 +97,7 @@ namespace Robots
 			, param.motion_raw_data->at(16).feedback_pos
 			, param.motion_raw_data->at(17).feedback_pos);
 
-		rt_printf("%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d"
+		rt_printf("pos_offset:\n%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n"
 			, controller.motionAtAbs(0).posOffset()
 			, controller.motionAtAbs(1).posOffset()
 			, controller.motionAtAbs(2).posOffset()
