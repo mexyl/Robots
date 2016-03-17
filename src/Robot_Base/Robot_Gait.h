@@ -11,10 +11,6 @@
 namespace Robots
 {
 	auto basicParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void;
-	
-	struct FakeHomeParam final :public Aris::Server::GaitParamBase {};
-	auto fakeHomeParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void;
-	auto fakeHomeGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)->int;
 
 	struct RecoverParam final :public Aris::Server::GaitParamBase
 	{

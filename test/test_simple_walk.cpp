@@ -49,10 +49,10 @@ int main_test(int argc, char *argv[])
 	
 	Robots::WalkParam wk_param;
 	wk_param.totalCount = 2000;
-	wk_param.n = 1;
+	wk_param.n = 3;
 	wk_param.beta = 0.3;
 	wk_param.alpha = 0;
-	wk_param.d = 0.5;
+	wk_param.d = 0.8;
 
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE);
