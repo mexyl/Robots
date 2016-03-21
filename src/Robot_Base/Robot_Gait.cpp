@@ -1,6 +1,4 @@
-﻿
-
-#ifdef UNIX
+﻿#ifdef UNIX
 #include "rtdk.h"
 #endif
 #ifdef WIN32
@@ -357,5 +355,38 @@ namespace Robots
 		robot.SetPee(Pee, beginMak);
 		
 		return 2 * param.n * param.totalCount - param.count - 1;
+	}
+
+	auto resetOriginParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)->void
+	{
+		Robots::ResetOriginParam param;
+		msg.copyStruct(param);
+	}
+	auto resetOriginGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param_in)->int
+	{
+		auto &robot = static_cast<Robots::RobotBase &>(model);
+		auto &param = static_cast<const Robots::ResetOriginParam &>(param_in);
+
+		double Pee[18];
+		robot.GetPee(Pee, robot.body());
+
+		double Peb[6]{ 0,0,0,0,0,0 };
+		robot.SetPeb(Peb);
+		robot.SetPee(Pee);
+
+		rt_printf("imu(pitch roll yaw): %f  %f  %f\n", param.imu_data->pitch, param.imu_data->roll, param.imu_data->yaw);
+
+		double force_on_body[6], force_on_marker[6];
+
+		// s_f2f 用来转换坐标系 // 
+		std::copy(param.force_data->at(0).fce, param.force_data->at(0).fce + 6, force_on_marker);
+		Aris::Dynamic::s_f2f(*robot.forceSensorMak().prtPm(), force_on_marker, force_on_body);
+
+		rt_printf("force on marker: %f  %f  %f  %f  %f  %f \n", force_on_marker[0], force_on_marker[1], force_on_marker[2], force_on_marker[3], force_on_marker[4], force_on_marker[5]);
+		rt_printf("force on marker: %f  %f  %f  %f  %f  %f \n", force_on_body[0], force_on_body[1], force_on_body[2], force_on_body[3], force_on_body[4], force_on_body[5]);
+
+
+
+		return 0;
 	}
 }

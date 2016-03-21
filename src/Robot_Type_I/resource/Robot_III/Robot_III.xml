@@ -28,7 +28,7 @@
             <RFpe type="matrix">{ 0.0679295 , 0 , -0.3552145, PI/2,  PI* 1/6,   -PI/2-PI*7/18}</RFpe>
             <RMpe type="matrix">{ 0.1234141 , 0 ,  0,         PI/2,  PI* 0/6,   -PI/2-PI*7/18}</RMpe>
             <RRpe type="matrix">{ 0.0679295 , 0 ,  0.3532904, PI/2,  PI*11/6,   -PI/2-PI*7/18}</RRpe>
-            <ForceSensorMakPe type="matrix">{ 0,0,0,0,0,0 }</ForceSensorMakPe>
+            <ForceSensorMakPe type="matrix">{ 0,0,0,0,PI/2,0 }</ForceSensorMakPe>
             <BodyGamma type="matrix">{140,0,0,0,0,0,0,0,0,0}</BodyGamma>
             <P1aGamma type="matrix">{0,0,0,0,0,0,0,0,0,0}</P1aGamma>
             <P2aGamma type="matrix">{0,0,0,0,0,0,0,0,0,0}</P2aGamma>

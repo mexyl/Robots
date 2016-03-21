@@ -50,11 +50,7 @@ int main(int argc, char *argv[])
 	
 
 	rs.createModel<Robots::RobotTypeI>();
-
-	std::cout << "before load" << std::endl;
 	rs.loadXml(xml_address.c_str());
-	std::cout << "after load" << std::endl;
-
 	rs.addCmd("en", Robots::basicParse, nullptr);
 	rs.addCmd("ds", Robots::basicParse, nullptr);
 	rs.addCmd("hm", Robots::basicParse, nullptr);

@@ -23,6 +23,8 @@ namespace Robots
 		Part& body();
 		const Marker& base() const;
 		Marker& base();
+		
+
 
 		void GetPee(double *pEE) const { GetPee(pEE, ground()); };
 		void GetPee(double *pEE, const Coordinate &Mak) const;
@@ -232,12 +234,15 @@ namespace Robots
 	public:
 		using Coordinate = Aris::Dynamic::Coordinate;
 		using Part = Aris::Dynamic::Part;
+		using Marker = Aris::Dynamic::Marker;
 
 		RobotBase();
 		virtual ~RobotBase() = default;
 
 		const Part& body() const { return *body_; };
 		Part& body() { return *body_;};
+		const Marker& forceSensorMak() const { return *force_sensor_mak_; };
+		Marker& forceSensorMak() { return *force_sensor_mak_; };
 		const Coordinate * const * const LegBases() const
 		{ 
 			static Coordinate *pBases[6]
@@ -328,6 +333,7 @@ namespace Robots
 
 	protected:
 		Aris::Dynamic::Part *body_;
+		Aris::Dynamic::Marker *force_sensor_mak_;
 
 	private:
 		double _BodyPm[4][4]{ {0} }, _BodyVel[6]{ 0 }, _BodyAcc[6]{ 0 };

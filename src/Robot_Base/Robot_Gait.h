@@ -46,6 +46,10 @@ namespace Robots
 	};
 	auto walkParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)->void;
 	auto walkGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param)->int;
+
+	struct ResetOriginParam final :public Aris::Server::GaitParamBase {};
+	auto resetOriginParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)->void;
+	auto resetOriginGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param)->int;
 }
 
 #endif

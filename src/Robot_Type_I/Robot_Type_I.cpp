@@ -1185,6 +1185,7 @@ namespace Robots
 
 		/*Update Parts*/
 		body_ = partPool().find("MainBody");
+		force_sensor_mak_ = body_->markerPool().find("ForceSensorMak");
 
 		for (int j = 0; j < 6; ++j)
 		{
