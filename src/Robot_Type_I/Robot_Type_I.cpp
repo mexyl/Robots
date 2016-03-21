@@ -856,15 +856,15 @@ namespace Robots
 		/*更新每个元素*/
 		pRobot->body().update();
 
-		for (auto i : prt_id_array_)
+		for (auto i : prt_array_)
 		{
 			i->update();
 		}
-		for (auto i : jnt_id_array_)
+		for (auto i : jnt_array_)
 		{
 			i->update();
 		}
-		for (auto i : mot_id_array_)
+		for (auto i : mot_array_)
 		{
 			i->update();
 		}

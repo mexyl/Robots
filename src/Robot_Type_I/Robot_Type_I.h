@@ -11,53 +11,53 @@ namespace Robots
 	class LegI :public Robots::LegBase
 	{
 	public:
-		Aris::Dynamic::Part& partAt(std::size_t id) { return *prt_id_array_[id]; };
-		Aris::Dynamic::Marker& markerAt(std::size_t id) { return *mak_id_array_[id]; };
-		Aris::Dynamic::Joint& jointAt(std::size_t id) { return *jnt_id_array_[id]; };
-		Aris::Dynamic::Motion& motionAt(std::size_t id) { return *mot_id_array_[id];};
-		Aris::Dynamic::SingleComponentForce& forceAt(std::size_t id) { return static_cast<Aris::Dynamic::SingleComponentForce&>(*fce_id_array_[id]); };
+		auto partAt(std::size_t id)->Aris::Dynamic::Part& { return *prt_array_[id]; };
+		auto markerAt(std::size_t id)->Aris::Dynamic::Marker& { return *mak_array_[id]; };
+		auto jointAt(std::size_t id)->Aris::Dynamic::Joint& { return *jnt_array_[id]; };
+		auto motionAt(std::size_t id)->Aris::Dynamic::Motion& { return *mot_array_[id];};
+		auto forceAt(std::size_t id)->Aris::Dynamic::SingleComponentForce& { return static_cast<Aris::Dynamic::SingleComponentForce&>(*fce_array_[id]); };
 
-		Aris::Dynamic::Part& p1a() { return static_cast<Aris::Dynamic::Part&>(*p1a_); };
-		Aris::Dynamic::Part& p2a() { return static_cast<Aris::Dynamic::Part&>(*p2a_); };
-		Aris::Dynamic::Part& p3a() { return static_cast<Aris::Dynamic::Part&>(*p3a_); };
-		Aris::Dynamic::Part& thigh() { return static_cast<Aris::Dynamic::Part&>(*thigh_); };
-		Aris::Dynamic::Part& p2b() { return static_cast<Aris::Dynamic::Part&>(*p2b_); };
-		Aris::Dynamic::Part& p3b() { return static_cast<Aris::Dynamic::Part&>(*p3b_); };
+		auto p1a()->Aris::Dynamic::Part& { return static_cast<Aris::Dynamic::Part&>(*p1a_); };
+		auto p2a()->Aris::Dynamic::Part& { return static_cast<Aris::Dynamic::Part&>(*p2a_); };
+		auto p3a()->Aris::Dynamic::Part& { return static_cast<Aris::Dynamic::Part&>(*p3a_); };
+		auto thigh()->Aris::Dynamic::Part& { return static_cast<Aris::Dynamic::Part&>(*thigh_); };
+		auto p2b()->Aris::Dynamic::Part& { return static_cast<Aris::Dynamic::Part&>(*p2b_); };
+		auto p3b()->Aris::Dynamic::Part& { return static_cast<Aris::Dynamic::Part&>(*p3b_); };
 
-		Aris::Dynamic::Marker& u1i() { return static_cast<Aris::Dynamic::Marker&>(*u1i_); };
-		Aris::Dynamic::Marker& u1j() { return static_cast<Aris::Dynamic::Marker&>(*u1j_); };
-		Aris::Dynamic::Marker& u2i() { return static_cast<Aris::Dynamic::Marker&>(*u2i_); };
-		Aris::Dynamic::Marker& u2j() { return static_cast<Aris::Dynamic::Marker&>(*u2j_); };
-		Aris::Dynamic::Marker& u3i() { return static_cast<Aris::Dynamic::Marker&>(*u3i_); };
-		Aris::Dynamic::Marker& u3j() { return static_cast<Aris::Dynamic::Marker&>(*u3j_); };
-		Aris::Dynamic::Marker& p1i() { return static_cast<Aris::Dynamic::Marker&>(*p1i_); };
-		Aris::Dynamic::Marker& p1j() { return static_cast<Aris::Dynamic::Marker&>(*p1j_); };
-		Aris::Dynamic::Marker& p2i() { return static_cast<Aris::Dynamic::Marker&>(*p2i_); };
-		Aris::Dynamic::Marker& p2j() { return static_cast<Aris::Dynamic::Marker&>(*p2j_); };
-		Aris::Dynamic::Marker& p3i() { return static_cast<Aris::Dynamic::Marker&>(*p3i_); };
-		Aris::Dynamic::Marker& p3j() { return static_cast<Aris::Dynamic::Marker&>(*p3j_); };
-		Aris::Dynamic::Marker& sfi() { return static_cast<Aris::Dynamic::Marker&>(*sfi_); };
-		Aris::Dynamic::Marker& sfj() { return static_cast<Aris::Dynamic::Marker&>(*sfj_); };
-		Aris::Dynamic::Marker& s2i() { return static_cast<Aris::Dynamic::Marker&>(*s2i_); };
-		Aris::Dynamic::Marker& s2j() { return static_cast<Aris::Dynamic::Marker&>(*s2j_); };
-		Aris::Dynamic::Marker& s3i() { return static_cast<Aris::Dynamic::Marker&>(*s3i_); };
-		Aris::Dynamic::Marker& s3j() { return static_cast<Aris::Dynamic::Marker&>(*s3j_); };
+		auto u1i()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*u1i_); };
+		auto u1j()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*u1j_); };
+		auto u2i()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*u2i_); };
+		auto u2j()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*u2j_); };
+		auto u3i()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*u3i_); };
+		auto u3j()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*u3j_); };
+		auto p1i()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*p1i_); };
+		auto p1j()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*p1j_); };
+		auto p2i()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*p2i_); };
+		auto p2j()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*p2j_); };
+		auto p3i()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*p3i_); };
+		auto p3j()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*p3j_); };
+		auto sfi()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*sfi_); };
+		auto sfj()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*sfj_); };
+		auto s2i()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*s2i_); };
+		auto s2j()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*s2j_); };
+		auto s3i()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*s3i_); };
+		auto s3j()->Aris::Dynamic::Marker& { return static_cast<Aris::Dynamic::Marker&>(*s3j_); };
 		
-		Aris::Dynamic::UniversalJoint& u1() { return static_cast<Aris::Dynamic::UniversalJoint&>(*u1_); };
-		Aris::Dynamic::UniversalJoint& u2() { return static_cast<Aris::Dynamic::UniversalJoint&>(*u2_); };
-		Aris::Dynamic::UniversalJoint& u3() { return static_cast<Aris::Dynamic::UniversalJoint&>(*u3_); };
-		Aris::Dynamic::TranslationalJoint& p1() { return static_cast<Aris::Dynamic::TranslationalJoint&>(*p1_); };
-		Aris::Dynamic::TranslationalJoint& p2() { return static_cast<Aris::Dynamic::TranslationalJoint&>(*p2_); };
-		Aris::Dynamic::TranslationalJoint& p3() { return static_cast<Aris::Dynamic::TranslationalJoint&>(*p3_); };
-		Aris::Dynamic::SphericalJoint& sf() { return static_cast<Aris::Dynamic::SphericalJoint&>(*sf_); };
-		Aris::Dynamic::SphericalJoint& s2() { return static_cast<Aris::Dynamic::SphericalJoint&>(*s2_); };
-		Aris::Dynamic::SphericalJoint& s3() { return static_cast<Aris::Dynamic::SphericalJoint&>(*s3_); };
-		Aris::Dynamic::SingleComponentMotion& m1() { return static_cast<Aris::Dynamic::SingleComponentMotion&>(*m1_); };
-		Aris::Dynamic::SingleComponentMotion& m2() { return static_cast<Aris::Dynamic::SingleComponentMotion&>(*m2_); };
-		Aris::Dynamic::SingleComponentMotion& m3() { return static_cast<Aris::Dynamic::SingleComponentMotion&>(*m3_); };
-		Aris::Dynamic::SingleComponentForce& f1() { return static_cast<Aris::Dynamic::SingleComponentForce&>(*f1_); };
-		Aris::Dynamic::SingleComponentForce& f2() { return static_cast<Aris::Dynamic::SingleComponentForce&>(*f2_); };
-		Aris::Dynamic::SingleComponentForce& f3() { return static_cast<Aris::Dynamic::SingleComponentForce&>(*f3_); };
+		auto u1()->Aris::Dynamic::UniversalJoint& { return static_cast<Aris::Dynamic::UniversalJoint&>(*u1_); };
+		auto u2()->Aris::Dynamic::UniversalJoint& { return static_cast<Aris::Dynamic::UniversalJoint&>(*u2_); };
+		auto u3()->Aris::Dynamic::UniversalJoint& { return static_cast<Aris::Dynamic::UniversalJoint&>(*u3_); };
+		auto p1()->Aris::Dynamic::TranslationalJoint& { return static_cast<Aris::Dynamic::TranslationalJoint&>(*p1_); };
+		auto p2()->Aris::Dynamic::TranslationalJoint& { return static_cast<Aris::Dynamic::TranslationalJoint&>(*p2_); };
+		auto p3()->Aris::Dynamic::TranslationalJoint& { return static_cast<Aris::Dynamic::TranslationalJoint&>(*p3_); };
+		auto sf()->Aris::Dynamic::SphericalJoint& { return static_cast<Aris::Dynamic::SphericalJoint&>(*sf_); };
+		auto s2()->Aris::Dynamic::SphericalJoint& { return static_cast<Aris::Dynamic::SphericalJoint&>(*s2_); };
+		auto s3()->Aris::Dynamic::SphericalJoint& { return static_cast<Aris::Dynamic::SphericalJoint&>(*s3_); };
+		auto m1()->Aris::Dynamic::SingleComponentMotion& { return static_cast<Aris::Dynamic::SingleComponentMotion&>(*m1_); };
+		auto m2()->Aris::Dynamic::SingleComponentMotion& { return static_cast<Aris::Dynamic::SingleComponentMotion&>(*m2_); };
+		auto m3()->Aris::Dynamic::SingleComponentMotion& { return static_cast<Aris::Dynamic::SingleComponentMotion&>(*m3_); };
+		auto f1()->Aris::Dynamic::SingleComponentForce& { return static_cast<Aris::Dynamic::SingleComponentForce&>(*f1_); };
+		auto f2()->Aris::Dynamic::SingleComponentForce& { return static_cast<Aris::Dynamic::SingleComponentForce&>(*f2_); };
+		auto f3()->Aris::Dynamic::SingleComponentForce& { return static_cast<Aris::Dynamic::SingleComponentForce&>(*f3_); };
 		
 		
 		void GetdJacOverPee(double *dJi_x, double *dJi_y, double *dJi_z, const char *relativeCoordinate="G")const;
@@ -106,7 +106,7 @@ namespace Robots
 		typedef Aris::Dynamic::Part* PartPtr;
 		union
 		{
-			PartPtr prt_id_array_[6];
+			PartPtr prt_array_[6];
 			struct
 			{
 				PartPtr p1a_, p2a_, p3a_, thigh_, p2b_, p3b_;
@@ -115,7 +115,7 @@ namespace Robots
 		typedef Aris::Dynamic::Marker* MarkerPtr;
 		union
 		{
-			MarkerPtr mak_id_array_[18];
+			MarkerPtr mak_array_[18];
 			struct
 			{
 				MarkerPtr u1i_, u1j_, u2i_, u2j_, u3i_, u3j_;
@@ -127,7 +127,7 @@ namespace Robots
 		typedef Aris::Dynamic::Joint* JointPtr;
 		union
 		{
-			JointPtr jnt_id_array_[9];
+			JointPtr jnt_array_[9];
 			struct
 			{
 				JointPtr u1_, u2_, u3_, p1_, p2_, p3_, sf_, s2_, s3_;
@@ -136,7 +136,7 @@ namespace Robots
 		typedef Aris::Dynamic::Motion* MotionPtr;
 		union
 		{
-			MotionPtr mot_id_array_[3];
+			MotionPtr mot_array_[3];
 			struct
 			{
 				MotionPtr m1_, m2_, m3_;
@@ -145,7 +145,7 @@ namespace Robots
 		typedef Aris::Dynamic::Force* ForcePtr;
 		union
 		{
-			ForcePtr fce_id_array_[3];
+			ForcePtr fce_array_[3];
 			struct
 			{
 				ForcePtr f1_, f2_, f3_;

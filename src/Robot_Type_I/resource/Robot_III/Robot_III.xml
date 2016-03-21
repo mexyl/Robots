@@ -28,6 +28,7 @@
             <RFpe type="matrix">{ 0.0679295 , 0 , -0.3552145, PI/2,  PI* 1/6,   -PI/2-PI*7/18}</RFpe>
             <RMpe type="matrix">{ 0.1234141 , 0 ,  0,         PI/2,  PI* 0/6,   -PI/2-PI*7/18}</RMpe>
             <RRpe type="matrix">{ 0.0679295 , 0 ,  0.3532904, PI/2,  PI*11/6,   -PI/2-PI*7/18}</RRpe>
+            <ForceSensorMakPe type="matrix">{ 0,0,0,0,0,0 }</ForceSensorMakPe>
             <BodyGamma type="matrix">{140,0,0,0,0,0,0,0,0,0}</BodyGamma>
             <P1aGamma type="matrix">{0,0,0,0,0,0,0,0,0,0}</P1aGamma>
             <P2aGamma type="matrix">{0,0,0,0,0,0,0,0,0,0}</P2aGamma>
@@ -264,6 +265,7 @@
                     <RR_U1i type="marker" active="true" pe="U1ipe" relative_to="RR_Base"/>
                     <RR_U2i type="marker" active="true" pe="U2ipe" relative_to="RR_Base"/>
                     <RR_U3i type="marker" active="true" pe="U3ipe" relative_to="RR_Base"/>
+                    <ForceSensorMak type="marker" active="true" pe="ForceSensorMakPe"/>
                 </ChildMarker>
             </MainBody>
             <RF_P1a type="part" active="true" pe="{0.0679295 , 0 , -0.3552145 , 1.31491505291085 , 0.590654342635874 , 3.74774855067125}" vel="{0 , 0 , 0 , 0 , 0 , 0}" acc="{0 , 0 , 0 , 0 , 0 , 0}" inertia="P1aGamma" graphic_file_path="${P1a_graphic}">
@@ -478,7 +480,7 @@
             <RR_F3 type="single_component_force" active="true" prt_m="RR_P3b" prt_n="RR_P3a" mak_i="P3i" mak_j="P3j" component="2"/>
         </Force>
     </Model>
-    <Server>
+    <Server ip="127.0.0.1" port="5866">
         <Commands>
             <start/>
             <stop/>
@@ -518,24 +520,8 @@
                   <beta abbreviation="b" type="double" default="0"/>
                 </wk_param>
             </wk>
-            <sw default="wk_param">
-                <wk_param type="group">
-                  <totalCount abbreviation="t" type="int" default="3000"/>
-                  <n abbreviation="n" type="int" default="1"/>
-                  <walkDirection abbreviation="w" type="int" default="-3"/>
-                  <upDirection abbreviation="u" type="int" default="2"/>
-                  <distance abbreviation="d" type="double" default="0.5"/>
-                  <height abbreviation="h" type="double" default="0.05"/>
-                  <alpha abbreviation="a" type="double" default="0"/>
-                  <beta abbreviation="b" type="double" default="0"/>
-                </wk_param>
-            </sw>
+            <ro/>
         </Commands>
-        <Connection IP="127.0.0.1" Port="5866"/>
-        <Sensors>
-            <IMU active="true" type="xsens_imu" portLinux="/dev/ttyUSB0" baudRate="921600" sampleRate="400" PeImuGround2BodyGound="{0,0,0,0,-PI/2,PI}" PeImu2Body="{0,0,0,0,PI/2,0}"/>
-            <Vision type="kinect2.0"/>
-        </Sensors>
     </Server>
     <Controller>
         <EtherCat>
@@ -596,30 +582,37 @@
                             <cw2 index="0x7010" subindex="0x02" type="int32"/>
                         </index_1601>
                     </PDO>
-                    <SDO/>
+                    <SDO>
+                        <ForceUnit index="0x2040" subindex="0x29" value="1" type="uint8"/>
+                        <TorqueUnit index="0x2040" subindex="0x2a" value="2" type="uint8"/>
+                    </SDO>
                 </AtiForceSensor>
             </SlaveType>
             <Slave>
-                <Motion1 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id="15"/>
-                <Motion2 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="17"/>
-                <Motion3 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="16"/>
-                <Motion4 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id="12"/>
-                <Motion5 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="14"/>
-                <Motion6 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="13"/>
-                <Motion7 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id=" 9"/>
-                <Motion8 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="11"/>
-                <Motion9 type="ElmoSoloWhistle"  max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="10"/>
-                <Motion10 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 2"/>
-                <Motion11 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id=" 0"/>
-                <Motion12 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 1"/>
-                <Motion13 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id=" 3"/>
-                <Motion14 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 5"/>
-                <Motion15 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 4"/>
-                <Motion16 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 7"/>
-                <Motion17 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 8"/>
-                <Motion18 type="ElmoSoloWhistle" max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id=" 6"/>
+                <Motion1 type="ElmoSoloWhistle"  min_pos="0.676" max_pos="1.091" max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id="15"/>
+                <Motion2 type="ElmoSoloWhistle"  min_pos="0.698" max_pos="1.112" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="17"/>
+                <Motion3 type="ElmoSoloWhistle"  min_pos="0.698" max_pos="1.112" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="16"/>
+                <Motion4 type="ElmoSoloWhistle"  min_pos="0.676" max_pos="1.091" max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id="12"/>
+                <Motion5 type="ElmoSoloWhistle"  min_pos="0.698" max_pos="1.112" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="14"/>
+                <Motion6 type="ElmoSoloWhistle"  min_pos="0.698" max_pos="1.112" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="13"/>
+                <Motion7 type="ElmoSoloWhistle"  min_pos="0.676" max_pos="1.091" max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id=" 9"/>
+                <Motion8 type="ElmoSoloWhistle"  min_pos="0.698" max_pos="1.112" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="11"/>
+                <Motion9 type="ElmoSoloWhistle"  min_pos="0.698" max_pos="1.112" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id="10"/>
+                <Motion10 type="ElmoSoloWhistle" min_pos="0.698" max_pos="1.112" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 2"/>
+                <Motion11 type="ElmoSoloWhistle" min_pos="0.676" max_pos="1.091" max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id=" 0"/>
+                <Motion12 type="ElmoSoloWhistle" min_pos="0.698" max_pos="1.112" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 1"/>
+                <Motion13 type="ElmoSoloWhistle" min_pos="0.676" max_pos="1.091" max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id=" 3"/>
+                <Motion14 type="ElmoSoloWhistle" min_pos="0.698" max_pos="1.112" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 5"/>
+                <Motion15 type="ElmoSoloWhistle" min_pos="0.698" max_pos="1.112" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 4"/>
+                <Motion16 type="ElmoSoloWhistle" min_pos="0.698" max_pos="1.112" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 7"/>
+                <Motion17 type="ElmoSoloWhistle" min_pos="0.698" max_pos="1.112" max_vel="0.2362" home_pos="0.698" input2count="22937600" abs_id=" 8"/>
+                <Motion18 type="ElmoSoloWhistle" min_pos="0.676" max_pos="1.091" max_vel="0.2362" home_pos="0.676" input2count="22937600" abs_id=" 6"/>
                 <ForceSensor type="AtiForceSensor"/>
             </Slave>
         </EtherCat>
     </Controller>
+    <Sensors>
+        <IMU active="true" type="xsens_imu" portLinux="/dev/ttyUSB0" baudRate="921600" sampleRate="400" PeImuGround2BodyGound="{0,0,0,0,-PI/2,PI}" PeImu2Body="{0,0,0,0,PI/2,0}"/>
+        <Vision type="kinect2.0"/>
+    </Sensors>
 </HexapodIII>
