@@ -490,18 +490,24 @@
                 <first abbreviation="f"/>
                 <second abbreviation="s"/>
                 <motor abbreviation="m" type="intArray" default="0"/>
+                <physical_motor abbreviation="p" type="intArray" default="0"/>
+                <leg abbreviation="l" type="intArray" default="0"/>
             </en>
             <ds default="all">
                 <all abbreviation="a"/>
                 <first abbreviation="f"/>
                 <second abbreviation="s"/>
                 <motor abbreviation="m" type="intArray" default="0"/>
+                <physical_motor abbreviation="p" type="intArray" default="0"/>
+                <leg abbreviation="l" type="intArray" default="0"/>
             </ds>
             <hm default="all">
                 <all abbreviation="a"/>
                 <first abbreviation="f"/>
                 <second abbreviation="s"/>
                 <motor abbreviation="m" type="intArray" default="0"/>
+                <physical_motor abbreviation="p" type="intArray" default="0"/>
+                <leg abbreviation="l" type="intArray" default="0"/>
             </hm>
             <fake_home/>
             <rc default="all">

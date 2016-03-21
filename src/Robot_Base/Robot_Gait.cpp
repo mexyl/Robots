@@ -46,9 +46,27 @@ namespace Robots
 			}
 			else if (i.first == "motor")
 			{
-				std::fill_n(param.active_motor, 18, false);
 				int id = { stoi(i.second) };
+				if (id<0 || id>17)throw std::runtime_error("invalide param in basicParse func");
+				
+				std::fill_n(param.active_motor, 18, false);
 				param.active_motor[id] = true;
+			}
+			else if (i.first == "physical_motor")
+			{
+				int id = { stoi(i.second) };
+				if (id<0 || id>5)throw std::runtime_error("invalide param in basicParse func");
+				
+				std::fill_n(param.active_motor, 18, false);
+				param.active_motor[Aris::Server::ControlServer::instance().controller().motionAtPhy(id).absID()] = true;
+			}
+			else if (i.first == "leg")
+			{
+				auto leg_id = std::stoi(i.second);
+				if (leg_id<0 || leg_id>5)throw std::runtime_error("invalide param in parseRecover func");
+
+				std::fill_n(param.active_motor, 18, false);
+				std::fill_n(param.active_motor + leg_id * 3, 3, true);
 			}
 		}
 
