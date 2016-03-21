@@ -52,7 +52,7 @@ int main_test(int argc, char *argv[])
 	wk_param.n = 3;
 	wk_param.beta = 0.3;
 	wk_param.alpha = 0;
-	wk_param.d = 0.8;
+	wk_param.d = 0.9;
 
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE);

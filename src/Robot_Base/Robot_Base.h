@@ -236,8 +236,8 @@ namespace Robots
 		RobotBase();
 		virtual ~RobotBase() = default;
 
-		const Part& body() const { return *body_id_; };
-		Part& body() { return *body_id_;};
+		const Part& body() const { return *body_; };
+		Part& body() { return *body_;};
 		const Coordinate * const * const LegBases() const
 		{ 
 			static Coordinate *pBases[6]
@@ -327,7 +327,7 @@ namespace Robots
 		LegBase *pLegs[6];
 
 	protected:
-		Aris::Dynamic::Part *body_id_;
+		Aris::Dynamic::Part *body_;
 
 	private:
 		double _BodyPm[4][4]{ {0} }, _BodyVel[6]{ 0 }, _BodyAcc[6]{ 0 };

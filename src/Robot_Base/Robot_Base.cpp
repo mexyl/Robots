@@ -418,7 +418,7 @@ namespace Robots
 
 	RobotBase::RobotBase()
 	{
-		body_id_ = &partPool().add<Part>("MainBody");
+		body_ = &partPool().add<Part>("MainBody");
 	}
 
 	void RobotBase::GetPmb(double *pmb, const Coordinate &mak) const

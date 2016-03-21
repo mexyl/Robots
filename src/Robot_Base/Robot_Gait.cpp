@@ -107,14 +107,20 @@ namespace Robots
 		auto &robot = static_cast<Robots::RobotBase &>(model);
 		auto &param = static_cast<const RecoverParam &>(plan_param);
 
-		static double beginPin[18];
-		if (param.count == 0)std::copy_n(param.motion_feedback_pos->data(), 18, beginPin);
+		static double beginPin[18], beginPee[18], alignPin[18];
 
-		const double pe[6]{ 0 };
-		robot.SetPeb(pe);
-		robot.SetPee(param.alignPee);
-		double alignPin[18]{ 0 };
-		robot.GetPin(alignPin);
+		if (param.count == 0)
+		{
+			std::copy_n(param.motion_feedback_pos->data(), 18, beginPin);
+			robot.GetPee(beginPee, robot.body());
+			
+			const double pe[6]{ 0 };
+			robot.SetPeb(pe);
+			robot.SetPee(param.alignPee);
+
+			robot.GetPin(alignPin);
+			robot.SetPee(beginPee, robot.body());
+		}
 
 		int leftCount = param.count < param.align_count ? 0 : param.align_count;
 		int rightCount = param.count < param.align_count ? param.align_count : param.align_count + param.recover_count;

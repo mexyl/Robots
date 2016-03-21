@@ -1184,81 +1184,79 @@ namespace Robots
 		Model::loadXml(ele);
 
 		/*Update Parts*/
-		body_id_ = partPool().find("MainBody");
+		body_ = partPool().find("MainBody");
 
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->p1a_id_ = partPool().find(pLegs[j]->name() + "_P1a");
-			pLegs[j]->p2a_id_ = partPool().find(pLegs[j]->name() + "_P2a");
-			pLegs[j]->p3a_id_ = partPool().find(pLegs[j]->name() + "_P3a");
-			pLegs[j]->thigh_id_ = partPool().find(pLegs[j]->name() + "_Thigh");
-			pLegs[j]->p2b_id_ = partPool().find(pLegs[j]->name() + "_P2b");
-			pLegs[j]->p3b_id_ = partPool().find(pLegs[j]->name() + "_P3b");
+			pLegs[j]->p1a_ = partPool().find(pLegs[j]->name() + "_P1a");
+			pLegs[j]->p2a_ = partPool().find(pLegs[j]->name() + "_P2a");
+			pLegs[j]->p3a_ = partPool().find(pLegs[j]->name() + "_P3a");
+			pLegs[j]->thigh_ = partPool().find(pLegs[j]->name() + "_Thigh");
+			pLegs[j]->p2b_ = partPool().find(pLegs[j]->name() + "_P2b");
+			pLegs[j]->p3b_ = partPool().find(pLegs[j]->name() + "_P3b");
 		}
 
-		/*Update Markers*/
-		//pBodyCenter = body().findMarker("BodyCenter");
-
+		// Update Markers //
 		for (int j = 0; j < 6; ++j)
 		{
 			pLegs[j]->base_mak_id_ = body().markerPool().find(pLegs[j]->name() + "_Base");
 
-			pLegs[j]->u1i_id_ = body().markerPool().find(pLegs[j]->name() + "_U1i");
-			pLegs[j]->u2i_id_ = body().markerPool().find(pLegs[j]->name() + "_U2i");
-			pLegs[j]->u3i_id_ = body().markerPool().find(pLegs[j]->name() + "_U3i");
+			pLegs[j]->u1i_ = body().markerPool().find(pLegs[j]->name() + "_U1i");
+			pLegs[j]->u2i_ = body().markerPool().find(pLegs[j]->name() + "_U2i");
+			pLegs[j]->u3i_ = body().markerPool().find(pLegs[j]->name() + "_U3i");
 
-			pLegs[j]->u1j_id_ = pLegs[j]->p1a().markerPool().find("U1j");
-			pLegs[j]->u2j_id_ = pLegs[j]->p2a().markerPool().find("U2j");
-			pLegs[j]->u3j_id_ = pLegs[j]->p3a().markerPool().find("U3j");
+			pLegs[j]->u1j_ = pLegs[j]->p1a().markerPool().find("U1j");
+			pLegs[j]->u2j_ = pLegs[j]->p2a().markerPool().find("U2j");
+			pLegs[j]->u3j_ = pLegs[j]->p3a().markerPool().find("U3j");
 
-			pLegs[j]->p1i_id_ = pLegs[j]->thigh().markerPool().find("P1i");
-			pLegs[j]->p2i_id_ = pLegs[j]->p2b().markerPool().find("P2i");
-			pLegs[j]->p3i_id_ = pLegs[j]->p3b().markerPool().find("P3i");
+			pLegs[j]->p1i_ = pLegs[j]->thigh().markerPool().find("P1i");
+			pLegs[j]->p2i_ = pLegs[j]->p2b().markerPool().find("P2i");
+			pLegs[j]->p3i_ = pLegs[j]->p3b().markerPool().find("P3i");
 
-			pLegs[j]->p1j_id_ = pLegs[j]->p1a().markerPool().find("P1j");
-			pLegs[j]->p2j_id_ = pLegs[j]->p2a().markerPool().find("P2j");
-			pLegs[j]->p3j_id_ = pLegs[j]->p3a().markerPool().find("P3j");
+			pLegs[j]->p1j_ = pLegs[j]->p1a().markerPool().find("P1j");
+			pLegs[j]->p2j_ = pLegs[j]->p2a().markerPool().find("P2j");
+			pLegs[j]->p3j_ = pLegs[j]->p3a().markerPool().find("P3j");
 
-			pLegs[j]->sfi_id_ = pLegs[j]->thigh().markerPool().find("Sfi");
-			pLegs[j]->s2i_id_ = pLegs[j]->thigh().markerPool().find("S2i");
-			pLegs[j]->s3i_id_ = pLegs[j]->thigh().markerPool().find("S3i");
+			pLegs[j]->sfi_ = pLegs[j]->thigh().markerPool().find("Sfi");
+			pLegs[j]->s2i_ = pLegs[j]->thigh().markerPool().find("S2i");
+			pLegs[j]->s3i_ = pLegs[j]->thigh().markerPool().find("S3i");
 
-			pLegs[j]->s2j_id_ = pLegs[j]->p2b().markerPool().find("S2j");
-			pLegs[j]->s3j_id_ = pLegs[j]->p3b().markerPool().find("S3j");
-			pLegs[j]->sfj_id_ = ground().markerPool().find(pLegs[j]->name() + "_Sfj");
+			pLegs[j]->s2j_ = pLegs[j]->p2b().markerPool().find("S2j");
+			pLegs[j]->s3j_ = pLegs[j]->p3b().markerPool().find("S3j");
+			pLegs[j]->sfj_ = ground().markerPool().find(pLegs[j]->name() + "_Sfj");
 		}
 
-		/*Update Joints*/
+		// Update Joints //
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->u1_id_ = jointPool().find(pLegs[j]->name() + "_U1");
-			pLegs[j]->u2_id_ = jointPool().find(pLegs[j]->name() + "_U2");
-			pLegs[j]->u3_id_ = jointPool().find(pLegs[j]->name() + "_U3");
-			pLegs[j]->p1_id_ = jointPool().find(pLegs[j]->name() + "_P1");
-			pLegs[j]->p2_id_ = jointPool().find(pLegs[j]->name() + "_P2");
-			pLegs[j]->p3_id_ = jointPool().find(pLegs[j]->name() + "_P3");
-			pLegs[j]->sf_id_ = jointPool().find(pLegs[j]->name() + "_Sf");
-			pLegs[j]->s2_id_ = jointPool().find(pLegs[j]->name() + "_S2");
-			pLegs[j]->s3_id_ = jointPool().find(pLegs[j]->name() + "_S3");
+			pLegs[j]->u1_ = jointPool().find(pLegs[j]->name() + "_U1");
+			pLegs[j]->u2_ = jointPool().find(pLegs[j]->name() + "_U2");
+			pLegs[j]->u3_ = jointPool().find(pLegs[j]->name() + "_U3");
+			pLegs[j]->p1_ = jointPool().find(pLegs[j]->name() + "_P1");
+			pLegs[j]->p2_ = jointPool().find(pLegs[j]->name() + "_P2");
+			pLegs[j]->p3_ = jointPool().find(pLegs[j]->name() + "_P3");
+			pLegs[j]->sf_ = jointPool().find(pLegs[j]->name() + "_Sf");
+			pLegs[j]->s2_ = jointPool().find(pLegs[j]->name() + "_S2");
+			pLegs[j]->s3_ = jointPool().find(pLegs[j]->name() + "_S3");
 		}
 
-		/*Update Motions*/
+		// Update Motions //
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->m1_id_ = motionPool().find(pLegs[j]->name() + "_M1");
-			pLegs[j]->m2_id_ = motionPool().find(pLegs[j]->name() + "_M2");
-			pLegs[j]->m3_id_ = motionPool().find(pLegs[j]->name() + "_M3");
+			pLegs[j]->m1_ = motionPool().find(pLegs[j]->name() + "_M1");
+			pLegs[j]->m2_ = motionPool().find(pLegs[j]->name() + "_M2");
+			pLegs[j]->m3_ = motionPool().find(pLegs[j]->name() + "_M3");
 		}
 
-		/* Update Forces */
+		// Update Forces //
 		for (int j = 0; j < 6; ++j)
 		{
-			pLegs[j]->f1_id_ = forcePool().find(pLegs[j]->name() + "_F1");
-			pLegs[j]->f2_id_ = forcePool().find(pLegs[j]->name() + "_F2");
-			pLegs[j]->f3_id_ = forcePool().find(pLegs[j]->name() + "_F3");
+			pLegs[j]->f1_ = forcePool().find(pLegs[j]->name() + "_F1");
+			pLegs[j]->f2_ = forcePool().find(pLegs[j]->name() + "_F2");
+			pLegs[j]->f3_ = forcePool().find(pLegs[j]->name() + "_F3");
 		}
 
-		/*Update Dimension Variables*/
+		// Update Dimension Variables //
 		for (int i = 0; i < 6; ++i)
 		{
 			double pm[4][4];
@@ -1285,6 +1283,18 @@ namespace Robots
 			*const_cast<double *>(&pLegs[i]->D2) = pLegs[i]->s2i().prtPm()[2][3];
 			*const_cast<double *>(&pLegs[i]->H2) = pLegs[i]->s2i().prtPm()[1][3];
 		}
+
+		// Update robot to current Pee //
+		for (int i = 0; i < 6; ++i)
+		{
+			pLegs[i]->sfi().update();
+			double pe[6];
+			pLegs[i]->sfi().getPe(pe);
+			pLegs[i]->SetPee(pe);
+		}
+
+
+
 	}
 	auto RobotTypeI::saveXml(Aris::Core::XmlElement &xml_ele)const->void
 	{
