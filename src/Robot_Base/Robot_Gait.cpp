@@ -47,7 +47,7 @@ namespace Robots
 			else if (i.first == "motor")
 			{
 				int id = { stoi(i.second) };
-				if (id<0 || id>17)throw std::runtime_error("invalide param in basicParse func");
+				if (id<0 || id>17)throw std::runtime_error("invalid param in basicParse func");
 				
 				std::fill_n(param.active_motor, 18, false);
 				param.active_motor[id] = true;
@@ -55,7 +55,7 @@ namespace Robots
 			else if (i.first == "physical_motor")
 			{
 				int id = { stoi(i.second) };
-				if (id<0 || id>5)throw std::runtime_error("invalide param in basicParse func");
+				if (id<0 || id>5)throw std::runtime_error("invalid param in basicParse func");
 				
 				std::fill_n(param.active_motor, 18, false);
 				param.active_motor[Aris::Server::ControlServer::instance().controller().motionAtPhy(id).absID()] = true;
@@ -63,7 +63,7 @@ namespace Robots
 			else if (i.first == "leg")
 			{
 				auto leg_id = std::stoi(i.second);
-				if (leg_id<0 || leg_id>5)throw std::runtime_error("invalide param in parseRecover func");
+				if (leg_id<0 || leg_id>5)throw std::runtime_error("invalid param in parseRecover func");
 
 				std::fill_n(param.active_motor, 18, false);
 				std::fill_n(param.active_motor + leg_id * 3, 3, true);
@@ -392,8 +392,8 @@ namespace Robots
 		robot.SetPeb(Peb);
 		robot.SetPee(Pee);
 
-		rt_printf("imu(pitch roll yaw): %f  %f  %f\n", param.imu_data->pitch, param.imu_data->roll, param.imu_data->yaw);
-
+		if(param.imu_data)rt_printf("imu(pitch roll yaw): %f  %f  %f\n", param.imu_data->pitch, param.imu_data->roll, param.imu_data->yaw);
+		
 		double force_on_body[6], force_on_marker[6];
 
 		// s_f2f 用来转换坐标系 // 
@@ -401,7 +401,7 @@ namespace Robots
 		Aris::Dynamic::s_f2f(*robot.forceSensorMak().prtPm(), force_on_marker, force_on_body);
 
 		rt_printf("force on marker: %f  %f  %f  %f  %f  %f \n", force_on_marker[0], force_on_marker[1], force_on_marker[2], force_on_marker[3], force_on_marker[4], force_on_marker[5]);
-		rt_printf("force on marker: %f  %f  %f  %f  %f  %f \n", force_on_body[0], force_on_body[1], force_on_body[2], force_on_body[3], force_on_body[4], force_on_body[5]);
+		rt_printf("force on body: %f  %f  %f  %f  %f  %f \n", force_on_body[0], force_on_body[1], force_on_body[2], force_on_body[3], force_on_body[4], force_on_body[5]);
 
 
 
