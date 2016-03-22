@@ -123,6 +123,14 @@ namespace Robots
 				std::fill_n(param.active_motor, 18, false);
 				std::fill_n(param.active_motor + leg_id * 3, 3, true);
 			}
+			else if (i.first == "t1")
+			{
+				param.recover_count = std::stoi(i.second);
+			}
+			else if (i.first == "t2")
+			{
+				param.align_count = std::stoi(i.second);
+			}
 			else
 			{
 				throw std::runtime_error("unknown param in parseRecover func");

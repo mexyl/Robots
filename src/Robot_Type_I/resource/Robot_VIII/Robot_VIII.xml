@@ -514,6 +514,8 @@
                 <first abbreviation="f"/>
                 <second abbreviation="s"/>
                 <leg abbreviation="l" type="intArray" default="0"/>
+                <t1 abbreviation="t" type="intArray" default="3000"/>
+                <t2 type="intArray" default="3000"/>
             </rc>
             <wk default="wk_param">
                 <wk_param type="group">
