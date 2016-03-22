@@ -185,7 +185,7 @@ namespace Robots
 		// recover 自己做检查 // 
 		for (int i = 0; i<18; ++i)
 		{
-			if ((param.motion_raw_data->at(i).target_pos > cs.controller().motionAtAbs(i).maxPosCount()))
+			if (param.motion_raw_data->at(i).target_pos > (cs.controller().motionAtAbs(i).maxPosCount() + 50000 ))
 			{
 				rt_printf("Motor %i's target position is bigger than its MAX permitted value in recover, you might forget to GO HOME\n", i);
 				rt_printf("The min, max and current count are:\n");
@@ -197,7 +197,7 @@ namespace Robots
 				return 0;
 			}
 
-			if (param.if_check_pos_min && (param.motion_raw_data->at(i).target_pos < cs.controller().motionAtAbs(i).minPosCount()))
+			if (param.motion_raw_data->at(i).target_pos < (cs.controller().motionAtAbs(i).minPosCount() - 50000 ))
 			{
 				rt_printf("Motor %i's target position is bigger than its MAX permitted value in recover, you might forget to GO HOME\n", i);
 				rt_printf("The min, max and current count are:\n");
