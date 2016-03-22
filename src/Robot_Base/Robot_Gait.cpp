@@ -77,6 +77,8 @@ namespace Robots
 	{
 		RecoverParam param;
 
+		param.if_check_pos_min = false;
+
 		for (auto &i : params)
 		{
 			if (i.first == "all")
