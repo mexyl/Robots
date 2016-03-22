@@ -161,8 +161,8 @@ namespace Robots
 			robot.SetPee(beginPee, robot.body());
 		}
 
-		int leftCount = param.count < param.align_count ? 0 : param.align_count;
-		int rightCount = param.count < param.align_count ? param.align_count : param.align_count + param.recover_count;
+		int leftCount = param.count < param.recover_count ? 0 : param.recover_count;
+		int rightCount = param.count < param.recover_count ? param.recover_count : param.recover_count + param.align_count;
 
 		double s = -(PI / 2)*cos(PI * (param.count - leftCount + 1) / (rightCount - leftCount)) + PI / 2;
 
@@ -170,7 +170,7 @@ namespace Robots
 		{
 			if (param.active_leg[i])
 			{
-				if (param.count < param.align_count)
+				if (param.count < param.recover_count)
 				{
 					for (int j = 0; j < 3; ++j)
 					{
