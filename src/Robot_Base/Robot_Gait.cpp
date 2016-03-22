@@ -78,6 +78,7 @@ namespace Robots
 		RecoverParam param;
 
 		param.if_check_pos_min = false;
+		param.if_check_pos_max = false;
 
 		for (auto &i : params)
 		{
@@ -135,6 +136,8 @@ namespace Robots
 		auto &robot = static_cast<Robots::RobotBase &>(model);
 		auto &param = static_cast<const RecoverParam &>(plan_param);
 
+		static Aris::Server::ControlServer &cs = Aris::Server::ControlServer::instance();
+
 		static double beginPin[18], beginPee[18], alignPin[18];
 
 		if (param.count == 0)
@@ -176,6 +179,34 @@ namespace Robots
 
 					robot.pLegs[i]->SetPee(pEE);
 				}
+			}
+		}
+
+		// recover 自己做检查 // 
+		for (int i = 0; i<18; ++i)
+		{
+			if ((param.motion_raw_data->at(i).target_pos > cs.controller().motionAtAbs(i).maxPosCount()))
+			{
+				rt_printf("Motor %i's target position is bigger than its MAX permitted value in recover, you might forget to GO HOME\n", i);
+				rt_printf("The min, max and current count are:\n");
+				for (std::size_t i = 0; i < cs.controller().motionNum(); ++i)
+				{
+					rt_printf("%d   %d   %d\n", cs.controller().motionAtAbs(i).minPosCount(), cs.controller().motionAtAbs(i).maxPosCount(), param.motion_raw_data->at(i).target_pos);
+				}
+				rt_printf("recover failed\n");
+				return 0;
+			}
+
+			if (param.if_check_pos_min && (param.motion_raw_data->at(i).target_pos < cs.controller().motionAtAbs(i).minPosCount()))
+			{
+				rt_printf("Motor %i's target position is bigger than its MAX permitted value in recover, you might forget to GO HOME\n", i);
+				rt_printf("The min, max and current count are:\n");
+				for (std::size_t i = 0; i<cs.controller().motionNum(); ++i)
+				{
+					rt_printf("%d   %d   %d\n", cs.controller().motionAtAbs(i).minPosCount(), cs.controller().motionAtAbs(i).maxPosCount(), param.motion_raw_data->at(i).target_pos);
+				}
+				rt_printf("recover failed\n");
+				return 0;
 			}
 		}
 
