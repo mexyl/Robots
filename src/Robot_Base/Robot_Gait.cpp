@@ -193,8 +193,9 @@ namespace Robots
 		// recover 自己做检查 // 
 		for (int i = 0; i<18; ++i)
 		{
-			if (param.last_motion_raw_data->at(i).cmd == Aris::Control::EthercatMotion::RUN)
+			if (param.active_motor[i] && (param.last_motion_raw_data->at(i).cmd == Aris::Control::EthercatMotion::RUN))
 			{
+								
 				if (param.motion_raw_data->at(i).target_pos >(cs.controller().motionAtAbs(i).maxPosCount() + 50000))
 				{
 					rt_printf("Motor %i's target position is bigger than its MAX permitted value in recover, you might forget to GO HOME\n", i);
