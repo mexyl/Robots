@@ -131,6 +131,10 @@ namespace Robots
 			{
 				param.align_count = std::stoi(i.second);
 			}
+			else if (i.first == "margin_offset")
+			{
+				param.margin_offset = std::stod(i.second);
+			}
 			else
 			{
 				throw std::runtime_error("unknown param in parseRecover func");
@@ -196,7 +200,7 @@ namespace Robots
 			if (param.active_motor[i] && (param.last_motion_raw_data->at(i).cmd == Aris::Control::EthercatMotion::RUN))
 			{
 								
-				if (param.motion_raw_data->at(i).target_pos >(cs.controller().motionAtAbs(i).maxPosCount() + 50000))
+				if (param.motion_raw_data->at(i).target_pos >(cs.controller().motionAtAbs(i).maxPosCount() + param.margin_offset * cs.controller().motionAtAbs(i).pos2countRatio()))
 				{
 					rt_printf("Motor %i's target position is bigger than its MAX permitted value in recover, you might forget to GO HOME\n", i);
 					rt_printf("The min, max and current count are:\n");
@@ -207,7 +211,7 @@ namespace Robots
 					rt_printf("recover failed\n");
 					return 0;
 				}
-				if (param.motion_raw_data->at(i).target_pos < (cs.controller().motionAtAbs(i).minPosCount() - 50000))
+				if (param.motion_raw_data->at(i).target_pos < (cs.controller().motionAtAbs(i).minPosCount() - param.margin_offset * cs.controller().motionAtAbs(i).pos2countRatio()))
 				{
 					rt_printf("Motor %i's target position is smaller than its MIN permitted value in recover, you might forget to GO HOME\n", i);
 					rt_printf("The min, max and current count are:\n");

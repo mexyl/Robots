@@ -17,6 +17,7 @@ namespace Robots
 		std::int32_t recover_count{ 3000 };
 		std::int32_t align_count{ 3000 };
 		bool active_leg[6]{ true,true,true,true,true,true };
+		double margin_offset{0.01};//meter
 		double alignPee[18]
 		{ -0.3,   -0.75,   -0.65,
 			-0.45,  -0.75,   0,
