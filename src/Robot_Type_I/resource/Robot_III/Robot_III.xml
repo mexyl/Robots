@@ -512,7 +512,7 @@
             <fake_home/>
             <rc default="rc_param">
                 <rc_param type="group">
-                    <leg_param type="unique">
+                    <leg_param type="unique" default="all">
                         <all abbreviation="a"/>
                         <first abbreviation="f"/>
                         <second abbreviation="s"/>
