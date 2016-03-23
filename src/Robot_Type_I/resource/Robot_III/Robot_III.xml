@@ -520,7 +520,7 @@
                     </leg_param>
                     <t1 abbreviation="t" type="intArray" default="3000"/>
                     <t2 type="intArray" default="3000"/>
-                    <margin_offset type="double" default="0.01"/>
+                    <margin_offset abbreviation="m" type="double" default="0.01"/>
                 </rc_param>
             </rc>
             <wk default="wk_param">
