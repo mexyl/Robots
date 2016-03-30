@@ -2,8 +2,6 @@
 
 int sendRequest(int argc, char *argv[], const char *xmlFileName)
 {
-	std::cout << "1" << std::endl;
-	
 	// 需要去除命令名的路径和扩展名 //
 	std::string cmdName(argv[0]);
 
@@ -20,8 +18,6 @@ int sendRequest(int argc, char *argv[], const char *xmlFileName)
 	}
 #endif
 
-	std::cout << "2" << std::endl;
-
 	if (cmdName.rfind('.'))
 	{
 		cmdName = cmdName.substr(0, cmdName.rfind('.'));
@@ -33,26 +29,17 @@ int sendRequest(int argc, char *argv[], const char *xmlFileName)
 		cmdName = cmdName + " " + argv[i];
 	}
 
-	std::cout << "3" << std::endl;
-
 	// 构造msg，这里需要先copy命令名称，然后依次copy各个参数 //
 	aris::core::Msg msg;
 	msg.copy(cmdName.c_str());
-
-	std::cout << "4" << std::endl;
 
 	// 连接并发送msg //
 	aris::core::XmlDocument doc;
 
 	if (doc.LoadFile(xmlFileName) != 0)	throw std::logic_error("failed to read configuration xml file");
 
-	std::cout << "5" << std::endl;
-
 	std::string ip = doc.RootElement()->FirstChildElement("Server")->Attribute("ip");
 	std::string port = doc.RootElement()->FirstChildElement("Server")->Attribute("port");
-
-	std::cout << "ip:" << std::endl;
-	std::cout << ip << std::endl;
 
 	aris::core::Socket conn;
 

@@ -479,7 +479,7 @@
             <RR_F3 type="single_component_force" active="true" prt_m="RR_P3b" prt_n="RR_P3a" mak_i="P3i" mak_j="P3j" component="2"/>
         </Force>
     </Model>
-    <server ip="127.0.0.1" port="5866">
+    <Server ip="127.0.0.1" port="5866">
         <Commands>
             <start/>
             <stop/>
@@ -534,7 +534,7 @@
             </wk>
             <ro/>
         </Commands>
-    </server>
+    </Server>
     <Controller>
         <EtherCat>
             <SlaveType>
@@ -595,8 +595,8 @@
                         </index_1601>
                     </PDO>
                     <SDO>
-                        <ForceUnit index="0x2040" subindex="0x29" value="1" type="uint8" is_tx="false"/>
-                        <TorqueUnit index="0x2040" subindex="0x2a" value="2" type="uint8" is_tx="false"/>
+                        <ForceUnit index="0x2040" subindex="0x31" value="1" type="int32" is_tx="false"/>
+                        <TorqueUnit index="0x2040" subindex="0x32" value="2" type="int32" is_tx="false"/>
                     </SDO>
                 </AtiForceSensor>
             </SlaveType>
