@@ -16,13 +16,13 @@
 #include "Robot_Base.h"
 
 
-using namespace Aris::Dynamic;
+using namespace aris::dynamic;
 
 namespace Robots
 {
-	auto basicParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void
+	auto basicParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg_out)->void
 	{
-		Aris::Server::BasicFunctionParam param;
+		aris::server::BasicFunctionParam param;
 
 		for (auto &i : params)
 		{
@@ -58,7 +58,7 @@ namespace Robots
 				if (id<0 || id>5)throw std::runtime_error("invalid param in basicParse func");
 				
 				std::fill_n(param.active_motor, 18, false);
-				param.active_motor[Aris::Server::ControlServer::instance().controller().motionAtPhy(id).absID()] = true;
+				param.active_motor[aris::server::ControlServer::instance().controller().motionAtPhy(id).absID()] = true;
 			}
 			else if (i.first == "leg")
 			{
@@ -73,7 +73,7 @@ namespace Robots
 		msg_out.copyStruct(param);
 	}
 
-	auto recoverParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void
+	auto recoverParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg_out)->void
 	{
 		RecoverParam param;
 
@@ -143,12 +143,12 @@ namespace Robots
 
 		msg_out.copyStruct(param);
 	}
-	auto recoverGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)->int
+	auto recoverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase & plan_param)->int
 	{
 		auto &robot = static_cast<Robots::RobotBase &>(model);
 		auto &param = static_cast<const RecoverParam &>(plan_param);
 
-		static Aris::Server::ControlServer &cs = Aris::Server::ControlServer::instance();
+		static aris::server::ControlServer &cs = aris::server::ControlServer::instance();
 
 		static double beginPin[18], beginPee[18], alignPin[18];
 
@@ -197,7 +197,7 @@ namespace Robots
 		// recover 自己做检查 // 
 		for (int i = 0; i<18; ++i)
 		{
-			if (param.active_motor[i] && (param.last_motion_raw_data->at(i).cmd == Aris::Control::EthercatMotion::RUN))
+			if (param.active_motor[i] && (param.last_motion_raw_data->at(i).cmd == aris::control::EthercatMotion::RUN))
 			{
 								
 				if (param.motion_raw_data->at(i).target_pos >(cs.controller().motionAtAbs(i).maxPosCount() + param.margin_offset * cs.controller().motionAtAbs(i).pos2countRatio()))
@@ -228,7 +228,7 @@ namespace Robots
 		return param.align_count + param.recover_count - param.count - 1;
 	}
 
-	auto walkParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)->void
+	auto walkParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void
 	{
 		Robots::WalkParam param;
 
@@ -261,13 +261,13 @@ namespace Robots
 		}
 		msg.copyStruct(param);
 	}
-	auto walkGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param_in)->int
+	auto walkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param_in)->int
 	{
 		auto &robot = static_cast<Robots::RobotBase &>(model);
 		auto &param = static_cast<const Robots::WalkParam &>(param_in);
 		
 		//初始化
-		static Aris::Dynamic::FloatMarker beginMak{ robot.ground() };
+		static aris::dynamic::FloatMarker beginMak{ robot.ground() };
 		static double beginPee[18];
 
 		if (param.count%param.totalCount == 0)
@@ -339,7 +339,7 @@ namespace Robots
 			}
 
 			//规划身体姿态
-			double s_acc = Aris::Dynamic::acc_even(param.totalCount, period_count + 1);
+			double s_acc = aris::dynamic::acc_even(param.totalCount, period_count + 1);
 			double pq[7] = { 0,0,0,std::sin(s_acc*b / 8)*up[0],std::sin(s_acc*b / 8)*up[1] ,std::sin(s_acc*b / 8)*up[2],std::cos(s_acc*b / 8) };
 			double pe[6];
 			s_pq2pe(pq, pe);
@@ -376,7 +376,7 @@ namespace Robots
 			}
 
 			//规划身体姿态
-			double s_dec = Aris::Dynamic::dec_even(param.totalCount, period_count + 1);
+			double s_dec = aris::dynamic::dec_even(param.totalCount, period_count + 1);
 			double pq[7] = { 0,0,0,std::sin(s_dec*b / 8)*up[0],std::sin(s_dec*b / 8)*up[1] ,std::sin(s_dec*b / 8)*up[2],std::cos(s_dec*b / 8) };
 			double pe[6];
 			s_pq2pe(pq, pe);
@@ -423,12 +423,12 @@ namespace Robots
 		return 2 * param.n * param.totalCount - param.count - 1;
 	}
 
-	auto resetOriginParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)->void
+	auto resetOriginParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void
 	{
 		Robots::ResetOriginParam param;
 		msg.copyStruct(param);
 	}
-	auto resetOriginGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param_in)->int
+	auto resetOriginGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param_in)->int
 	{
 		auto &robot = static_cast<Robots::RobotBase &>(model);
 		auto &param = static_cast<const Robots::ResetOriginParam &>(param_in);
@@ -446,7 +446,7 @@ namespace Robots
 
 		// s_f2f 用来转换坐标系 // 
 		std::copy(param.force_data->at(0).fce, param.force_data->at(0).fce + 6, force_on_marker);
-		Aris::Dynamic::s_f2f(*robot.forceSensorMak().prtPm(), force_on_marker, force_on_body);
+		aris::dynamic::s_f2f(*robot.forceSensorMak().prtPm(), force_on_marker, force_on_body);
 
 		rt_printf("force on marker: %f  %f  %f  %f  %f  %f \n", force_on_marker[0], force_on_marker[1], force_on_marker[2], force_on_marker[3], force_on_marker[4], force_on_marker[5]);
 		rt_printf("force on body: %f  %f  %f  %f  %f  %f \n", force_on_body[0], force_on_body[1], force_on_body[2], force_on_body[3], force_on_body[4], force_on_body[5]);

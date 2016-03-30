@@ -21,8 +21,6 @@ using namespace std;
 #endif
 
 
-using namespace Aris::Core;
-
 int main(int argc, char *argv[])
 {
 	std::string xml_address;
@@ -45,7 +43,7 @@ int main(int argc, char *argv[])
 		throw std::runtime_error("invalid robot name, please type in III or VIII");
 	}
 	
-	auto &rs = Aris::Server::ControlServer::instance();
+	auto &rs = aris::server::ControlServer::instance();
 	
 	
 
@@ -62,15 +60,15 @@ int main(int argc, char *argv[])
 
 	rs.setOnExit([&]() 
 	{
-		Aris::Core::XmlDocument xml_doc;
+		aris::core::XmlDocument xml_doc;
 		xml_doc.LoadFile(xml_address.c_str());
 		auto model_xml_ele = xml_doc.RootElement()->FirstChildElement("Model");
 		if (!model_xml_ele)throw std::runtime_error("can't find Model element in xml file");
 		rs.model().saveXml(*model_xml_ele);
 		
-		Aris::Core::stopMsgLoop();
+		aris::core::stopMsgLoop();
 	});
-	Aris::Core::runMsgLoop();
+	aris::core::runMsgLoop();
 
 	
 

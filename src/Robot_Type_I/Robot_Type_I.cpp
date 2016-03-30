@@ -12,7 +12,7 @@
 //#define EIGEN_NO_MALLOC
 #include "Eigen/Eigen"	
 
-using namespace Aris::Dynamic;
+using namespace aris::dynamic;
 using namespace std;
 
 namespace Robots
@@ -941,7 +941,7 @@ namespace Robots
 			Robots::RobotBase::pLegs[i] = static_cast<Robots::LegBase *>(pLegs[i]);
 		}
 
-		this->scriptPool().add<Aris::Dynamic::Script>("default_script");
+		this->scriptPool().add<aris::dynamic::Script>("default_script");
 	}
 	void RobotTypeI::GetFin(double *fIn) const
 	{
@@ -1160,7 +1160,7 @@ namespace Robots
 			xm = Dm.lu().solve(bm);
 		});
 		
-		this->Aris::Dynamic::Model::dyn();
+		this->aris::dynamic::Model::dyn();
 
 		// 更新数据
 		for (int i = 0; i < 6; ++i)
@@ -1179,7 +1179,7 @@ namespace Robots
 		}
 	}
 
-	auto RobotTypeI::loadXml(const Aris::Core::XmlElement &ele)->void
+	auto RobotTypeI::loadXml(const aris::core::XmlElement &ele)->void
 	{
 		Model::loadXml(ele);
 
@@ -1297,7 +1297,7 @@ namespace Robots
 
 
 	}
-	auto RobotTypeI::saveXml(Aris::Core::XmlElement &xml_ele)const->void
+	auto RobotTypeI::saveXml(aris::core::XmlElement &xml_ele)const->void
 	{
 		Model::saveXml(xml_ele);
 
@@ -1355,7 +1355,7 @@ namespace Robots
 
 	};
 
-	auto RobotTypeI::simToAdams(const std::string &adams_file, const Aris::Dynamic::PlanFunc &func, const Aris::Dynamic::PlanParamBase &param, int ms_dt)->Aris::Dynamic::SimResult
+	auto RobotTypeI::simToAdams(const std::string &adams_file, const aris::dynamic::PlanFunc &func, const aris::dynamic::PlanParamBase &param, int ms_dt)->aris::dynamic::SimResult
 	{
 		double begin_pee[18], begin_peb[6];
 		this->GetPee(begin_pee);
@@ -1378,7 +1378,7 @@ namespace Robots
 				double Pee_loc[3];
 				pLegs[i]->GetPee(Pee_loc);
 
-				bool is_equal = Aris::Dynamic::s_is_equal(3, last_Pee[i], Pee_loc, 1e-10);
+				bool is_equal = aris::dynamic::s_is_equal(3, last_Pee[i], Pee_loc, 1e-10);
 
 				if ((is_equal) && (stand_num<3))
 				{
@@ -1415,19 +1415,19 @@ namespace Robots
 			{
 			case STAND:
 			{
-				Aris::Dynamic::DynEle *ele_group[]{ &pLegs[i]->m1(),&pLegs[i]->f2(),&pLegs[i]->f3() };
+				aris::dynamic::DynEle *ele_group[]{ &pLegs[i]->m1(),&pLegs[i]->f2(),&pLegs[i]->f3() };
 				for (auto &ele : ele_group)scriptPool().at(0).act(*ele, false);
 				break;
 			}
 			case SUSPEND:
 			{
-				Aris::Dynamic::DynEle *ele_group[]{ &pLegs[i]->m1(),&pLegs[i]->m2(),&pLegs[i]->m3() };
+				aris::dynamic::DynEle *ele_group[]{ &pLegs[i]->m1(),&pLegs[i]->m2(),&pLegs[i]->m3() };
 				for (auto &ele : ele_group)scriptPool().at(0).act(*ele, false);
 				break;
 			}
 			case MOVE:
 			{
-				Aris::Dynamic::DynEle *ele_group[]{ &pLegs[i]->sf(),&pLegs[i]->f1(),&pLegs[i]->f2(),&pLegs[i]->f3() };
+				aris::dynamic::DynEle *ele_group[]{ &pLegs[i]->sf(),&pLegs[i]->f1(),&pLegs[i]->f2(),&pLegs[i]->f3() };
 				for (auto &ele : ele_group)scriptPool().at(0).act(*ele, false);
 				break;
 			}
@@ -1554,6 +1554,6 @@ namespace Robots
 		this->SetPee(begin_pee);
 		this->SetPeb(begin_peb);
 
-		return this->Aris::Dynamic::Model::simToAdams(adams_file, func, param, ms_dt, &scriptPool().at(0));
+		return this->aris::dynamic::Model::simToAdams(adams_file, func, param, ms_dt, &scriptPool().at(0));
 	}
 }

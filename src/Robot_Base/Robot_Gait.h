@@ -10,9 +10,9 @@
 
 namespace Robots
 {
-	auto basicParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void;
+	auto basicParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg_out)->void;
 
-	struct RecoverParam final :public Aris::Server::GaitParamBase
+	struct RecoverParam final :public aris::server::GaitParamBase
 	{
 		std::int32_t recover_count{ 3000 };
 		std::int32_t align_count{ 3000 };
@@ -33,10 +33,10 @@ namespace Robots
 			0.45,  -0.85,    0,
 			0.3,   -0.85,     0.65 };
 	};
-	auto recoverParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg_out)->void;
-	auto recoverGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase & plan_param)->int;
+	auto recoverParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg_out)->void;
+	auto recoverGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase & plan_param)->int;
 	
-	struct WalkParam final:public Aris::Server::GaitParamBase
+	struct WalkParam final:public aris::server::GaitParamBase
 	{
 		std::int32_t totalCount{ 3000 };
 		std::int32_t n{ 2 };
@@ -45,12 +45,12 @@ namespace Robots
 		double alpha{ 0.3 };
 		double beta{ 0.3 };
 	};
-	auto walkParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)->void;
-	auto walkGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param)->int;
+	auto walkParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void;
+	auto walkGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param)->int;
 
-	struct ResetOriginParam final :public Aris::Server::GaitParamBase {};
-	auto resetOriginParse(const std::string &cmd, const std::map<std::string, std::string> &params, Aris::Core::Msg &msg)->void;
-	auto resetOriginGait(Aris::Dynamic::Model &model, const Aris::Dynamic::PlanParamBase &param)->int;
+	struct ResetOriginParam final :public aris::server::GaitParamBase {};
+	auto resetOriginParse(const std::string &cmd, const std::map<std::string, std::string> &params, aris::core::Msg &msg)->void;
+	auto resetOriginGait(aris::dynamic::Model &model, const aris::dynamic::PlanParamBase &param)->int;
 }
 
 #endif

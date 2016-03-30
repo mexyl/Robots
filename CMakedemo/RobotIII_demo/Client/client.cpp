@@ -32,13 +32,13 @@ int sendRequest(int argc, char *argv[], const char *xmlFileName)
 
 
 	/*构造msg，这里需要先copy命令名称，然后依次copy各个参数*/
-	Aris::Core::Msg msg;
+	aris::core::Msg msg;
 	msg.copy(cmdName.c_str());
 
 
 
 	/*连接并发送msg*/
-	Aris::Core::XmlDocument doc;
+	aris::core::XmlDocument doc;
 
 	if (doc.LoadFile(xmlFileName) != 0)
 		throw std::logic_error("failed to read configuration xml file");
@@ -46,7 +46,7 @@ int sendRequest(int argc, char *argv[], const char *xmlFileName)
 	std::string ip = doc.RootElement()->FirstChildElement("Server")->Attribute("ip");
 	std::string port = doc.RootElement()->FirstChildElement("Server")->Attribute("port");
 
-	Aris::Core::Socket conn;
+	aris::core::Socket conn;
 
 	while (true)
 	{
@@ -58,12 +58,12 @@ int sendRequest(int argc, char *argv[], const char *xmlFileName)
 		catch (std::exception &)
 		{
 			std::cout << "failed to connect server, will retry in 1 second" << std::endl;
-			Aris::Core::msSleep(1000);
+			aris::core::msSleep(1000);
 		}
 
 	}
 
-	Aris::Core::Msg ret = conn.sendRequest(msg);
+	aris::core::Msg ret = conn.sendRequest(msg);
 
 	/*错误处理*/
 	if (ret.size() > 0)

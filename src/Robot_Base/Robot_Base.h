@@ -10,12 +10,12 @@ namespace Robots
 {
 	class RobotBase;
 
-	class LegBase:public Aris::Dynamic::Object
+	class LegBase:public aris::dynamic::Object
 	{
 	public:
-		using Coordinate = Aris::Dynamic::Coordinate;
-		using Marker = Aris::Dynamic::Marker;
-		using Part = Aris::Dynamic::Part;
+		using Coordinate = aris::dynamic::Coordinate;
+		using Marker = aris::dynamic::Marker;
+		using Part = aris::dynamic::Part;
 
 		const Part& ground() const;
 		Part& ground();
@@ -134,7 +134,7 @@ namespace Robots
 
 	protected:		
 		RobotBase *pRobot;
-		Aris::Dynamic::Marker *base_mak_id_;
+		aris::dynamic::Marker *base_mak_id_;
 
 		union 
 		{
@@ -229,12 +229,12 @@ namespace Robots
 		friend class RobotBase;
 	};
 
-	class RobotBase:public Aris::Dynamic::Model
+	class RobotBase:public aris::dynamic::Model
 	{
 	public:
-		using Coordinate = Aris::Dynamic::Coordinate;
-		using Part = Aris::Dynamic::Part;
-		using Marker = Aris::Dynamic::Marker;
+		using Coordinate = aris::dynamic::Coordinate;
+		using Part = aris::dynamic::Part;
+		using Marker = aris::dynamic::Marker;
 
 		RobotBase();
 		virtual ~RobotBase() = default;
@@ -332,8 +332,8 @@ namespace Robots
 		LegBase *pLegs[6];
 
 	protected:
-		Aris::Dynamic::Part *body_;
-		Aris::Dynamic::Marker *force_sensor_mak_;
+		aris::dynamic::Part *body_;
+		aris::dynamic::Marker *force_sensor_mak_;
 
 	private:
 		double _BodyPm[4][4]{ {0} }, _BodyVel[6]{ 0 }, _BodyAcc[6]{ 0 };

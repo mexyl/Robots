@@ -69,7 +69,7 @@ int main_test(int argc, char *argv[])
 	wk_param.n = 3;
 	wk_param.beta = 0.3;
 	wk_param.d = 0.5;
-	Aris::Dynamic::SimResult result;
+	aris::dynamic::SimResult result;
 	rbt.SetPeb(beginPE);
 	rbt.SetPee(beginEE);
 	rbt.simKin(Robots::walk, wk_param, result, true);
@@ -81,9 +81,9 @@ int main_test(int argc, char *argv[])
 	double s[1000];
 
 	for (int i = 0; i < 1000;++i)
-	s[i]=Aris::Dynamic::s_interp(1000, i + 1, 0, d/2, 0, d/1000);
+	s[i]=aris::dynamic::s_interp(1000, i + 1, 0, d/2, 0, d/1000);
 
-	Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\s.txt",s, 1, 1000);
+	aris::dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\s.txt",s, 1, 1000);
 
 	/*
 	SimpleWalkParam param;
@@ -102,7 +102,7 @@ int main_test(int argc, char *argv[])
 
 	double fin[18];
 	rbt.GetFinDyn(fin);
-	Aris::Dynamic::dsp(fin, 18, 1);
+	aris::dynamic::dsp(fin, 18, 1);
 
 	{
 	rbt.ClbPre();
@@ -113,14 +113,14 @@ int main_test(int argc, char *argv[])
 	auto im = Am.inverse();
 	Am = im;
 	});
-	rbt.ForEachMotion([](Aris::Dynamic::Motion *p)
+	rbt.ForEachMotion([](aris::dynamic::Motion *p)
 	{
 	p->SetMotFce(p->MotFce());
 	});
 
-	Aris::Dynamic::Matrix D(rbt.ClbDimM(), rbt.ClbDimN());
-	Aris::Dynamic::Matrix b(rbt.ClbDimM(), 1);
-	Aris::Dynamic::Matrix x(rbt.ClbDimN(), 1);
+	aris::dynamic::Matrix D(rbt.ClbDimM(), rbt.ClbDimN());
+	aris::dynamic::Matrix b(rbt.ClbDimM(), 1);
+	aris::dynamic::Matrix x(rbt.ClbDimN(), 1);
 
 	rbt.ClbMtx(D.Data(), b.Data());
 	rbt.ClbUkn(x.Data());

@@ -24,8 +24,8 @@ int main()
 	//	robot.pLegs[leg_index]->SetPee(pEE_all[i]);
 	//	robot.pLegs[leg_index]->GetPin(pIn_all[i]);
 	//}
-	//Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\pIn.txt", *pIn_all, NUM, 3);
-	//Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\pEE.txt", *pEE_all, NUM, 3);
+	//aris::dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\pIn.txt", *pIn_all, NUM, 3);
+	//aris::dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\pEE.txt", *pEE_all, NUM, 3);
 
 //#define NUM 1900
 //	double s[NUM];
@@ -44,9 +44,9 @@ int main()
 //		dds[i] = p->dds;
 //		++i;
 //	}
-//	Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\s.txt", s, tg.list.size(), 1);
-//	Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\ds.txt", ds, tg.list.size(), 1);
-//	Aris::Dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\dds.txt", dds, tg.list.size(), 1);
+//	aris::dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\s.txt", s, tg.list.size(), 1);
+//	aris::dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\ds.txt", ds, tg.list.size(), 1);
+//	aris::dynamic::dlmwrite("C:\\Users\\yang\\Desktop\\dds.txt", dds, tg.list.size(), 1);
 
 	//std::cout << "size:" << tg.list.size();
 

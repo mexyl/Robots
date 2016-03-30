@@ -10,24 +10,24 @@
 #define EIGEN_NO_MALLOC
 #include <Eigen/Eigen>
 
-using namespace Aris::Dynamic;
+using namespace aris::dynamic;
 using namespace std;
 
 namespace Robots
 {
 	LegBase::LegBase(RobotBase* pRobot, const char *name)
-		: Object(static_cast<Aris::Dynamic::Model &>(*pRobot), name)
+		: Object(static_cast<aris::dynamic::Model &>(*pRobot), name)
 		, pRobot(pRobot)
 	{
 		base_mak_id_ = &pRobot->body().markerPool().add(std::string(name) + "_Base");
 	}
 	
-	const Aris::Dynamic::Part& LegBase::ground() const { return pRobot->ground(); };
-	Aris::Dynamic::Part& LegBase::ground() { return pRobot->ground(); };
-	const Aris::Dynamic::Part& LegBase::body() const { return pRobot->body(); };
-	Aris::Dynamic::Part& LegBase::body() { return pRobot->body(); };
-	const Aris::Dynamic::Marker& LegBase::base() const { return *base_mak_id_; };
-	Aris::Dynamic::Marker& LegBase::base() { return *base_mak_id_; };
+	const aris::dynamic::Part& LegBase::ground() const { return pRobot->ground(); };
+	aris::dynamic::Part& LegBase::ground() { return pRobot->ground(); };
+	const aris::dynamic::Part& LegBase::body() const { return pRobot->body(); };
+	aris::dynamic::Part& LegBase::body() { return pRobot->body(); };
+	const aris::dynamic::Marker& LegBase::base() const { return *base_mak_id_; };
+	aris::dynamic::Marker& LegBase::base() { return *base_mak_id_; };
 	void LegBase::GetPee(double *pEE, const Coordinate &mak) const
 	{
 		double pEE_G[3];
@@ -702,7 +702,7 @@ namespace Robots
 		double pEE_G[18];
 
 		this->GetPee(pEE_G);
-		Aris::Dynamic::s_pe2pq(initBodyPE, pq, "313");
+		aris::dynamic::s_pe2pq(initBodyPE, pq, "313");
 		s_pq2pe(pq, pe, "313");
 		this->SetPeb(pe);
 		this->SetPee(pEE_G);

@@ -2,7 +2,7 @@
 #include <aris.h>
 
 Robots::RobotTypeI robot;
-Aris::Dynamic::FastPath tg;
+aris::dynamic::FastPath tg;
 
 #define NUM 900
 #define ACC_NUM 900
@@ -69,13 +69,13 @@ void pe_const(double time, double *bodyPe, double *bodyVel = nullptr, double *bo
 
 
 }
-void get_const(Aris::Dynamic::FastPath::Data & data)
+void get_const(aris::dynamic::FastPath::Data & data)
 {
 	double bodyPe[6],bodyVel[6],bodyAcc[6];
 	pe_const(data.time, bodyPe, bodyVel, bodyAcc);
 
 	double bodyPm[16];
-	Aris::Dynamic::s_pe2pm(bodyPe, bodyPm);
+	aris::dynamic::s_pe2pm(bodyPe, bodyPm);
 	robot.body().setPm(bodyPm);
 	robot.body().setVel(bodyVel);
 	robot.body().setAcc(bodyAcc);
@@ -86,7 +86,7 @@ void get_const(Aris::Dynamic::FastPath::Data & data)
 	g_const(data.s, data.g);
 	h_const(data.s, data.h);
 	
-	Aris::Dynamic::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
+	aris::dynamic::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
 
 	robot.pLegs[leg_index]->SetPee(pEE);
 	robot.pLegs[leg_index]->SetVee(vEE);
@@ -116,11 +116,11 @@ void h_acc(double s_in, double *h_out)
 	h_out[1] = -stepH*sin(s_in);
 	h_out[2] = stepD / 4 * cos(s_in);
 }
-void get_acc(Aris::Dynamic::FastPath::Data & data)
+void get_acc(aris::dynamic::FastPath::Data & data)
 {
 	double bodyPe[6]{ 0,0,0.5*a*data.time*data.time,0,0,0 }, bodyVel[6]{ 0,0,a*data.time,0,0,0 }, bodyAcc[6]{ 0,0,a,0,0,0 };
 	double bodyPm[16];
-	Aris::Dynamic::s_pe2pm(bodyPe, bodyPm);
+	aris::dynamic::s_pe2pm(bodyPe, bodyPm);
 	robot.body().setPm(bodyPm);
 	robot.body().setVel(bodyVel);
 	robot.body().setAcc(bodyAcc);
@@ -131,7 +131,7 @@ void get_acc(Aris::Dynamic::FastPath::Data & data)
 	g_acc(data.s, data.g);
 	h_acc(data.s, data.h);
 
-	Aris::Dynamic::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
+	aris::dynamic::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
 
 	robot.pLegs[leg_index]->SetPee(pEE);
 	robot.pLegs[leg_index]->SetVee(vEE);
@@ -160,14 +160,14 @@ void h_dec(double s_in, double *h_out)
 	h_out[1] = -stepH*sin(s_in);
 	h_out[2] = stepD / 4 * cos(s_in);
 }
-void get_dec(Aris::Dynamic::FastPath::Data & data)
+void get_dec(aris::dynamic::FastPath::Data & data)
 {
 	double bodyPe[6]{ 0,0, 0.5*a*decTime / 1000 * decTime / 1000 - 0.5*a*data.time*data.time,0,0,0 };
 	double bodyVel[6]{ 0,0,a*decTime / 1000 - a*data.time,0,0,0 };
 	double bodyAcc[6]{ 0,0,-a,0,0,0 };
 
 	double bodyPm[16];
-	Aris::Dynamic::s_pe2pm(bodyPe, bodyPm);
+	aris::dynamic::s_pe2pm(bodyPe, bodyPm);
 	robot.body().setPm(bodyPm);
 	robot.body().setVel(bodyVel);
 	robot.body().setAcc(bodyAcc);
@@ -178,7 +178,7 @@ void get_dec(Aris::Dynamic::FastPath::Data & data)
 	g_dec(data.s, data.g);
 	h_dec(data.s, data.h);
 
-	Aris::Dynamic::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
+	aris::dynamic::s_daxpy(3, data.ds, data.g, 1, vEE, 1);
 
 	robot.pLegs[leg_index]->SetPee(pEE);
 	robot.pLegs[leg_index]->SetVee(vEE);
@@ -212,7 +212,7 @@ void plan_const(const char *fileName)
 		std::cout << "begin to plan leg " << i << std::endl;
 
 		leg_index = i;
-		tg.setMotionLimit(std::vector<Aris::Dynamic::FastPath::MotionLimit> {3, { 0.9,-0.9,3.0,-3.0 } });
+		tg.setMotionLimit(std::vector<aris::dynamic::FastPath::MotionLimit> {3, { 0.9,-0.9,3.0,-3.0 } });
 		tg.setBeginNode({ 0.0, 0.0, 0.0, 0.0, true });
 		tg.setEndNode({  constTime / 1000.0, PI, 0.0, 0.0, true });
 		tg.setFunction(get_const);
@@ -225,7 +225,7 @@ void plan_const(const char *fileName)
 			
 			pe_const((j + 1)*0.001, pe);
 
-			Aris::Dynamic::s_pe2pm(pe, pm);
+			aris::dynamic::s_pe2pm(pe, pm);
 			b_const(tg.result().at(j), pEE);
 			robot.body().setPm(pm);
 			robot.pLegs[leg_index]->SetPee(pEE);
@@ -243,7 +243,7 @@ void plan_const(const char *fileName)
 		}
 	}
 	
-	Aris::Dynamic::dlmwrite(fileName, result);
+	aris::dynamic::dlmwrite(fileName, result);
 	std::cout << "finished planing const period" << std::endl;
 }
 void plan_acc(const char *fileName)
@@ -257,7 +257,7 @@ void plan_acc(const char *fileName)
 		std::cout << "begin to plan leg " << i << std::endl;
 
 		leg_index = i;
-		tg.setMotionLimit(std::vector<Aris::Dynamic::FastPath::MotionLimit> {3, { 0.9,-0.9,3.2,-3.2 } });
+		tg.setMotionLimit(std::vector<aris::dynamic::FastPath::MotionLimit> {3, { 0.9,-0.9,3.2,-3.2 } });
 		tg.setBeginNode({ 0.0, 0.0, 0.0, 0.0, true });
 		tg.setEndNode({ accTime / 1000.0, PI, 0.0, 0.0, true });
 		tg.setFunction(get_acc);
@@ -269,7 +269,7 @@ void plan_acc(const char *fileName)
 		{
 			pe[2] = 0.5*a * (j + 1)*(j + 1)*1e-6;
 			
-			Aris::Dynamic::s_pe2pm(pe, pm);
+			aris::dynamic::s_pe2pm(pe, pm);
 			b_acc(tg.result().at(j), pEE);
 			robot.body().setPm(pm);
 			robot.pLegs[leg_index]->SetPee(pEE);
@@ -280,11 +280,11 @@ void plan_acc(const char *fileName)
 			robot.pLegs[(leg_index + 3) % 6]->GetPin(&result[j][(i * 3 + 9) % 18]);
 		}
 
-		Aris::Dynamic::dsp(pEE, 1, 3);
-		Aris::Dynamic::dsp(pe, 1, 6);
+		aris::dynamic::dsp(pEE, 1, 3);
+		aris::dynamic::dsp(pe, 1, 6);
 	}
 
-	Aris::Dynamic::dlmwrite(fileName, result);
+	aris::dynamic::dlmwrite(fileName, result);
 	std::cout << "finished planing acc period" << std::endl;
 }
 void plan_dec(const char *fileName)
@@ -298,7 +298,7 @@ void plan_dec(const char *fileName)
 		std::cout << "begin to plan leg " << i << std::endl;
 
 		leg_index = i;
-		tg.setMotionLimit(std::vector<Aris::Dynamic::FastPath::MotionLimit> {3, { 0.9,-0.9,3.2,-3.2 } });
+		tg.setMotionLimit(std::vector<aris::dynamic::FastPath::MotionLimit> {3, { 0.9,-0.9,3.2,-3.2 } });
 		tg.setBeginNode({ 0.0, 0.0, 0.0, 0.0, true });
 		tg.setEndNode({  decTime / 1000.0, PI, 0.0, 0.0, true });
 		tg.setFunction(get_dec);
@@ -310,7 +310,7 @@ void plan_dec(const char *fileName)
 		{
 			pe[2] = a*decTime/1000*(j + 1)*1e-3 - 0.5*a * (j + 1)*(j + 1)*1e-6;
 
-			Aris::Dynamic::s_pe2pm(pe, pm);
+			aris::dynamic::s_pe2pm(pe, pm);
 			b_dec(tg.result().at(j), pEE);
 			robot.body().setPm(pm);
 			robot.pLegs[leg_index]->SetPee(pEE);
@@ -322,11 +322,11 @@ void plan_dec(const char *fileName)
 			robot.pLegs[(leg_index + 3) % 6]->GetPin(&result[j][(i * 3 + 9) % 18]);
 		}
 
-		Aris::Dynamic::dsp(pEE, 1, 3);
-		Aris::Dynamic::dsp(pe, 1, 6);
+		aris::dynamic::dsp(pEE, 1, 3);
+		aris::dynamic::dsp(pe, 1, 6);
 	}
 
-	Aris::Dynamic::dlmwrite(fileName, result);
+	aris::dynamic::dlmwrite(fileName, result);
 	std::cout << "finished planing dec period" << std::endl;
 }
 
