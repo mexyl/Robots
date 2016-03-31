@@ -217,7 +217,6 @@ namespace Robots
 					rt_printf("The min, max and current count are:\n");
 					for (std::size_t i = 0; i < cs.controller().motionNum(); ++i)
 					{
-						rt_printf("%f   %d   %d\n", (cs.controller().motionAtAbs(i).minPosCount() - param.margin_offset * cs.controller().motionAtAbs(i).pos2countRatio()), cs.controller().motionAtAbs(i).maxPosCount(), param.motion_raw_data->at(i).target_pos);
 						rt_printf("%d   %d   %d\n", cs.controller().motionAtAbs(i).minPosCount(), cs.controller().motionAtAbs(i).maxPosCount(), param.motion_raw_data->at(i).target_pos);
 					}
 					rt_printf("recover failed\n");
