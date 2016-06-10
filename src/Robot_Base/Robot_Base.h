@@ -330,6 +330,7 @@ namespace Robots
 			, const char *toMak, double *toPee) const;
 
 		LegBase *pLegs[6];
+		LegBase *pNL;
 
 	protected:
 		aris::dynamic::Part *body_;

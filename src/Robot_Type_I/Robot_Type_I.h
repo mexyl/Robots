@@ -266,6 +266,7 @@ namespace Robots
 			};
 			LegI *const pLegs[6];
 		};
+		LegI *const pNL;
 
 	private:
 		LegI LF_Leg{ "LF", this };
@@ -274,6 +275,7 @@ namespace Robots
 		LegI RF_Leg{ "RF", this };
 		LegI RM_Leg{ "RM", this };
 		LegI RR_Leg{ "RR", this };
+		LegI NL_Leg{ "NL",this};
 
 		friend class LegI;
 	};

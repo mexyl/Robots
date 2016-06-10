@@ -170,7 +170,7 @@ namespace Robots
 			std::fill_n(dJi_y, 9, 0);
 			std::fill_n(dJi_z, 9, 0);
 
-			dsp(*base().pm(), 4, 4);
+			//dsp(*base().pm(), 4, 4);
 
 			const double *a = &(base().pm()[0][0]);
 
@@ -934,12 +934,14 @@ namespace Robots
 		s_dgemm(6, 1, 6, 1, *p3b().prtIm(), 6, p3b().prtAcc(), 1, 1, &_c_M[30][0], 4);
 	}
 
-	RobotTypeI::RobotTypeI(): pLF{ &LF_Leg }, pLM{ &LM_Leg }, pLR{ &LR_Leg }, pRF{ &RF_Leg }, pRM{ &RM_Leg }, pRR{ &RR_Leg }
+	RobotTypeI::RobotTypeI():pNL{&NL_Leg}, pLF{ &LF_Leg }, pLM{ &LM_Leg }, pLR{ &LR_Leg }, pRF{ &RF_Leg }, pRM{ &RM_Leg }, pRR{ &RR_Leg }
 	{
 		for (int i = 0; i < 6; ++i)
 		{
 			Robots::RobotBase::pLegs[i] = static_cast<Robots::LegBase *>(pLegs[i]);
 		}
+
+		Robots::RobotBase::pNL=static_cast<Robots::LegBase *>(pNL);
 
 		this->scriptPool().add<aris::dynamic::Script>("default_script");
 	}
@@ -1248,6 +1250,7 @@ namespace Robots
 			pLegs[j]->m2_ = motionPool().find(pLegs[j]->name() + "_M2");
 			pLegs[j]->m3_ = motionPool().find(pLegs[j]->name() + "_M3");
 		}
+		pNL->m1_ = motionPool().find("NEW_MOT");
 
 		// Update Forces //
 		for (int j = 0; j < 6; ++j)
