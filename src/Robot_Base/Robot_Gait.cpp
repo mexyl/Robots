@@ -26,20 +26,20 @@ namespace Robots
 
 		for (auto &i : params)
 		{
-			if (i.first == "all")
+            if (i.first == "all")
 			{
-				std::fill_n(param.active_motor, 18, true);
+                std::fill_n(param.active_motor, 19, true);
 			}
 			else if (i.first == "first")
 			{
-				std::fill_n(param.active_motor, 18, false);
+                std::fill_n(param.active_motor, 19, false);
 				std::fill_n(param.active_motor + 0, 3, true);
 				std::fill_n(param.active_motor + 6, 3, true);
 				std::fill_n(param.active_motor + 12, 3, true);
 			}
 			else if (i.first == "second")
 			{
-				std::fill_n(param.active_motor, 18, false);
+                std::fill_n(param.active_motor, 19, false);
 				std::fill_n(param.active_motor + 3, 3, true);
 				std::fill_n(param.active_motor + 9, 3, true);
 				std::fill_n(param.active_motor + 15, 3, true);
@@ -49,7 +49,7 @@ namespace Robots
 				int id = { stoi(i.second) };
 				if (id<0 || id>17)throw std::runtime_error("invalid param in basicParse func");
 				
-				std::fill_n(param.active_motor, 18, false);
+                std::fill_n(param.active_motor, 19, false);
 				param.active_motor[id] = true;
 			}
 			else if (i.first == "physical_motor")
@@ -57,7 +57,7 @@ namespace Robots
 				int id = { stoi(i.second) };
 				if (id<0 || id>5)throw std::runtime_error("invalid param in basicParse func");
 				
-				std::fill_n(param.active_motor, 18, false);
+                std::fill_n(param.active_motor, 19, false);
 				param.active_motor[aris::server::ControlServer::instance().controller().motionAtPhy(id).absID()] = true;
 			}
 			else if (i.first == "leg")
@@ -65,7 +65,7 @@ namespace Robots
 				auto leg_id = std::stoi(i.second);
 				if (leg_id<0 || leg_id>5)throw std::runtime_error("invalid param in parseRecover func");
 
-				std::fill_n(param.active_motor, 18, false);
+                std::fill_n(param.active_motor, 19, false);
 				std::fill_n(param.active_motor + leg_id * 3, 3, true);
 			}
 		}
@@ -85,6 +85,8 @@ namespace Robots
 			if (i.first == "all")
 			{
 				std::fill_n(param.active_leg, 6, true);
+				std::fill_n(param.active_motor, 19, false);
+				std::fill_n(param.active_motor, 18, true);
 			}
 			else if (i.first == "first")
 			{
@@ -94,7 +96,7 @@ namespace Robots
 				param.active_leg[3] = false;
 				param.active_leg[4] = true;
 				param.active_leg[5] = false;
-				std::fill_n(param.active_motor, 18, false);
+                std::fill_n(param.active_motor, 19, false);
 				std::fill_n(param.active_motor + 0, 3, true);
 				std::fill_n(param.active_motor + 6, 3, true);
 				std::fill_n(param.active_motor + 12, 3, true);
@@ -107,7 +109,7 @@ namespace Robots
 				param.active_leg[3] = true;
 				param.active_leg[4] = false;
 				param.active_leg[5] = true;
-				std::fill_n(param.active_motor, 18, false);
+                std::fill_n(param.active_motor, 19, false);
 				std::fill_n(param.active_motor + 3, 3, true);
 				std::fill_n(param.active_motor + 9, 3, true);
 				std::fill_n(param.active_motor + 15, 3, true);
@@ -120,7 +122,7 @@ namespace Robots
 
 				std::fill_n(param.active_leg, 6, false);
 				param.active_leg[leg_id] = true;
-				std::fill_n(param.active_motor, 18, false);
+                std::fill_n(param.active_motor, 19, false);
 				std::fill_n(param.active_motor + leg_id * 3, 3, true);
 			}
 			else if (i.first == "t1")
