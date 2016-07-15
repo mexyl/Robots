@@ -136,6 +136,7 @@ namespace Robots
 		s_dgemm(3, 3, 3, 1, *tem1, 3, *dJ1_z, 3, 0, *tem2, 3);
 		s_dgemm(3, 3, 3, -1, *tem2, 3, *inv_J1, 3, 1, dJi_z_L, 3);
 
+		double dJi_x_tem[9], dJi_y_tem[9], dJi_z_tem[9];
 
 		switch (*relativeCoordinate)
 		{
@@ -146,21 +147,27 @@ namespace Robots
 			break;
 		case 'M':
 		case 'B':
-			std::fill_n(dJi_x, 9, 0);
-			std::fill_n(dJi_y, 9, 0);
-			std::fill_n(dJi_z, 9, 0);
+			std::fill_n(dJi_x_tem, 9, 0);
+			std::fill_n(dJi_y_tem, 9, 0);
+			std::fill_n(dJi_z_tem, 9, 0);
 
-			s_daxpy(9, base().prtPm()[0][0], dJi_x_L, 1, dJi_x, 1);
-			s_daxpy(9, base().prtPm()[0][1], dJi_y_L, 1, dJi_x, 1);
-			s_daxpy(9, base().prtPm()[0][2], dJi_z_L, 1, dJi_x, 1);
+			s_daxpy(9, base().prtPm()[0][0], dJi_x_L, 1, dJi_x_tem, 1);
+			s_daxpy(9, base().prtPm()[0][1], dJi_y_L, 1, dJi_x_tem, 1);
+			s_daxpy(9, base().prtPm()[0][2], dJi_z_L, 1, dJi_x_tem, 1);
 
-			s_daxpy(9, base().prtPm()[1][0], dJi_x_L, 1, dJi_y, 1);
-			s_daxpy(9, base().prtPm()[1][1], dJi_y_L, 1, dJi_y, 1);
-			s_daxpy(9, base().prtPm()[1][2], dJi_z_L, 1, dJi_y, 1);
+			s_daxpy(9, base().prtPm()[1][0], dJi_x_L, 1, dJi_y_tem, 1);
+			s_daxpy(9, base().prtPm()[1][1], dJi_y_L, 1, dJi_y_tem, 1);
+			s_daxpy(9, base().prtPm()[1][2], dJi_z_L, 1, dJi_y_tem, 1);
 
-			s_daxpy(9, base().prtPm()[2][0], dJi_x_L, 1, dJi_z, 1);
-			s_daxpy(9, base().prtPm()[2][1], dJi_y_L, 1, dJi_z, 1);
-			s_daxpy(9, base().prtPm()[2][2], dJi_z_L, 1, dJi_z, 1);
+			s_daxpy(9, base().prtPm()[2][0], dJi_x_L, 1, dJi_z_tem, 1);
+			s_daxpy(9, base().prtPm()[2][1], dJi_y_L, 1, dJi_z_tem, 1);
+			s_daxpy(9, base().prtPm()[2][2], dJi_z_L, 1, dJi_z_tem, 1);
+
+			s_dgemmNT(3,3,3,1,dJi_x_tem,3,*base().prtPm(),4,0,dJi_x,3);
+			s_dgemmNT(3,3,3,1,dJi_y_tem,3,*base().prtPm(),4,0,dJi_y,3);
+			s_dgemmNT(3,3,3,1,dJi_z_tem,3,*base().prtPm(),4,0,dJi_z,3);
+
+			//the Equations are checked right, but at most 5% error appears, maybe because of too many equations and matrixs are invloved
 
 			break;
 		case 'G':
@@ -197,6 +204,9 @@ namespace Robots
 			//s_daxpy(9, *base().pm()[2], dJi_x_L, 1, dJi_z, 1);
 			//s_daxpy(9, *base().pm()[6], dJi_y_L, 1, dJi_z, 1);
 			//s_daxpy(9, *base().pm()[10], dJi_z_L, 1, dJi_z, 1);
+
+			//Not right here in "G", the rate of the rotation matrix dR_s should be considered, which is not easy
+			//Do not use this function in "G"
 
 			break;
 		}
