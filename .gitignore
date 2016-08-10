@@ -1,10 +1,15 @@
 # for cmake
 CMakeCache.txt
+CMakeLists.txt.user
 CMakeFiles
-Makefile
+*.cmake
+./build/*.cmake
+# Makefile     this should be commented because we have Makefile in sh folder
 cmake_install.cmake
 install_manifest.txt
 
+TrjFile.txt
+ParsedFile.txt
 # for linux local file
 *~
 
@@ -39,3 +44,22 @@ install_manifest.txt
 *.exe
 *.out
 *.app
+build
+bin
+
+# python executables
+*.pyc
+
+# temp files
+.*.*.swp
+.*.swp
+
+# IDE files
+.project
+.cproject
+*.txt
+*.includes
+*.creator
+*.files
+*.user
+*.config
